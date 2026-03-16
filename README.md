@@ -128,14 +128,10 @@ http://localhost:7001/api/v1/auth/login
 http://localhost:7001/api/v1/auth/refresh
 http://localhost:7001/api/v1/account/logout
 http://localhost:7001/api/v1/users
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/api/v1/users/{id}
+http://localhost:7001/api/v1/users/{id} 
 http://localhost:7001/version
 http://localhost:7001/status
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/account/logout
+http://localhost:7001/api/v1/account/logout 
 
 ```
 
