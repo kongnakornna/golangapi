@@ -118,7 +118,7 @@ After starting the service, visit **http://localhost:7001/swagger** to view the 
 
 # http://localhost:7001/api/v1/users
 
-
+```bash
 http://localhost:7001/api/v1/health
 http://localhost:7001/health
 http://localhost:7001/health/detailed
@@ -137,6 +137,7 @@ http://localhost:7001/api/v1/account/logout
 http://localhost:7001/api/v1/account/logout
 http://localhost:7001/api/v1/account/logout
 
+```
 
 ### 🏥 Health Check Endpoints
 - `GET /health` - Basic health check with uptime

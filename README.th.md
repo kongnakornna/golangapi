@@ -112,7 +112,7 @@ project-root/
 
 ## 🚀 Quick Start
 
-
+```bash
 http://localhost:7001/api/v1/health
 http://localhost:7001/health
 http://localhost:7001/health/detailed
@@ -131,6 +131,7 @@ http://localhost:7001/api/v1/account/logout
 http://localhost:7001/api/v1/account/logout
 http://localhost:7001/api/v1/account/logout
 
+```
 
 ## 📚 Documentation
 See `docs/README.md` (Chinese) for architecture, development, maintenance, and deployment guides.
