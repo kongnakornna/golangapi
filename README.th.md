@@ -1,7 +1,7 @@
 # Go-Rest-Starter
-
 > Production-ready Go RESTful API boilerplate with Chi, GORM, PostgreSQL, Redis, and enterprise features
 
+C:\Program Files\Redis\
 ## 🌟 Features
 
 ### 🚀 Core Features
@@ -38,6 +38,38 @@ Design reference:
 
 - [go project layout](https://github.com/kongnakornna/goreststarterio)
 - [go modules layout](https://go.dev/doc/modules/layout)
+
+
+### 🚀 คุณสมบัติหลัก
+- **🏭 สถาปัตยกรรมแบบ Clean** - สถาปัตยกรรมสามชั้น (Repository/Service/Handler) พร้อมการฉีด dependencies อย่างครอบคลุม
+- **🔒 การพิสูจน์ตัวตนด้วย JWT** - ระบบยืนยันตัวตนที่สมบูรณ์พร้อม access/refresh tokens และการขึ้นบัญชีดำ token
+- **👥 การจัดการผู้ใช้** - การดำเนินการ CRUD อย่างเต็มรูปแบบพร้อมการป้องกันตามบทบาทพื้นฐาน (สร้างได้เฉพาะ admin)
+- **📝 การบันทึกแบบมีโครงสร้าง** - การบันทึกที่เป็นหนึ่งเดียวผ่าน `pkg/logger` (สร้างบน slog ของ Go) พร้อม trace/request context
+- **🚫 การจำกัดอัตราการเรียกใช้** - การควบคุมปริมาณคำขอตาม IP พร้อมการล้างข้อมูลอัตโนมัติ
+- **📊 การตรวจสอบสุขภาพระบบ** - การตรวจสอบสุขภาพที่ครอบคลุมพร้อมการตรวจสอบ dependencies
+- **🌐 แคช Redis** - ชั้นแคชที่พร้อมใช้งานจริงพร้อมการจัดการ TTL และการ serialize วัตถุ
+- **📦 คิวข้อความ** - การส่งข้อความแบบ pub/sub บน Redis พร้อม worker pools และการรองรับ dead letter queue
+- **💼 การจัดการธุรกรรม** - ตัวจัดการธุรกรรมของ GORM พร้อมการรองรับธุรกรรมซ้อน
+- **🛡️ ความปลอดภัย** - ชั้นความปลอดภัยหลายชั้นรวมถึง CORS, security headers และการตรวจสอบข้อมูลนำเข้า
+
+### 🛠️ ชุดมิดเดิลแวร์
+- **Request Context** - Trace IDs, request IDs และการแพร่กระจาย context ของผู้ใช้
+- **Security Headers** - CSP, HSTS, X-Frame-Options, การป้องกัน XSS
+- **CORS Handling** - การแชร์ทรัพยากรข้ามแหล่งที่มาที่ปรับแต่งได้
+- **Panic Recovery** - การจัดการ panic ในระดับแอปพลิเคชันพร้อมการตอบสนองข้อผิดพลาดอย่างเหมาะสม
+- **Request Logging** - การบันทึกคำขอ/การตอบสนองแบบมีโครงสร้างพร้อมเมตริกประสิทธิภาพ
+- **Authentication** - มิดเดิลแวร์ JWT พร้อมการป้องกันเส้นทางตามบทบาท
+- **Input Validation** - การตรวจสอบคำขออย่างครอบคลุมโดยใช้ go-playground/validator
+
+### 📈 สุขภาพและการตรวจสอบ
+- **Health Endpoints** - ตรวจสอบพื้นฐาน, ละเอียด, readiness และ liveness probes
+- **การตรวจสอบ Dependency** - สถานะการเชื่อมต่อฐานข้อมูลและ Redis ผ่าน `/health/detailed`
+- **เมตริกระบบ (ไม่บังคับ)** - ตัวจัดการ snapshot runtime/หน่วยความจำ พร้อมสำหรับการเชื่อมต่อ
+- **การติดตามประสิทธิภาพ (ไม่บังคับ)** - มิดเดิลแวร์ตรวจสอบ + ตัวจัดการเมตริก พร้อมใช้งาน
+- **พร้อมสำหรับ Kubernetes** - การตรวจสอบ `/ready` และ `/live`
+
+## โครงสร้างไดเรกทอรี
+
 
 ```md
 project-root/
@@ -115,28 +147,6 @@ go run cmd/app/main.go
 After starting the service, visit **http://localhost:7001/swagger** to view the interactive API documentation.
 
 ## 📚 API Endpoints
-
-# http://localhost:7001/api/v1/users
-
-
-http://localhost:7001/api/v1/health
-http://localhost:7001/health
-http://localhost:7001/health/detailed
-http://localhost:7001/ready
-http://localhost:7001/live
-http://localhost:7001/api/v1/auth/login
-http://localhost:7001/api/v1/auth/refresh
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/users
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/version
-http://localhost:7001/status
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/account/logout
-
 
 ### 🏥 Health Check Endpoints
 - `GET /health` - Basic health check with uptime
@@ -423,3 +433,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Go Project Layout](https://github.com/kongnakornna/goreststarterio) - Standard Go project structure
 - [Chi Router](https://github.com/go-chi/chi) - Lightweight HTTP router
 - [GORM](https://gorm.io/) - The fantastic ORM library for Golang
+
+# - แปลภาษาจากจีน เป็นไทย

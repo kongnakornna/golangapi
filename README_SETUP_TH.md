@@ -1,142 +1,35 @@
 # Go-Rest-Starter
-
 > Production-ready Go RESTful API boilerplate with Chi, GORM, PostgreSQL, Redis, and enterprise features
 
 ## 🌟 Features
 
+- D:\git\goreststarterio\deploy\docker>d
+ docker-compose up -d
+
 ### 🚀 Core Features
-- **🏭 Clean Architecture** - Three-layer architecture (Repository/Service/Handler) with comprehensive dependency injection
-- **🔒 JWT Authentication** - Complete authentication system with access/refresh tokens and token blacklisting
-- **👥 User Management** - Full CRUD operations with basic role-based protection (admin-only create)
-- **📝 Structured Logging** - Unified logging via `pkg/logger` (built on Go's slog) with trace/request context
-- **🚫 Rate Limiting** - IP-based request throttling with automatic cleanup
-- **📊 Health Monitoring** - Comprehensive health checks with dependency monitoring
-- **🌐 Redis Cache** - Production-ready caching layer with TTL management and object serialization
-- **📦 Message Queue** - Redis-based pub/sub messaging with worker pools and dead letter queue support
-- **💼 Transaction Management** - GORM transaction manager with nested transaction support
-- **🛡️ Security** - Multiple security layers including CORS, security headers, and input validation
-
-### 🛠️ Middleware Stack
-- **Request Context** - Trace IDs, request IDs, and user context propagation
-- **Security Headers** - CSP, HSTS, X-Frame-Options, XSS Protection
-- **CORS Handling** - Configurable cross-origin resource sharing
-- **Panic Recovery** - Application-level panic handling with graceful error responses
-- **Request Logging** - Structured request/response logging with performance metrics
-- **Authentication** - JWT middleware with role-based route protection
-- **Input Validation** - Comprehensive request validation using go-playground/validator
-
-### 📈 Health & Monitoring
-- **Health Endpoints** - Basic, detailed, readiness, and liveness probes
-- **Dependency Checks** - Database and Redis connection status via `/health/detailed`
-- **System Metrics (Optional)** - Runtime/memory snapshot handler available for wiring
-- **Performance Tracking (Optional)** - Monitoring middleware + metrics handler available
-- **Kubernetes Ready** - `/ready` and `/live` probes
-
-## Directory Structure
-
-Design reference:
-
-- [go project layout](https://github.com/kongnakornna/goreststarterio)
-- [go modules layout](https://go.dev/doc/modules/layout)
-
-```md
-project-root/
-├── api/                          # API related files
-│   └── app/                      # API app docs
-│       └── docs.go               # docs.go
-│       └── swagger.json          # Swagger documentation
-├── cmd/                          # Main program entry
-│   └── app/                      # Application
-│       └── main.go               # Program entry point
-├── configs/                      # Configuration files (optimized as single source)
-├── deploy/                       # Deployment configurations (simplified to essential scripts)
-│   └── docker/                  
-│   └── k8s/                     
-├── internal/                     # Internal application code
-│   ├── apps/                     # Application composition roots
-│   │   └── app/                  # Current app
-│   │       ├── bootstrap/        # App bootstrap (DI, startup)
-│   │       └── router/           # App router
-│   ├── core/                     # Domain modules (auth/user/health)
-│   ├── platform/                 # Infrastructure (config/db)
-│   └── transport/                # HTTP transport helpers (httpx/middleware)
-├── migrations/                   # Database migration files (version controlled)
-├── pkg/                          # External packages (independent reusable components)
-│   ├── cache/                    # Redis cache and strategies
-│   ├── errors/                   # Custom error handling package
-│   ├── jwt/                      # JWT helpers
-│   ├── logger/                   # Structured logger
-│   ├── queue/                    # Redis queue helpers
-│   ├── transaction/              # Transaction manager
-│   └── utils                     # Common utility functions
-├── scripts/                      # Development and deployment scripts (simplified workflow)
-├── .air.toml                     # Development hot-reload configuration
-├── go.mod                        # Go module definition
-└── README.md                     # Project documentation
-```
-
-## 🚀 Quick Start
-
-## 📚 Documentation
-See `docs/README.md` (Chinese) for architecture, development, maintenance, and deployment guides.
-
-### Prerequisites
-- **Go 1.25+** - [Install Go](https://golang.org/doc/install)
-- **PostgreSQL 12+** - [Install PostgreSQL](https://postgresql.org/download/)
-- **Redis 6+** - [Install Redis](https://redis.io/download)
-
-### Installation
+- go install github.com/air-verse/air@latest
+- go run cmd/app/main.go
 
 ```bash
-# Clone the repository
-git clone https://github.com/vadxq/go-rest-starter.git
-cd go-rest-starter
 
-# Install dependencies
-go mod download
+ go install github.com/air-verse/air@latest
+ go run cmd/app/main.go
 
-# Copy and configure the config file
-cp configs/config.example.yaml configs/config.yaml
-# Edit configs/config.yaml with your database and Redis settings
-```
 
-### Development Mode
 
-```bash
 # Run development server (with auto-reload)
 ./scripts/dev.sh
 
 # Or run directly
 go run cmd/app/main.go
 ```
+- http://localhost:7001/swagger
 
 ### Access API Documentation
 
 After starting the service, visit **http://localhost:7001/swagger** to view the interactive API documentation.
 
 ## 📚 API Endpoints
-
-# http://localhost:7001/api/v1/users
-
-
-http://localhost:7001/api/v1/health
-http://localhost:7001/health
-http://localhost:7001/health/detailed
-http://localhost:7001/ready
-http://localhost:7001/live
-http://localhost:7001/api/v1/auth/login
-http://localhost:7001/api/v1/auth/refresh
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/users
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/api/v1/users/{id}
-http://localhost:7001/version
-http://localhost:7001/status
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/account/logout
-
 
 ### 🏥 Health Check Endpoints
 - `GET /health` - Basic health check with uptime
@@ -423,3 +316,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Go Project Layout](https://github.com/kongnakornna/goreststarterio) - Standard Go project structure
 - [Chi Router](https://github.com/go-chi/chi) - Lightweight HTTP router
 - [GORM](https://gorm.io/) - The fantastic ORM library for Golang
+
+
+http://localhost:7001/api/v1/health
+http://localhost:7001/health
+http://localhost:7001/health/detailed
+http://localhost:7001/ready
+http://localhost:7001/live
+http://localhost:7001/api/v1/auth/login
+http://localhost:7001/api/v1/auth/refresh
+http://localhost:7001/api/v1/account/logout
+http://localhost:7001/api/v1/users
+http://localhost:7001/api/v1/users/{id}
+http://localhost:7001/api/v1/users/{id}
+http://localhost:7001/api/v1/users/{id}
+http://localhost:7001/version
+http://localhost:7001/status
+http://localhost:7001/api/v1/account/logout
+http://localhost:7001/api/v1/account/logout
+http://localhost:7001/api/v1/account/logout
