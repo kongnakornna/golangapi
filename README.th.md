@@ -71,6 +71,9 @@ Design reference:
 ## โครงสร้างไดเรกทอรี
 
 
+
+
+
 ```md
 project-root/
 ├── api/                          # API related files
@@ -108,6 +111,26 @@ project-root/
 ```
 
 ## 🚀 Quick Start
+
+
+http://localhost:7001/api/v1/health
+http://localhost:7001/health
+http://localhost:7001/health/detailed
+http://localhost:7001/ready
+http://localhost:7001/live
+http://localhost:7001/api/v1/auth/login
+http://localhost:7001/api/v1/auth/refresh
+http://localhost:7001/api/v1/account/logout
+http://localhost:7001/api/v1/users
+http://localhost:7001/api/v1/users/{id}
+http://localhost:7001/api/v1/users/{id}
+http://localhost:7001/api/v1/users/{id}
+http://localhost:7001/version
+http://localhost:7001/status
+http://localhost:7001/api/v1/account/logout
+http://localhost:7001/api/v1/account/logout
+http://localhost:7001/api/v1/account/logout
+
 
 ## 📚 Documentation
 See `docs/README.md` (Chinese) for architecture, development, maintenance, and deployment guides.
