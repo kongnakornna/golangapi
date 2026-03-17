@@ -45,7 +45,7 @@ func New() (*App, error) {
 		return nil, fmt.Errorf("โหลดการกำหนดค่าล้มเหลว: %w", err)
 	}
 
-	// สร้างตัวบันทึก日志
+	// สร้างตัวบันทึก 
 	appLogger, err := logger.NewLogger(&logger.LogConfig{
 		Level:   cfg.Log.Level,
 		File:    cfg.Log.File,
