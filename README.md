@@ -422,7 +422,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [GORM](https://gorm.io/) - The fantastic ORM library for Golang
 # คู่มือการใช้งาน Repository (Repo)
 
-## โครงสร้างโปรเจกต์และการจัดระเบียบโมดูล
+## โครงสร้างโปรเจกต์และโครงสร้างโโมดูล
 จุดเริ่มต้นของ service อยู่ที่ `cmd/app/main.go`  
 การประกอบแอปพลิเคชันอยู่ที่ `internal/apps/app/bootstrap/`  
 การประกอบเส้นทาง (routing) อยู่ที่ `internal/apps/app/router/`  
