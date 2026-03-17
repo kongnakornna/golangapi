@@ -1,4 +1,4 @@
-# Go-Rest-Starter
+# Go-RestAPI
 
 > Production-ready Go RESTful API boilerplate with Chi, GORM, PostgreSQL, Redis, and enterprise features
 
