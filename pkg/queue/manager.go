@@ -117,7 +117,7 @@ func (rq *RedisQueue) Subscribe(ctx context.Context, topic string, handler Handl
 	return nil
 }
 
-// consume บริโภคข้อความ
+// consume  
 func (rq *RedisQueue) consume(topic string) {
 	defer rq.wg.Done()
 
