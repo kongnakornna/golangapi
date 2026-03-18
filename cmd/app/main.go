@@ -6,8 +6,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/vadxq/go-rest-starter/internal/apps/app/bootstrap"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	"github.com/vadxq/golangapi/internal/apps/app/bootstrap"
+	"github.com/vadxq/golangapi/pkg/logger"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 set -e
 
 # การกำหนดค่าเริ่มต้น
-IMAGE_NAME="go-rest-starter"
+IMAGE_NAME="golangapi"
 VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "latest")
 DOCKERFILE="deploy/docker/Dockerfile"
 
@@ -23,7 +23,7 @@ while [[ $# -gt 0 ]]; do
     -h|--help)
       echo "การใช้งาน: $0 [ตัวเลือก]"
       echo "ตัวเลือก:"
-      echo "  -n, --name IMAGE_NAME    ชื่อ Docker image (ค่าเริ่มต้น: go-rest-starter)"
+      echo "  -n, --name IMAGE_NAME    ชื่อ Docker image (ค่าเริ่มต้น: golangapi)"
       echo "  -v, --version VERSION    แท็กเวอร์ชันของ image (ค่าเริ่มต้น: git describe)"
       echo "  -f, --file DOCKERFILE    ตำแหน่งของ Dockerfile (ค่าเริ่มต้น: deploy/docker/Dockerfile)"
       echo "  -h, --help               แสดงข้อความช่วยเหลือนี้"
@@ -60,7 +60,7 @@ docker images ${IMAGE_NAME}
 
 echo ""
 echo "วิธีเรียกใช้ container:"
-echo "docker run -d -p 7001:7001 --name go-rest-starter-container \\"
+echo "docker run -d -p 7001:7001 --name golangapi-container \\"
 echo "  -e APP_DATABASE_HOST=host.docker.internal \\"
 echo "  -e APP_REDIS_HOST=host.docker.internal \\"
 echo "  ${IMAGE_NAME}:${VERSION}"
