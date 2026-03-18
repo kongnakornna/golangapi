@@ -111,7 +111,6 @@ cp configs/config.example.yaml configs/config.yaml
 ```bash
 # Run development server (with auto-reload)
 ./scripts/dev.sh
-
 # Or run directly
 go run cmd/app/main.go
 ```
