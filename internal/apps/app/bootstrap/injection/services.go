@@ -32,7 +32,7 @@ type Services struct {
 // นี่คือชั้นที่สองของการฉีด dependencies ซึ่งขึ้นอยู่กับชั้น repository
 func InitServices(
 	repos *Repositories,
-	validate *validator.Validate,
+	validate * validator.Validate,
 	db *gorm.DB,
 	config *config.AppConfig,
 	cacheInstance cache.Cache,
