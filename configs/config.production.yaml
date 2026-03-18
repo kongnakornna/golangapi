@@ -1,36 +1,36 @@
 app:
   server:
-    port: ${PORT:8080}          # ใช้ตัวแปรสภาพแวดล้อม ค่าเริ่มต้น 8080
-    timeout: 30s
-    read_timeout: 15s
-    write_timeout: 15s
+    port: 7001           # หมายเลขพอร์ตบริการ
+    timeout: 30s         # การตั้งค่าระยะเวลาหมดเวลาทั่วโลก
+    read_timeout: 15s    # ระยะเวลาหมดเวลาการอ่าน
+    write_timeout: 15s   # ระยะเวลาหมดเวลาการเขียน
 
   database:
-    driver: postgres
-    host: ${DB_HOST}            # อ่านจากตัวแปรสภาพแวดล้อม
-    port: ${DB_PORT:5432}       
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}   # ข้อมูลสำคัญต้องอ่านจากตัวแปรสภาพแวดล้อม
-    dbname: ${DB_NAME}
-    sslmode: ${DB_SSL_MODE:require}   # สภาพแวดล้อมการใช้งานจริงแนะนำให้เปิดใช้ SSL
-    max_open_conns: 100        # สภาพแวดล้อมการใช้งานจริงเพิ่มขนาดพูลการเชื่อมต่อ
-    max_idle_conns: 25
-    conn_max_lifetime: 30m     # ลดอายุการเชื่อมต่อ หลีกเลี่ยงปัญหาการเชื่อมต่อนานเกินไป
+    driver: postgres      # ชนิดฐานข้อมูล
+    host: localhost       # ที่อยู่โฮสต์ฐานข้อมูล
+    port: 5432            # พอร์ตฐานข้อมูล
+    username: postgres    # ชื่อผู้ใช้ฐานข้อมูล
+    password: postgres    # "****"      # รหัสผ่านฐานข้อมูล - ในสภาพแวดล้อมการผลิตแนะนำให้ใช้ตัวแปรสภาพแวดล้อม: ${DB_PASSWORD}
+    dbname: iodb         # ชื่อฐานข้อมูล
+    sslmode: disable      # โหมด SSL
+    max_open_conns: 20    # จำนวนการเชื่อมต่อสูงสุด
+    max_idle_conns: 5     # จำนวนการเชื่อมต่อว่างสูงสุด
+    conn_max_lifetime: 1h # อายุการใช้งานสูงสุดของการเชื่อมต่อ
 
   redis:
-    enabled: ${REDIS_ENABLED:true}
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD} 
-    db: ${REDIS_DB:0}
+    enabled: true         # เปิดใช้ Redis หรือไม่ (ถ้าเป็น false จะลดระดับเป็น Noop โดยอัตโนมัติ)
+    host: localhost       # ที่อยู่โฮสต์ Redis
+    port: 6379            # พอร์ต Redis
+    password: ""          # รหัสผ่าน Redis - หากต้องการรหัสผ่าน กรุณาใช้ตัวแปรสภาพแวดล้อม: ${REDIS_PASSWORD}
+    db: 0                 # ดัชนีฐานข้อมูล Redis
 
   log:
-    level: ${LOG_LEVEL:info}   # สภาพแวดล้อมการใช้งานจริง ค่าเริ่มต้นระดับ info
-    file: ${LOG_FILE:logs/app.log}
-    console: ${LOG_CONSOLE:false}  # สภาพแวดล้อมการใช้งานจริง ปิดการแสดงผลทางคอนโซล
+    level: debug          # ระดับบันทึก: debug, info, warn, error
+    file: "logs/app.log"  # เส้นทางไฟล์บันทึก
+    console: true         # ส่งออกไปยังคอนโซลพร้อมกันหรือไม่
 
   jwt:
-    secret: ${JWT_SECRET}        # ต้องอ่านจากตัวแปรสภาพแวดล้อม
-
- refresh_token_exp: ${JWT_REFRESH_EXP}
-    issuer: ${JWT_ISSUER:go-rest-starter}
+    secret: "@test" # คีย์ JWT - ในสภาพแวดล้อมการผลิตต้องแก้ไขและใช้ตัวแปรสภาพแวดล้อม: ${JWT_SECRET}
+    access_token_exp: 24h                 # เวลาหมดอายุของโทเค็นการเข้าถึง
+    refresh_token_exp: 168h               # เวลาหมดอายุของโทเค็นรีเฟรช
+    issuer: "go-rest-starter"             # ผู้ออกโทเค็น

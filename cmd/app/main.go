@@ -1,26 +1,4 @@
 package main
-
-// @title Go-Rest-Starter API
-// @version 1.0
-// @description บริการ API แบบ RESTful ของ Go-Rest-Starter (https://github.com/vadxq/go-rest-starter) สร้างขึ้นด้วย Go , GORM, PostgreSQL และ Redis
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.url https://blog.vadxq.com
-// @contact.email dxl@vadxq.com
-
-// @license.name MIT
-// @license.url https://opensource.org/licenses/MIT
-
-// @host localhost:7001
-// @BasePath /
-// @schemes http https
-
-// @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
-// @description รูปแบบการป้อนข้อมูล: Bearer {token}
-
 import (
 	"context"
 	"os"
