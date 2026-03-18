@@ -51,8 +51,8 @@ import (
 "syscall"
 "time"
 
-app2bootstrap "github.com/vadxq/go-rest-starter/internal/apps/app2/bootstrap"
-"github.com/vadxq/go-rest-starter/pkg/logger"
+app2bootstrap "github.com/kongnakornna/golangapi/internal/apps/app2/bootstrap"
+"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 func main() {

@@ -36,7 +36,7 @@
 
 Design reference:
 
-- [go project layout](https://kongnakornna/goreststarterio)
+- [go project layout](https://github.com/kongnakornna/golangapigoreststarterio)
 - [go modules layout](https://go.dev/doc/modules/layout)
 
 ```md
@@ -317,7 +317,7 @@ go test -bench=. ./...
 - **Web Framework**: `chi/v5` - Lightweight, fast HTTP router with middleware support
 - **ORM**: `GORM v1.30.0` - Feature-rich ORM with auto-migration and relations
 - **Database Driver**: `gorm.io/driver/postgres` - PostgreSQL driver for GORM
-- **Cache**: `redis/go-redis/v9` - Redis client with pipeline and pub/sub support
+- **Cache**: `github.com/redis/go-redis/v9` - Redis client with pipeline and pub/sub support
 
 ### Authentication & Security
 - **JWT**: `golang-jwt/jwt/v5` - JSON Web Token implementation
@@ -420,7 +420,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Go Project Layout](https://kongnakornna/goreststarterio) - Standard Go project structure
+- [Go Project Layout](https://github.com/kongnakornna/golangapigoreststarterio) - Standard Go project structure
 - [Chi Router](https://go-chi/chi) - Lightweight HTTP router
 - [GORM](https://gorm.io/) - The fantastic ORM library for Golang
 
@@ -1163,7 +1163,7 @@ import (
     "time"
     
     "gin-gonic/gin"
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
     "your-project/internal/transport/httpx"
 )
 
@@ -1456,7 +1456,7 @@ import (
     "encoding/json"
     "time"
     
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
 )
 
 type Cache interface {
@@ -1554,7 +1554,7 @@ import (
     "encoding/json"
     "time"
     
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
     "google/uuid"
 )
 
@@ -1942,7 +1942,7 @@ import (
     "time"
     
     "gin-gonic/gin"
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
     "gorm.io/gorm"
     
     "your-project/configs"

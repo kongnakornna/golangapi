@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/github.com/redis/go-redis/v9"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
 	"github.com/vadxq/go-rest-starter/internal/apps/app/bootstrap/injection"

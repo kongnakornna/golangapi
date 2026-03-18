@@ -2,14 +2,14 @@ package injection
 
 import (
 	"go-playground/validator/v10"
-	"redis/go-redis/v9"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	"kongnakornna/internal/platform/config"
-	"kongnakornna/pkg/cache"
-	"kongnakornna/pkg/logger"
-	"kongnakornna/pkg/queue"
-	"kongnakornna/pkg/transaction"
+	"github.com/kongnakornna/golangapiinternal/platform/config"
+	"github.com/kongnakornna/golangapipkg/cache"
+	"github.com/kongnakornna/golangapipkg/logger"
+	"github.com/kongnakornna/golangapipkg/queue"
+	"github.com/kongnakornna/golangapipkg/transaction"
 )
 
 // Dependencies คอนเทนเนอร์สำหรับ dependencies ของแอปพลิเคชัน

@@ -211,7 +211,7 @@ go test -bench=. ./...
 - **Web Framework**: `chi/v5` - Lightweight, fast HTTP router with middleware support
 - **ORM**: `GORM v1.30.0` - Feature-rich ORM with auto-migration and relations
 - **Database Driver**: `gorm.io/driver/postgres` - PostgreSQL driver for GORM
-- **Cache**: `redis/go-redis/v9` - Redis client with pipeline and pub/sub support
+- **Cache**: `github.com/redis/go-redis/v9` - Redis client with pipeline and pub/sub support
 
 ### Authentication & Security
 - **JWT**: `golang-jwt/jwt/v5` - JSON Web Token implementation
@@ -314,7 +314,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Go Project Layout](https://github.com/kongnakornna/goreststarterio) - Standard Go project structure
+- [Go Project Layout](https://github.com/github.com/kongnakornna/golangapigoreststarterio) - Standard Go project structure
 - [Chi Router](https://github.com/go-chi/chi) - Lightweight HTTP router
 - [GORM](https://gorm.io/) - The fantastic ORM library for Golang
 

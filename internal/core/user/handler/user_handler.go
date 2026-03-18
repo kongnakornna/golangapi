@@ -5,13 +5,13 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
+	"github.com/github.com/go-playground/validator/v10"
 
-	userdto "github.com/kongnakornna/golangapi/internal/core/user/dto"
-	userservice "github.com/kongnakornna/golangapi/internal/core/user/service"
-	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
-	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
-	"github.com/kongnakornna/golangapi/pkg/logger"
+	userdto "github.com/github.com/kongnakornna/golangapigolangapi/internal/core/user/dto"
+	userservice "github.com/github.com/kongnakornna/golangapigolangapi/internal/core/user/service"
+	httpx "github.com/github.com/kongnakornna/golangapigolangapi/internal/transport/httpx"
+	apperrors "github.com/github.com/kongnakornna/golangapigolangapi/pkg/errors"
+	"github.com/github.com/kongnakornna/golangapigolangapi/pkg/logger"
 )
 
 // UserHandler จัดการคำขอ HTTP ที่เกี่ยวข้องกับผู้ใช้

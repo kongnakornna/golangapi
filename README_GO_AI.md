@@ -735,7 +735,7 @@ import (
     "time"
     
     "gin-gonic/gin"
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
     "your-project/internal/transport/httpx"
 )
 
@@ -1028,7 +1028,7 @@ import (
     "encoding/json"
     "time"
     
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
 )
 
 type Cache interface {
@@ -1126,7 +1126,7 @@ import (
     "encoding/json"
     "time"
     
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
     "google/uuid"
 )
 
@@ -1514,7 +1514,7 @@ import (
     "time"
     
     "gin-gonic/gin"
-    "redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
     "gorm.io/gorm"
     
     "your-project/configs"
