@@ -123,7 +123,8 @@ After starting the service, visit **http://localhost:7001/swagger** to view the 
 # http://localhost:7001/api/v1/users
 
 ```bash
-http://localhost:7001/api/v1/health
+http://localhost:7001/version
+http://localhost:7001/status
 http://localhost:7001/health
 http://localhost:7001/health/detailed
 http://localhost:7001/ready
@@ -131,10 +132,8 @@ http://localhost:7001/live
 http://localhost:7001/api/v1/auth/login
 http://localhost:7001/api/v1/auth/refresh
 http://localhost:7001/api/v1/account/logout
-http://localhost:7001/api/v1/users
 http://localhost:7001/api/v1/users/{id} 
-http://localhost:7001/version
-http://localhost:7001/status
+http://localhost:7001/api/v1/users
 http://localhost:7001/api/v1/account/logout 
 
 ```
