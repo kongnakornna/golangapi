@@ -21,7 +21,7 @@ app:
     enabled: true         # เปิดใช้ Redis หรือไม่ (ถ้าเป็น false จะลดระดับเป็น Noop โดยอัตโนมัติ)
     host: localhost       # ที่อยู่โฮสต์ Redis
     port: 6379            # พอร์ต Redis
-    password: "          # รหัสผ่าน Redis - หากต้องการรหัสผ่าน กรุณาใช้ตัวแปรสภาพแวดล้อม: ${REDIS_PASSWORD}
+    password: ""          # รหัสผ่าน Redis - หากต้องการรหัสผ่าน กรุณาใช้ตัวแปรสภาพแวดล้อม: ${REDIS_PASSWORD}
     db: 0                 # ดัชนีฐานข้อมูล Redis
 
   log:
