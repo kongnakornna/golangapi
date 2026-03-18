@@ -1,4 +1,4 @@
-# Go-Rest-Starter
+# golangapi
 > Production-ready Go RESTful API boilerplate with Chi, GORM, PostgreSQL, Redis, and enterprise features
 
 C:\Program Files\Redis\
@@ -141,8 +141,8 @@ See `docs/README.md` (Chinese) for architecture, development, maintenance, and d
 
 ```bash
 # Clone the repository
-git clone https://github.com/vadxq/go-rest-starter.git
-cd go-rest-starter
+git clone https://github.com/kongnakornna/golangapi.git
+cd golangapi
 
 # Install dependencies
 go mod download
@@ -241,7 +241,7 @@ APP_REDIS_DB=0
 APP_JWT_SECRET=your-secure-secret-key-change-in-production
 APP_JWT_ACCESS_TOKEN_EXP=24h
 APP_JWT_REFRESH_TOKEN_EXP=168h
-APP_JWT_ISSUER=go-rest-starter
+APP_JWT_ISSUER=golangapi
 
 # Logging Configuration
 APP_LOG_LEVEL=info
@@ -283,7 +283,7 @@ go build -ldflags="-s -w" -o app cmd/app/main.go
 
 ```bash
 # Build Docker image
-docker build -t go-rest-starter -f deploy/docker/Dockerfile .
+docker build -t golangapi -f deploy/docker/Dockerfile .
 
 # Run with Docker Compose (includes PostgreSQL and Redis)
 cd deploy/docker
@@ -293,7 +293,7 @@ docker compose up -d
 docker run -p 7001:7001 \
   -e APP_DB_HOST=your-db-host \
   -e APP_REDIS_HOST=your-redis-host \
-  go-rest-starter
+  golangapi
 ```
 
 ### Kubernetes Deployment
@@ -303,8 +303,8 @@ docker run -p 7001:7001 \
 kubectl apply -f deploy/k8s/
 
 # Check deployment status
-kubectl get pods -l app=go-rest-starter
-kubectl logs -f deployment/go-rest-starter
+kubectl get pods -l app=golangapi
+kubectl logs -f deployment/golangapi
 ```
 
 ## 🧪 Testing

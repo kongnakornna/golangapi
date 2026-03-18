@@ -1,4 +1,4 @@
-module github.com/vadxq/go-rest-starter
+module github.com/vadxq/golangapi
 
 go 1.25
 

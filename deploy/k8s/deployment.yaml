@@ -1,64 +1,64 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-rest-starter
+  name: golangapi
   labels:
-    app: go-rest-starter
+    app: golangapi
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: go-rest-starter
+      app: golangapi
   template:
     metadata:
       labels:
-        app: go-rest-starter
+        app: golangapi
     spec:
       containers:
-      - name: go-rest-starter
-        image: your-registry/go-rest-starter:latest
+      - name: golangapi
+        image: your-registry/golangapi:latest
         ports:
         - containerPort: 7001
         env:
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
-              name: go-rest-starter-config
+              name: golangapi-config
               key: db_host
         - name: DB_PORT
           valueFrom:
             configMapKeyRef:
-              name: go-rest-starter-config
+              name: golangapi-config
               key: db_port
         - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: go-rest-starter-secrets
+              name: golangapi-secrets
               key: db_username
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: go-rest-starter-secrets
+              name: golangapi-secrets
               key: db_password
         - name: DB_NAME
           valueFrom:
             configMapKeyRef:
-              name: go-rest-starter-config
+              name: golangapi-config
               key: db_name
         - name: REDIS_HOST
           valueFrom:
             configMapKeyRef:
-              name: go-rest-starter-config
+              name: golangapi-config
               key: redis_host
         - name: REDIS_PORT
           valueFrom:
             configMapKeyRef:
-              name: go-rest-starter-config
+              name: golangapi-config
               key: redis_port
         - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: go-rest-starter-secrets
+              name: golangapi-secrets
               key: redis_password
         resources:
           limits:
@@ -83,10 +83,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: go-rest-starter
+  name: golangapi
 spec:
   selector:
-    app: go-rest-starter
+    app: golangapi
   ports:
   - port: 80
     targetPort: 7001
@@ -95,7 +95,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: go-rest-starter-config
+  name: golangapi-config
 data:
   db_host: "postgres"
   db_port: "5432"
@@ -106,7 +106,7 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: go-rest-starter-secrets
+  name: golangapi-secrets
 type: Opaque
 data:
   db_username: cG9zdGdyZXM= # postgres (เข้ารหัส base64)

@@ -33,4 +33,4 @@ app:
     secret: "@test" # คีย์ JWT - ในสภาพแวดล้อมการผลิตต้องแก้ไขและใช้ตัวแปรสภาพแวดล้อม: ${JWT_SECRET}
     access_token_exp: 24h                 # เวลาหมดอายุของโทเค็นการเข้าถึง
     refresh_token_exp: 168h               # เวลาหมดอายุของโทเค็นรีเฟรช
-    issuer: "go-rest-starter"             # ผู้ออกโทเค็น
+    issuer: "golangapi"             # ผู้ออกโทเค็น
