@@ -144,11 +144,11 @@ func (s *userService) UpdateUser(ctx context.Context, id string, input userdto.U
 	}
 
 	// อัปเดตฟิลด์ต่างๆ
-	if input.Name != "" {
+	if input.Name != " {
 		user.Name = input.Name
 	}
 
-	if input.Email != "" && input.Email != user.Email {
+	if input.Email != " && input.Email != user.Email {
 		// ตรวจสอบอีเมลใหม่ว่ามีอยู่แล้วหรือไม่
 		exists, err := s.userRepo.ExistsByEmail(ctx, input.Email)
 		if err != nil {
@@ -162,7 +162,7 @@ func (s *userService) UpdateUser(ctx context.Context, id string, input userdto.U
 		user.Email = input.Email
 	}
 
-	if input.Password != "" {
+	if input.Password != " {
 		// เข้ารหัสรหัสผ่านใหม่
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 		if err != nil {
