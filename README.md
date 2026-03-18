@@ -89,14 +89,16 @@ See `docs/README.md` for architecture, development, maintenance, and deployment 
 
 ```bash
 # Clone the repository
-git clone https://golangapi.git
+git clone https://github.com/kongnakornna/golangapi
 cd golangapi
+
+go clean -modcache
+rm go.sum
 
 # Install dependencies
 Setup 
 
-go clean -modcache
-rm go.sum
+
 go mod tidy
 
 # Copy and configure the config file

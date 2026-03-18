@@ -11,7 +11,7 @@ import (
 
 // การใช้งานแคช Redis
 type redisCache struct {
-	client            *redis.Client
+	client *redis.Client
 	defaultExpiration time.Duration
 }
 
