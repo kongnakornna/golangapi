@@ -58,7 +58,7 @@ echo "การสร้าง Docker เสร็จสมบูรณ์!"
 echo "Images ที่สร้างแล้ว:"
 docker images ${IMAGE_NAME}
 
-echo ""
+echo "
 echo "วิธีเรียกใช้ container:"
 echo "docker run -d -p 7001:7001 --name go-rest-starter-container \\"
 echo "  -e APP_DATABASE_HOST=host.docker.internal \\"
