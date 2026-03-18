@@ -6,8 +6,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-
-	_ "github.com/kongnakornna/golangapi/docs"
 	v1 "github.com/kongnakornna/golangapi/internal/apps/app/router/v1"
 	authhandler "github.com/kongnakornna/golangapi/internal/core/auth/handler"
 	healthmodule "github.com/kongnakornna/golangapi/internal/core/health"
@@ -15,7 +13,7 @@ import (
 	userhandler "github.com/kongnakornna/golangapi/internal/core/user/handler"
 	custommiddleware "github.com/kongnakornna/golangapi/internal/transport/middleware"
 	"github.com/kongnakornna/golangapi/pkg/logger"
-	"github.com/swaggo/http-swagger/v2"
+	_ "github.com/swaggo/http-swagger/v2"
 )
 
 // RouterGroup คำจำกัดความประเภทกลุ่มเส้นทาง
