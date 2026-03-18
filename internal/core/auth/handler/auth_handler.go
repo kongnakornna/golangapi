@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/go-playground/validator/v10"
 
 	authdto "github.com/kongnakornna/golangapi/internal/core/auth/dto"
 	authservice "github.com/kongnakornna/golangapi/internal/core/auth/service"
@@ -100,7 +100,7 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
     // ดึงโทเค็นการเข้าถึงจากส่วนหัว Authorization
     authHeader := r.Header.Get("Authorization")
-    if authHeader == " {
+    if authHeader == "" {
         httpx.Error(w, r, apperrors.UnauthorizedError("ไม่มีโทเค็นอนุญาต", nil))
         return
     }

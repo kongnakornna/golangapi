@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -205,7 +205,7 @@ func TestUserService_CreateUser(t *testing.T) {
 		service3 := NewUserService(mockRepo3, validator, db, mockCache)
 
 		invalidInput := userdto.CreateUserInput{
-			Name:     ", // ชื่อว่างควรจะไม่ผ่าน
+			Name:     "", // ชื่อว่างควรจะไม่ผ่าน
 			Email:    "อีเมลไม่ถูกต้อง",
 			Password: "123", // รหัสผ่านสั้นเกินไป
 		}

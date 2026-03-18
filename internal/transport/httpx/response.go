@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/go-playground/validator/v10"
 
 	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
 	"github.com/kongnakornna/golangapi/pkg/logger"

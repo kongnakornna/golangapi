@@ -183,7 +183,7 @@ func setDefaults(config *AppConfig) {
 	if config.JWT.RefreshTokenExp == 0 {
 		config.JWT.RefreshTokenExp = 7 * 24 * time.Hour
 	}
-	if config.JWT.Issuer == " {
+	if config.JWT.Issuer == "" {
 		config.JWT.Issuer = "go-rest-starter"
 	}
 }
@@ -191,7 +191,7 @@ func setDefaults(config *AppConfig) {
 // GetDSN รับสตริงการเชื่อมต่อฐานข้อมูล
 func (c *DatabaseConfig) GetDSN() string {
 	// สร้าง DSN สำหรับ PostgreSQL - ตรวจสอบให้แน่ใจว่าพารามิเตอร์ dbname ถูกต้อง
-	if c.Password == " {
+	if c.Password == "" {
 		return fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=%s",
 			c.Host, c.Port, c.Username, c.DBName, c.SSLMode)
 	} else {

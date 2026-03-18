@@ -132,7 +132,7 @@ func (cw *ConfigWatcher) validateConfig(cfg *AppConfig) error {
 		return ErrInvalidPort
 	}
 
-	if cfg.Database.Host == " {
+	if cfg.Database.Host == "" {
 		return ErrMissingDatabaseHost
 	}
 

@@ -60,12 +60,12 @@ func NewLogger(config *LogConfig) (*StructuredLogger, error) {
 	var writers []io.Writer
 
 	// ส่งออกไปที่คอนโซล
-	if config.Console || config.File == " {
+	if config.Console || config.File == "" {
 		writers = append(writers, os.Stdout)
 	}
 
 	// ส่งออกไปที่ไฟล์
-	if config.File != " {
+	if config.File != "" {
 		file, err := createLogFile(config.File)
 		if err != nil {
 			return nil, err
@@ -234,10 +234,10 @@ func GetTraceID(ctx context.Context) string {
 		}
 	}
 	// ลองดึงจาก middleware ของ Chi
-	if reqID := middleware.GetReqID(ctx); reqID != " {
+	if reqID := middleware.GetReqID(ctx); reqID != "" {
 		return reqID
 	}
-	return "
+	return ""
 }
 
 // GetRequestID ดึง request ID จาก context
@@ -247,7 +247,7 @@ func GetRequestID(ctx context.Context) string {
 			return str
 		}
 	}
-	return "
+	return ""
 }
 
 // GetUserID ดึง user ID จาก context
@@ -257,7 +257,7 @@ func GetUserID(ctx context.Context) string {
 			return str
 		}
 	}
-	return "
+	return ""
 }
 
 // WithTraceID กำหนด trace ID ใน context
@@ -283,13 +283,13 @@ func LoggerMiddleware(logger Logger) func(next http.Handler) http.Handler {
 
 			// ดึงหรือสร้าง request ID
 			requestID := middleware.GetReqID(r.Context())
-			if requestID == " {
+			if requestID == "" {
 				requestID = fmt.Sprintf("%d", middleware.NextRequestID())
 			}
 
 			// ดึงหรือสร้าง trace ID
 			traceID := r.Header.Get("X-Trace-ID")
-			if traceID == " {
+			if traceID == "" {
 				traceID = requestID
 			}
 

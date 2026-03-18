@@ -67,7 +67,7 @@ app:
     enabled: true
     host: localhost
     port: 6379
-    password: "
+    password: ""
     db: 0
 ```
 

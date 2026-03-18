@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
@@ -307,7 +307,7 @@ func (app *App) Logger() logger.Logger {
 // รับเส้นทางไฟล์กำหนดค่า
 func getConfigPath() string {
 	configPath := os.Getenv("CONFIG_PATH")
-	if configPath == " {
+	if configPath == "" {
 		configPath = "configs/config.yaml"
 	}
 	return configPath

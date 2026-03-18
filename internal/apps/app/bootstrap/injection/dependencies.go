@@ -5,11 +5,11 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
+	"github.com/kongnakornna/golangapi/internal/platform/config"
 	"github.com/kongnakornna/golangapi/pkg/cache"
 	"github.com/kongnakornna/golangapi/pkg/logger"
 	"github.com/kongnakornna/golangapi/pkg/queue"
 	"github.com/kongnakornna/golangapi/pkg/transaction"
-	"github.com/kongnakornna/golangapiinternal/platform/config"
 )
 
 // Dependencies คอนเทนเนอร์สำหรับ dependencies ของแอปพลิเคชัน
