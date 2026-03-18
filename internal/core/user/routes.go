@@ -22,3 +22,23 @@ func RegisterRoutes(r chi.Router, handler *userhandler.UserHandler) {
 		})
 	})
 }
+
+
+func AdduserRoutes(r chi.Router, handler *userhandler.UserHandler) {
+	r.Route("/users", func(r chi.Router) {
+		// Collection
+		r.Get("/", handler.ListUsers)
+		r.With(custommiddleware.RequireRole("admin")).Post("/", handler.CreateUser)
+
+		// Forgot password endpoints (public)
+		r.Post("/forgot-password", handler.ForgotPassword)
+		r.Post("/reset-password", handler.ResetPassword)
+
+		// Resource
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", handler.GetUser)
+			r.Put("/", handler.UpdateUser)
+			r.Delete("/", handler.DeleteUser)
+		})
+	})
+}
