@@ -1264,4 +1264,4 @@ Present in a structured report with: 1) Executive summary, 2) Risk categories,
 - **Template prompts** for reproducible results
 - **Meta-prompts** for generating better prompts
 
-ทั้งสองภาษามีหลักการเดียวกัน แต่ต้องคำนึงถึงลักษณะเฉพาะของภาษาและบริบทวัฒนธรรมในการเขียน prompt ที่มีประสิทธิภาพ****
+ 
