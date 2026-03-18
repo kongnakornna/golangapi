@@ -1,17 +1,17 @@
 module github.com/kongnakornna/golangapi
 
-go 1.25
+go 1.24
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-chi/chi/v5 v5.2.1
+	github.com/go-playground/validator/v10 v10.25.0 // เพิ่ม
 	github.com/golang-jwt/jwt/v5 v5.2.2
-	github.com/redis/go-redis/v9 v9.8.0
+	github.com/redis/go-redis/v9 v9.8.0          // ใช้ v9.8.0 เพียงตัวเดียว
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	github.com/swaggo/swag v1.16.4
-	github.com/kongnakornna/golangapi v0.0.0-20260123095829-2a96dc76bd8d
 	golang.org/x/crypto v0.38.0
 	golang.org/x/time v0.12.0
 	gorm.io/driver/postgres v1.5.11
@@ -19,6 +19,7 @@ require (
 	gorm.io/gorm v1.30.0
 )
 
+// indirect dependencies ด้านล่างไม่ต้องแก้ไข แต่เมื่อรัน go mod tidy จะปรับให้อัตโนมัติ
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
