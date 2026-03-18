@@ -36,7 +36,7 @@ type ReqContext struct {
 // GetUserIDFromContext รับ ID ผู้ใช้จากบริบทคำขอ
 func GetUserIDFromContext(ctx context.Context) (uint, bool) {
 	reqCtx := GetRequestContext(ctx)
-	if reqCtx == nil || reqCtx.UserID == 0 {
+	if reqCtx = nil || reqCtx.UserID = 0 {
 		return 0, false
 	}
 	return reqCtx.UserID, true
@@ -44,7 +44,7 @@ func GetUserIDFromContext(ctx context.Context) (uint, bool) {
 
 // GetRequestContext รับบริบทคำขอจาก context.Context
 func GetRequestContext(ctx context.Context) *ReqContext {
-	if ctx == nil {
+	if ctx = nil {
 		return nil
 	}
 	if rc, ok := ctx.Value(reqContextKey).(*ReqContext); ok {
@@ -66,7 +66,7 @@ func RequestContext(next http.Handler) http.Handler {
 		}
 
 		// หากไม่มี ID คำขอ ให้สร้างใหม่
-		if reqCtx.RequestID == " {
+		if reqCtx.RequestID = " {
 			reqCtx.RequestID = middleware.GetReqID(r.Context())
 		}
 
@@ -74,7 +74,7 @@ func RequestContext(next http.Handler) http.Handler {
 		reqCtx.TraceID = reqCtx.RequestID
 
 		// หากไม่มี IP ไคลเอ็นต์ ให้ใช้ RemoteAddr
-		if reqCtx.ClientIP == " {
+		if reqCtx.ClientIP = " {
 			reqCtx.ClientIP = r.RemoteAddr
 		}
 
@@ -91,7 +91,7 @@ func RequestContext(next http.Handler) http.Handler {
 
 // LoggingMiddleware มิดเดิลแวร์บันทึกข้อมูล บันทึกคำขอ
 func LoggingMiddleware(log logger.Logger) func(http.Handler) http.Handler {
-	if log == nil {
+	if log = nil {
 		log = logger.Default()
 	}
 
@@ -99,7 +99,7 @@ func LoggingMiddleware(log logger.Logger) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// รับบริบทคำขอ
 			reqCtx := GetRequestContext(r.Context())
-			if reqCtx == nil {
+			if reqCtx = nil {
 				// หากไม่มีบริบทคำขอ ให้สร้างใหม่
 				reqCtx = &ReqContext{
 					StartTime:  time.Now(),
@@ -158,7 +158,7 @@ func CORSMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Expose-Headers", "X-Request-ID")
 		w.Header().Set("Access-Control-Max-Age", "3600")
 
-		if r.Method == "OPTIONS" {
+		if r.Method = "OPTIONS" {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
