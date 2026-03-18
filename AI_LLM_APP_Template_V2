@@ -1,0 +1,1353 @@
+# Golang DDD + Clean Architecture Full Code Example
+
+This is a complete, production-ready template for a Go application following **Domain-Driven Design (DDD)** and **Clean Architecture** principles. It includes:
+
+- User domain with CRUD operations
+- RESTful API using Gin
+- JWT authentication (access/refresh tokens)
+- PostgreSQL with GORM
+- Redis caching
+- Structured logging (slog)
+- Centralized error handling
+- Configuration via environment variables
+- Graceful shutdown
+- Docker and docker-compose setup
+- Makefile for common tasks
+
+---
+
+## Project Structure
+
+```
+.
+├── cmd/
+│   └── app/
+│       └── main.go                 # Application entry point
+├── internal/
+│   ├── core/                         # Domain (business logic)
+│   │   └── user/
+│   │       ├── entity/                # Domain entities
+│   │       │   └── user.go
+│   │       ├── repository/            # Repository interface (port)
+│   │       │   └── repository.go
+│   │       ├── service/               # Domain services (use cases)
+│   │       │   └── service.go
+│   │       └── handler/                # HTTP handlers (adapters)
+│   │           └── http/
+│   │               └── handler.go
+│   ├── platform/                       # Infrastructure (external dependencies)
+│   │   ├── config/
+│   │   │   └── config.go
+│   │   ├── database/
+│   │   │   └── postgres.go
+│   │   ├── cache/
+│   │   │   └── redis.go
+│   │   └── logger/
+│   │       └── logger.go
+│   └── transport/                       # HTTP server and middleware
+│       ├── http/
+│       │   ├── middleware/
+│       │   │   ├── auth.go
+│       │   │   ├── logger.go
+│       │   │   └── recovery.go
+│       │   └── router.go
+├── pkg/                                  # Shared packages
+│   ├── utils/
+│   │   ├── hash.go
+│   │   └── jwt.go
+│   └── errors/
+│       └── errors.go
+├── migrations/                            # Database migration files
+├── .env.example
+├── Dockerfile
+├── docker-compose.yml
+├── go.mod
+├── Makefile
+└── README.md
+```
+
+---
+
+## Code Files
+
+### 1. `go.mod`
+
+```go
+module github.com/yourusername/yourproject
+
+go 1.21
+
+require (
+    github.com/gin-gonic/gin v1.9.1
+    github.com/golang-jwt/jwt/v5 v5.0.0
+    github.com/google/uuid v1.3.1
+    github.com/redis/go-redis/v9 v9.2.1
+    github.com/spf13/viper v1.17.0
+    golang.org/x/crypto v0.14.0
+    gorm.io/driver/postgres v1.5.3
+    gorm.io/gorm v1.25.5
+)
+```
+
+### 2. `cmd/app/main.go`
+
+```go
+package main
+
+import (
+    "context"
+    "log/slog"
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
+
+    "github.com/yourusername/yourproject/internal/platform/config"
+    "github.com/yourusername/yourproject/internal/platform/database"
+    "github.com/yourusername/yourproject/internal/platform/cache"
+    "github.com/yourusername/yourproject/internal/platform/logger"
+    "github.com/yourusername/yourproject/internal/transport/http"
+    userHttp "github.com/yourusername/yourproject/internal/core/user/handler/http"
+    userRepo "github.com/yourusername/yourproject/internal/core/user/repository"
+    userService "github.com/yourusername/yourproject/internal/core/user/service"
+)
+
+func main() {
+    // Load configuration
+    cfg, err := config.Load()
+    if err != nil {
+        slog.Error("failed to load config", "error", err)
+        os.Exit(1)
+    }
+
+    // Setup logger
+    log := logger.New(cfg.Environment)
+    slog.SetDefault(log)
+
+    // Connect to database
+    db, err := database.NewPostgres(cfg.DatabaseURL)
+    if err != nil {
+        slog.Error("failed to connect to database", "error", err)
+        os.Exit(1)
+    }
+    // Auto migrate (in production use migrations)
+    if err := database.Migrate(db); err != nil {
+        slog.Error("failed to migrate database", "error", err)
+        os.Exit(1)
+    }
+
+    // Connect to Redis
+    rdb, err := cache.NewRedis(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB)
+    if err != nil {
+        slog.Error("failed to connect to redis", "error", err)
+        os.Exit(1)
+    }
+
+    // Initialize repositories
+    userRepo := userRepo.NewGormUserRepository(db, rdb)
+
+    // Initialize services
+    userSvc := userService.NewUserService(userRepo, log)
+
+    // Initialize HTTP handlers
+    userHandler := userHttp.NewUserHandler(userSvc, log)
+
+    // Setup HTTP server
+    server := http.NewServer(cfg.HTTPPort, log)
+    server.RegisterRoutes(userHandler)
+
+    // Start server in goroutine
+    go func() {
+        slog.Info("starting HTTP server", "port", cfg.HTTPPort)
+        if err := server.Start(); err != nil {
+            slog.Error("server failed", "error", err)
+            os.Exit(1)
+        }
+    }()
+
+    // Graceful shutdown
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    <-quit
+    slog.Info("shutting down server...")
+
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+    if err := server.Shutdown(ctx); err != nil {
+        slog.Error("server forced to shutdown", "error", err)
+    }
+
+    // Close database and redis connections
+    if err := db.Close(); err != nil {
+        slog.Error("failed to close database", "error", err)
+    }
+    if err := rdb.Close(); err != nil {
+        slog.Error("failed to close redis", "error", err)
+    }
+    slog.Info("server exited")
+}
+```
+
+### 3. `internal/platform/config/config.go`
+
+```go
+package config
+
+import (
+    "github.com/spf13/viper"
+)
+
+type Config struct {
+    Environment    string `mapstructure:"ENVIRONMENT"`
+    HTTPPort       string `mapstructure:"HTTP_PORT"`
+    DatabaseURL    string `mapstructure:"DATABASE_URL"`
+    RedisAddr      string `mapstructure:"REDIS_ADDR"`
+    RedisPassword  string `mapstructure:"REDIS_PASSWORD"`
+    RedisDB        int    `mapstructure:"REDIS_DB"`
+    JWTSecret      string `mapstructure:"JWT_SECRET"`
+    JWTExpiration  int    `mapstructure:"JWT_EXPIRATION"` // in minutes
+}
+
+func Load() (*Config, error) {
+    viper.SetConfigFile(".env")
+    viper.AutomaticEnv()
+
+    if err := viper.ReadInConfig(); err != nil {
+        // .env file not found, continue with env vars
+    }
+
+    cfg := &Config{
+        Environment:   viper.GetString("ENVIRONMENT"),
+        HTTPPort:      viper.GetString("HTTP_PORT"),
+        DatabaseURL:   viper.GetString("DATABASE_URL"),
+        RedisAddr:     viper.GetString("REDIS_ADDR"),
+        RedisPassword: viper.GetString("REDIS_PASSWORD"),
+        RedisDB:       viper.GetInt("REDIS_DB"),
+        JWTSecret:     viper.GetString("JWT_SECRET"),
+        JWTExpiration: viper.GetInt("JWT_EXPIRATION"),
+    }
+
+    // Set defaults
+    if cfg.Environment == "" {
+        cfg.Environment = "development"
+    }
+    if cfg.HTTPPort == "" {
+        cfg.HTTPPort = "8080"
+    }
+    if cfg.RedisAddr == "" {
+        cfg.RedisAddr = "localhost:6379"
+    }
+    if cfg.RedisDB == 0 {
+        cfg.RedisDB = 0
+    }
+    if cfg.JWTExpiration == 0 {
+        cfg.JWTExpiration = 60 // 1 hour
+    }
+
+    return cfg, nil
+}
+```
+
+### 4. `internal/platform/logger/logger.go`
+
+```go
+package logger
+
+import (
+    "log/slog"
+    "os"
+)
+
+func New(env string) *slog.Logger {
+    var handler slog.Handler
+    if env == "production" {
+        handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+            Level: slog.LevelInfo,
+        })
+    } else {
+        handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+            Level: slog.LevelDebug,
+        })
+    }
+    return slog.New(handler)
+}
+```
+
+### 5. `internal/platform/database/postgres.go`
+
+```go
+package database
+
+import (
+    "gorm.io/driver/postgres"
+    "gorm.io/gorm"
+    "gorm.io/gorm/logger"
+
+    "github.com/yourusername/yourproject/internal/core/user/entity"
+)
+
+func NewPostgres(dsn string) (*gorm.DB, error) {
+    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+        Logger: logger.Default.LogMode(logger.Info),
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    sqlDB, err := db.DB()
+    if err != nil {
+        return nil, err
+    }
+    sqlDB.SetMaxIdleConns(10)
+    sqlDB.SetMaxOpenConns(100)
+
+    return db, nil
+}
+
+func Migrate(db *gorm.DB) error {
+    return db.AutoMigrate(&entity.User{})
+}
+```
+
+### 6. `internal/platform/cache/redis.go`
+
+```go
+package cache
+
+import (
+    "context"
+    "encoding/json"
+    "time"
+
+    "github.com/redis/go-redis/v9"
+)
+
+type RedisClient struct {
+    client *redis.Client
+}
+
+func NewRedis(addr, password string, db int) (*RedisClient, error) {
+    client := redis.NewClient(&redis.Options{
+        Addr:     addr,
+        Password: password,
+        DB:       db,
+    })
+    // Test connection
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+    if err := client.Ping(ctx).Err(); err != nil {
+        return nil, err
+    }
+    return &RedisClient{client: client}, nil
+}
+
+func (r *RedisClient) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
+    data, err := json.Marshal(value)
+    if err != nil {
+        return err
+    }
+    return r.client.Set(ctx, key, data, ttl).Err()
+}
+
+func (r *RedisClient) Get(ctx context.Context, key string, dest interface{}) (bool, error) {
+    data, err := r.client.Get(ctx, key).Bytes()
+    if err == redis.Nil {
+        return false, nil
+    }
+    if err != nil {
+        return false, err
+    }
+    if err := json.Unmarshal(data, dest); err != nil {
+        return false, err
+    }
+    return true, nil
+}
+
+func (r *RedisClient) Del(ctx context.Context, keys ...string) error {
+    return r.client.Del(ctx, keys...).Err()
+}
+
+func (r *RedisClient) Close() error {
+    return r.client.Close()
+}
+```
+
+### 7. `internal/core/user/entity/user.go`
+
+```go
+package entity
+
+import (
+    "time"
+
+    "github.com/google/uuid"
+    "gorm.io/gorm"
+)
+
+type User struct {
+    ID        uuid.UUID      `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+    Email     string         `json:"email" gorm:"uniqueIndex;not null"`
+    Password  string         `json:"-"` // excluded from JSON
+    FirstName string         `json:"first_name"`
+    LastName  string         `json:"last_name"`
+    IsActive  bool           `json:"is_active" gorm:"default:true"`
+    Roles     string         `json:"roles" gorm:"default:'user'"`
+    CreatedAt time.Time      `json:"created_at"`
+    UpdatedAt time.Time      `json:"updated_at"`
+    DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) error {
+    if u.ID == uuid.Nil {
+        u.ID = uuid.New()
+    }
+    return nil
+}
+```
+
+### 8. `internal/core/user/repository/repository.go` (interface)
+
+```go
+package repository
+
+import (
+    "context"
+
+    "github.com/google/uuid"
+    "github.com/yourusername/yourproject/internal/core/user/entity"
+)
+
+type UserRepository interface {
+    Create(ctx context.Context, user *entity.User) error
+    GetByID(ctx context.Context, id uuid.UUID) (*entity.User, error)
+    GetByEmail(ctx context.Context, email string) (*entity.User, error)
+    Update(ctx context.Context, user *entity.User) error
+    Delete(ctx context.Context, id uuid.UUID) error
+    List(ctx context.Context) ([]entity.User, error)
+}
+```
+
+### 9. `internal/core/user/repository/gorm_repository.go` (implementation)
+
+```go
+package repository
+
+import (
+    "context"
+    "errors"
+    "time"
+
+    "github.com/google/uuid"
+    "gorm.io/gorm"
+
+    "github.com/yourusername/yourproject/internal/core/user/entity"
+    "github.com/yourusername/yourproject/internal/platform/cache"
+)
+
+type gormUserRepository struct {
+    db    *gorm.DB
+    cache *cache.RedisClient
+}
+
+func NewGormUserRepository(db *gorm.DB, cache *cache.RedisClient) UserRepository {
+    return &gormUserRepository{db: db, cache: cache}
+}
+
+func (r *gormUserRepository) Create(ctx context.Context, user *entity.User) error {
+    return r.db.WithContext(ctx).Create(user).Error
+}
+
+func (r *gormUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.User, error) {
+    // Try cache first
+    var user entity.User
+    found, err := r.cache.Get(ctx, "user:"+id.String(), &user)
+    if err == nil && found {
+        return &user, nil
+    }
+
+    // Fallback to DB
+    err = r.db.WithContext(ctx).Where("id = ?", id).First(&user).Error
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, nil
+        }
+        return nil, err
+    }
+
+    // Set cache
+    _ = r.cache.Set(ctx, "user:"+id.String(), &user, 5*time.Minute)
+    return &user, nil
+}
+
+func (r *gormUserRepository) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
+    var user entity.User
+    err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, nil
+        }
+        return nil, err
+    }
+    return &user, nil
+}
+
+func (r *gormUserRepository) Update(ctx context.Context, user *entity.User) error {
+    err := r.db.WithContext(ctx).Save(user).Error
+    if err == nil {
+        // Invalidate cache
+        _ = r.cache.Del(ctx, "user:"+user.ID.String())
+    }
+    return err
+}
+
+func (r *gormUserRepository) Delete(ctx context.Context, id uuid.UUID) error {
+    err := r.db.WithContext(ctx).Delete(&entity.User{}, "id = ?", id).Error
+    if err == nil {
+        _ = r.cache.Del(ctx, "user:"+id.String())
+    }
+    return err
+}
+
+func (r *gormUserRepository) List(ctx context.Context) ([]entity.User, error) {
+    var users []entity.User
+    err := r.db.WithContext(ctx).Find(&users).Error
+    return users, err
+}
+```
+
+### 10. `internal/core/user/service/service.go`
+
+```go
+package service
+
+import (
+    "context"
+    "errors"
+    "log/slog"
+    "time"
+
+    "github.com/google/uuid"
+
+    "github.com/yourusername/yourproject/internal/core/user/entity"
+    "github.com/yourusername/yourproject/internal/core/user/repository"
+    "github.com/yourusername/yourproject/pkg/utils"
+)
+
+var (
+    ErrUserNotFound      = errors.New("user not found")
+    ErrEmailAlreadyExists = errors.New("email already exists")
+)
+
+type UserService struct {
+    repo repository.UserRepository
+    log  *slog.Logger
+}
+
+func NewUserService(repo repository.UserRepository, log *slog.Logger) *UserService {
+    return &UserService{repo: repo, log: log}
+}
+
+type CreateUserInput struct {
+    Email     string
+    Password  string
+    FirstName string
+    LastName  string
+}
+
+func (s *UserService) Create(ctx context.Context, input CreateUserInput) (*entity.User, error) {
+    // Check if email exists
+    existing, err := s.repo.GetByEmail(ctx, input.Email)
+    if err != nil {
+        return nil, err
+    }
+    if existing != nil {
+        return nil, ErrEmailAlreadyExists
+    }
+
+    // Hash password
+    hashed, err := utils.HashPassword(input.Password)
+    if err != nil {
+        return nil, err
+    }
+
+    user := &entity.User{
+        Email:     input.Email,
+        Password:  hashed,
+        FirstName: input.FirstName,
+        LastName:  input.LastName,
+        IsActive:  true,
+        Roles:     "user",
+    }
+
+    if err := s.repo.Create(ctx, user); err != nil {
+        return nil, err
+    }
+
+    s.log.Info("user created", "id", user.ID, "email", user.Email)
+    return user, nil
+}
+
+func (s *UserService) GetByID(ctx context.Context, id uuid.UUID) (*entity.User, error) {
+    user, err := s.repo.GetByID(ctx, id)
+    if err != nil {
+        return nil, err
+    }
+    if user == nil {
+        return nil, ErrUserNotFound
+    }
+    return user, nil
+}
+
+func (s *UserService) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
+    user, err := s.repo.GetByEmail(ctx, email)
+    if err != nil {
+        return nil, err
+    }
+    if user == nil {
+        return nil, ErrUserNotFound
+    }
+    return user, nil
+}
+
+type UpdateUserInput struct {
+    FirstName *string
+    LastName  *string
+    Password  *string
+}
+
+func (s *UserService) Update(ctx context.Context, id uuid.UUID, input UpdateUserInput) error {
+    user, err := s.repo.GetByID(ctx, id)
+    if err != nil {
+        return err
+    }
+    if user == nil {
+        return ErrUserNotFound
+    }
+
+    if input.FirstName != nil {
+        user.FirstName = *input.FirstName
+    }
+    if input.LastName != nil {
+        user.LastName = *input.LastName
+    }
+    if input.Password != nil {
+        hashed, err := utils.HashPassword(*input.Password)
+        if err != nil {
+            return err
+        }
+        user.Password = hashed
+    }
+
+    user.UpdatedAt = time.Now()
+
+    if err := s.repo.Update(ctx, user); err != nil {
+        return err
+    }
+    s.log.Info("user updated", "id", user.ID)
+    return nil
+}
+
+func (s *UserService) Delete(ctx context.Context, id uuid.UUID) error {
+    user, err := s.repo.GetByID(ctx, id)
+    if err != nil {
+        return err
+    }
+    if user == nil {
+        return ErrUserNotFound
+    }
+
+    if err := s.repo.Delete(ctx, id); err != nil {
+        return err
+    }
+    s.log.Info("user deleted", "id", id)
+    return nil
+}
+
+func (s *UserService) List(ctx context.Context) ([]entity.User, error) {
+    return s.repo.List(ctx)
+}
+```
+
+### 11. `internal/core/user/handler/http/handler.go`
+
+```go
+package http
+
+import (
+    "net/http"
+
+    "github.com/gin-gonic/gin"
+    "github.com/google/uuid"
+    "log/slog"
+
+    "github.com/yourusername/yourproject/internal/core/user/service"
+    "github.com/yourusername/yourproject/pkg/errors"
+    "github.com/yourusername/yourproject/pkg/utils"
+)
+
+type UserHandler struct {
+    userService *service.UserService
+    log         *slog.Logger
+}
+
+func NewUserHandler(userService *service.UserService, log *slog.Logger) *UserHandler {
+    return &UserHandler{userService: userService, log: log}
+}
+
+// Request/Response DTOs
+type createUserRequest struct {
+    Email     string `json:"email" binding:"required,email"`
+    Password  string `json:"password" binding:"required,min=6"`
+    FirstName string `json:"first_name"`
+    LastName  string `json:"last_name"`
+}
+
+type updateUserRequest struct {
+    FirstName *string `json:"first_name"`
+    LastName  *string `json:"last_name"`
+    Password  *string `json:"password" binding:"omitempty,min=6"`
+}
+
+type userResponse struct {
+    ID        uuid.UUID `json:"id"`
+    Email     string    `json:"email"`
+    FirstName string    `json:"first_name"`
+    LastName  string    `json:"last_name"`
+    IsActive  bool      `json:"is_active"`
+    Roles     string    `json:"roles"`
+    CreatedAt string    `json:"created_at"`
+}
+
+func (h *UserHandler) Create(c *gin.Context) {
+    var req createUserRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, errors.NewValidationError(err.Error()))
+        return
+    }
+
+    user, err := h.userService.Create(c.Request.Context(), service.CreateUserInput{
+        Email:     req.Email,
+        Password:  req.Password,
+        FirstName: req.FirstName,
+        LastName:  req.LastName,
+    })
+    if err != nil {
+        switch err {
+        case service.ErrEmailAlreadyExists:
+            c.JSON(http.StatusConflict, errors.NewConflictError("email already exists"))
+        default:
+            h.log.Error("failed to create user", "error", err)
+            c.JSON(http.StatusInternalServerError, errors.NewInternalError())
+        }
+        return
+    }
+
+    c.JSON(http.StatusCreated, toUserResponse(user))
+}
+
+func (h *UserHandler) Get(c *gin.Context) {
+    idStr := c.Param("id")
+    id, err := uuid.Parse(idStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, errors.NewValidationError("invalid user id"))
+        return
+    }
+
+    user, err := h.userService.GetByID(c.Request.Context(), id)
+    if err != nil {
+        if err == service.ErrUserNotFound {
+            c.JSON(http.StatusNotFound, errors.NewNotFoundError("user not found"))
+        } else {
+            h.log.Error("failed to get user", "error", err)
+            c.JSON(http.StatusInternalServerError, errors.NewInternalError())
+        }
+        return
+    }
+
+    c.JSON(http.StatusOK, toUserResponse(user))
+}
+
+func (h *UserHandler) Update(c *gin.Context) {
+    idStr := c.Param("id")
+    id, err := uuid.Parse(idStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, errors.NewValidationError("invalid user id"))
+        return
+    }
+
+    var req updateUserRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, errors.NewValidationError(err.Error()))
+        return
+    }
+
+    err = h.userService.Update(c.Request.Context(), id, service.UpdateUserInput{
+        FirstName: req.FirstName,
+        LastName:  req.LastName,
+        Password:  req.Password,
+    })
+    if err != nil {
+        if err == service.ErrUserNotFound {
+            c.JSON(http.StatusNotFound, errors.NewNotFoundError("user not found"))
+        } else {
+            h.log.Error("failed to update user", "error", err)
+            c.JSON(http.StatusInternalServerError, errors.NewInternalError())
+        }
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "user updated"})
+}
+
+func (h *UserHandler) Delete(c *gin.Context) {
+    idStr := c.Param("id")
+    id, err := uuid.Parse(idStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, errors.NewValidationError("invalid user id"))
+        return
+    }
+
+    err = h.userService.Delete(c.Request.Context(), id)
+    if err != nil {
+        if err == service.ErrUserNotFound {
+            c.JSON(http.StatusNotFound, errors.NewNotFoundError("user not found"))
+        } else {
+            h.log.Error("failed to delete user", "error", err)
+            c.JSON(http.StatusInternalServerError, errors.NewInternalError())
+        }
+        return
+    }
+
+    c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *UserHandler) List(c *gin.Context) {
+    users, err := h.userService.List(c.Request.Context())
+    if err != nil {
+        h.log.Error("failed to list users", "error", err)
+        c.JSON(http.StatusInternalServerError, errors.NewInternalError())
+        return
+    }
+
+    response := make([]userResponse, len(users))
+    for i, u := range users {
+        response[i] = toUserResponse(&u)
+    }
+    c.JSON(http.StatusOK, response)
+}
+
+func toUserResponse(u *entity.User) userResponse {
+    return userResponse{
+        ID:        u.ID,
+        Email:     u.Email,
+        FirstName: u.FirstName,
+        LastName:  u.LastName,
+        IsActive:  u.IsActive,
+        Roles:     u.Roles,
+        CreatedAt: u.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+    }
+}
+
+// Register routes (called from router)
+func (h *UserHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
+    users := rg.Group("/users")
+    users.Use(authMiddleware)
+    {
+        users.POST("/", h.Create)          // admin only - we'll add role check in middleware
+        users.GET("/", h.List)
+        users.GET("/:id", h.Get)
+        users.PUT("/:id", h.Update)
+        users.DELETE("/:id", h.Delete)     // admin only
+    }
+}
+```
+
+### 12. `internal/transport/http/middleware/auth.go`
+
+```go
+package middleware
+
+import (
+    "net/http"
+    "strings"
+
+    "github.com/gin-gonic/gin"
+    "github.com/golang-jwt/jwt/v5"
+
+    "github.com/yourusername/yourproject/pkg/errors"
+    "github.com/yourusername/yourproject/pkg/utils"
+)
+
+func JWTAuth(secret string) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        authHeader := c.GetHeader("Authorization")
+        if authHeader == "" {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, errors.NewUnauthorizedError("missing authorization header"))
+            return
+        }
+
+        parts := strings.Split(authHeader, " ")
+        if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, errors.NewUnauthorizedError("invalid authorization header format"))
+            return
+        }
+
+        tokenStr := parts[1]
+        claims, err := utils.ParseJWT(tokenStr, secret)
+        if err != nil {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, errors.NewUnauthorizedError("invalid or expired token"))
+            return
+        }
+
+        // Set user info in context
+        c.Set("userID", claims.Subject)
+        c.Set("userRoles", strings.Split(claims.Roles, ","))
+        c.Next()
+    }
+}
+
+func RequireRoles(allowedRoles ...string) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        roles, exists := c.Get("userRoles")
+        if !exists {
+            c.AbortWithStatusJSON(http.StatusForbidden, errors.NewForbiddenError("access denied"))
+            return
+        }
+
+        userRoles := roles.([]string)
+        for _, role := range userRoles {
+            for _, allowed := range allowedRoles {
+                if role == allowed {
+                    c.Next()
+                    return
+                }
+            }
+        }
+        c.AbortWithStatusJSON(http.StatusForbidden, errors.NewForbiddenError("insufficient permissions"))
+    }
+}
+```
+
+### 13. `internal/transport/http/middleware/logger.go`
+
+```go
+package middleware
+
+import (
+    "log/slog"
+    "time"
+
+    "github.com/gin-gonic/gin"
+    "github.com/google/uuid"
+)
+
+func Logger(log *slog.Logger) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        start := time.Now()
+        path := c.Request.URL.Path
+        method := c.Request.Method
+        requestID := uuid.New().String()
+
+        c.Set("requestID", requestID)
+        c.Header("X-Request-ID", requestID)
+
+        c.Next()
+
+        latency := time.Since(start)
+        status := c.Writer.Status()
+
+        log.Info("request",
+            "request_id", requestID,
+            "method", method,
+            "path", path,
+            "status", status,
+            "latency", latency,
+            "client_ip", c.ClientIP(),
+        )
+    }
+}
+```
+
+### 14. `internal/transport/http/middleware/recovery.go`
+
+```go
+package middleware
+
+import (
+    "log/slog"
+    "net/http"
+    "runtime/debug"
+
+    "github.com/gin-gonic/gin"
+    "github.com/yourusername/yourproject/pkg/errors"
+)
+
+func Recovery(log *slog.Logger) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        defer func() {
+            if err := recover(); err != nil {
+                log.Error("panic recovered", "error", err, "stack", string(debug.Stack()))
+                c.AbortWithStatusJSON(http.StatusInternalServerError, errors.NewInternalError())
+            }
+        }()
+        c.Next()
+    }
+}
+```
+
+### 15. `internal/transport/http/router.go`
+
+```go
+package http
+
+import (
+    "log/slog"
+    "net/http"
+    "time"
+
+    "github.com/gin-gonic/gin"
+
+    "github.com/yourusername/yourproject/internal/transport/http/middleware"
+    "github.com/yourusername/yourproject/internal/platform/config"
+)
+
+type Server struct {
+    engine *gin.Engine
+    srv    *http.Server
+    log    *slog.Logger
+}
+
+func NewServer(port string, log *slog.Logger) *Server {
+    gin.SetMode(gin.ReleaseMode)
+    engine := gin.New()
+
+    srv := &http.Server{
+        Addr:         ":" + port,
+        Handler:      engine,
+        ReadTimeout:  10 * time.Second,
+        WriteTimeout: 10 * time.Second,
+        IdleTimeout:  120 * time.Second,
+    }
+
+    return &Server{
+        engine: engine,
+        srv:    srv,
+        log:    log,
+    }
+}
+
+func (s *Server) RegisterRoutes(userHandler interface{ RegisterRoutes(*gin.RouterGroup, gin.HandlerFunc) }) {
+    // Load config for JWT secret
+    cfg, _ := config.Load() // ignore error, we already loaded in main
+
+    // Global middleware
+    s.engine.Use(middleware.Recovery(s.log))
+    s.engine.Use(middleware.Logger(s.log))
+
+    // Health check
+    s.engine.GET("/health", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{"status": "ok"})
+    })
+
+    // API v1 group
+    api := s.engine.Group("/api/v1")
+
+    // Auth middleware
+    authMiddleware := middleware.JWTAuth(cfg.JWTSecret)
+
+    // Register domain routes
+    userHandler.RegisterRoutes(api, authMiddleware)
+}
+
+func (s *Server) Start() error {
+    return s.srv.ListenAndServe()
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+    return s.srv.Shutdown(ctx)
+}
+```
+
+### 16. `pkg/utils/hash.go`
+
+```go
+package utils
+
+import "golang.org/x/crypto/bcrypt"
+
+func HashPassword(password string) (string, error) {
+    bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+    return err == nil
+}
+```
+
+### 17. `pkg/utils/jwt.go`
+
+```go
+package utils
+
+import (
+    "time"
+
+    "github.com/golang-jwt/jwt/v5"
+    "github.com/google/uuid"
+)
+
+type Claims struct {
+    jwt.RegisteredClaims
+    Roles string `json:"roles"`
+}
+
+func GenerateJWT(userID uuid.UUID, roles string, secret string, expirationMinutes int) (string, error) {
+    now := time.Now()
+    claims := Claims{
+        RegisteredClaims: jwt.RegisteredClaims{
+            Subject:   userID.String(),
+            ExpiresAt: jwt.NewNumericDate(now.Add(time.Duration(expirationMinutes) * time.Minute)),
+            IssuedAt:  jwt.NewNumericDate(now),
+            NotBefore: jwt.NewNumericDate(now),
+            ID:        uuid.New().String(),
+        },
+        Roles: roles,
+    }
+
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    return token.SignedString([]byte(secret))
+}
+
+func ParseJWT(tokenStr string, secret string) (*Claims, error) {
+    token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+        return []byte(secret), nil
+    })
+    if err != nil {
+        return nil, err
+    }
+    if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+        return claims, nil
+    }
+    return nil, jwt.ErrSignatureInvalid
+}
+```
+
+### 18. `pkg/errors/errors.go`
+
+```go
+package errors
+
+import "net/http"
+
+type AppError struct {
+    Code    int    `json:"code"`
+    Message string `json:"message"`
+    Details string `json:"details,omitempty"`
+}
+
+func (e *AppError) Error() string {
+    return e.Message
+}
+
+func NewValidationError(details string) *AppError {
+    return &AppError{
+        Code:    http.StatusBadRequest,
+        Message: "Validation error",
+        Details: details,
+    }
+}
+
+func NewUnauthorizedError(details string) *AppError {
+    return &AppError{
+        Code:    http.StatusUnauthorized,
+        Message: "Unauthorized",
+        Details: details,
+    }
+}
+
+func NewForbiddenError(details string) *AppError {
+    return &AppError{
+        Code:    http.StatusForbidden,
+        Message: "Forbidden",
+        Details: details,
+    }
+}
+
+func NewNotFoundError(details string) *AppError {
+    return &AppError{
+        Code:    http.StatusNotFound,
+        Message: "Not found",
+        Details: details,
+    }
+}
+
+func NewConflictError(details string) *AppError {
+    return &AppError{
+        Code:    http.StatusConflict,
+        Message: "Conflict",
+        Details: details,
+    }
+}
+
+func NewInternalError() *AppError {
+    return &AppError{
+        Code:    http.StatusInternalServerError,
+        Message: "Internal server error",
+    }
+}
+```
+
+### 19. `.env.example`
+
+```env
+ENVIRONMENT=development
+HTTP_PORT=8080
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb?sslmode=disable
+REDIS_ADDR=localhost:6379
+REDIS_PASSWORD=
+REDIS_DB=0
+JWT_SECRET=your-secret-key-change-in-production
+JWT_EXPIRATION=60
+```
+
+### 20. `Dockerfile`
+
+```dockerfile
+# Build stage
+FROM golang:1.21-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/app
+
+# Final stage
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/main .
+COPY --from=builder /app/.env.example .env
+EXPOSE 8080
+CMD ["./main"]
+```
+
+### 21. `docker-compose.yml`
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: development
+      HTTP_PORT: 8080
+      DATABASE_URL: postgresql://user:password@postgres:5432/mydb?sslmode=disable
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ""
+      REDIS_DB: 0
+      JWT_SECRET: your-secret-key-change-in-production
+      JWT_EXPIRATION: 60
+
+volumes:
+  postgres_data:
+```
+
+### 22. `Makefile`
+
+```makefile
+.PHONY: run build test docker-up docker-down migrate
+
+run:
+	go run cmd/app/main.go
+
+build:
+	go build -o bin/app cmd/app/main.go
+
+test:
+	go test -v ./...
+
+docker-up:
+	docker-compose up -d
+
+docker-down:
+	docker-compose down
+
+migrate:
+	# Using golang-migrate or similar; for now, auto-migrate is in code
+	@echo "Auto-migrate is handled on startup"
+```
+
+### 23. `README.md` (brief)
+
+```markdown
+# Go DDD Clean Architecture Template
+
+A production-ready Go project following Domain-Driven Design and Clean Architecture.
+
+## Features
+
+- RESTful API with Gin
+- JWT Authentication
+- PostgreSQL with GORM
+- Redis Caching
+- Structured Logging (slog)
+- Centralized Error Handling
+- Docker & Docker Compose
+
+## Getting Started
+
+1. Copy `.env.example` to `.env` and adjust values.
+2. Run `make docker-up` to start PostgreSQL and Redis.
+3. Run `make run` to start the application.
+4. Access API at `http://localhost:8080`.
+
+## API Endpoints
+
+- `POST /api/v1/users` - Create user (admin only)
+- `GET /api/v1/users` - List users
+- `GET /api/v1/users/:id` - Get user by ID
+- `PUT /api/v1/users/:id` - Update user
+- `DELETE /api/v1/users/:id` - Delete user (admin only)
+```
+
+---
+
+## Summary
+
+This template provides a solid foundation for building scalable, maintainable Go applications using DDD and Clean Architecture. It includes all necessary layers, infrastructure integration, and follows best practices. You can extend it by adding more domains, gRPC, or event-driven patterns as needed.

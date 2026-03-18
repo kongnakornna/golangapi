@@ -1,0 +1,264 @@
+บทความภาษาไทย Golang แบบละเอียด  อย่างที่ทำได้
+1. [บทนำ (Introduction)](#1-บทนำ-introduction)
+2. [บทนิยาม (Definitions)](#2-บทนิยาม-definitions)
+3. [สารบัญ (Table of Contents)](#3-สารบัญ-table-of-contents)
+4. [เวิร์กโฟลว์การพัฒนา (Development Workflow)](#4-เวิร์กโฟลว์การพัฒนา-development-workflow)
+5. [ผังการไหลของข้อมูล (Data Flow Architecture)](#5-ผังการไหลของข้อมูล-data-flow-architecture)
+6. [แม่แบบโค้ด (Code Templates)](#6-แม่แบบโค้ด-code-templates)
+
+สร้าง Tempale แบบละเอียด ครอบคุมทุกส่วน 
+● Golang domain driven design (ddd) clean architecture   (Modules/Repository/Service/Handler/Controller/Model/routes/cache/errors/queue/jwt/logger/ORM/CRUD/utils/migrations/configs)
+    ตัวออย่าง
+    ```md
+            project-root/
+            ├── api/                          # API related files
+            │   └── app/                      # API app docs
+            │       └── docs.go               # docs.go
+            │       └── swagger.json          # Swagger documentation
+            ├── cmd/                          # Main program entry
+            │   └── app/                      # Application
+            │       └── grpc.go               # grp Program entry point
+            │       └── main.go               # Program entry point
+            ├── configs/                      # Configuration files (optimized as single source)
+            ├── deploy/                       # Deployment configurations (simplified to essential scripts)
+            │   └── docker/                  
+            │   └── k8s/                     
+            ├── internal/                     # Internal application code
+            │   ├── apps/                     # Application composition roots
+            │   │   └── app/                  # Current app
+            │   │       ├── bootstrap/        # App bootstrap (DI, startup)
+            │   │       └── router/           # App router
+            │   ├── platform/                     # Application composition roots
+            │   │   └── app/                  # Current app
+            │   │       ├── bootstrap/        # App bootstrap (DI, startup)
+            │   │       └── router/           # App router
+            │   ├── transport/                     # Application composition roots
+            │   │   └── app/                  # Current app
+            │   │       ├── bootstrap/        # App bootstrap (DI, startup)
+            │   │       └── router/           # App router
+            │   ├── core/                     # Domain modules (auth/user/health)
+            │   │   ├── auth/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── auth.go            # module setup
+            │   │   ├── oauth/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── oauth.go            # module setup
+            │   │   ├── user/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── user.go            # module setup
+            │   │   ├── iot/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── iot.go            # module setup
+            │   │   ├── grpc/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── grpc.go            # module setup
+            │   │   └── health/
+            │   ├── platform/                 # Infrastructure (config/db)
+            │   │   ├── config/
+            │   │   ├── db/                    # database connection (postgres)
+            │   │   ├── cache/                 # Redis cache implementation
+            │   │   ├── queue/                 # Redis queue
+            │   │   └── logger/                 # logger implementation
+            │   └── transport/                # HTTP transport helpers (httpx/middleware)
+            │       ├── middleware/
+            │       ├── utils/
+            │       └── httpx/
+            ├── migrations/                   # Database migration files (version controlled)
+            ├── pkg/                          # External packages (independent reusable components)
+            │   ├── cache/                    # Redis cache and strategies
+            │   ├── errors/                   # Custom error handling package
+            │   ├── errors/                   # Custom error handling package
+            │   ├── jwt/                      # JWT helpers
+            │   ├── oauth/                      #  OAuth 2.0 to Access Google APIs | Authorization
+            │   ├── logger/                   # Structured logger
+            │   ├── queue/                    # Redis queue helpers
+            │   ├── transaction/              # Transaction manager
+            │   ├── mqtt/                     # Transaction mqtt
+            │   ├── grpc/                     # Transaction grpc
+            │   └── utils                     # Common utility functions
+            ├── scripts/                      # Development and deployment scripts (simplified workflow)
+            ├── .air.toml                     # Development hot-reload configuration
+            ├── go.mod                        # Go module definition
+            └── README.md                     # Project documentation
+        ```
+    - postgresssql redis  queue restfull api  template github 
+    - RESTful API 
+    - gRPC in a Go application using Domain-Driven Design (DDD)
+    - Redis queue
+🏭 Core Features using Domain-Driven Design (DDD)
+🏭 Clean Architecture - Three-layer architecture (Modules/Repository/Service/Handler/Controller/Model/routes/cache/errors/queue/jwt/logger/ORM/CRUD/utils/migrations/configs) with comprehensive dependency injection
+🔒 JWT Authentication - Complete authentication system with access/refresh tokens and token blacklisting
+👥 User Management - Full CRUD operations with basic role-based protection (admin-only create)
+📝 Structured Logging - Unified logging via pkg/logger (built on Go's slog) with trace/request context
+🚫 Rate Limiting - IP-based request throttling with automatic cleanup
+📊 Health Monitoring - Comprehensive health checks with dependency monitoring
+🌐 Redis Cache - Production-ready caching layer with TTL management and object serialization
+📦 Message Queue - Redis-based pub/sub messaging with worker pools and dead letter queue support
+💼 Transaction Management - GORM transaction manager with nested transaction support
+🛡️ Security - Multiple security layers including CORS, security headers, and input validation
+🛠️ Middleware Stack
+Request Context - Trace IDs, request IDs, and user context propagation
+Security Headers - CSP, HSTS, X-Frame-Options, XSS Protection
+CORS Handling - Configurable cross-origin resource sharing
+Panic Recovery - Application-level panic handling with graceful error responses
+Request Logging - Structured request/response logging with performance metrics
+Authentication - JWT middleware with role-based route protection
+Input Validation - Comprehensive request validation using go-playground/validator
+📈 Health & Monitoring
+Health Endpoints - Basic, detailed, readiness, and liveness probes
+Dependency Checks - Database and Redis connection status via /health/detailed
+System Metrics (Optional) - Runtime/memory snapshot handler available for wiring
+Performance Tracking (Optional) - Monitoring middleware + metrics handler available
+Kubernetes Ready 
+
+Golang domain driven design (ddd) clean architecture   (Modules/Repository/Service/Handler/Controller/Model/routes/cache/errors/queue/jwt/logger/ORM/CRUD/utils/migrations/configs)
+    ตัวออย่าง
+    ```md
+            project-root/
+            ├── api/                          # API related files
+            │   └── app/                      # API app docs
+            │       └── docs.go               # docs.go
+            │       └── swagger.json          # Swagger documentation
+            ├── cmd/                          # Main program entry
+            │   └── app/                      # Application
+            │       └── grpc.go               # grp Program entry point
+            │       └── main.go               # Program entry point
+            ├── configs/                      # Configuration files (optimized as single source)
+            ├── deploy/                       # Deployment configurations (simplified to essential scripts)
+            │   └── docker/                  
+            │   └── k8s/                     
+            ├── internal/                     # Internal application code
+            │   ├── apps/                     # Application composition roots
+            │   │   └── app/                  # Current app
+            │   │       ├── bootstrap/        # App bootstrap (DI, startup)
+            │   │       └── router/           # App router
+            │   ├── platform/                     # Application composition roots
+            │   │   └── app/                  # Current app
+            │   │       ├── bootstrap/        # App bootstrap (DI, startup)
+            │   │       └── router/           # App router
+            │   ├── transport/                     # Application composition roots
+            │   │   └── app/                  # Current app
+            │   │       ├── bootstrap/        # App bootstrap (DI, startup)
+            │   │       └── router/           # App router
+            │   ├── core/                     # Domain modules (auth/user/health)
+            │   │   ├── auth/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── auth.go            # module setup
+            │   │   ├── oauth/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── oauth.go            # module setup
+            │   │   ├── user/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── user.go            # module setup
+            │   │   ├── iot/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── iot.go            # module setup
+            │   │   ├── grpc/
+            │   │   │   ├── entity/            # domain entities ORM Database 
+            │   │   │   ├── routes/            # routes
+            │   │   │   ├── repository/        # repository interfaces type data
+            │   │   │   ├── service/           # business logic & CRUD
+            │   │   │   ├── handler/           # HTTP handlers
+            │   │   │   ├── dto/               # request/response validator DTOs  
+            │   │   │   ├── Controller/        # request/Controller routes CRUD
+            │   │   │   ├── Model/             # request/Model database ORM logic
+            │   │   │   └── grpc.go            # module setup
+            │   │   └── health/
+            │   ├── platform/                 # Infrastructure (config/db)
+            │   │   ├── config/
+            │   │   ├── db/                    # database connection (postgres)
+            │   │   ├── cache/                 # Redis cache implementation
+            │   │   ├── queue/                 # Redis queue
+            │   │   └── logger/                 # logger implementation
+            │   └── transport/                # HTTP transport helpers (httpx/middleware)
+            │       ├── middleware/
+            │       ├── utils/
+            │       └── httpx/
+            ├── migrations/                   # Database migration files (version controlled)
+            ├── pkg/                          # External packages (independent reusable components)
+            │   ├── cache/                    # Redis cache and strategies
+            │   ├── errors/                   # Custom error handling package
+            │   ├── errors/                   # Custom error handling package
+            │   ├── jwt/                      # JWT helpers
+            │   ├── oauth/                      #  OAuth 2.0 to Access Google APIs | Authorization
+            │   ├── logger/                   # Structured logger
+            │   ├── queue/                    # Redis queue helpers
+            │   ├── transaction/              # Transaction manager
+            │   ├── mqtt/                     # Transaction mqtt
+            │   ├── grpc/                     # Transaction grpc
+            │   └── utils                     # Common utility functions
+            ├── scripts/                      # Development and deployment scripts (simplified workflow)
+            ├── .air.toml                     # Development hot-reload configuration
+            ├── go.mod                        # Go module definition
+            └── README.md                     # Project documentation
+        ```
+    - postgresssql redis  queue restfull api  template github 
+    - RESTful API 
+    - gRPC in a Go application using Domain-Driven Design (DDD)
+    - Redis queue
+
+ ● LangChain FastAPI  RESTful API  architecture (Modules/Repository/Service/Handler/Controller/Model/routes/cache/errors/queue/jwt/logger/ORM/CRUD/utils/migrations/configs)
+    
