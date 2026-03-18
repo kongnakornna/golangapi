@@ -1584,15 +1584,11 @@ graph TD
 - **Training** - Share best practices
 
 ---
-
 ## Summary
-
 Good code review is **a conversation between professionals** to create the best possible code. Focus on:
 1. **Quality** over speed
 2. **Learning** over fault-finding
 3. **Collaboration** over competition
 
 #### **Remember:** We're all on the same team. The goal is to build great software, not to prove who is better.
----------------
-
- 
+--------------
