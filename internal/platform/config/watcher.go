@@ -7,7 +7,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 
-	"github.com/kongnakornna/golangapi/pkg/logger"
+	"github.com/vadxq/go-rest-starter/pkg/logger"
 )
 
 var log = logger.Default()

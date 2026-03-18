@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.comgolangapi /golangapi/pkg/logger"
+	"github.com/vadxq/go-rest-starter/pkg/logger"
 )
 
 var log = logger.Default()

@@ -73,16 +73,16 @@ This is a complete, production-ready template for a Go application following **D
 ### 1. `go.mod`
 
 ```go
-module github.com/yourusername/yourproject
+module yourusername/yourproject
 
 go 1.21
 
 require (
-    github.com/gin-gonic/gin v1.9.1
-    github.com/golang-jwt/jwt/v5 v5.0.0
-    github.com/google/uuid v1.3.1
-    github.com/redis/go-redis/v9 v9.2.1
-    github.com/spf13/viper v1.17.0
+    gin-gonic/gin v1.9.1
+    golang-jwt/jwt/v5 v5.0.0
+    google/uuid v1.3.1
+    redis/go-redis/v9 v9.2.1
+    spf13/viper v1.17.0
     golang.org/x/crypto v0.14.0
     gorm.io/driver/postgres v1.5.3
     gorm.io/gorm v1.25.5
@@ -102,14 +102,14 @@ import (
     "syscall"
     "time"
 
-    "github.com/yourusername/yourproject/internal/platform/config"
-    "github.com/yourusername/yourproject/internal/platform/database"
-    "github.com/yourusername/yourproject/internal/platform/cache"
-    "github.com/yourusername/yourproject/internal/platform/logger"
-    "github.com/yourusername/yourproject/internal/transport/http"
-    userHttp "github.com/yourusername/yourproject/internal/core/user/handler/http"
-    userRepo "github.com/yourusername/yourproject/internal/core/user/repository"
-    userService "github.com/yourusername/yourproject/internal/core/user/service"
+    "yourusername/yourproject/internal/platform/config"
+    "yourusername/yourproject/internal/platform/database"
+    "yourusername/yourproject/internal/platform/cache"
+    "yourusername/yourproject/internal/platform/logger"
+    "yourusername/yourproject/internal/transport/http"
+    userHttp "yourusername/yourproject/internal/core/user/handler/http"
+    userRepo "yourusername/yourproject/internal/core/user/repository"
+    userService "yourusername/yourproject/internal/core/user/service"
 )
 
 func main() {
@@ -194,7 +194,7 @@ func main() {
 package config
 
 import (
-    "github.com/spf13/viper"
+    "spf13/viper"
 )
 
 type Config struct {
@@ -283,7 +283,7 @@ import (
     "gorm.io/gorm"
     "gorm.io/gorm/logger"
 
-    "github.com/yourusername/yourproject/internal/core/user/entity"
+    "yourusername/yourproject/internal/core/user/entity"
 )
 
 func NewPostgres(dsn string) (*gorm.DB, error) {
@@ -319,7 +319,7 @@ import (
     "encoding/json"
     "time"
 
-    "github.com/redis/go-redis/v9"
+    "redis/go-redis/v9"
 )
 
 type RedisClient struct {
@@ -380,7 +380,7 @@ package entity
 import (
     "time"
 
-    "github.com/google/uuid"
+    "google/uuid"
     "gorm.io/gorm"
 )
 
@@ -413,8 +413,8 @@ package repository
 import (
     "context"
 
-    "github.com/google/uuid"
-    "github.com/yourusername/yourproject/internal/core/user/entity"
+    "google/uuid"
+    "yourusername/yourproject/internal/core/user/entity"
 )
 
 type UserRepository interface {
@@ -437,11 +437,11 @@ import (
     "errors"
     "time"
 
-    "github.com/google/uuid"
+    "google/uuid"
     "gorm.io/gorm"
 
-    "github.com/yourusername/yourproject/internal/core/user/entity"
-    "github.com/yourusername/yourproject/internal/platform/cache"
+    "yourusername/yourproject/internal/core/user/entity"
+    "yourusername/yourproject/internal/platform/cache"
 )
 
 type gormUserRepository struct {
@@ -526,11 +526,11 @@ import (
     "log/slog"
     "time"
 
-    "github.com/google/uuid"
+    "google/uuid"
 
-    "github.com/yourusername/yourproject/internal/core/user/entity"
-    "github.com/yourusername/yourproject/internal/core/user/repository"
-    "github.com/yourusername/yourproject/pkg/utils"
+    "yourusername/yourproject/internal/core/user/entity"
+    "yourusername/yourproject/internal/core/user/repository"
+    "yourusername/yourproject/pkg/utils"
 )
 
 var (
@@ -676,13 +676,13 @@ package http
 import (
     "net/http"
 
-    "github.com/gin-gonic/gin"
-    "github.com/google/uuid"
+    "gin-gonic/gin"
+    "google/uuid"
     "log/slog"
 
-    "github.com/yourusername/yourproject/internal/core/user/service"
-    "github.com/yourusername/yourproject/pkg/errors"
-    "github.com/yourusername/yourproject/pkg/utils"
+    "yourusername/yourproject/internal/core/user/service"
+    "yourusername/yourproject/pkg/errors"
+    "yourusername/yourproject/pkg/utils"
 )
 
 type UserHandler struct {
@@ -871,11 +871,11 @@ import (
     "net/http"
     "strings"
 
-    "github.com/gin-gonic/gin"
-    "github.com/golang-jwt/jwt/v5"
+    "gin-gonic/gin"
+    "golang-jwt/jwt/v5"
 
-    "github.com/yourusername/yourproject/pkg/errors"
-    "github.com/yourusername/yourproject/pkg/utils"
+    "yourusername/yourproject/pkg/errors"
+    "yourusername/yourproject/pkg/utils"
 )
 
 func JWTAuth(secret string) gin.HandlerFunc {
@@ -937,8 +937,8 @@ import (
     "log/slog"
     "time"
 
-    "github.com/gin-gonic/gin"
-    "github.com/google/uuid"
+    "gin-gonic/gin"
+    "google/uuid"
 )
 
 func Logger(log *slog.Logger) gin.HandlerFunc {
@@ -978,8 +978,8 @@ import (
     "net/http"
     "runtime/debug"
 
-    "github.com/gin-gonic/gin"
-    "github.com/yourusername/yourproject/pkg/errors"
+    "gin-gonic/gin"
+    "yourusername/yourproject/pkg/errors"
 )
 
 func Recovery(log *slog.Logger) gin.HandlerFunc {
@@ -1005,10 +1005,10 @@ import (
     "net/http"
     "time"
 
-    "github.com/gin-gonic/gin"
+    "gin-gonic/gin"
 
-    "github.com/yourusername/yourproject/internal/transport/http/middleware"
-    "github.com/yourusername/yourproject/internal/platform/config"
+    "yourusername/yourproject/internal/transport/http/middleware"
+    "yourusername/yourproject/internal/platform/config"
 )
 
 type Server struct {
@@ -1094,8 +1094,8 @@ package utils
 import (
     "time"
 
-    "github.com/golang-jwt/jwt/v5"
-    "github.com/google/uuid"
+    "golang-jwt/jwt/v5"
+    "google/uuid"
 )
 
 type Claims struct {

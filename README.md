@@ -36,7 +36,7 @@
 
 Design reference:
 
-- [go project layout](https://github.com/kongnakornna/goreststarterio)
+- [go project layout](https://kongnakornna/goreststarterio)
 - [go modules layout](https://go.dev/doc/modules/layout)
 
 ```md
@@ -89,7 +89,7 @@ See `docs/README.md` for architecture, development, maintenance, and deployment 
 
 ```bash
 # Clone the repository
-git clone https://github.com/kongnakornna/golangapi.git
+git clone https://golangapi.git
 cd golangapi
 
 # Install dependencies
@@ -420,8 +420,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Go Project Layout](https://github.com/kongnakornna/goreststarterio) - Standard Go project structure
-- [Chi Router](https://github.com/go-chi/chi) - Lightweight HTTP router
+- [Go Project Layout](https://kongnakornna/goreststarterio) - Standard Go project structure
+- [Chi Router](https://go-chi/chi) - Lightweight HTTP router
 - [GORM](https://gorm.io/) - The fantastic ORM library for Golang
 
 
@@ -689,7 +689,7 @@ package entity
 
 import (
     "time"
-    "github.com/google/uuid"
+    "google/uuid"
 )
 
 type User struct {
@@ -736,7 +736,7 @@ package repository
 
 import (
     "context"
-    "github.com/google/uuid"
+    "google/uuid"
     "your-project/internal/core/auth/entity"
 )
 
@@ -760,7 +760,7 @@ import (
     "errors"
     "time"
     
-    "github.com/google/uuid"
+    "google/uuid"
     "gorm.io/gorm"
     "your-project/internal/core/auth/entity"
     "your-project/internal/core/auth/repository"
@@ -814,7 +814,7 @@ import (
     "context"
     "time"
     
-    "github.com/google/uuid"
+    "google/uuid"
     "golang.org/x/crypto/bcrypt"
     "your-project/internal/core/auth/entity"
     "your-project/internal/core/auth/repository"
@@ -936,7 +936,7 @@ package handler
 import (
     "net/http"
     
-    "github.com/gin-gonic/gin"
+    "gin-gonic/gin"
     "your-project/internal/core/auth/dto"
     "your-project/internal/core/auth/service"
     "your-project/internal/transport/httpx"
@@ -1021,7 +1021,7 @@ import (
     "regexp"
     "strings"
     
-    "github.com/go-playground/validator/v10"
+    "go-playground/validator/v10"
 )
 
 type RegisterRequest struct {
@@ -1072,7 +1072,7 @@ import (
     "net/http"
     "strings"
     
-    "github.com/gin-gonic/gin"
+    "gin-gonic/gin"
     "your-project/pkg/jwt"
     "your-project/internal/transport/httpx"
 )
@@ -1162,8 +1162,8 @@ import (
     "sync"
     "time"
     
-    "github.com/gin-gonic/gin"
-    "github.com/redis/go-redis/v9"
+    "gin-gonic/gin"
+    "redis/go-redis/v9"
     "your-project/internal/transport/httpx"
 )
 
@@ -1227,7 +1227,7 @@ import (
     "os"
     "time"
     
-    "github.com/google/uuid"
+    "google/uuid"
 )
 
 type Logger interface {
@@ -1456,7 +1456,7 @@ import (
     "encoding/json"
     "time"
     
-    "github.com/redis/go-redis/v9"
+    "redis/go-redis/v9"
 )
 
 type Cache interface {
@@ -1554,8 +1554,8 @@ import (
     "encoding/json"
     "time"
     
-    "github.com/redis/go-redis/v9"
-    "github.com/google/uuid"
+    "redis/go-redis/v9"
+    "google/uuid"
 )
 
 type Job struct {
@@ -1769,8 +1769,8 @@ package jwt
 import (
     "time"
     
-    "github.com/golang-jwt/jwt/v5"
-    "github.com/google/uuid"
+    "golang-jwt/jwt/v5"
+    "google/uuid"
 )
 
 type Claims struct {
@@ -1941,8 +1941,8 @@ import (
     "syscall"
     "time"
     
-    "github.com/gin-gonic/gin"
-    "github.com/redis/go-redis/v9"
+    "gin-gonic/gin"
+    "redis/go-redis/v9"
     "gorm.io/gorm"
     
     "your-project/configs"
@@ -3410,7 +3410,7 @@ package repository
 
 import (
     "context"
-    "github.com/google/uuid"
+    "google/uuid"
     "your-project/internal/core/[module]/entity"
 )
 
@@ -3429,7 +3429,7 @@ package service
 
 import (
     "context"
-    "github.com/google/uuid"
+    "google/uuid"
     "your-project/internal/core/[module]/entity"
     "your-project/internal/core/[module]/repository"
     "your-project/pkg/logger"
@@ -3496,8 +3496,8 @@ package handler
 import (
     "net/http"
     
-    "github.com/gin-gonic/gin"
-    "github.com/google/uuid"
+    "gin-gonic/gin"
+    "google/uuid"
     
     "your-project/internal/core/[module]/dto"
     "your-project/internal/core/[module]/service"
@@ -3577,8 +3577,8 @@ package dto
 import (
     "time"
     
-    "github.com/go-playground/validator/v10"
-    "github.com/google/uuid"
+    "go-playground/validator/v10"
+    "google/uuid"
     "your-project/internal/core/[module]/entity"
 )
 
@@ -3963,7 +3963,7 @@ async def delete_entity(
 
 1. **Golang Resources**:
    - [Official Go Documentation](https://golang.org/doc/)
-   - [Clean Architecture in Go](https://github.com/bxcodec/go-clean-arch)
+   - [Clean Architecture in Go](https://bxcodec/go-clean-arch)
    - [GORM Documentation](https://gorm.io/docs/)
 
 2. **LangChain Resources**:
@@ -3972,7 +3972,7 @@ async def delete_entity(
    - [OpenAI API Documentation](https://platform.openai.com/docs)
 
 3. **DDD Resources**:
-   - [Domain-Driven Design in Go](https://github.com/marcusolsson/goddd)
+   - [Domain-Driven Design in Go](https://marcusolsson/goddd)
    - [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 
 ---

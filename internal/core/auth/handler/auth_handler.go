@@ -6,11 +6,11 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	authdto "github.com/kongnakornna/golangapi/internal/core/auth/dto"
-	authservice "github.com/kongnakornna/golangapi/internal/core/auth/service"
-	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
-	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
-	"github.com/kongnakornna/golangapi/pkg/logger"
+	authdto "github.com/vadxq/go-rest-starter/internal/core/auth/dto"
+	authservice "github.com/vadxq/go-rest-starter/internal/core/auth/service"
+	httpx "github.com/vadxq/go-rest-starter/internal/transport/httpx"
+	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
+	"github.com/vadxq/go-rest-starter/pkg/logger"
 )
 
 // AuthHandler จัดการคำขอ HTTP ที่เกี่ยวข้องกับการรับรองตัวตน

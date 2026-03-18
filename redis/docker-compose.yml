@@ -1,0 +1,13 @@
+version: "2"
+services:
+# To connect manually over cli:
+# docker-compose run redis redis-cli -s /tmp/redis/myredis.sock
+  redis:
+    image: redis:3.2
+    hostname: my-redis
+    container_name: my-redis
+    command: redis-server /usr/local/etc/redis/redis.conf --appendonly yes
+    volumes:
+      - ./data:/data
+      - ./tmp/redis:/tmp/redis
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf

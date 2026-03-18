@@ -1,4 +1,5 @@
 package main
+
 import (
 	"context"
 	"os"
@@ -6,8 +7,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.comgolangapi /golangapi/internal/apps/app/bootstrap"
-	"github.comgolangapi /golangapi/pkg/logger"
+	"github.com/vadxq/go-rest-starter/internal/apps/app/bootstrap"
+	"github.com/vadxq/go-rest-starter/pkg/logger"
 )
 
 func main() {

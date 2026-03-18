@@ -3,7 +3,7 @@ package auth
 import (
 	"github.com/go-chi/chi/v5"
 
-	authhandler "github.com/kongnakornna/golangapi/internal/core/auth/handler"
+	authhandler "github.com/vadxq/go-rest-starter/internal/core/auth/handler"
 )
 
 // RegisterPublicRoutes registers public auth endpoints under the current group.

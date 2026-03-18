@@ -191,19 +191,19 @@ shop/
 ```bash
 mkdir isekai-shop
 cd isekai-shop
-go mod init github.com/yourname/isekai-shop
+go mod init yourname/isekai-shop
 ```
 
 ติดตั้ง package ที่จำเป็น:
 ```bash
-go get -u github.com/labstack/echo/v4
+go get -u labstack/echo/v4
 go get -u gorm.io/gorm
 go get -u gorm.io/driver/postgres
-go get -u github.com/go-redis/redis/v8
-go get -u github.com/golang-jwt/jwt/v5
+go get -u go-redis/redis/v8
+go get -u golang-jwt/jwt/v5
 go get -u golang.org/x/oauth2
-go get -u github.com/google/uuid
-go get -u github.com/spf13/viper
+go get -u google/uuid
+go get -u spf13/viper
 go get -u go.uber.org/zap # หรือใช้ slog ในตัว
 ```
 
@@ -212,7 +212,7 @@ go get -u go.uber.org/zap # หรือใช้ slog ในตัว
 ```go
 package config
 
-import "github.com/spf13/viper"
+import "spf13/viper"
 
 type Config struct {
     ServerPort string `mapstructure:"SERVER_PORT"`
@@ -289,7 +289,7 @@ package cache
 
 import (
     "context"
-    "github.com/go-redis/redis/v8"
+    "go-redis/redis/v8"
 )
 
 var RedisClient *redis.Client
@@ -315,7 +315,7 @@ import (
     "os/signal"
     "time"
 
-    "github.com/labstack/echo/v4"
+    "labstack/echo/v4"
     "isekai-shop/config"
     "isekai-shop/internal/adapters/handlers"
     "isekai-shop/internal/adapters/middlewares"
@@ -401,8 +401,8 @@ import (
     "net/http"
     "strings"
 
-    "github.com/golang-jwt/jwt/v5"
-    "github.com/labstack/echo/v4"
+    "golang-jwt/jwt/v5"
+    "labstack/echo/v4"
 )
 
 func AuthMiddleware(secret string) echo.MiddlewareFunc {

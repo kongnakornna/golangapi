@@ -12,13 +12,13 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	"github.com/kongnakornna/golangapi/internal/apps/app/bootstrap/injection"
-	api "github.com/kongnakornna/golangapi/internal/apps/app/router"
-	"github.com/kongnakornna/golangapi/internal/platform/config"
-	"github.com/kongnakornna/golangapi/internal/platform/db"
-	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
-	"github.com/kongnakornna/golangapi/pkg/cache"
-	"github.com/kongnakornna/golangapi/pkg/logger"
+	"github.com/vadxq/go-rest-starter/internal/apps/app/bootstrap/injection"
+	api "github.com/vadxq/go-rest-starter/internal/apps/app/router"
+	"github.com/vadxq/go-rest-starter/internal/platform/config"
+	"github.com/vadxq/go-rest-starter/internal/platform/db"
+	httpx "github.com/vadxq/go-rest-starter/internal/transport/httpx"
+	"github.com/vadxq/go-rest-starter/pkg/cache"
+	"github.com/vadxq/go-rest-starter/pkg/logger"
 )
 
 // App โครงสร้างแอปพลิเคชัน
@@ -45,7 +45,7 @@ func New() (*App, error) {
 		return nil, fmt.Errorf("โหลดการกำหนดค่าล้มเหลว: %w", err)
 	}
 
-	// สร้างตัวบันทึก 
+	// สร้างตัวบันทึก日志
 	appLogger, err := logger.NewLogger(&logger.LogConfig{
 		Level:   cfg.Log.Level,
 		File:    cfg.Log.File,

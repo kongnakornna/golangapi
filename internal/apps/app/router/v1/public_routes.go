@@ -2,9 +2,9 @@ package v1
 
 import (
 	"github.com/go-chi/chi/v5"
-	authmodule "github.com/kongnakornna/golangapi/internal/core/auth"
-	authhandler "github.com/kongnakornna/golangapi/internal/core/auth/handler"
-	userhandler "github.com/kongnakornna/golangapi/internal/core/user/handler"
+	authmodule "github.com/vadxq/go-rest-starter/internal/core/auth"
+	authhandler "github.com/vadxq/go-rest-starter/internal/core/auth/handler"
+	userhandler "github.com/vadxq/go-rest-starter/internal/core/user/handler"
 )
 
 // RouterConfig การกำหนดค่าเส้นทาง

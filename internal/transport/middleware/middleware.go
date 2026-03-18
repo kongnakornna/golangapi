@@ -8,9 +8,9 @@ import (
 
 	"github.com/go-chi/chi/v5/middleware"
 
-	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
-	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
-	"github.com/kongnakornna/golangapi/pkg/logger"
+	httpx "github.com/vadxq/go-rest-starter/internal/transport/httpx"
+	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
+	"github.com/vadxq/go-rest-starter/pkg/logger"
 )
 
 // ประเภทคีย์บริบท

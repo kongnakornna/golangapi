@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
-	"github.com/kongnakornna/golangapi/pkg/logger"
+	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
+	"github.com/vadxq/go-rest-starter/pkg/logger"
 )
 
 var log logger.Logger = logger.Default()

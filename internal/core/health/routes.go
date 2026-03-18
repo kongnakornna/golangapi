@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	healthhandler "github.com/kongnakornna/golangapi/internal/core/health/handler"
+	healthhandler "github.com/vadxq/go-rest-starter/internal/core/health/handler"
 )
 
 // RegisterRoutes registers health and utility endpoints.

@@ -14,9 +14,9 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	userdto "github.com/kongnakornna/golangapi/internal/core/user/dto"
-	"github.com/kongnakornna/golangapi/internal/core/user/model"
-	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
+	userdto "github.com/vadxq/go-rest-starter/internal/core/user/dto"
+	"github.com/vadxq/go-rest-starter/internal/core/user/model"
+	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
 )
 
 // MockUserRepository คือการจำลองการทำงานของ UserRepository

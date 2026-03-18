@@ -924,7 +924,7 @@ package entity
 
 import (
     "time"
-    "github.com/google/uuid"
+    "google/uuid"
 )
 
 type User struct {
@@ -947,7 +947,7 @@ package repository
 
 import (
     "context"
-    "github.com/google/uuid"
+    "google/uuid"
     "yourproject/internal/core/user/entity"
 )
 
@@ -970,7 +970,7 @@ import (
     "context"
     "errors"
     "time"
-    "github.com/google/uuid"
+    "google/uuid"
     "yourproject/internal/core/user/entity"
     "yourproject/internal/core/user/repository"
     "yourproject/pkg/utils"
@@ -1087,8 +1087,8 @@ package handler
 
 import (
     "net/http"
-    "github.com/gin-gonic/gin"
-    "github.com/google/uuid"
+    "gin-gonic/gin"
+    "google/uuid"
     "yourproject/internal/core/user/service"
     "yourproject/internal/transport/http/middleware"
 )
@@ -1232,7 +1232,7 @@ import (
     "syscall"
     "time"
 
-    "github.com/gin-gonic/gin"
+    "gin-gonic/gin"
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
     "yourproject/internal/core/user/entity"
@@ -1319,7 +1319,7 @@ package repository
 
 import (
     "context"
-    "github.com/google/uuid"
+    "google/uuid"
     "gorm.io/gorm"
     "yourproject/internal/core/user/entity"
 )
@@ -1837,7 +1837,7 @@ resource "aws_instance" "app" {
               yum install -y docker
               service docker start
               usermod -a -G docker ec2-user
-              curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              curl -L "https://docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
               chmod +x /usr/local/bin/docker-compose
               EOF
   tags = { Name = "app-server" }
@@ -2180,8 +2180,8 @@ package main
 
 import (
     "fmt"
-    mqtt "github.com/eclipse/paho.mqtt.golang"
-    "github.com/influxdata/influxdb-client-go/v2"
+    mqtt "eclipse/paho.mqtt.golang"
+    "influxdata/influxdb-client-go/v2"
     "log"
     "time"
 )
@@ -2250,8 +2250,8 @@ package main
 
 import (
     "fmt"
-    mqtt "github.com/eclipse/paho.mqtt.golang"
-    "github.com/influxdata/influxdb-client-go/v2"
+    mqtt "eclipse/paho.mqtt.golang"
+    "influxdata/influxdb-client-go/v2"
     "log"
     "time"
 )

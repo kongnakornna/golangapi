@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/kongnakornna/golangapi/internal/platform/config"
+	"github.com/vadxq/go-rest-starter/internal/platform/config"
 )
 
 // InitDB เริ่มต้นการเชื่อมต่อฐานข้อมูล

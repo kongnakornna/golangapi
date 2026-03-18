@@ -1,6 +1,6 @@
 package dto
 
-import userdto "github.com/kongnakornna/golangapi/internal/core/user/dto"
+import userdto "github.com/vadxq/go-rest-starter/internal/core/user/dto"
 
 // UserResponse ใช้โครงสร้างการตอบสนองผู้ใช้ซ้ำ
 type UserResponse = userdto.UserResponse
