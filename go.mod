@@ -5,9 +5,8 @@ go 1.25
 require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-chi/chi/v5 v5.2.1
-	github.com/redis/go-redis/v9 v10.26.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
-	"github.com/redis/go-redis/v9 v9.8.0
+	github.com/redis/go-redis/v9 v9.8.0
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
