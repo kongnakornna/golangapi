@@ -5,9 +5,9 @@ go 1.24
 require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-chi/chi/v5 v5.2.1
-	github.com/go-playground/validator/v10 v10.25.0 // เพิ่ม
+	github.com/go-playground/validator/v10 v10.25.0  
 	github.com/golang-jwt/jwt/v5 v5.2.2
-	github.com/redis/go-redis/v9 v9.8.0          // ใช้ v9.8.0 เพียงตัวเดียว
+	github.com/redis/go-redis/v9 v9.8.0           
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
@@ -18,8 +18,6 @@ require (
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.30.0
 )
-
-// indirect dependencies ด้านล่างไม่ต้องแก้ไข แต่เมื่อรัน go mod tidy จะปรับให้อัตโนมัติ
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
