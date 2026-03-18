@@ -2,10 +2,10 @@ package v1
 
 import (
 	"github.com/go-chi/chi/v5"
-	authmodule "github.com/vadxq/go-rest-starter/internal/core/auth"
-	usermodule "github.com/vadxq/go-rest-starter/internal/core/user"
-	custommiddleware "github.com/vadxq/go-rest-starter/internal/transport/middleware"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	authmodule "github.com/kongnakornna/golangapi/internal/core/auth"
+	usermodule "github.com/kongnakornna/golangapi/internal/core/user"
+	custommiddleware "github.com/kongnakornna/golangapi/internal/transport/middleware"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // SetupProtectedRoutes ตั้งค่าเส้นทางที่ได้รับการป้องกัน (ต้องมีการรับรองตัวตน)

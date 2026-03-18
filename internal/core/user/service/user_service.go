@@ -9,11 +9,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
-	userdto "github.com/vadxq/go-rest-starter/internal/core/user/dto"
-	"github.com/vadxq/go-rest-starter/internal/core/user/model"
-	userrepo "github.com/vadxq/go-rest-starter/internal/core/user/repository"
-	"github.com/vadxq/go-rest-starter/pkg/cache"
-	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
+	userdto "github.com/kongnakornna/golangapi/internal/core/user/dto"
+	"github.com/kongnakornna/golangapi/internal/core/user/model"
+	userrepo "github.com/kongnakornna/golangapi/internal/core/user/repository"
+	"github.com/kongnakornna/golangapi/pkg/cache"
+	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
 )
 
 const (

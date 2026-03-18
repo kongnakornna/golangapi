@@ -6,12 +6,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 
-	authservice "github.com/vadxq/go-rest-starter/internal/core/auth/service"
-	userservice "github.com/vadxq/go-rest-starter/internal/core/user/service"
-	"github.com/vadxq/go-rest-starter/internal/platform/config"
-	"github.com/vadxq/go-rest-starter/pkg/cache"
-	"github.com/vadxq/go-rest-starter/pkg/jwt"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	authservice "github.com/kongnakornna/golangapi/internal/core/auth/service"
+	userservice "github.com/kongnakornna/golangapi/internal/core/user/service"
+	"github.com/kongnakornna/golangapi/internal/platform/config"
+	"github.com/kongnakornna/golangapi/pkg/cache"
+	"github.com/kongnakornna/golangapi/pkg/jwt"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // Services ชุดของบริการทั้งหมด

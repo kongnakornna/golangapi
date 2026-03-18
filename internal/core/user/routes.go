@@ -3,8 +3,8 @@ package user
 import (
 	"github.com/go-chi/chi/v5"
 
-	userhandler "github.com/vadxq/go-rest-starter/internal/core/user/handler"
-	custommiddleware "github.com/vadxq/go-rest-starter/internal/transport/middleware"
+	userhandler "github.com/kongnakornna/golangapi/internal/core/user/handler"
+	custommiddleware "github.com/kongnakornna/golangapi/internal/transport/middleware"
 )
 
 // RegisterRoutes registers user endpoints under the current group.

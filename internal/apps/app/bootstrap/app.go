@@ -12,13 +12,13 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	"github.com/vadxq/go-rest-starter/internal/apps/app/bootstrap/injection"
-	api "github.com/vadxq/go-rest-starter/internal/apps/app/router"
-	"github.com/vadxq/go-rest-starter/internal/platform/config"
-	"github.com/vadxq/go-rest-starter/internal/platform/db"
-	httpx "github.com/vadxq/go-rest-starter/internal/transport/httpx"
-	"github.com/vadxq/go-rest-starter/pkg/cache"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	"github.com/kongnakornna/golangapi/internal/apps/app/bootstrap/injection"
+	api "github.com/kongnakornna/golangapi/internal/apps/app/router"
+	"github.com/kongnakornna/golangapi/internal/platform/config"
+	"github.com/kongnakornna/golangapi/internal/platform/db"
+	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
+	"github.com/kongnakornna/golangapi/pkg/cache"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // App โครงสร้างแอปพลิเคชัน

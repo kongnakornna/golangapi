@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/vadxq/go-rest-starter/internal/core/user/model"
-	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
+	"github.com/kongnakornna/golangapi/internal/core/user/model"
+	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
 )
 
 // UserRepository กำหนดอินเทอร์เฟซของคลังข้อมูลผู้ใช้
