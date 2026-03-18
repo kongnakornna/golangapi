@@ -64,6 +64,8 @@ func (s *authService) Login(ctx context.Context, req authdto.LoginRequest) (*aut
 		return nil, apperrors.UnauthorizedError("อีเมลหรือรหัสผ่านไม่ถูกต้อง", nil)
 	}
 
+	 
+
 	// Verify password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return nil, apperrors.UnauthorizedError("อีเมลหรือรหัสผ่านไม่ถูกต้อง", nil)
