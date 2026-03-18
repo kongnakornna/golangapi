@@ -93,6 +93,9 @@ git clone https://github.com/kongnakornna/golangapi.git
 cd golangapi
 
 # Install dependencies
+Setup 
+go mod tidy
+update
 go mod download
 
 # Copy and configure the config file

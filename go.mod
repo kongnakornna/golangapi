@@ -1,4 +1,4 @@
-module github.com/vadxq/golangapi
+module github.com/kongnakornna/golangapi
 
 go 1.25
 
