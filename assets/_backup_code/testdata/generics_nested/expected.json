@@ -56,7 +56,7 @@
                         }
                     },
                     "222": {
-                        "description": "",
+                        "description": ",
                         "schema": {
                             "$ref": "#/definitions/web.GenericNestedResponseMulti-web_GenericInnerType-types_Post-types_Post"
                         }
@@ -123,7 +123,7 @@
                         }
                     },
                     "222": {
-                        "description": "",
+                        "description": ",
                         "schema": {
                             "$ref": "#/definitions/web.GenericNestedResponseMulti-web_GenericInnerType-array_types_Post-array_types_Post"
                         }

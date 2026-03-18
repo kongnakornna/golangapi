@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
-	userrepo "github.com/vadxq/go-rest-starter/internal/core/user/repository"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	userrepo "github.com/kongnakornna/golangapi/internal/core/user/repository"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // Repositories คือชุดรวมของ repositories ทั้งหมด

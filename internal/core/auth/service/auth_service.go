@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
-	authdto "github.com/vadxq/go-rest-starter/internal/core/auth/dto"
-	userrepo "github.com/vadxq/go-rest-starter/internal/core/user/repository"
-	"github.com/vadxq/go-rest-starter/pkg/cache"
-	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
-	"github.com/vadxq/go-rest-starter/pkg/jwt"
+	authdto "github.com/kongnakornna/golangapi/internal/core/auth/dto"
+	userrepo "github.com/kongnakornna/golangapi/internal/core/user/repository"
+	"github.com/kongnakornna/golangapi/pkg/cache"
+	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
+	"github.com/kongnakornna/golangapi/pkg/jwt"
 )
 
 const (

@@ -116,7 +116,7 @@ OPTIONS:
    --tags value, -t value                 A comma-separated list of tags to filter the APIs for which the documentation is generated.Special case if the tag is prefixed with the '!' character then the APIs with that tag will be excluded
    --templateDelims value, --td value     Provide custom delimiters for Go template generation. The format is leftDelim,rightDelim. For example: "[[,]]"
    --collectionFormat value, --cf value   Set default collection format (default: "csv")
-   --state value                          Initial state for the state machine (default: ""), @HostState in root file, @State in other files
+   --state value                          Initial state for the state machine (default: "), @HostState in root file, @State in other files
    --parseFuncBody                        Parse API info within body of functions in go files, disabled by default (default: false)
    --help, -h                             show help (default: false)
 ```
@@ -193,8 +193,8 @@ func main() {
 		accounts := v1.Group("/accounts")
 		{
 			accounts.GET(":id", c.ShowAccount)
-			accounts.GET("", c.ListAccounts)
-			accounts.POST("", c.AddAccount)
+			accounts.GET(", c.ListAccounts)
+			accounts.POST(", c.AddAccount)
 			accounts.DELETE(":id", c.DeleteAccount)
 			accounts.PATCH(":id", c.UpdateAccount)
 			accounts.POST(":id/images", c.UploadAccountImage)

@@ -103,12 +103,12 @@
                             "B": "BBB"
                         },
                         "x-enum-descriptions": [
-                            "",
+                            ",
                             "AAA",
                             "BBB",
-                            "",
-                            "",
-                            ""
+                            ",
+                            ",
+                            "
                         ],
                         "x-enum-varnames": [
                             "None",
@@ -133,7 +133,7 @@
                             "Medium": "This one also has a comment"
                         },
                         "x-enum-descriptions": [
-                            "",
+                            ",
                             "This one also has a comment",
                             "This means really hard"
                         ],
@@ -157,7 +157,7 @@
                             "GenericMedium": "This one also has a comment"
                         },
                         "x-enum-descriptions": [
-                            "",
+                            ",
                             "This one also has a comment",
                             "This means really hard"
                         ],
@@ -189,7 +189,7 @@
                             "Mask2",
                             "Mask3",
                             "Mask4",
-                            ""
+                            "
                         ],
                         "x-enum-varnames": [
                             "Mask1",
@@ -218,7 +218,7 @@
                             "SuperSecret": "This one has a name override and a comment"
                         },
                         "x-enum-descriptions": [
-                            "",
+                            ",
                             "Name override and comment rules apply here just as above",
                             "This one has a name override and a comment"
                         ],
@@ -407,12 +407,12 @@
                 "B": "BBB"
             },
             "x-enum-descriptions": [
-                "",
+                ",
                 "AAA",
                 "BBB",
-                "",
-                "",
-                ""
+                ",
+                ",
+                "
             ],
             "x-enum-varnames": [
                 "None",
@@ -435,7 +435,7 @@
                 "Medium": "This one also has a comment"
             },
             "x-enum-descriptions": [
-                "",
+                ",
                 "This one also has a comment",
                 "This means really hard"
             ],
@@ -457,7 +457,7 @@
                 "GenericMedium": "This one also has a comment"
             },
             "x-enum-descriptions": [
-                "",
+                ",
                 "This one also has a comment",
                 "This means really hard"
             ],
@@ -487,7 +487,7 @@
                 "Mask2",
                 "Mask3",
                 "Mask4",
-                ""
+                "
             ],
             "x-enum-varnames": [
                 "Mask1",
@@ -538,7 +538,7 @@
                 "SuperSecret": "This one has a name override and a comment"
             },
             "x-enum-descriptions": [
-                "",
+                ",
                 "Name override and comment rules apply here just as above",
                 "This one has a name override and a comment"
             ],

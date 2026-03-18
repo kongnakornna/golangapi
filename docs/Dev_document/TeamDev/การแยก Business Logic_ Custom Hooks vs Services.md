@@ -504,7 +504,7 @@ const BookingForm = ({ onSuccess }) => {
         error={errors.serviceType}
         required
       >
-        <option value="">เลือกบริการ</option>
+        <option value=">เลือกบริการ</option>
         <option value="oil-change">เปลี่ยนถ่ายน้ำมันเครื่อง</option>
         <option value="general-maintenance">ตรวจเช็คทั่วไป</option>
         <option value="tire-change">เปลี่ยนยาง</option>
@@ -518,7 +518,7 @@ const BookingForm = ({ onSuccess }) => {
         error={errors.vehicleType}
         required
       >
-        <option value="">เลือกประเภทรถ</option>
+        <option value=">เลือกประเภทรถ</option>
         <option value="sedan">รถเก๋ง</option>
         <option value="suv">รถ SUV</option>
         <option value="truck">รถกระบะ</option>

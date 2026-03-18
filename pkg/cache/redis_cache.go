@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/github.com/redis/go-redis/v9"
+	""github.com/redis/go-redis/v9"
 )
 
 // การใช้งานแคช Redis

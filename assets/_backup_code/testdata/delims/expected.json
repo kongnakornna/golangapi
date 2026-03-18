@@ -8,8 +8,8 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "",
-    "basePath": "",
+    "host": ",
+    "basePath": ",
     "paths": {
         "/myfunc": {
             "get": {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
+	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
 )
 
 // DecodeJSON decodes JSON payload from request body.

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	httpx "github.com/vadxq/go-rest-starter/internal/transport/httpx"
-	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
-	jwtpkg "github.com/vadxq/go-rest-starter/pkg/jwt"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
+	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
+	jwtpkg "github.com/kongnakornna/golangapi/pkg/jwt"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // UserIDKey คีย์สำหรับเก็บ ID ผู้ใช้ในคอนเท็กซ์

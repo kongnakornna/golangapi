@@ -409,7 +409,7 @@ func AuthMiddleware(secret string) echo.MiddlewareFunc {
     return func(next echo.HandlerFunc) echo.HandlerFunc {
         return func(c echo.Context) error {
             authHeader := c.Request().Header.Get("Authorization")
-            if authHeader == "" {
+            if authHeader == " {
                 return echo.NewHTTPError(http.StatusUnauthorized, "missing token")
             }
             parts := strings.Split(authHeader, " ")

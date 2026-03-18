@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/github.com/redis/go-redis/v9"
+	""github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/vadxq/go-rest-starter/internal/platform/config"
+	"github.com/kongnakornna/golangapi/internal/platform/config"
 )
 
 // InitDB เริ่มต้นการเชื่อมต่อฐานข้อมูล

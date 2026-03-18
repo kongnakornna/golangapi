@@ -7,7 +7,7 @@ manually in the description comment in api/api.go.
 
 ```json
 {
-	"with": "escaped \"quotes\"",
+	"with": "escaped \"quotes\",
 	"indentedWith": "tabs",
 	"foo": "bar",
 	"baz": null

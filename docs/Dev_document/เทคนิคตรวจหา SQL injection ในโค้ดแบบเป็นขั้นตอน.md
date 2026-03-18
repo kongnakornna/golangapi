@@ -70,7 +70,7 @@ await connection.query('SELECT * FROM users WHERE name = $1', [req.body.name]);
 
 ```typescript
 // ❌ DANGER: TypeORM เวอร์ชันเก่า (ก่อน 0.3.0) มีช่องโหว่ถ้าส่ง req.body เข้าไปตรงๆ
-// User อาจส่ง { "id": 1, "password": { "$gt": "" } } เพื่อ bypass ได้
+// User อาจส่ง { "id": 1, "password": { "$gt": " } } เพื่อ bypass ได้
 userRepository.findOne(req.body); 
 ```
 

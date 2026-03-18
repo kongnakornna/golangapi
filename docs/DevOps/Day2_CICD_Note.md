@@ -454,10 +454,10 @@ pipeline {
         // ใช้ Docker ที่ติดตั้งบน Jenkins agent (ต้องติดตั้ง Docker plugin ก่อน) ใน Jenkins หรือ Docker ใน Docker
         stage('Build Docker Image') {
             steps {
-                sh """
+                sh ""
                     echo "Building Docker image: ${DOCKER_REPO}:${BUILD_NUMBER}"
                     docker build --target production -t ${DOCKER_REPO}:${BUILD_NUMBER} -t ${DOCKER_REPO}:latest .
-                """
+                ""
             }
         }
 
@@ -467,11 +467,11 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_HUB_CREDENTIALS_ID) {
-                        sh """
+                        sh ""
                             echo "Pushing Docker image: ${DOCKER_REPO}:${BUILD_NUMBER} and ${DOCKER_REPO}:latest"
                             docker push ${DOCKER_REPO}:${BUILD_NUMBER}
                             docker push ${DOCKER_REPO}:latest
-                        """
+                        ""
                     }
                 }
             }
@@ -484,13 +484,13 @@ pipeline {
         // และลบ cache ที่ไม่จำเป็นออกไป
         stage('Cleanup Docker') {
             steps {
-                sh """
+                sh ""
                     echo "Cleaning up local Docker images/cache on agent..."
                     docker image rm -f ${DOCKER_REPO}:${BUILD_NUMBER} || true
                     docker image rm -f ${DOCKER_REPO}:latest || true
                     docker image prune -af || true
                     docker builder prune -af || true
-                """
+                ""
             }
         }
 
@@ -500,14 +500,14 @@ pipeline {
         // สร้างและรัน container ใหม่จาก image ล่าสุด
         stage('Deploy Local') {
             steps {
-                sh """
+                sh ""
                     echo "Deploying container ${APP_NAME} from latest image..."
                     docker pull ${DOCKER_REPO}:latest
                     docker stop ${APP_NAME} || true
                     docker rm ${APP_NAME} || true
                     docker run -d --name ${APP_NAME} -p 3000:3000 ${DOCKER_REPO}:latest
                     docker ps --filter name=${APP_NAME} --format "table {{.Names}}\\t{{.Image}}\\t{{.Status}}"
-                """
+                ""
             }
         }
     }
@@ -1143,7 +1143,7 @@ pipeline {
             } 
             steps {
                 script {
-                    def deployCmd = """
+                    def deployCmd = ""
                         echo "Deploying container ${DEV_APP_NAME} from latest image..."
                         docker pull ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker stop ${DEV_APP_NAME} || true
@@ -1154,7 +1154,7 @@ pipeline {
                             -e ASPNETCORE_URLS=http://+:8080 \
                             ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker ps --filter name=${DEV_APP_NAME} --format "table {{.Names}}\\t{{.Image}}\\t{{.Status}}"
-                    """
+                    ""
                     sh deployCmd
                 }
             }
@@ -1186,7 +1186,7 @@ pipeline {
             } 
             steps {
                 script {
-                    def deployCmd = """
+                    def deployCmd = ""
                         echo "Deploying container ${PROD_APP_NAME} from latest image..."
                         docker pull ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker stop ${PROD_APP_NAME} || true
@@ -1197,7 +1197,7 @@ pipeline {
                             -e ASPNETCORE_URLS=http://+:8080 \
                             ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker ps --filter name=${PROD_APP_NAME} --format "table {{.Names}}\\t{{.Image}}\\t{{.Status}}"
-                    """
+                    ""
                     sh deployCmd
                 }
             }
@@ -1224,7 +1224,7 @@ pipeline {
                     
                     echo "ROLLING BACK ${params.ROLLBACK_TARGET.toUpperCase()} to image: ${imageToDeploy}"
                     
-                    def deployCmd = """
+                    def deployCmd = ""
                         docker pull ${imageToDeploy}
                         docker stop ${targetAppName} || true
                         docker rm ${targetAppName} || true
@@ -1233,7 +1233,7 @@ pipeline {
                             -e ASPNETCORE_ENVIRONMENT=${targetEnv} \
                             -e ASPNETCORE_URLS=http://+:8080 \
                             ${imageToDeploy}
-                    """
+                    ""
                     sh(deployCmd)
                 }
             }
@@ -1255,10 +1255,10 @@ pipeline {
                 if (params.ACTION == 'Build & Deploy') {
                     echo "Cleaning up Docker images on agent..."
                     try {
-                        sh """
+                        sh ""
                             docker image rm -f ${DOCKER_REPO}:${env.IMAGE_TAG} || true
                             docker image rm -f ${DOCKER_REPO}:latest || true
-                        """
+                        ""
                     } catch (err) {
                         echo "Could not clean up images, but continuing..."
                     }
@@ -2005,18 +2005,18 @@ pipeline {
             steps {
                 script {
                     // [MODIFIED] สร้าง command string
-                    def deployCmd = """
+                    def deployCmd = ""
                         echo 'Deploying container ${DEV_APP_NAME} on REMOTE server...'
                         docker pull ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker stop ${DEV_APP_NAME} || true
                         docker rm ${DEV_APP_NAME} || true
                         docker run -d --name ${DEV_APP_NAME} -p ${DEV_HOST_PORT}:3000 ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker ps --filter name=${DEV_APP_NAME} --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}'
-                    """
+                    ""
                     
                     // [MODIFIED] ใช้ sshagent ห่อ sh command
                     sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
-                        sh "ssh -o StrictHostKeyChecking=no ${env.REMOTE_USER}@${env.REMOTE_HOST_IP} \"${deployCmd}\""
+                        sh "ssh -o StrictHostKeyChecking=no ${env.REMOTE_USER}@${env.REMOTE_HOST_IP} \"${deployCmd}\"
                     }
                 }
             }
@@ -2049,18 +2049,18 @@ pipeline {
             steps {
                 script {
                     // [MODIFIED] สร้าง command string
-                    def deployCmd = """
+                    def deployCmd = ""
                         echo 'Deploying container ${PROD_APP_NAME} on REMOTE server...'
                         docker pull ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker stop ${PROD_APP_NAME} || true
                         docker rm ${PROD_APP_NAME} || true
                         docker run -d --name ${PROD_APP_NAME} -p ${PROD_HOST_PORT}:3000 ${DOCKER_REPO}:${env.IMAGE_TAG}
                         docker ps --filter name=${PROD_APP_NAME} --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}'
-                    """
+                    ""
                     
                     // [MODIFIED] ใช้ sshagent ห่อ sh command
                     sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
-                        sh "ssh -o StrictHostKeyChecking=no ${env.REMOTE_USER}@${env.REMOTE_HOST_IP} \"${deployCmd}\""
+                        sh "ssh -o StrictHostKeyChecking=no ${env.REMOTE_USER}@${env.REMOTE_HOST_IP} \"${deployCmd}\"
                     }
                 }
             }
@@ -2090,16 +2090,16 @@ pipeline {
                     echo "ROLLING BACK ${params.ROLLBACK_TARGET.toUpperCase()} on REMOTE server to image: ${imageToDeploy}"
                     
                     // [MODIFIED] สร้าง command string
-                    def deployCmd = """
+                    def deployCmd = ""
                         docker pull ${imageToDeploy}
                         docker stop ${targetAppName} || true
                         docker rm ${targetAppName} || true
                         docker run -d --name ${targetAppName} -p ${targetHostPort}:3000 ${imageToDeploy}
-                    """
+                    ""
 
                     // [MODIFIED] ใช้ sshagent ห่อ sh command
                     sshagent(credentials: [env.SSH_CREDENTIALS_ID]) {
-                        sh "ssh -o StrictHostKeyChecking=no ${env.REMOTE_USER}@${env.REMOTE_HOST_IP} \"${deployCmd}\""
+                        sh "ssh -o StrictHostKeyChecking=no ${env.REMOTE_USER}@${env.REMOTE_HOST_IP} \"${deployCmd}\"
                     }
                 }
             }
@@ -2123,10 +2123,10 @@ pipeline {
                 if (params.ACTION == 'Build & Deploy') {
                     echo "Cleaning up Docker images on agent..."
                     try {
-                        sh """
+                        sh ""
                             docker image rm -f ${DOCKER_REPO}:${env.IMAGE_TAG} || true
                             docker image rm -f ${DOCKER_REPO}:latest || true
-                        """
+                        ""
                     } catch (err) {
                         echo "Could not clean up images, but continuing..."
                     }

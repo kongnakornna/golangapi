@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -14,9 +14,9 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	userdto "github.com/vadxq/go-rest-starter/internal/core/user/dto"
-	"github.com/vadxq/go-rest-starter/internal/core/user/model"
-	apperrors "github.com/vadxq/go-rest-starter/pkg/errors"
+	userdto "github.com/kongnakornna/golangapi/internal/core/user/dto"
+	"github.com/kongnakornna/golangapi/internal/core/user/model"
+	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
 )
 
 // MockUserRepository คือการจำลองการทำงานของ UserRepository

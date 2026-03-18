@@ -434,7 +434,7 @@ kind: ClusterRole
 metadata:
   name: filebeat
 rules:
-- apiGroups: [""]
+- apiGroups: ["]
   resources:
   - namespaces
   - pods
@@ -1016,12 +1016,12 @@ echo "🔔 Applying Alert Rules..."
 kubectl apply -f infrastructure/kubernetes/monitoring/prometheus-rules.yaml
 
 # Get access information
-echo ""
+echo "
 echo "✅ Deployment Complete!"
-echo ""
+echo "
 echo "📊 Kibana: http://$(kubectl get svc kibana -n logging -o jsonpath='{.status.loadBalancer.ingress[^0].hostname}'):5601"
 echo "📈 Grafana: http://$(kubectl get svc prometheus-grafana -n monitoring -o jsonpath='{.status.loadBalancer.ingress[^0].hostname}')"
-echo ""
+echo "
 echo "🔐 Grafana Credentials:"
 echo "   Username: admin"
 echo "   Password: $(kubectl get secret -n monitoring prometheus-grafana -o jsonpath='{.data.admin-password}' | base64 -d)"

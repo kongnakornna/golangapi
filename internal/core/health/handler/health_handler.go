@@ -7,11 +7,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/github.com/redis/go-redis/v9"
+	""github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	httpx "github.com/vadxq/go-rest-starter/internal/transport/httpx"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // HealthHandler ตัวจัดการตรวจสอบสุขภาพระบบ

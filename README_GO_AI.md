@@ -662,7 +662,7 @@ func NewAuthMiddleware(jwtService jwt.JWTService) *AuthMiddleware {
 func (m *AuthMiddleware) RequireAuth() gin.HandlerFunc {
     return func(c *gin.Context) {
         token := extractToken(c)
-        if token == "" {
+        if token == " {
             httpx.RespondError(c, httpx.ErrUnauthorized("missing authorization token"))
             c.Abort()
             return
@@ -708,7 +708,7 @@ func (m *AuthMiddleware) RequireRole(roles ...string) gin.HandlerFunc {
 func extractToken(c *gin.Context) string {
     // Check Authorization header
     authHeader := c.GetHeader("Authorization")
-    if authHeader != "" {
+    if authHeader != " {
         parts := strings.Split(authHeader, " ")
         if len(parts) == 2 && strings.ToLower(parts[0]) == "bearer" {
             return parts[1]
@@ -721,7 +721,7 @@ func extractToken(c *gin.Context) string {
         return token
     }
     
-    return ""
+    return "
 }
 ```
 
@@ -1159,7 +1159,7 @@ func NewRedisQueue(client *redis.Client) Queue {
 }
 
 func (q *redisQueue) Push(ctx context.Context, queue string, job *Job) error {
-    if job.ID == "" {
+    if job.ID == " {
         job.ID = uuid.New().String()
     }
     if job.CreatedAt.IsZero() {
@@ -1619,7 +1619,7 @@ func main() {
         }
         
         // Protected routes
-        protected := v1.Group("")
+        protected := v1.Group(")
         protected.Use(authMiddleware.RequireAuth())
         {
             protected.POST("/auth/logout", authHandler.Logout)
@@ -1688,7 +1688,7 @@ database:
 
 redis:
   addr: localhost:6379
-  password: ""
+  password: "
   db: 0
   pool_size: 10
 
@@ -2090,7 +2090,7 @@ class DocumentService:
             chunk_size=1000,
             chunk_overlap=200,
             length_function=len,
-            separators=["\n\n", "\n", " ", ""]
+            separators=["\n\n", "\n", " ", "]
         )
     
     async def create_document(
@@ -2232,7 +2232,7 @@ class AgentService:
         ]
         
         # Create prompt
-        prompt = PromptTemplate.from_template("""
+        prompt = PromptTemplate.from_template(""
         You are a helpful AI assistant with access to various tools.
         Use the following tools to help answer the user's question:
         
@@ -2241,7 +2241,7 @@ class AgentService:
         Question: {input}
         
         Thought process: {agent_scratchpad}
-        """)
+        "")
         
         # Create agent
         agent = create_react_agent(
@@ -2259,7 +2259,7 @@ class AgentService:
         )
     
     async def _search_documents(self, query: str) -> str:
-        """Search through internal documents"""
+        ""Search through internal documents""
         results = await self.document_service.search_similar(
             query=query,
             limit=3
@@ -2278,7 +2278,7 @@ class AgentService:
         query: str,
         user_id: Optional[str] = None
     ) -> Dict[str, Any]:
-        """Run the agent with a query"""
+        ""Run the agent with a query""
         result = await self.agent_executor.arun(
             input=query,
             user_id=user_id
@@ -2362,7 +2362,7 @@ class ChromaStore:
         documents: List[Document],
         ids: Optional[List[str]] = None
     ) -> List[str]:
-        """Add documents to vector store"""
+        ""Add documents to vector store""
         return self.vectorstore.add_documents(
             documents=documents,
             ids=ids
@@ -2374,7 +2374,7 @@ class ChromaStore:
         k: int = 4,
         filter: Optional[Dict[str, Any]] = None
     ) -> List[tuple[Document, float]]:
-        """Search for similar documents"""
+        ""Search for similar documents""
         results = self.vectorstore.similarity_search_with_score(
             query=query,
             k=k,
@@ -2383,11 +2383,11 @@ class ChromaStore:
         return results
     
     async def delete_document(self, document_id: str) -> None:
-        """Delete document by ID"""
+        ""Delete document by ID""
         self.vectorstore.delete(filter={"document_id": document_id})
     
     async def get_collection_stats(self) -> Dict[str, Any]:
-        """Get collection statistics"""
+        ""Get collection statistics""
         collection = self.client.get_collection(
             self.vectorstore._collection.name
         )
@@ -2434,7 +2434,7 @@ class OpenAIService(LLMService):
         messages: List[BaseMessage],
         temperature: Optional[float] = None
     ) -> str:
-        """Generate response from messages"""
+        ""Generate response from messages""
         response = await self.chat_model.agenerate([messages])
         return response.generations[0][0].text
     
@@ -2447,7 +2447,7 @@ class OpenAIService(LLMService):
         prompt: str,
         max_tokens: Optional[int] = None
     ) -> str:
-        """Generate completion from prompt"""
+        ""Generate completion from prompt""
         response = await self.llm.agenerate([prompt])
         return response.generations[0][0].text
     
@@ -2455,16 +2455,16 @@ class OpenAIService(LLMService):
         self,
         messages: List[BaseMessage]
     ) -> Any:
-        """Stream response"""
+        ""Stream response""
         async for chunk in self.chat_model.astream(messages):
             yield chunk
     
     def get_llm(self):
-        """Get LangChain LLM instance"""
+        ""Get LangChain LLM instance""
         return self.chat_model
     
     def get_embeddings(self):
-        """Get embeddings model"""
+        ""Get embeddings model""
         from langchain.embeddings import OpenAIEmbeddings
         return OpenAIEmbeddings(
             openai_api_key=self.settings.OPENAI_API_KEY
@@ -2493,9 +2493,9 @@ async def chat(
     chat_service: ChatService = Depends(get_chat_service),
     user_id: Optional[UUID] = Depends(get_current_user)
 ):
-    """
+    ""
     Send a message to the chat
-    """
+    ""
     try:
         response = await chat_service.chat(
             request=request,
@@ -2520,9 +2520,9 @@ async def get_conversation(
     chat_service: ChatService = Depends(get_chat_service),
     user_id: UUID = Depends(get_current_user)
 ):
-    """
+    ""
     Get conversation history
-    """
+    ""
     messages = await chat_service.get_conversation_history(
         conversation_id=conversation_id
     )
@@ -2538,15 +2538,15 @@ async def delete_conversation(
     chat_service: ChatService = Depends(get_chat_service),
     user_id: UUID = Depends(get_current_user)
 ):
-    """
+    ""
     Delete a conversation
-    """
+    ""
     await chat_service.delete_conversation(conversation_id)
     return {"message": "Conversation deleted"}
 
 
 async def log_conversation(conversation_id: UUID, user_id: Optional[UUID]):
-    """Background task for logging"""
+    ""Background task for logging""
     # Implement logging logic
     pass
 ```
@@ -2568,7 +2568,7 @@ from app.infrastructure.cache.redis import redis_client
 
 
 def create_app() -> FastAPI:
-    """Application factory"""
+    ""Application factory""
     app = FastAPI(
         title="LangChain API",
         version=settings.VERSION,
@@ -2597,13 +2597,13 @@ def create_app() -> FastAPI:
     
     @app.on_event("startup")
     async def startup():
-        """Startup tasks"""
+        ""Startup tasks""
         await init_db()
         await redis_client.initialize()
     
     @app.on_event("shutdown")
     async def shutdown():
-        """Shutdown tasks"""
+        ""Shutdown tasks""
         await redis_client.close()
     
     return app
@@ -3321,7 +3321,7 @@ from app.infrastructure.vector_store.base import BaseVectorStore
 
 
 class QAChain:
-    """Template for QA chain with retrieval"""
+    ""Template for QA chain with retrieval""
     
     def __init__(
         self,
@@ -3340,7 +3340,7 @@ class QAChain:
         
         # Create prompt template
         self.prompt = PromptTemplate(
-            template="""
+            template=""
             Use the following pieces of context to answer the question at the end.
             If you don't know the answer, just say that you don't know, don't try to make up an answer.
             
@@ -3348,7 +3348,7 @@ class QAChain:
             
             Question: {question}
             
-            Answer: """,
+            Answer: "",
             input_variables=["context", "question"]
         )
         
@@ -3369,7 +3369,7 @@ class QAChain:
         query: str,
         callbacks: Optional[List[AsyncCallbackHandler]] = None
     ) -> Dict[str, Any]:
-        """Async invoke chain"""
+        ""Async invoke chain""
         result = await self.chain.ainvoke(
             {"query": query},
             callbacks=callbacks
@@ -3408,9 +3408,9 @@ async def create_entity(
     service: BaseService = Depends(get_service),
     user_id: UUID = Depends(get_current_user)
 ):
-    """
+    ""
     Create a new entity
-    """
+    ""
     try:
         entity = await service.create(request.dict())
         return EntityResponse.from_entity(entity)
@@ -3424,9 +3424,9 @@ async def get_entity(
     service: BaseService = Depends(get_service),
     user_id: UUID = Depends(get_current_user)
 ):
-    """
+    ""
     Get entity by ID
-    """
+    ""
     entity = await service.get_by_id(entity_id)
     if not entity:
         raise HTTPException(status_code=404, detail="Entity not found")
@@ -3442,9 +3442,9 @@ async def list_entities(
     service: BaseService = Depends(get_service),
     user_id: UUID = Depends(get_current_user)
 ):
-    """
+    ""
     List entities with pagination
-    """
+    ""
     filters = {}
     if search:
         filters["search"] = search
@@ -3471,9 +3471,9 @@ async def update_entity(
     user_id: UUID = Depends(get_current_user),
     _: bool = Depends(require_permissions(["admin"]))
 ):
-    """
+    ""
     Update entity (admin only)
-    """
+    ""
     entity = await service.update(
         entity_id,
         request.dict(exclude_unset=True)
@@ -3491,9 +3491,9 @@ async def delete_entity(
     user_id: UUID = Depends(get_current_user),
     _: bool = Depends(require_permissions(["admin"]))
 ):
-    """
+    ""
     Delete entity (admin only)
-    """
+    ""
     deleted = await service.delete(entity_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Entity not found")

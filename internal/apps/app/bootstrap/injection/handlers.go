@@ -5,10 +5,10 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	authhandler "github.com/vadxq/go-rest-starter/internal/core/auth/handler"
-	healthhandler "github.com/vadxq/go-rest-starter/internal/core/health/handler"
-	userhandler "github.com/vadxq/go-rest-starter/internal/core/user/handler"
-	"github.com/vadxq/go-rest-starter/pkg/logger"
+	authhandler "github.com/kongnakornna/golangapi/internal/core/auth/handler"
+	healthhandler "github.com/kongnakornna/golangapi/internal/core/health/handler"
+	userhandler "github.com/kongnakornna/golangapi/internal/core/user/handler"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // Handlers รวมตัวจัดการ HTTP ทั้งหมด

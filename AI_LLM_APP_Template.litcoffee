@@ -1257,7 +1257,7 @@ func main() {
     db.AutoMigrate(&entity.User{})
 
     // Redis
-    redisClient := cache.NewRedisClient("localhost:6379", "", 0)
+    redisClient := cache.NewRedisClient("localhost:6379", ", 0)
     cache := cache.NewRedisCache(redisClient)
 
     // Repositories

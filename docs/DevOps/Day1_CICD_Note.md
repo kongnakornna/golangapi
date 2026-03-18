@@ -1195,7 +1195,7 @@ npm init -y
 {
   "name": "express-docker-app",
   "version": "1.0.0",
-  "description": "",
+  "description": ",
   "main": "index.js",
   "scripts": {
     "start:ts": "ts-node src/app.ts",
@@ -1204,7 +1204,7 @@ npm init -y
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": ",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
@@ -1559,19 +1559,19 @@ pipeline {
                     def isWindows = isUnix() ? false : true
                     echo "Cleaning up local Docker images/cache on agent..."
                     if (isWindows) {
-                        bat """
+                        bat ""
                             docker image rm -f ${DOCKER_REPO}:${BUILD_NUMBER} || echo ignore
                             docker image rm -f ${DOCKER_REPO}:latest || echo ignore
                             docker image prune -af -f
                             docker builder prune -af -f
-                        """
+                        ""
                     } else {
-                        sh """
+                        sh ""
                             docker image rm -f ${DOCKER_REPO}:${BUILD_NUMBER} || true
                             docker image rm -f ${DOCKER_REPO}:latest || true
                             docker image prune -af -f
                             docker builder prune -af -f
-                        """
+                        ""
                     }
                 }
             }
@@ -1584,21 +1584,21 @@ pipeline {
                     def isWindows = isUnix() ? false : true
                     echo "Deploying container ${APP_NAME} from latest image..."
                     if (isWindows) {
-                        bat """
+                        bat ""
                             docker pull ${DOCKER_REPO}:latest
                             docker stop ${APP_NAME} || echo ignore
                             docker rm ${APP_NAME} || echo ignore
                             docker run -d --name ${APP_NAME} -p 3000:3000 ${DOCKER_REPO}:latest
                             docker ps --filter name=${APP_NAME} --format \"table {{.Names}}\t{{.Image}}\t{{.Status}}\"
-                        """
+                        ""
                     } else {
-                        sh """
+                        sh ""
                             docker pull ${DOCKER_REPO}:latest
                             docker stop ${APP_NAME} || true
                             docker rm ${APP_NAME} || true
                             docker run -d --name ${APP_NAME} -p 3000:3000 ${DOCKER_REPO}:latest
                             docker ps --filter name=${APP_NAME} --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
-                        """
+                        ""
                     }
                 }
             }

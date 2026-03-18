@@ -114,7 +114,7 @@ func getConfigPath() string {
 
 configPath := os.Getenv("APP2_CONFIG_PATH")
 
-if configPath == "" {
+if configPath == " {
 
 configPath = "configs/config.yaml"
 

@@ -108,7 +108,7 @@ func getEnv(key, fallback string) string {
 }
 
 func getEnvAsInt(key string, fallback int) int {
-	valStr := getEnv(key, "")
+	valStr := getEnv(key, ")
 	if val, err := strconv.Atoi(valStr); err == nil {
 		return val
 	}
@@ -345,15 +345,15 @@ func (s *AuthService) Register(ctx context.Context, username, password, email st
 func (s *AuthService) Login(ctx context.Context, username, password string) (string, error) {
 	user, err := s.userRepo.GetByUsername(ctx, username)
 	if err != nil {
-		return "", errors.New("invalid credentials")
+		return ", errors.New("invalid credentials")
 	}
 	if !utils.CheckPasswordHash(password, user.Password) {
-		return "", errors.New("invalid credentials")
+		return ", errors.New("invalid credentials")
 	}
 	// สร้าง JWT token
 	token, err := utils.GenerateJWT(user.ID, user.Role, s.jwtSecret, time.Duration(s.jwtExp)*time.Hour)
 	if err != nil {
-		return "", err
+		return ", err
 	}
 	return token, nil
 }
@@ -684,7 +684,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/redis/go-redis/v9"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -762,7 +762,7 @@ func main() {
 	api.GET("/items", itemHandler.List) // รายการไอเทม (public)
 
 	// Protected routes
-	userOnly := api.Group("")
+	userOnly := api.Group(")
 	userOnly.Use(middlewares.AuthMiddleware(cfg.JWTSecret))
 	userOnly.GET("/player/coins", playerHandler.GetCoins)
 	userOnly.POST("/player/buy", playerHandler.BuyItem)

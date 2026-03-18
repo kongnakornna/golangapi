@@ -38,7 +38,7 @@
                         }
                     },
                     "222": {
-                        "description": "",
+                        "description": ",
                         "schema": {
                             "$ref": "#/definitions/web.GenericListResponseMulti-types_Post-types_Post"
                         }
@@ -75,7 +75,7 @@
                         }
                     },
                     "222": {
-                        "description": "",
+                        "description": ",
                         "schema": {
                             "$ref": "#/definitions/web.GenericListResponseMulti-types_Post-types_Post"
                         }
@@ -112,7 +112,7 @@
                         }
                     },
                     "222": {
-                        "description": "",
+                        "description": ",
                         "schema": {
                             "$ref": "#/definitions/web.GenericListResponseMulti-types_Post-array_types_Post"
                         }

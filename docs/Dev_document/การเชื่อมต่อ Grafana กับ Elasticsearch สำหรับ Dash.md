@@ -725,7 +725,7 @@ curl -X GET "$ES_URL/car-service-*/_search?pretty" -H 'Content-Type: application
 '
 
 # Test Grafana API
-echo ""
+echo "
 echo "Testing Grafana API..."
 GRAFANA_URL="http://prometheus-grafana.monitoring.svc.cluster.local"
 GRAFANA_USER="admin"
@@ -734,7 +734,7 @@ GRAFANA_PASS=$(kubectl get secret -n monitoring prometheus-grafana -o jsonpath='
 # List data sources
 curl -u "$GRAFANA_USER:$GRAFANA_PASS" "$GRAFANA_URL/api/datasources"
 
-echo ""
+echo "
 echo "✅ Tests complete"
 ```
 

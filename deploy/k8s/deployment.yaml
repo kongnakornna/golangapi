@@ -111,4 +111,4 @@ type: Opaque
 data:
   db_username: cG9zdGdyZXM= # postgres (เข้ารหัส base64)
   db_password: cG9zdGdyZXM= # postgres (เข้ารหัส base64)
-  redis_password: "" # รหัสผ่านว่าง (เข้ารหัส base64)
+  redis_password: " # รหัสผ่านว่าง (เข้ารหัส base64)

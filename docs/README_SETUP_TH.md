@@ -98,7 +98,7 @@ APP_DB_CONN_MAX_LIFETIME=1h
 APP_REDIS_ENABLED=true
 APP_REDIS_HOST=localhost
 APP_REDIS_PORT=6379
-APP_REDIS_PASSWORD=""
+APP_REDIS_PASSWORD="
 APP_REDIS_DB=0
 
 # JWT Configuration
@@ -314,7 +314,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Go Project Layout](https://github.com/github.com/kongnakornna/golangapigoreststarterio) - Standard Go project structure
+- [Go Project Layout](https://"github.com/kongnakornna/golangapigoreststarterio) - Standard Go project structure
 - [Chi Router](https://github.com/go-chi/chi) - Lightweight HTTP router
 - [GORM](https://gorm.io/) - The fantastic ORM library for Golang
 
