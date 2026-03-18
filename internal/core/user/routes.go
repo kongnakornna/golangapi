@@ -31,8 +31,8 @@ func AdduserRoutes(r chi.Router, handler *userhandler.UserHandler) {
 		r.With(custommiddleware.RequireRole("admin")).Post("/", handler.CreateUser)
 
 		// Forgot password endpoints (public)
-		r.Post("/forgot-password", handler.ForgotPassword)
-		r.Post("/reset-password", handler.ResetPassword)
+		// r.Post("/forgot-password", handler.ForgotPassword)
+		// r.Post("/reset-password", handler.ResetPassword)
 
 		// Resource
 		r.Route("/{id}", func(r chi.Router) {
