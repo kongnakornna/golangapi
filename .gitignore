@@ -22,8 +22,8 @@ go.work
 go.work.sum
 
 # env file
-# .env
-# *.local
+ .env
+*.local
 
 .cursorrules
 .cursor
