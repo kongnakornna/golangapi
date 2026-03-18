@@ -5,13 +5,14 @@ go 1.25.0
 require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/go-chi/chi/v5 v5.2.1
-	github.com/go-playground/validator/v10 v10.25.0
+	github.com/go-playground/validator/v10 v10.26.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/redis/go-redis/v9 v9.8.0
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
-	github.com/swaggo/swag v1.16.4
+	github.com/swaggo/swag v1.16.6
+	github.com/vadxq/go-rest-starter v0.0.0-20260123095829-2a96dc76bd8d
 	golang.org/x/crypto v0.48.0
 	golang.org/x/time v0.12.0
 	gorm.io/driver/postgres v1.5.11
@@ -54,6 +55,7 @@ require (
 	github.com/swaggo/files/v2 v2.0.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
+	golang.org/x/mod v0.33.0 // indirect
 	golang.org/x/net v0.50.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect

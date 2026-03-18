@@ -91,23 +91,22 @@ See `docs/README.md` for architecture, development, maintenance, and deployment 
 # Clone the repository
 git clone https://github.com/kongnakornna/golangapi
 cd golangapi
-
 go clean -modcache
 rm go.sum
 
 # Install dependencies
 Setup 
-
-
 go mod tidy
-
 # Copy and configure the config file
 cp configs/config.example.yaml configs/config.yaml
 # Edit configs/config.yaml with your database and Redis settings
+
+# Swagger Documentation 
+
+swag init
+
 ```
-
 ### Development Mode
-
 ```bash
 # Run development server (with auto-reload)
 ./scripts/dev.sh
