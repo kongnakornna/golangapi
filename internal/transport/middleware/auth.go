@@ -48,7 +48,7 @@ func JWTAuth(config *JWTConfig, log logger.Logger) func(http.Handler) http.Handl
 
 			// ดึงโทเคนจากส่วนหัวคำขอ
 			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
+			if authHeader == " {
 				renderUnauthorized(w, r, "ไม่มีโทเคนยืนยันตัวตน")
 				return
 			}

@@ -95,6 +95,9 @@ cd golangapi
 # Install dependencies
 Setup 
 
+go clean -modcache
+rm go.sum
+go mod tidy
 
 # Copy and configure the config file
 cp configs/config.example.yaml configs/config.yaml

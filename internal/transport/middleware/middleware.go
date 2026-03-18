@@ -66,7 +66,7 @@ func RequestContext(next http.Handler) http.Handler {
 		}
 
 		// หากไม่มี ID คำขอ ให้สร้างใหม่
-		if reqCtx.RequestID == "" {
+		if reqCtx.RequestID == " {
 			reqCtx.RequestID = middleware.GetReqID(r.Context())
 		}
 
@@ -74,7 +74,7 @@ func RequestContext(next http.Handler) http.Handler {
 		reqCtx.TraceID = reqCtx.RequestID
 
 		// หากไม่มี IP ไคลเอ็นต์ ให้ใช้ RemoteAddr
-		if reqCtx.ClientIP == "" {
+		if reqCtx.ClientIP == " {
 			reqCtx.ClientIP = r.RemoteAddr
 		}
 
@@ -176,7 +176,7 @@ func RecoveryMiddleware(next http.Handler) http.Handler {
 
 			// สร้างข้อความแสดงข้อผิดพลาด
 			message := "ข้อผิดพลาดภายในเซิร์ฟเวอร์"
-			if reqCtx != nil && reqCtx.TraceID != "" {
+			if reqCtx != nil && reqCtx.TraceID != " {
 				message = "ข้อผิดพลาดภายในเซิร์ฟเวอร์ โปรดลองอีกครั้งในภายหลัง"
 			}
 

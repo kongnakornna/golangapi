@@ -133,7 +133,7 @@ func SecureRedirectMiddleware(next http.Handler) http.Handler {
 
 		// สร้าง URL HTTPS
 		target := "https://" + r.Host + r.URL.Path
-		if r.URL.RawQuery != "" {
+		if r.URL.RawQuery != " {
 			target += "?" + r.URL.RawQuery
 		}
 

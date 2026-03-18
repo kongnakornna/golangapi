@@ -100,7 +100,7 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
     // ดึงโทเค็นการเข้าถึงจากส่วนหัว Authorization
     authHeader := r.Header.Get("Authorization")
-    if authHeader == "" {
+    if authHeader == " {
         httpx.Error(w, r, apperrors.UnauthorizedError("ไม่มีโทเค็นอนุญาต", nil))
         return
     }

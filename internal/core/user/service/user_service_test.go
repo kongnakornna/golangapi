@@ -205,7 +205,7 @@ func TestUserService_CreateUser(t *testing.T) {
 		service3 := NewUserService(mockRepo3, validator, db, mockCache)
 
 		invalidInput := userdto.CreateUserInput{
-			Name:     "", // ชื่อว่างควรจะไม่ผ่าน
+			Name:     ", // ชื่อว่างควรจะไม่ผ่าน
 			Email:    "อีเมลไม่ถูกต้อง",
 			Password: "123", // รหัสผ่านสั้นเกินไป
 		}

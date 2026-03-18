@@ -5,13 +5,13 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/github.com/go-playground/validator/v10"
+	"github.com/redis/go-redis/v9"
 
-	userdto "github.com/github.com/kongnakornna/golangapigolangapi/internal/core/user/dto"
-	userservice "github.com/github.com/kongnakornna/golangapigolangapi/internal/core/user/service"
-	httpx "github.com/github.com/kongnakornna/golangapigolangapi/internal/transport/httpx"
-	apperrors "github.com/github.com/kongnakornna/golangapigolangapi/pkg/errors"
-	"github.com/github.com/kongnakornna/golangapigolangapi/pkg/logger"
+	userdto "github.com/kongnakornna/golangapi/internal/core/user/dto"
+	userservice "github.com/kongnakornna/golangapi/internal/core/user/service"
+	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"
+	apperrors "github.com/kongnakornna/golangapi/pkg/errors"
+	"github.com/kongnakornna/golangapi/pkg/logger"
 )
 
 // UserHandler จัดการคำขอ HTTP ที่เกี่ยวข้องกับผู้ใช้
@@ -43,7 +43,7 @@ func NewUserHandler(us userservice.UserService, log logger.Logger, v *validator.
 // @Security BearerAuth
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
-	if userID == "" {
+	if userID == " {
 		httpx.Error(w, r, apperrors.BadRequestError("ขาดพารามิเตอร์ ID", nil))
 		return
 	}
@@ -121,7 +121,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Security BearerAuth
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
-	if userID == "" {
+	if userID == " {
 		httpx.Error(w, r, apperrors.BadRequestError("ขาดพารามิเตอร์ ID", nil))
 		return
 	}
@@ -164,7 +164,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 // @Security BearerAuth
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
-	if userID == "" {
+	if userID == " {
 		httpx.Error(w, r, apperrors.BadRequestError("ขาดพารามิเตอร์ ID", nil))
 		return
 	}
@@ -198,14 +198,14 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	page := 1
 	pageSize := 10
 
-	if pageStr != "" {
+	if pageStr != " {
 		pageVal, err := strconv.Atoi(pageStr)
 		if err == nil && pageVal > 0 {
 			page = pageVal
 		}
 	}
 
-	if pageSizeStr != "" {
+	if pageSizeStr != " {
 		pageSizeVal, err := strconv.Atoi(pageSizeStr)
 		if err == nil && pageSizeVal > 0 {
 			pageSize = pageSizeVal

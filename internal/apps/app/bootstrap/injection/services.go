@@ -1,7 +1,7 @@
 package injection
 
 import (
-	"github.com/go-playground/validator/v10"
+	"go-playground/validator/v10"
 	"os"
 
 	"gorm.io/gorm"
@@ -73,7 +73,7 @@ func InitServices(
 // createJWTConfig สร้างการกำหนดค่า JWT จากการกำหนดค่าแอปพลิเคชัน
 // นี่คือฟังก์ชันช่วยเหลือ สำหรับสร้างการกำหนดค่าที่จำเป็นสำหรับบริการ JWT
 func createJWTConfig(config *config.AppConfig, log logger.Logger) *jwt.Config {
-	if config.JWT.Secret == "" {
+	if config.JWT.Secret == " {
 		log.Warn("คีย์ลับ JWT ว่างเปล่า ซึ่งอาจทำให้เกิดปัญหาด้านความปลอดภัย")
 	}
 

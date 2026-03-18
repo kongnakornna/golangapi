@@ -130,7 +130,7 @@ func writeRateLimitResponse(w http.ResponseWriter) {
 // getClientIP ดึง IP จริงของไคลเอนต์
 func getClientIP(r *http.Request) string {
 	// ตรวจสอบหัว X-Forwarded-For
-	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+	if xff := r.Header.Get("X-Forwarded-For"); xff != " {
 		// ใช้เฉพาะ IP แรก
 		if idx := len(xff); idx > 0 {
 			return xff[:idx]
@@ -138,12 +138,12 @@ func getClientIP(r *http.Request) string {
 	}
 
 	// ตรวจสอบหัว X-Real-IP
-	if xri := r.Header.Get("X-Real-IP"); xri != "" {
+	if xri := r.Header.Get("X-Real-IP"); xri != " {
 		return xri
 	}
 
 	// ตรวจสอบ X-Forwarded-For อีกครั้ง (กรณีไม่มีการตัด)
-	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+	if xff := r.Header.Get("X-Forwarded-For"); xff != " {
 		return xff
 	}
 

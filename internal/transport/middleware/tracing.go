@@ -14,38 +14,38 @@ func TracingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get or generate request ID
 		requestID := r.Header.Get("X-Request-ID")
-		if requestID == "" {
+		if requestID == " {
 			requestID = middleware.GetReqID(r.Context())
-			if requestID == "" {
+			if requestID == " {
 				requestID = fmt.Sprintf("%d", middleware.NextRequestID())
 			}
 		}
 
 		// Get or generate trace ID
 		traceID := r.Header.Get("X-Trace-ID")
-		if traceID == "" {
+		if traceID == " {
 			traceID = r.Header.Get("X-B3-TraceId") // Support Zipkin B3 format
-			if traceID == "" {
+			if traceID == " {
 				traceID = requestID // If no trace ID, use request ID
 			}
 		}
 
 		// Get span ID (if exists)
 		spanID := r.Header.Get("X-Span-ID")
-		if spanID == "" {
+		if spanID == " {
 			spanID = r.Header.Get("X-B3-SpanId") // Support Zipkin B3 format
 		}
 
 		// Get parent span ID (if exists)
 		parentSpanID := r.Header.Get("X-Parent-Span-ID")
-		if parentSpanID == "" {
+		if parentSpanID == " {
 			parentSpanID = r.Header.Get("X-B3-ParentSpanId") // Support Zipkin B3 format
 		}
 
 		// Set response headers
 		w.Header().Set("X-Request-ID", requestID)
 		w.Header().Set("X-Trace-ID", traceID)
-		if spanID != "" {
+		if spanID != " {
 			w.Header().Set("X-Span-ID", spanID)
 		}
 
@@ -88,7 +88,7 @@ func getStringFromContext(ctx context.Context, key string) string {
 			return str
 		}
 	}
-	return ""
+	return "
 }
 
 // RequestContextMiddleware request context middleware

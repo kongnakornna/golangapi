@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	""github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
 	httpx "github.com/kongnakornna/golangapi/internal/transport/httpx"

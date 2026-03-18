@@ -50,7 +50,7 @@ type Options struct {
 
 // NewCache สร้างอินสแตนซ์แคช (รองรับเฉพาะ Redis)
 func NewCache(opts Options) (Cache, error) {
-	if opts.RedisAddress == "" {
+	if opts.RedisAddress == " {
 		return nil, errors.New("ไม่ได้กำหนดที่อยู่ Redis เนื่องจากบริการแคชต้องใช้ Redis")
 	}
 	return newRedisCache(opts)
