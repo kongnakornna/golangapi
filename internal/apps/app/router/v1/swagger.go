@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	_ "github.com/kongnakornna/golangapi/docs" // important!
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
