@@ -1541,7 +1541,7 @@ curl -X POST http://localhost:5000/api/v1/login \
   - **RSA JWT** ช่วยให้ฝั่ง mobile ตรวจสอบ token ได้เอง (ถ้ามี public key)  
   - **Rate limiter** (Redis sliding window) ป้องกัน brute force  
 - **ผลลัพธ์**:
-  - รองรับ user 200,000 คน, 并发 5,000 req/s  
+  - รองรับ user 200,000 คน,5,000 req/s  
   - Developer onboarding ลดลง 60% เพราะโครงสร้างมาตรฐาน  
   - สามารถ deploy แบบ containerized บน Kubernetes ได้ง่าย  
 
@@ -1554,7 +1554,7 @@ curl -X POST http://localhost:5000/api/v1/login \
 - **Stateless JWT + Redis** – scale แนวนอนได้, ไม่ต้อง sticky session  
 - **Async email** – API response เร็ว, ไม่ติด I/O  
 - **Hot‑reload (Air)** – เพิ่ม productivity ใน development  
-- **Docker Compose** – dev environment 一致, ลด “มันทำงานบนเครื่องฉัน”  
+- **Docker Compose** – dev environment, ลด “มันทำงานบนเครื่องฉัน”  
 
 ### ⚠️ ข้อควรระวัง
 - **RSA private key** ต้องเก็บให้ปลอดภัย (ใช้ Vault หรือ K8s secret)  
@@ -2101,12 +2101,3 @@ go test ./...
 air
 ./air.cmd
 .\run.ps1 -All
-
-
-
-
-
-
-อ่าน  C:\github\icmongolang\docs\Modules_PDPA.md  มีทำไปแล้วทำต่อส่วนที่ขาด
-
-
