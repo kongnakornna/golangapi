@@ -1,0 +1,5 @@
+{
+    "snyk.advanced.autoSelectOrganization": true,
+    "localaipilot.standalone.ollamaModel": "qwen3.6:latest",
+    "aiderAgent.provider": "local"
+}

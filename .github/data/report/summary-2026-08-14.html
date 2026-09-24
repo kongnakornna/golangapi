@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รายงานสรุป — vectordata / elasticsearch / report module</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --ink: #1f2430;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --brand: #2563eb;
+    --ok: #16a34a;
+    --warn: #d97706;
+    --code-bg: #0f172a;
+    --code-ink: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", "Noto Sans Thai", -apple-system, Roboto, Arial, sans-serif;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 64px; }
+  header.hero {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: #fff;
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  header.hero h1 { margin: 0 0 6px; font-size: 26px; }
+  header.hero .meta { opacity: .85; font-size: 14px; }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.35);
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    margin-right: 8px;
+  }
+  h2 {
+    font-size: 20px;
+    margin: 36px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--line);
+  }
+  h3 { font-size: 16px; margin: 20px 0 8px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+  }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #f1f5f9; font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  .ok { color: var(--ok); font-weight: 600; white-space: nowrap; }
+  .warn { color: var(--warn); font-weight: 600; }
+  .tag {
+    display: inline-block; padding: 1px 8px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; vertical-align: middle;
+  }
+  .tag.ok { background: #dcfce7; color: #15803d; }
+  .tag.major { background: #fef3c7; color: #b45309; }
+  .tag.nit { background: #e0e7ff; color: #4338ca; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    padding: 16px 18px; border-radius: 10px; overflow-x: auto;
+    font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13px;
+  }
+  code { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 13px; }
+  pre code { color: var(--code-ink); }
+  .inline { background: #eef2ff; color: #3730a3; padding: 1px 6px; border-radius: 5px; }
+  ul { margin: 8px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .stat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 20px; text-align: center;
+  }
+  .stat .num { font-size: 30px; font-weight: 700; color: var(--brand); }
+  .stat .lbl { font-size: 13px; color: var(--muted); }
+  footer { margin-top: 40px; color: var(--muted); font-size: 13px; text-align: center; }
+  .muted { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>รายงานสรุป — vectordata / elasticsearch / report module</h1>
+  <div class="meta">
+    <span class="badge">วันที่: 2026-08-14</span>
+    <span class="badge">สถานะ: เสร็จสิ้น 100%</span>
+    <span class="badge">build / vet / test / live verify ผ่าน</span>
+  </div>
+</header>
+
+<div class="cols">
+  <div class="stat"><div class="num">3</div><div class="lbl">ชุด Unit tests ผ่าน</div></div>
+  <div class="stat"><div class="num">3</div><div class="lbl">elasticsearch MAJOR แก้แล้ว</div></div>
+  <div class="stat"><div class="num">2</div><div class="lbl">รายงาน PDF live verify</div></div>
+  <div class="stat"><div class="num">5</div><div class="lbl">งานหลักเสร็จ</div></div>
+</div>
+
+<h2>1. งานที่ทำทั้งหมด</h2>
+<div class="card">
+<table>
+  <tr><th style="width:200px">หัวข้อ</th><th>รายละเอียด</th><th style="width:70px">สถานะ</th></tr>
+  <tr><td>vectordata BLOCKER-1</td><td>Verify ฝั่ง Elasticsearch: seed ไปที่ index ที่ตั้งค่าไว้ (<span class="inline">vector_documents_test</span>) ไม่ใช่ <span class="inline">vector_embeddings</span>; idempotent; metadata ครบ</td><td><span class="tag ok">เสร็จ</span></td></tr>
+  <tr><td>vectordata ES sort bug</td><td>ES 8 ห้าม sort บน <span class="inline">_id</span> → เปลี่ยนเป็น sort ด้วย <span class="inline">document_id</span></td><td><span class="tag ok">เสร็จ</span></td></tr>
+  <tr><td>Unit tests</td><td><span class="inline">pkg/vectordb</span>, <span class="inline">pkg/elasticsearch</span>, <span class="inline">vectordata/usecase</span> (รวม 3 ไฟล์)</td><td><span class="tag ok">ผ่าน</span></td></tr>
+  <tr><td>elasticsearch MAJOR 1–3</td><td>k-clamp ≤100, nil-llm guard ใน CreateIndex, embed ก่อนแล้ว EnsureIndex(len(embedding))</td><td><span class="tag ok">เสร็จ</span></td></tr>
+  <tr><td>report module</td><td>wire เข้า server ตัวจริง + data จริง (customer-list, invoice-from-quotation) + go:embed templates + Chrome ใน Docker</td><td><span class="tag ok">เสร็จ</span></td></tr>
+  <tr><td>Docs</td><td>README_VectorData §3.2, scrutinize-elasticsearch.md, scrutinize-report.md, PROJECT_CHECKLIST.md</td><td><span class="tag ok">เสร็จ</span></td></tr>
+</table>
+</div>
+
+<h2>2. รายละเอียดการแก้ไข</h2>
+
+<h3>2.1 vectordata / elasticsearch</h3>
+<div class="card">
+<ul>
+  <li><b>BLOCKER-1 (ES ใช้ index ที่ตั้งค่าไว้):</b> run CLI seed ด้วย
+    <span class="inline">VECTOR_DB_PROVIDER=elasticsearch VECTOR_DB_INDEX=vector_documents_test</span>
+    → พบ doc 5 รายการใน <span class="inline">vector_documents_test</span>, รอบสอง seed 0 (idempotent),
+    <span class="inline">vector_embeddings</span> ไม่ถูกแตะ, metadata อยู่ใน ES mapping + doc</li>
+  <li><b>บั๊กใหม่ที่เจอระหว่าง verify:</b> ES 8 ปฏิเสธการ sort ด้วย <span class="inline">_id</span>
+    (<span class="inline">indices.id_field_data.enabled</span>) → <span class="inline">List</span> เปลี่ยนเป็น
+    <span class="inline">{"document_id": "asc"}</span> (keyword sort ตรง ๆ ไม่ใช้ <span class="inline">.keyword</span>)</li>
+  <li><b>elasticsearch MAJOR ทั้ง 3 (ผู้ใช้ตอบ "fix all 3"):</b>
+    <ul>
+      <li>MAJOR-1: <span class="inline">SearchVector</span> clamp <span class="inline">k</span> ∈ [1,100]</li>
+      <li>MAJOR-2: <span class="inline">CreateIndex</span> คืน error แทน panic เมื่อ <span class="inline">llm == nil</span></li>
+      <li>MAJOR-3: <span class="inline">EmbedAndIndex</span> embed ก่อน แล้ว <span class="inline">EnsureIndex(len(embedding))</span>
+        — แก้ปัญหา dims 1536 (default) vs 768 (nomic-embed-text) ที่ baked ลง mapping ถาวร</li>
+    </ul></li>
+</ul>
+</div>
+
+<h3>2.2 Unit tests ที่เพิ่ม</h3>
+<div class="card">
+<ul>
+  <li><span class="inline">pkg/vectordb/vectordb_test.go</span> — VecToString, isNumericID, provider selection</li>
+  <li><span class="inline">pkg/elasticsearch/client_test.go</span> — fake ES server (httptest): Index/Get round trip,
+    Get NotFound, Update partial-body + 404→ErrNotFound, Delete 404, List/Search metadata,
+    WithIndex isolation, EnsureIndex already-exists (ต้องใช้ dummyLogger เพราะ nil logger panic)</li>
+  <li><span class="inline">internal/modules/vectordata/usecase/usecase_test.go</span> — fakeVDB + fake LLM:
+    Create embedding-only ข้าม LLM, Create content-only generate embedding, Update metadata-only
+    ไม่ regenerate embedding, Update content-only regenerate, Update NotFound, Search k cap 100 /
+    default 10, Seed idempotent</li>
+</ul>
+<p class="muted">หมายเหตุ: vendor มีเฉพาะ testify <span class="inline">assert</span> + <span class="inline">mock</span> (ไม่มี <span class="inline">require</span>) → เทสต์ใช้ <span class="inline">assert</span> + early return</p>
+</div>
+
+<h3>2.3 report module wiring (ผู้ใช้ตอบ "1+2+3")</h3>
+<div class="card">
+<table>
+  <tr><th style="width:230px">งาน</th><th>รายละเอียด</th></tr>
+  <tr><td><span class="inline">pkg/report/generator.go</span></td>
+    <td><span class="inline">//go:embed templates/*.html</span> + <span class="inline">template.ParseFS</span> root เป็น <span class="inline">base.html</span>
+    (แต่ละ doc override <span class="inline">{{define "content"}}</span>); แก้ fileURL bug (ใช้ <span class="inline">url.URL</span> escaped form)</td></tr>
+  <tr><td>quotation repo/usecase</td><td>เพิ่ม <span class="inline">GetQuotationParts</span> / <span class="inline">GetQuotationServices</span></td></tr>
+  <tr><td><span class="inline">report/usecase/usecase.go</span> (ใหม่)</td><td><span class="inline">BuildInvoice(ctx, quotationID)</span> ดึง quotation + parts + services + customer → <span class="inline">report.InvoiceData</span></td></tr>
+  <tr><td><span class="inline">report/company.go</span> (ใหม่)</td><td>รวม CompanyInfo ไว้ที่เดียว (handler + usecase ใช้ร่วมกัน)</td></tr>
+  <tr><td>report handlers</td><td><span class="inline">CustomerListPDF</span> ใช้ <span class="inline">GetMultiByUserID</span> จริง; <span class="inline">InvoicePDF</span> รับ <span class="inline">?source=&lt;uuid&gt;</span>;
+    อีก 4 ตัว (daily-sales/inventory/credit/debit) เป็น placeholder + TODO; date ผิดรูปแบบ → 400</td></tr>
+  <tr><td><span class="inline">routes.go</span></td><td><span class="inline">*chi.Mux</span> → <span class="inline">chi.Router</span> (mount บน root <span class="inline">r</span> ได้)</td></tr>
+  <tr><td><span class="inline">internal/server/handlers.go</span></td><td>wire <span class="inline">MapReportRoute(r, ...)</span> + <span class="inline">CreateReportHandler(cfg, logger, customerUC, reportUC)</span></td></tr>
+  <tr><td><span class="inline">internal/delivery/rest/router.go</span></td><td>อัปเดต call site legacy ให้ compile ผ่าน</td></tr>
+  <tr><td><span class="inline">Dockerfile.dev</span></td><td>เพิ่ม <span class="inline">chromium</span> + <span class="inline">fontconfig</span> + <span class="inline">font-noto-thai</span> + <span class="inline">font-noto-cjk</span> + <span class="inline">ttf-freefont</span> (Thai PDF ต้องมีฟอนต์)</td></tr>
+</table>
+</div>
+
+<h2>3. การทดสอบ</h2>
+
+<h3>3.1 Unit tests (ทุกตัวผ่าน)</h3>
+<div class="card">
+<pre><code>ok  icmongolang/pkg/vectordb
+ok  icmongolang/pkg/elasticsearch
+ok  icmongolang/internal/modules/vectordata/usecase</code></pre>
+</div>
+
+<h3>3.2 Build / Vet / Gofmt</h3>
+<div class="card">
+<ul>
+  <li><span class="inline">go build ./...</span> ✅</li>
+  <li><span class="inline">go vet</span> (report, quotation, pkg/report, server, elasticsearch) ✅</li>
+  <li><span class="inline">gofmt</span> ไฟล์ที่แก้ ✅</li>
+</ul>
+</div>
+
+<h3>3.3 Live test (ผ่านจริงทั้ง 2 รายงาน)</h3>
+<div class="card">
+<p class="muted">Steps: 1) <span class="inline">docker compose build api</span> (ติดตั้ง Chromium) + restart &nbsp; 2) login → customer-list PDF (31 KB) &nbsp; 3) invoice PDF (90 KB) &nbsp; 4) ตรวจด้วย pypdf text extraction</p>
+
+<p><b>Invoice (จาก quotation):</b></p>
+<pre><code>ICMON Auto Repair / 123/4 ถนนสุขุมวิท ...
+เลขที่ : QT-2026-0001 | วันที : 10/08/2026 | ครบกำหนด : 09/09/2026
+สถานะ : CONVERTED
+1 ผ้าเบรกหน้าแท้          2 x 4500.00  =   9000.00
+2 กรองอากาศ               4 x 1250.00  =   5000.00
+3 เปลี่ยนชุดลูกปืนล้อหน้า  1 x 15000.00 =  15000.00
+รวมราคา 28000.00 | ภาษี 7% 1960.00 | ยอดสุทธิ 29960.00</code></pre>
+
+<p><b>Customer list:</b></p>
+<pre><code>1 CUST-2026-0001 คุณสมชาย  081-234-5678 somchai@example.com 12500.00 ACTIVE
+2 CUST-2026-0000 วิภา ศรีสุข 082-345-6789 wipa@example.com    4800.00 ACTIVE</code></pre>
+</div>
+
+<h3>3.4 ปัญหาที่พบ + แก้ระหว่าง live test</h3>
+<div class="card">
+<ul>
+  <li><b>"template is incomplete or empty":</b> <span class="inline">template.New(name)</span> + ParseFS ทำให้ root template ว่าง
+    → เปลี่ยนเป็น root <span class="inline">base.html</span> แล้ว render ผ่าน block <span class="inline">content</span></li>
+  <li><b><span class="inline">m_customer</span>/<span class="inline">t_quotation</span> ไม่มีใน DB:</b> <span class="inline">migrate</span> command
+    AutoMigrate เฉพาะรายการที่ลิสต์ไว้ → ต้อง apply <span class="inline">migrations/20260712_new_modules_schema.sql</span> เอง</li>
+  <li><b>seed_data.sql มี UUID ปลอม</b> (<span class="inline">k1000000-...</span> ฯลฯ) ทำให้ fail → ต้อง insert ข้อมูลทดสอบเอง</li>
+  <li><b>เจอ trigger bug auto-numbering</b> (แก้แล้ว ดู §5): <span class="inline">generate_*_no/code</span> ใช้ <span class="inline">SUBSTRING(xx FROM N)</span>
+    ซึ่งกินเครื่องหมาย dash หน้าเลขลำดับ → ได้ค่าลบ (CUST-2026-0000)</li>
+  <li><b><span class="inline">whitelabel_id</span> เป็น NOT NULL</b> ใน <span class="inline">m_customer</span>/<span class="inline">t_quotation</span>
+    (แต่ไม่มีตาราง whitelabel) → insert ต้องส่งค่า <span class="inline">00000000-0000-0000-0000-000000000001</span></li>
+</ul>
+</div>
+
+<h2>4. ไฟล์ที่แก้ไข/เพิ่ม</h2>
+<div class="card">
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:4px 24px;">
+<div>
+<p><b>แก้ไข</b></p>
+<ul>
+  <li><span class="inline">pkg/report/generator.go</span></li>
+  <li><span class="inline">internal/modules/report/delivery/http/handlers.go</span>, <span class="inline">routes.go</span></li>
+  <li><span class="inline">internal/modules/quotation/{pg_repository.go,usecase.go}</span> + <span class="inline">repository/pg_repository.go</span> + <span class="inline">usecase/usecase.go</span></li>
+  <li><span class="inline">internal/server/handlers.go</span>, <span class="inline">internal/delivery/rest/router.go</span></li>
+  <li><span class="inline">Dockerfile.dev</span></li>
+  <li><span class="inline">docs/manule/README_VectorData.md</span> (§3.2), scrutinize-elasticsearch.md, scrutinize-report.md, PROJECT_CHECKLIST.md</li>
+</ul>
+</div>
+<div>
+<p><b>เพิ่ม</b></p>
+<ul>
+  <li><span class="inline">internal/modules/report/usecase/usecase.go</span></li>
+  <li><span class="inline">internal/modules/report/company.go</span></li>
+  <li>เทสต์: <span class="inline">pkg/vectordb/vectordb_test.go</span>, <span class="inline">pkg/elasticsearch/client_test.go</span>, <span class="inline">internal/modules/vectordata/usecase/usecase_test.go</span></li>
+</ul>
+</div>
+</div>
+</div>
+
+<h2>5. จุดที่ยังค้าง (Open Items)</h2>
+<div class="card">
+<table>
+  <tr><th>รายการ</th><th style="width:110px">ระดับ</th></tr>
+  <tr><td><s>elasticsearch NIT-1..4</s> <b>แก้แล้ว</b> — NIT-1 handler ไม่ leak raw error, NIT-2 ลบ validate tag ตกแต่ง, NIT-3 เพิ่ม metadata round-trip, NIT-4 ตัด field <span class="inline">u.index</span> ใช้ <span class="inline">es.IndexName()</span> + เพิ่ม <span class="inline">usecase_test.go</span> 5 case</td><td><span class="tag ok">เสร็จ</span></td></tr>
+  <tr><td>elasticsearch: แนะนำ fold เข้า <span class="inline">vectordata</span> หรือลบ (duplicate module)</td><td><span class="tag major">decision</span></td></tr>
+  <tr><td>report: daily-sales / inventory / credit-note / debit-note ยังเป็น placeholder (ยังไม่มี sales/inventory/credit entities ใน data model)</td><td><span class="tag major">MAJOR</span></td></tr>
+  <tr><td>report NIT-3: PDF + JWT ใน browser ใช้ไม่ได้ (ต้องมี session flow)</td><td><span class="tag nit">NIT</span></td></tr>
+  <tr><td><s>trigger <span class="inline">generate_*_no/code</span> ใช้ <span class="inline">SUBSTRING</span> กิน dash → เลขลำดับผิด</s> <b>แก้แล้ว</b> — migration + <span class="inline">db/public_DB.sql</span> + <span class="inline">docs/docs/modules_3.md</span> เปลี่ยนเป็น <span class="inline">SPLIT_PART(code,'-',3)</span>; apply dev DB แล้ว verify (CUST-2026-0002, QT-2026-0002)</td><td><span class="tag ok">เสร็จ</span></td></tr>
+  <tr><td>ยังไม่ได้ commit รอบนี้ (ต้องให้ user ยืนยันก่อน)</td><td>—</td></tr>
+</table>
+</div>
+
+<h2>6. ข้อควรจำสำหรับรอบถัดไป</h2>
+<div class="card">
+<ul>
+  <li>Env var vectordata คือ <span class="inline">VECTOR_DB_*</span> (ไม่ใช่ <span class="inline">VECTORDB_*</span>)</li>
+  <li><span class="inline">air</span> ไม่ poll → หลังแก้โค้ดต้อง <span class="inline">docker compose restart api</span></li>
+  <li>Docker exec + curl + JSON พังใน PowerShell → ใช้ <span class="inline">Invoke-RestMethod</span> กับ localhost โดยตรง</li>
+  <li>ป้อนข้อมูลภาษาไทยผ่าน PowerShell ต้อง <span class="inline">$OutputEncoding = [System.Text.Encoding]::UTF8</span> ก่อน pipe</li>
+  <li>ES 8 ห้าม sort ด้วย <span class="inline">_id</span>; vendor ไม่มี testify <span class="inline">require</span></li>
+</ul>
+</div>
+
+<footer>ICMON Go — สรุปรอบ 2026-08-14 &nbsp;·&nbsp; สร้างโดย opencode</footer>
+
+</div>
+</body>
+</html>

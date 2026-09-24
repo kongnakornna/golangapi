@@ -1,0 +1,124 @@
+{{define "content"}}
+<div class="header">
+  <div class="company-info">
+    <h1>{{.Company.Name}}</h1>
+    <p>{{.Company.Address}}</p>
+    <p>Tel: {{.Company.Phone}} | Tax ID: {{.Company.TaxID}}</p>
+  </div>
+  <div class="doc-title">
+    <h2>ใบงานซ่อม / JOB CARD</h2>
+    <p class="doc-no">เลขที่: {{.JobNo}}</p>
+    <p style="font-size:11px;color:#666;">วันที่: {{.Date | formatDate}}</p>
+    <p>สถานะ: <span class="badge badge-info">{{.Status}}</span></p>
+  </div>
+</div>
+
+<div class="info-section">
+  <div class="info-box">
+    <h3>ข้อมูลลูกค้า</h3>
+    <p><strong>{{.CustomerName}}</strong></p>
+    <p>{{.CustomerAddr}}</p>
+  </div>
+  <div class="info-box">
+    <h3>ข้อมูลรถยนต์</h3>
+    <p>ทะเบียน: {{.LicensePlate}}</p>
+    <p>ยี่ห้อ: {{.CarBrand}} / {{.CarModel}} ({{.CarYear}})</p>
+    <p>เลขไมล์: {{.Mileage}} กม.</p>
+  </div>
+</div>
+
+{{if .Symptoms}}
+<div style="margin-bottom:15px;padding:10px;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;">
+  <h3 style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:5px;">อาการที่แจ้ง</h3>
+  <ul style="margin:0;padding-left:20px;">
+    {{range .Symptoms}}<li style="font-size:12px;color:#991b1b;">{{.}}</li>{{end}}
+  </ul>
+</div>
+{{end}}
+
+{{if .Diagnosis}}
+<div style="margin-bottom:15px;padding:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;">
+  <h3 style="font-size:12px;font-weight:700;color:#1e40af;margin-bottom:5px;">ผลการตรวจวินิจฉัย</h3>
+  <p style="font-size:12px;color:#1e40af;">{{.Diagnosis}}</p>
+</div>
+{{end}}
+
+{{if .Services}}
+<h3 style="font-size:13px;font-weight:700;margin-bottom:5px;">รายการบริการ</h3>
+<table>
+  <thead>
+    <tr>
+      <th style="width:40px;">#</th>
+      <th>รายการ</th>
+      <th style="width:60px;" class="text-center">จำนวน</th>
+      <th style="width:90px;" class="text-right">ราคา/หน่วย</th>
+      <th style="width:100px;" class="text-right">จำนวนเงิน</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Services}}
+    <tr>
+      <td>{{.LineNo}}</td>
+      <td>{{.Description}}</td>
+      <td class="text-center">{{.Quantity}}</td>
+      <td class="text-right">{{.UnitPrice | formatMoney}}</td>
+      <td class="text-right">{{.TotalPrice | formatMoney}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}
+
+{{if .Parts}}
+<h3 style="font-size:13px;font-weight:700;margin-bottom:5px;">อะไหล่ที่ใช้</h3>
+<table>
+  <thead>
+    <tr>
+      <th style="width:40px;">#</th>
+      <th style="width:100px;">รหัส</th>
+      <th>รายการ</th>
+      <th style="width:60px;" class="text-center">จำนวน</th>
+      <th style="width:90px;" class="text-right">ราคา/หน่วย</th>
+      <th style="width:100px;" class="text-right">จำนวนเงิน</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Parts}}
+    <tr>
+      <td>{{.LineNo}}</td>
+      <td>{{.PartCode}}</td>
+      <td>{{.Description}}</td>
+      <td class="text-center">{{.Quantity}}</td>
+      <td class="text-right">{{.UnitPrice | formatMoney}}</td>
+      <td class="text-right">{{.TotalPrice | formatMoney}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}
+
+<div style="margin-bottom:15px;padding:10px;background:#f8f9fa;border-radius:4px;">
+  <p style="font-size:12px;"><strong>ช่างผู้รับงาน:</strong> {{.Mechanic}}</p>
+</div>
+
+{{if .Remark}}
+<div style="margin-bottom:15px;padding:10px;background:#f8f9fa;border-radius:4px;">
+  <p style="font-size:12px;color:#666;"><strong>หมายเหตุ:</strong> {{.Remark}}</p>
+</div>
+{{end}}
+
+<div class="footer">
+  <div class="sign-box">
+    <p class="sign-line">ช่างผู้ซ่อม</p>
+    <p>( {{.Mechanic}} )</p>
+  </div>
+  <div class="sign-box">
+    <p class="sign-line">ลูกค้า</p>
+    <p>&nbsp;</p>
+  </div>
+  <div class="sign-box">
+    <p class="sign-line">ผู้จัดการ</p>
+    <p>&nbsp;</p>
+  </div>
+</div>
+{{end}}

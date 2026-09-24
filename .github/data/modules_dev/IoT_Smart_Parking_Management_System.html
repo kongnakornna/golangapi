@@ -1,0 +1,4629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IoT_Smart_Parking_Management_System</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+<style>
+
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #24292e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #24292e;
+}
+
+h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h2 {
+  font-size: 1.5em;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+
+h6 {
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #656d76;
+}
+
+/* Paragraphs */
+p {
+  margin: 16px 0;
+}
+
+/* Inline */
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+del {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  background-color: #eff1f3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #24292e;
+}
+
+a {
+  color: #0969da;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 3px;
+}
+
+a:hover { opacity: 0.8; }
+
+/* Blockquotes */
+blockquote {
+  margin: 16px 0;
+  padding: 0 1em;
+  border-left: 3px solid #d0d7de;
+  color: #656d76;
+}
+
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
+
+/* Lists */
+ul, ol {
+  padding-left: 2em;
+  margin: 16px 0;
+}
+
+li { margin: 4px 0; }
+ul ul, ul ol, ol ul, ol ol { margin: 0; }
+li > p { margin: 0; }
+
+input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: #0969da;
+}
+
+/* Code Blocks */
+pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  line-height: 1.45;
+  margin: 16px 0;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: auto;
+  max-width: 100%;
+  overflow: auto;
+  display: block;
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) td {
+  background-color: #f6f8fa;
+}
+
+/* Horizontal Rule */
+hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 24px 0;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Math (KaTeX MathML) */
+.math-block {
+  display: block;
+  text-align: center;
+  margin: 16px 0;
+  padding: 8px 0;
+  overflow-x: auto;
+}
+
+.math-inline {
+  display: inline;
+}
+
+.math-error {
+  color: #cf222e;
+  background-color: rgba(207, 34, 46, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Mermaid */
+pre.mermaid {
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  padding: 16px 0;
+}
+
+/* Footnotes */
+.footnotes-section {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #d0d7de;
+  font-size: 0.9em;
+  color: #656d76;
+}
+
+.footnotes-section ol {
+  padding-left: 1.5em;
+}
+
+.footnotes-section li {
+  margin: 8px 0;
+}
+
+sup.footnote-ref a {
+  color: #0969da;
+  text-decoration: none;
+  font-size: 0.85em;
+  padding: 0 2px;
+}
+
+sup.footnote-ref a:hover {
+  text-decoration: underline;
+}
+
+a.footnote-backref {
+  color: #0969da;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+/* Details/Summary */
+details {
+  margin: 8px 0;
+  border-left: 2px solid rgba(128, 128, 128, 0.3);
+  padding-left: 12px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 0;
+  color: #24292e;
+}
+
+summary:hover {
+  color: #0969da;
+}
+
+/* Print */
+@media print {
+  body { background: white; }
+  .markdown-body { max-width: none; padding: 0; }
+  pre { white-space: pre-wrap; word-wrap: break-word; }
+  a { color: #24292e; text-decoration: underline; }
+  pre.mermaid { page-break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<div class="markdown-body">
+<h3>ระบบบริหารจัดการอาคารจอดรถอัจฉริยะ(Smart Parking Management System) Module</h3>
+<blockquote>
+<p><strong>เป้าหมาย:</strong>
+ที่สมบูรณ์ด้วย Clean Architecture คือ แนวทางการออกแบบซอฟต์แวร์ (Software Design Approach) ที่คิดค้นโดย Robert C. Martin (หรือ Uncle Bob) ซึ่งจัดระเบียบโครงสร้างโค้ดด้วยการแบ่งออกเป็นชั้น ๆ (Layers) เพื่อแยกส่วนตรรกะทางธุรกิจ (Business Rules) ออกจากเทคโนโลยีภายนอก เช่น ฐานข้อมูล (Database) หรือ UI<br>DDD  Domain-Driven Design คือ แนวทางและปรัชญาในการออกแบบซอฟต์แวร์ที่เน้นจำลองโครงสร้างและตรรกะของโค้ดให้สอดคล้องกับ &quot;โดเมนธุรกิจ&quot; (Business Domain) หรือปัญหาที่ซับซ้อนของกิจการนั้น ๆ อย่างแท้จริง<br><strong>เหมาะสำหรับ:</strong> นักพัฒนาที่ต้องการระบบ Clean Architecture + DDD Domain-Driven Design
+<strong>รายละเอียด</strong></p>
+<ul>
+<li>Kafka Consumer Group (หลัก)</li>
+<li>Elasticsearch Bulk Indexer</li>
+<li>WebSocket Broadcaster</li>
+<li>LLM Consumer (เรียก LLM แบบ Async)</li>
+<li>Embedding Consumer (สร้างเวกเตอร์)</li>
+<li>Blockchain Consumer (บันทึกข้อมูลลง Blockchain)</li>
+<li>QR Code &amp; Payment System</li>
+<li>การติดตั้งและใช้งาน</li>
+<li>Business Model</li>
+<li>Mobile App</li>
+<li>Prompt สำหรับการขยายระบบ</li>
+</ul>
+</blockquote>
+<h2>สารบัญ</h2>
+<ol>
+<li><a href="#1-%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%A7%E0%B8%A1%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%9A">ภาพรวมระบบ</a></li>
+<li><a href="#2-%E0%B9%82%E0%B8%84%E0%B8%A3%E0%B8%87%E0%B8%AA%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%87-module">โครงสร้าง Module</a></li>
+<li><a href="#3-domain-layer">Domain Layer</a><ul>
+<li>3.1 Entities</li>
+<li>3.2 Value Objects</li>
+<li>3.3 Repository Interfaces</li>
+<li>3.4 Domain Services</li>
+<li>3.5 Domain Errors</li>
+</ul>
+</li>
+<li><a href="#4-application-layer">Application Layer</a><ul>
+<li>4.1 Use Cases</li>
+<li>4.2 DTOs</li>
+</ul>
+</li>
+<li><a href="#5-infrastructure-layer">Infrastructure Layer</a><ul>
+<li>5.1 Repository Implementations</li>
+<li>5.2 Hardware Controllers</li>
+<li>5.3 Payment Gateway Integration</li>
+<li>5.4 MQTT/Kafka Implementation</li>
+<li>5.5 QR Code Generation</li>
+</ul>
+</li>
+<li><a href="#6-interface-layer">Interface Layer</a><ul>
+<li>6.1 HTTP Handlers</li>
+<li>6.2 Routes</li>
+<li>6.3 Middleware</li>
+<li>6.4 WebSocket Handlers</li>
+</ul>
+</li>
+<li><a href="#7-database-migrations">Database Migrations</a></li>
+<li><a href="#8-workflow-diagram">Workflow Diagram</a></li>
+<li><a href="#9-system-flow">System Flow</a></li>
+<li><a href="#10-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%94%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%87%E0%B8%B2%E0%B8%99">การติดตั้งและใช้งาน</a></li>
+<li><a href="#11-business-model">Business Model</a></li>
+<li><a href="#12-prompt-%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%82%E0%B8%A2%E0%B8%B2%E0%B8%A2%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%9A">Prompt สำหรับการขยายระบบ</a></li>
+<li><a href="#13-%E0%B8%A0%E0%B8%B2%E0%B8%84%E0%B8%9C%E0%B8%99%E0%B8%A7%E0%B8%81">ภาคผนวก</a></li>
+</ol>
+<hr>
+<h2>1. ภาพรวมระบบ</h2>
+<h3>1.1 ระบบ Smart Parking Management</h3>
+<p>ระบบบริหารจัดการอาคารจอดรถอัจฉริยะ ครบวงจร รองรับ:</p>
+<ul>
+<li><strong>อาคารจอดรถหลายชั้น</strong> - รองรับหลายอาคาร หลายชั้น หลายโซน</li>
+<li><strong>ระบบลิฟต์จอดรถ</strong> - ควบคุมลิฟต์ขนย้ายรถอัตโนมัติ</li>
+<li><strong>ระบบชาร์จรถไฟฟ้า (EV Charging)</strong> - รองรับการชาร์จ EV</li>
+<li><strong>RFID &amp; กล้อง CCTV AI</strong> - ตรวจจับและจดจำป้ายทะเบียน</li>
+<li><strong>ระบบสแกนป้ายทะเบียน (LPR)</strong> - อ่านป้ายทะเบียนอัตโนมัติ</li>
+<li><strong>QR Code Scan &amp; Payment</strong> - ชำระเงินผ่าน QR Code</li>
+<li><strong>ระบบนำทาง (Parking Guidance)</strong> - แสดงที่จอดว่าง/ไม่ว่าง</li>
+<li><strong>ระบบไฟแสดงสถานะ</strong> - สีเขียว (ว่าง) / สีแดง (ไม่ว่าง)</li>
+<li><strong>ระบบวิเคราะห์สถิติ</strong> - รายชั่วโมง/วัน/สัปดาห์/เดือน/ปี/ไตรมาส</li>
+<li><strong>ระบบพิมพ์ใบเสร็จ/บัตรจอดรถ/ใบแจ้งหนี้</strong> - รองรับหลายรูปแบบ</li>
+<li><strong>ระบบจัดการส่วนลด</strong> - สแกนส่วนลดผ่าน QR Code</li>
+<li><strong>ระบบแจ้งเตือนเหตุฉุกเฉิน</strong> - ไฟแสดงสถานะและแจ้งเตือน</li>
+<li><strong>ระบบบำรุงรักษาอุปกรณ์</strong> - ตารางบำรุงรักษาและแจ้งเตือน</li>
+<li><strong>ระบบป้องกันการกระแทก</strong> - ระบบกันกระแทกอัตโนมัติ</li>
+<li><strong>ระบบสลับโหมด</strong> - Auto / Manual Mode</li>
+</ul>
+<h3>1.2 โครงสร้างระบบ</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                         Smart Parking Management System                              │
+├──────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                      │
+│  ┌──────────────────────────────────────────────────────────────────────────────────┐ │
+│  │                           Building A (5 Floors)                                  │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 1 - Zone A1 (ลานจอดทั่วไป)                                       │ │ │
+│  │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │ │ │
+│  │  │  │ 🟢 A1-01│ │ 🔴 A1-02│ │ 🟢 A1-03│ │ 🔴 A1-04│ │ 🟢 A1-05│ │ 🔴 A1-06│ │ 🟢 A1-07│ │ │ │
+│  │  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘      │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                                 │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 2 - Zone A2 (EV Charging + EV Parking)                           │ │ │
+│  │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │ │ │
+│  │  │  │ ⚡🔴  │ │ ⚡🟢  │ │ ⚡🟢  │ │ ⚡🔴  │ │ ⚡🟢  │ │ 🔴    │ │ 🟢    │      │ │ │
+│  │  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘      │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                                 │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 3 - Zone A3 (VIP / Monthly Rental)                               │ │ │
+│  │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │ │ │
+│  │  │  │ 🔴    │ │ 🟢    │ │ 🟢    │ │ 🔴    │ │ 🟢    │ │ 🟢    │ │ 🔴    │      │ │ │
+│  │  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘      │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                                 │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 4-5 - Zone A4 (Automated Parking Lift System)                    │ │ │
+│  │  │                    ┌────────────┐                                       │ │ │
+│  │  │                    │  Elevator  │                                       │ │ │
+│  │  │                    │  Control   │                                       │ │ │
+│  │  │                    │  System    │                                       │ │ │
+│  │  │                    └────────────┘                                       │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                      │
+│  ┌──────────────────────────────────────────────────────────────────────────────────┐ │
+│  │                        Control Center / Lobby                                      │ │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐              │ │
+│  │  │  CCTV      │  │  LPR       │  │  RFID      │  │  BOOM      │              │ │
+│  │  │  Monitor   │  │  System    │  │  Reader    │  │  Barrier   │              │ │
+│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘              │ │
+│  │                                                                                 │ │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐              │ │
+│  │  │  Payment   │  │  QR Code   │  │  Ticket    │  │  EV       │              │ │
+│  │  │  Kiosk     │  │  Scanner   │  │  Printer   │  │  Charger  │              │ │
+│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘              │ │
+│  │                                                                                 │ │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐              │ │
+│  │  │  Invoice   │  │  Receipt   │  │  Parking   │  │  Emergency │              │ │
+│  │  │  Printer   │  │  Printer   │  │  Ticket    │  │  Light     │              │ │
+│  │  │  (ใบแจ้งหนี้)│  │  (ใบเสร็จ)  │  │  Printer   │  │  System    │              │ │
+│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘              │ │
+│  └──────────────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                      │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>2. โครงสร้าง Module</h2>
+<pre><code>internal/modules/parking/
+│
+├── domain/                                    # 🏛️ DOMAIN LAYER
+│   ├── entity/
+│   │   ├── building.go                        # Building Aggregate Root
+│   │   ├── floor.go                           # Floor Entity
+│   │   ├── parking_space.go                   # ParkingSpace Entity
+│   │   ├── vehicle.go                         # Vehicle Aggregate Root
+│   │   ├── parking_ticket.go                  # ParkingTicket Aggregate Root
+│   │   ├── parking_rate.go                    # ParkingRate Entity
+│   │   ├── ev_charging.go                     # EVCharger &amp; EVChargingSession
+│   │   ├── lift.go                            # Lift &amp; LiftOperation
+│   │   ├── surveillance.go                    # Camera &amp; LPREvent
+│   │   ├── payment.go                         # Payment Entity
+│   │   ├── discount.go                        # Discount &amp; DiscountUsage
+│   │   ├── printing.go                        # PrintDocument &amp; Receipts
+│   │   ├── maintenance.go                     # Equipment &amp; MaintenanceLog
+│   │   ├── emergency.go                       # EmergencyEvent &amp; SystemMode
+│   │   ├── statistics.go                      # ParkingStatistics
+│   │   └── member.go                          # Member &amp; Loyalty
+│   │
+│   ├── value_object/
+│   │   ├── plate_no.go                        # PlateNo Value Object
+│   │   ├── ticket_no.go                       # TicketNo Value Object
+│   │   ├── space_status.go                    # SpaceStatus Value Object
+│   │   ├── money.go                           # Money Value Object
+│   │   ├── duration.go                        # Duration Value Object
+│   │   ├── qr_code.go                         # QRCode Value Object
+│   │   └── location.go                        # Location Value Object
+│   │
+│   ├── repository/
+│   │   ├── building_repository.go             # Interface
+│   │   ├── floor_repository.go                # Interface
+│   │   ├── parking_space_repository.go        # Interface
+│   │   ├── vehicle_repository.go              # Interface
+│   │   ├── parking_ticket_repository.go       # Interface
+│   │   ├── parking_rate_repository.go         # Interface
+│   │   ├── ev_charging_repository.go          # Interface
+│   │   ├── lift_repository.go                 # Interface
+│   │   ├── payment_repository.go              # Interface
+│   │   ├── discount_repository.go             # Interface
+│   │   ├── printing_repository.go             # Interface
+│   │   ├── maintenance_repository.go          # Interface
+│   │   ├── statistics_repository.go           # Interface
+│   │   └── member_repository.go               # Interface
+│   │
+│   ├── service/
+│   │   ├── parking_service.go                 # Domain Service
+│   │   ├── pricing_service.go                 # Pricing Domain Service
+│   │   ├── space_allocation_service.go        # Space Allocation Service
+│   │   ├── validation_service.go              # Validation Service
+│   │   └── notification_service.go            # Notification Interface
+│   │
+│   └── errors/
+│       └── errors.go                          # Domain Errors
+│
+├── application/                               # 🎯 APPLICATION LAYER
+│   ├── entry_vehicle.go                       # EntryVehicle UseCase
+│   ├── exit_vehicle.go                        # ExitVehicle UseCase
+│   ├── calculate_fee.go                       # CalculateFee UseCase
+│   ├── process_payment.go                     # ProcessPayment UseCase
+│   ├── generate_qr_payment.go                 # GenerateQRPayment UseCase
+│   ├── print_ticket.go                        # PrintTicket UseCase
+│   ├── print_receipt.go                       # PrintReceipt UseCase
+│   ├── print_invoice.go                       # PrintInvoice UseCase
+│   ├── apply_discount.go                      # ApplyDiscount UseCase
+│   ├── manage_maintenance.go                  # ManageMaintenance UseCase
+│   ├── emergency_mode.go                      # EmergencyMode UseCase
+│   ├── generate_report.go                     # GenerateReport UseCase
+│   ├── get_available_spaces.go                # GetAvailableSpaces UseCase
+│   ├── get_statistics.go                      # GetStatistics UseCase
+│   ├── member_register.go                     # MemberRegister UseCase
+│   ├── redeem_points.go                       # RedeemPoints UseCase
+│   └── dto.go                                 # Request/Response DTOs
+│
+├── infrastructure/                            # 🔧 INFRASTRUCTURE LAYER
+│   ├── persistence/
+│   │   ├── postgres/
+│   │   │   ├── building_repo_impl.go          # PostgreSQL Implementation
+│   │   │   ├── floor_repo_impl.go
+│   │   │   ├── parking_space_repo_impl.go
+│   │   │   ├── vehicle_repo_impl.go
+│   │   │   ├── parking_ticket_repo_impl.go
+│   │   │   ├── parking_rate_repo_impl.go
+│   │   │   ├── ev_charging_repo_impl.go
+│   │   │   ├── lift_repo_impl.go
+│   │   │   ├── payment_repo_impl.go
+│   │   │   ├── discount_repo_impl.go
+│   │   │   ├── printing_repo_impl.go
+│   │   │   ├── maintenance_repo_impl.go
+│   │   │   ├── statistics_repo_impl.go
+│   │   │   ├── member_repo_impl.go
+│   │   │   └── models.go                      # GORM Models
+│   │   │
+│   │   └── redis/
+│   │       ├── cache_repo_impl.go
+│   │       ├── session_repo_impl.go
+│   │       └── realtime_status_repo.go
+│   │
+│   ├── hardware/
+│   │   ├── led_controller.go                  # LED Control
+│   │   ├── boom_controller.go                 # Boom Barrier Control
+│   │   ├── lift_controller.go                 # Lift Control
+│   │   ├── anti_crash.go                      # Anti-Crash System
+│   │   ├── mode_switch.go                     # Auto/Manual Mode
+│   │   ├── ev_charger_controller.go           # EV Charger Control
+│   │   ├── rfid_reader.go                     # RFID Reader
+│   │   └── lpr_service.go                     # LPR Service
+│   │
+│   ├── payment/
+│   │   ├── qr_payment.go                      # QR Payment Generation
+│   │   ├── cash_payment.go                    # Cash Payment Processing
+│   │   ├── card_payment.go                    # Card Payment Processing
+│   │   └── payment_gateway.go                 # Payment Gateway Integration
+│   │
+│   ├── printing/
+│   │   ├── escpos_client.go                   # ESC/POS Protocol
+│   │   ├── receipt_printer.go                 # Receipt Printing
+│   │   ├── invoice_printer.go                 # Invoice Printing
+│   │   ├── ticket_printer.go                  # Ticket Printing
+│   │   └── template_engine.go                 # Print Template Engine
+│   │
+│   ├── messaging/
+│   │   ├── kafka/
+│   │   │   ├── producer.go                    # Kafka Producer
+│   │   │   ├── consumer_group.go              # Kafka Consumer Group
+│   │   │   ├── event_types.go                 # Event Definitions
+│   │   │   └── handlers.go                    # Event Handlers
+│   │   │
+│   │   └── mqtt/
+│   │       └── mqtt_client.go                 # MQTT Client
+│   │
+│   ├── ai/
+│   │   ├── llm_consumer.go                    # LLM Consumer (Async)
+│   │   ├── embedding_consumer.go              # Embedding Consumer
+│   │   ├── anomaly_detection.go               # Anomaly Detection
+│   │   └── plate_recognition.go               # Plate Recognition
+│   │
+│   ├── blockchain/
+│   │   ├── blockchain_consumer.go             # Blockchain Consumer
+│   │   ├── smart_contract.go                  # Smart Contract Integration
+│   │   └── transaction_logger.go              # Transaction Logger
+│   │
+│   ├── elasticsearch/
+│   │   ├── bulk_indexer.go                    # Bulk Indexer
+│   │   ├── search_service.go                  # Search Service
+│   │   └── mapping.go                         # Index Mapping
+│   │
+│   ├── websocket/
+│   │   ├── broadcaster.go                     # WebSocket Broadcaster
+│   │   ├── hub.go                             # WebSocket Hub
+│   │   └── client.go                          # WebSocket Client
+│   │
+│   ├── notification/
+│   │   ├── line_notify.go                     # LINE Notify
+│   │   ├── email_notify.go                    # Email Notify
+│   │   └── sms_notify.go                      # SMS Notify
+│   │
+│   └── security/
+│       ├── jwt_maker.go                       # JWT Implementation
+│       ├── bcrypt_hasher.go                   # Bcrypt Implementation
+│       └── rate_limit.go                      # Rate Limit Middleware
+│
+└── interfaces/                                # 🌐 INTERFACE LAYER
+    ├── http/
+    │   ├── parking_handler.go                 # Parking HTTP Handlers
+    │   ├── payment_handler.go                 # Payment HTTP Handlers
+    │   ├── printing_handler.go                # Printing HTTP Handlers
+    │   ├── admin_handler.go                   # Admin HTTP Handlers
+    │   ├── member_handler.go                  # Member HTTP Handlers
+    │   ├── dashboard_handler.go               # Dashboard HTTP Handlers
+    │   ├── routes.go                          # Route Registration
+    │   └── dto.go                             # HTTP DTOs
+    │
+    ├── websocket/
+    │   ├── realtime_handler.go                # Real-time WebSocket
+    │   └── dashboard_handler.go               # Dashboard WebSocket
+    │
+    └── middleware/
+        ├── auth.go                            # Auth Middleware
+        ├── cors.go                            # CORS Middleware
+        ├── logging.go                         # Logging Middleware
+        ├── rate_limit.go                      # Rate Limit Middleware
+        └── role.go                            # Role-based Middleware
+</code></pre>
+<hr>
+<h2>3. Domain Layer</h2>
+<h3>3.1 Entities</h3>
+<h4>3.1.1 Building - Aggregate Root</h4>
+<pre><code class="language-go">// domain/entity/building.go
+package entity
+
+import (
+    &quot;errors&quot;
+    &quot;time&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+)
+
+type Building struct {
+    ID          int64              `json:&quot;id&quot;`
+    Code        value_object.Code  `json:&quot;code&quot;`
+    Name        string             `json:&quot;name&quot;`
+    Address     string             `json:&quot;address&quot;`
+    TotalFloors int                `json:&quot;total_floors&quot;`
+    TotalSpaces int                `json:&quot;total_spaces&quot;`
+    HasEVCharger bool              `json:&quot;has_ev_charger&quot;`
+    HasLift     bool               `json:&quot;has_lift&quot;`
+    Status      BuildingStatus     `json:&quot;status&quot;`
+    Floors      []*Floor           `json:&quot;floors,omitempty&quot;`
+    CreatedAt   time.Time          `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time          `json:&quot;updated_at&quot;`
+}
+
+type BuildingStatus string
+
+const (
+    BuildingStatusActive     BuildingStatus = &quot;active&quot;
+    BuildingStatusInactive   BuildingStatus = &quot;inactive&quot;
+    BuildingStatusMaintenance BuildingStatus = &quot;maintenance&quot;
+)
+
+func NewBuilding(code, name, address string, totalFloors int, hasEV, hasLift bool) (*Building, error) {
+    if code == &quot;&quot; {
+        return nil, errors.New(&quot;building code is required&quot;)
+    }
+    if name == &quot;&quot; {
+        return nil, errors.New(&quot;building name is required&quot;)
+    }
+    if totalFloors &lt; 1 {
+        return nil, errors.New(&quot;building must have at least 1 floor&quot;)
+    }
+
+    return &amp;Building{
+        Code:        value_object.Code{Value: code},
+        Name:        name,
+        Address:     address,
+        TotalFloors: totalFloors,
+        HasEVCharger: hasEV,
+        HasLift:     hasLift,
+        Status:      BuildingStatusActive,
+        CreatedAt:   time.Now(),
+        UpdatedAt:   time.Now(),
+    }, nil
+}
+
+func (b *Building) AddFloor(floor *Floor) error {
+    if floor == nil {
+        return errors.New(&quot;floor cannot be nil&quot;)
+    }
+    if len(b.Floors) &gt;= b.TotalFloors {
+        return errors.New(&quot;building has reached maximum floors&quot;)
+    }
+    b.Floors = append(b.Floors, floor)
+    b.UpdatedAt = time.Now()
+    return nil
+}
+
+func (b *Building) UpdateStatus(status BuildingStatus) {
+    b.Status = status
+    b.UpdatedAt = time.Now()
+}
+</code></pre>
+<h4>3.1.2 Floor - Entity</h4>
+<pre><code class="language-go">// domain/entity/floor.go
+package entity
+
+import (
+    &quot;errors&quot;
+    &quot;time&quot;
+)
+
+type Floor struct {
+    ID          int64     `json:&quot;id&quot;`
+    BuildingID  int64     `json:&quot;building_id&quot;`
+    FloorNo     int       `json:&quot;floor_no&quot;`
+    Name        string    `json:&quot;name&quot;`
+    ZoneCode    string    `json:&quot;zone_code&quot;`
+    ZoneType    ZoneType  `json:&quot;zone_type&quot;`
+    TotalSpaces int       `json:&quot;total_spaces&quot;`
+    HasEVCharger bool     `json:&quot;has_ev_charger&quot;`
+    HasLift     bool      `json:&quot;has_lift&quot;`
+    Spaces      []*ParkingSpace `json:&quot;spaces,omitempty&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type ZoneType string
+
+const (
+    ZoneTypeGeneral    ZoneType = &quot;general&quot;
+    ZoneTypeEV         ZoneType = &quot;ev_charging&quot;
+    ZoneTypeVIP        ZoneType = &quot;vip&quot;
+    ZoneTypeMonthly    ZoneType = &quot;monthly&quot;
+    ZoneTypeHandicap   ZoneType = &quot;handicap&quot;
+    ZoneTypeAutomated  ZoneType = &quot;automated&quot;
+)
+
+func NewFloor(buildingID int64, floorNo int, zoneCode string, zoneType ZoneType) (*Floor, error) {
+    if buildingID &lt;= 0 {
+        return nil, errors.New(&quot;building_id is required&quot;)
+    }
+    if floorNo &lt; 1 {
+        return nil, errors.New(&quot;floor number must be positive&quot;)
+    }
+    if zoneCode == &quot;&quot; {
+        return nil, errors.New(&quot;zone code is required&quot;)
+    }
+
+    return &amp;Floor{
+        BuildingID: buildingID,
+        FloorNo:    floorNo,
+        Name:       string(zoneType),
+        ZoneCode:   zoneCode,
+        ZoneType:   zoneType,
+        CreatedAt:  time.Now(),
+        UpdatedAt:  time.Now(),
+    }, nil
+}
+</code></pre>
+<h4>3.1.3 ParkingSpace - Entity</h4>
+<pre><code class="language-go">// domain/entity/parking_space.go
+package entity
+
+import (
+    &quot;errors&quot;
+    &quot;time&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+)
+
+type ParkingSpace struct {
+    ID           int64                  `json:&quot;id&quot;`
+    FloorID      int64                  `json:&quot;floor_id&quot;`
+    SpaceNo      string                 `json:&quot;space_no&quot;`
+    SpaceType    SpaceType              `json:&quot;space_type&quot;`
+    Status       value_object.SpaceStatus `json:&quot;status&quot;`
+    IsEVCharger  bool                   `json:&quot;is_ev_charger&quot;`
+    IsHandicap   bool                   `json:&quot;is_handicap&quot;`
+    Width        float64                `json:&quot;width&quot;`
+    Length       float64                `json:&quot;length&quot;`
+    Height       float64                `json:&quot;height&quot;`
+    ZoneCode     string                 `json:&quot;zone_code&quot;`
+    FloorNo      int                    `json:&quot;floor_no&quot;`
+    LEDColor     string                 `json:&quot;led_color&quot;`
+    OccupiedBy   string                 `json:&quot;occupied_by&quot;`
+    EntryTime    *time.Time             `json:&quot;entry_time&quot;`
+    ExitTime     *time.Time             `json:&quot;exit_time&quot;`
+    CreatedAt    time.Time              `json:&quot;created_at&quot;`
+    UpdatedAt    time.Time              `json:&quot;updated_at&quot;`
+}
+
+type SpaceType string
+
+const (
+    SpaceTypeCar        SpaceType = &quot;car&quot;
+    SpaceTypeSUV        SpaceType = &quot;suv&quot;
+    SpaceTypeTruck      SpaceType = &quot;truck&quot;
+    SpaceTypeVan        SpaceType = &quot;van&quot;
+    SpaceTypeMotorcycle SpaceType = &quot;motorcycle&quot;
+    SpaceTypeEV         SpaceType = &quot;ev&quot;
+)
+
+func NewParkingSpace(floorID int64, spaceNo string, spaceType SpaceType) (*ParkingSpace, error) {
+    if floorID &lt;= 0 {
+        return nil, errors.New(&quot;floor_id is required&quot;)
+    }
+    if spaceNo == &quot;&quot; {
+        return nil, errors.New(&quot;space number is required&quot;)
+    }
+
+    return &amp;ParkingSpace{
+        FloorID:    floorID,
+        SpaceNo:    spaceNo,
+        SpaceType:  spaceType,
+        Status:     value_object.SpaceStatusAvailable,
+        CreatedAt:  time.Now(),
+        UpdatedAt:  time.Now(),
+    }, nil
+}
+
+func (s *ParkingSpace) Occupied(vehicleID string) error {
+    if s.Status == value_object.SpaceStatusOccupied {
+        return errors.New(&quot;space is already occupied&quot;)
+    }
+    if s.Status == value_object.SpaceStatusMaintenance {
+        return errors.New(&quot;space is under maintenance&quot;)
+    }
+
+    now := time.Now()
+    s.Status = value_object.SpaceStatusOccupied
+    s.OccupiedBy = vehicleID
+    s.EntryTime = &amp;now
+    s.LEDColor = &quot;red&quot;
+    s.UpdatedAt = now
+    return nil
+}
+
+func (s *ParkingSpace) Vacate() error {
+    if s.Status == value_object.SpaceStatusAvailable {
+        return errors.New(&quot;space is already available&quot;)
+    }
+
+    now := time.Now()
+    s.Status = value_object.SpaceStatusAvailable
+    s.OccupiedBy = &quot;&quot;
+    s.ExitTime = &amp;now
+    s.LEDColor = &quot;green&quot;
+    s.UpdatedAt = now
+    return nil
+}
+</code></pre>
+<h4>3.1.4 ParkingTicket - Aggregate Root</h4>
+<pre><code class="language-go">// domain/entity/parking_ticket.go
+package entity
+
+import (
+    &quot;errors&quot;
+    &quot;time&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+)
+
+type ParkingTicket struct {
+    ID             int64                  `json:&quot;id&quot;`
+    TicketNo       value_object.TicketNo  `json:&quot;ticket_no&quot;`
+    BuildingID     int64                  `json:&quot;building_id&quot;`
+    FloorID        int64                  `json:&quot;floor_id&quot;`
+    SpaceID        int64                  `json:&quot;space_id&quot;`
+    VehicleID      int64                  `json:&quot;vehicle_id&quot;`
+    PlateNo        value_object.PlateNo   `json:&quot;plate_no&quot;`
+    VehicleType    string                 `json:&quot;vehicle_type&quot;`
+    EntryTime      time.Time              `json:&quot;entry_time&quot;`
+    ExitTime       *time.Time             `json:&quot;exit_time&quot;`
+    Duration       int                    `json:&quot;duration&quot;`       // in minutes
+    RateType       string                 `json:&quot;rate_type&quot;`
+    RateAmount     float64                `json:&quot;rate_amount&quot;`
+    TotalAmount    float64                `json:&quot;total_amount&quot;`
+    Discount       float64                `json:&quot;discount&quot;`
+    NetAmount      float64                `json:&quot;net_amount&quot;`
+    PaymentStatus  PaymentStatus          `json:&quot;payment_status&quot;`
+    PaymentMethod  PaymentMethod          `json:&quot;payment_method&quot;`
+    QRCode         string                 `json:&quot;qr_code&quot;`
+    Status         TicketStatus           `json:&quot;status&quot;`
+    CreatedAt      time.Time              `json:&quot;created_at&quot;`
+    UpdatedAt      time.Time              `json:&quot;updated_at&quot;`
+}
+
+type PaymentStatus string
+
+const (
+    PaymentStatusPending   PaymentStatus = &quot;pending&quot;
+    PaymentStatusPaid      PaymentStatus = &quot;paid&quot;
+    PaymentStatusFailed    PaymentStatus = &quot;failed&quot;
+    PaymentStatusRefunded  PaymentStatus = &quot;refunded&quot;
+)
+
+type TicketStatus string
+
+const (
+    TicketStatusActive    TicketStatus = &quot;active&quot;
+    TicketStatusCompleted TicketStatus = &quot;completed&quot;
+    TicketStatusCancelled TicketStatus = &quot;cancelled&quot;
+    TicketStatusExpired   TicketStatus = &quot;expired&quot;
+)
+
+func NewParkingTicket(
+    ticketNo string,
+    buildingID, floorID, spaceID, vehicleID int64,
+    plateNo string,
+    vehicleType string,
+) (*ParkingTicket, error) {
+    if ticketNo == &quot;&quot; {
+        return nil, errors.New(&quot;ticket number is required&quot;)
+    }
+    if buildingID &lt;= 0 || floorID &lt;= 0 || spaceID &lt;= 0 || vehicleID &lt;= 0 {
+        return nil, errors.New(&quot;invalid reference IDs&quot;)
+    }
+    if plateNo == &quot;&quot; {
+        return nil, errors.New(&quot;plate number is required&quot;)
+    }
+
+    ticketNoVal, err := value_object.NewTicketNo(ticketNo)
+    if err != nil {
+        return nil, err
+    }
+
+    plateNoVal, err := value_object.NewPlateNo(plateNo)
+    if err != nil {
+        return nil, err
+    }
+
+    return &amp;ParkingTicket{
+        TicketNo:      *ticketNoVal,
+        BuildingID:    buildingID,
+        FloorID:       floorID,
+        SpaceID:       spaceID,
+        VehicleID:     vehicleID,
+        PlateNo:       *plateNoVal,
+        VehicleType:   vehicleType,
+        EntryTime:     time.Now(),
+        PaymentStatus: PaymentStatusPending,
+        Status:        TicketStatusActive,
+        CreatedAt:     time.Now(),
+        UpdatedAt:     time.Now(),
+    }, nil
+}
+
+func (t *ParkingTicket) Exit() error {
+    if t.Status != TicketStatusActive {
+        return errors.New(&quot;ticket is not active&quot;)
+    }
+    if t.ExitTime != nil {
+        return errors.New(&quot;ticket already exited&quot;)
+    }
+
+    now := time.Now()
+    t.ExitTime = &amp;now
+    t.Duration = int(now.Sub(t.EntryTime).Minutes())
+    t.UpdatedAt = now
+    return nil
+}
+
+func (t *ParkingTicket) CalculateFee(rates []ParkingRate) (float64, error) {
+    if t.ExitTime == nil {
+        return 0, errors.New(&quot;ticket must have exit time to calculate fee&quot;)
+    }
+
+    duration := t.ExitTime.Sub(t.EntryTime)
+    hours := int(duration.Hours())
+    minutes := int(duration.Minutes()) % 60
+
+    var rate ParkingRate
+    for _, r := range rates {
+        if r.VehicleType == t.VehicleType {
+            rate = r
+            break
+        }
+    }
+
+    if rate.FirstHour == 0 {
+        return 0, errors.New(&quot;no rate found for vehicle type&quot;)
+    }
+
+    fee := rate.FirstHour
+    hours--
+
+    if hours &gt; 0 {
+        fee += float64(hours) * rate.SubsequentHour
+    }
+
+    if minutes &gt; 0 {
+        fee += rate.SubsequentHour
+    }
+
+    if fee &gt; rate.MaxCharge {
+        fee = rate.MaxCharge
+    }
+
+    t.TotalAmount = fee
+    return fee, nil
+}
+
+func (t *ParkingTicket) ApplyDiscount(discountValue float64, discountType string) error {
+    if t.PaymentStatus == PaymentStatusPaid {
+        return errors.New(&quot;ticket already paid&quot;)
+    }
+
+    var discount float64
+    if discountType == &quot;percentage&quot; {
+        discount = t.TotalAmount * (discountValue / 100)
+    } else {
+        discount = discountValue
+    }
+
+    if discount &gt; t.TotalAmount {
+        discount = t.TotalAmount
+    }
+
+    t.Discount = discount
+    t.NetAmount = t.TotalAmount - discount
+    t.UpdatedAt = time.Now()
+    return nil
+}
+</code></pre>
+<h4>3.1.5 Vehicle - Aggregate Root</h4>
+<pre><code class="language-go">// domain/entity/vehicle.go
+package entity
+
+import (
+    &quot;errors&quot;
+    &quot;time&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+)
+
+type Vehicle struct {
+    ID          int64                  `json:&quot;id&quot;`
+    PlateNo     value_object.PlateNo   `json:&quot;plate_no&quot;`
+    VehicleType VehicleType            `json:&quot;vehicle_type&quot;`
+    Brand       string                 `json:&quot;brand&quot;`
+    Model       string                 `json:&quot;model&quot;`
+    Color       string                 `json:&quot;color&quot;`
+    IsEV        bool                   `json:&quot;is_ev&quot;`
+    OwnerName   string                 `json:&quot;owner_name&quot;`
+    OwnerPhone  string                 `json:&quot;owner_phone&quot;`
+    OwnerEmail  string                 `json:&quot;owner_email&quot;`
+    RFIDTag     string                 `json:&quot;rfid_tag&quot;`
+    IsVIP       bool                   `json:&quot;is_vip&quot;`
+    MonthlyPlan bool                   `json:&quot;monthly_plan&quot;`
+    CreatedAt   time.Time              `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time              `json:&quot;updated_at&quot;`
+}
+
+type VehicleType string
+
+const (
+    VehicleTypeCar        VehicleType = &quot;car&quot;
+    VehicleTypeSUV        VehicleType = &quot;suv&quot;
+    VehicleTypeTruck      VehicleType = &quot;truck&quot;
+    VehicleTypeVan        VehicleType = &quot;van&quot;
+    VehicleTypeMotorcycle VehicleType = &quot;motorcycle&quot;
+    VehicleTypeEV         VehicleType = &quot;ev&quot;
+)
+
+func NewVehicle(plateNo, ownerName, ownerPhone string, vehicleType VehicleType) (*Vehicle, error) {
+    if plateNo == &quot;&quot; {
+        return nil, errors.New(&quot;plate number is required&quot;)
+    }
+    if ownerName == &quot;&quot; {
+        return nil, errors.New(&quot;owner name is required&quot;)
+    }
+    if ownerPhone == &quot;&quot; {
+        return nil, errors.New(&quot;owner phone is required&quot;)
+    }
+
+    plateNoVal, err := value_object.NewPlateNo(plateNo)
+    if err != nil {
+        return nil, err
+    }
+
+    return &amp;Vehicle{
+        PlateNo:     *plateNoVal,
+        VehicleType: vehicleType,
+        OwnerName:   ownerName,
+        OwnerPhone:  ownerPhone,
+        CreatedAt:   time.Now(),
+        UpdatedAt:   time.Now(),
+    }, nil
+}
+</code></pre>
+<h4>3.1.6 Payment - Entity</h4>
+<pre><code class="language-go">// domain/entity/payment.go
+package entity
+
+import (
+    &quot;errors&quot;
+    &quot;time&quot;
+)
+
+type Payment struct {
+    ID          int64        `json:&quot;id&quot;`
+    TicketID    int64        `json:&quot;ticket_id&quot;`
+    Amount      float64      `json:&quot;amount&quot;`
+    Discount    float64      `json:&quot;discount&quot;`
+    NetAmount   float64      `json:&quot;net_amount&quot;`
+    Method      PaymentMethod `json:&quot;method&quot;`
+    Status      PaymentStatus `json:&quot;status&quot;`
+    QRCode      string       `json:&quot;qr_code&quot;`
+    PaymentDate time.Time    `json:&quot;payment_date&quot;`
+    CreatedAt   time.Time    `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time    `json:&quot;updated_at&quot;`
+}
+
+type PaymentMethod string
+
+const (
+    PaymentMethodQR     PaymentMethod = &quot;qr&quot;
+    PaymentMethodCash   PaymentMethod = &quot;cash&quot;
+    PaymentMethodCard   PaymentMethod = &quot;card&quot;
+    PaymentMethodRFID   PaymentMethod = &quot;rfid&quot;
+    PaymentMethodPromptPay PaymentMethod = &quot;promptpay&quot;
+)
+
+func NewPayment(ticketID int64, amount float64, method PaymentMethod) (*Payment, error) {
+    if ticketID &lt;= 0 {
+        return nil, errors.New(&quot;ticket_id is required&quot;)
+    }
+    if amount &lt;= 0 {
+        return nil, errors.New(&quot;amount must be positive&quot;)
+    }
+
+    return &amp;Payment{
+        TicketID:    ticketID,
+        Amount:      amount,
+        Method:      method,
+        Status:      PaymentStatusPending,
+        PaymentDate: time.Now(),
+        CreatedAt:   time.Now(),
+        UpdatedAt:   time.Now(),
+    }, nil
+}
+
+func (p *Payment) Confirm() {
+    p.Status = PaymentStatusPaid
+    p.UpdatedAt = time.Now()
+}
+
+func (p *Payment) Fail() {
+    p.Status = PaymentStatusFailed
+    p.UpdatedAt = time.Now()
+}
+</code></pre>
+<h3>3.2 Value Objects</h3>
+<h4>3.2.1 PlateNo - Value Object</h4>
+<pre><code class="language-go">// domain/value_object/plate_no.go
+package value_object
+
+import (
+    &quot;errors&quot;
+    &quot;regexp&quot;
+)
+
+type PlateNo struct {
+    Value string
+}
+
+var plateNoRegex = regexp.MustCompile(`^[ก-ฮ]{2}\s?\d{4}[ก-ฮ]?$`)
+
+func NewPlateNo(value string) (*PlateNo, error) {
+    if value == &quot;&quot; {
+        return nil, errors.New(&quot;plate number cannot be empty&quot;)
+    }
+
+    // Basic validation for Thai license plate
+    if !plateNoRegex.MatchString(value) {
+        // Allow any format for flexibility
+        // return nil, errors.New(&quot;invalid plate number format&quot;)
+    }
+
+    return &amp;PlateNo{Value: value}, nil
+}
+
+func (p PlateNo) String() string {
+    return p.Value
+}
+
+func (p PlateNo) Equals(other PlateNo) bool {
+    return p.Value == other.Value
+}
+</code></pre>
+<h4>3.2.2 TicketNo - Value Object</h4>
+<pre><code class="language-go">// domain/value_object/ticket_no.go
+package value_object
+
+import (
+    &quot;errors&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+)
+
+type TicketNo struct {
+    Value string
+}
+
+func NewTicketNo(value string) (*TicketNo, error) {
+    if value == &quot;&quot; {
+        return nil, errors.New(&quot;ticket number cannot be empty&quot;)
+    }
+    return &amp;TicketNo{Value: value}, nil
+}
+
+func GenerateTicketNo() TicketNo {
+    return TicketNo{
+        Value: fmt.Sprintf(&quot;TK-%s-%04d&quot;, time.Now().Format(&quot;20060102&quot;), 
+            time.Now().UnixNano()%10000),
+    }
+}
+
+func (t TicketNo) String() string {
+    return t.Value
+}
+</code></pre>
+<h4>3.2.3 Money - Value Object</h4>
+<pre><code class="language-go">// domain/value_object/money.go
+package value_object
+
+import (
+    &quot;errors&quot;
+    &quot;fmt&quot;
+)
+
+type Money struct {
+    Amount   float64
+    Currency string
+}
+
+func NewMoney(amount float64, currency string) (*Money, error) {
+    if amount &lt; 0 {
+        return nil, errors.New(&quot;amount cannot be negative&quot;)
+    }
+    if currency == &quot;&quot; {
+        currency = &quot;THB&quot;
+    }
+    return &amp;Money{
+        Amount:   amount,
+        Currency: currency,
+    }, nil
+}
+
+func (m Money) Add(other Money) (Money, error) {
+    if m.Currency != other.Currency {
+        return Money{}, errors.New(&quot;currencies must match&quot;)
+    }
+    return Money{
+        Amount:   m.Amount + other.Amount,
+        Currency: m.Currency,
+    }, nil
+}
+
+func (m Money) Subtract(other Money) (Money, error) {
+    if m.Currency != other.Currency {
+        return Money{}, errors.New(&quot;currencies must match&quot;)
+    }
+    return Money{
+        Amount:   m.Amount - other.Amount,
+        Currency: m.Currency,
+    }, nil
+}
+
+func (m Money) String() string {
+    return fmt.Sprintf(&quot;%.2f %s&quot;, m.Amount, m.Currency)
+}
+</code></pre>
+<h4>3.2.4 SpaceStatus - Value Object</h4>
+<pre><code class="language-go">// domain/value_object/space_status.go
+package value_object
+
+type SpaceStatus string
+
+const (
+    SpaceStatusAvailable  SpaceStatus = &quot;available&quot;
+    SpaceStatusOccupied   SpaceStatus = &quot;occupied&quot;
+    SpaceStatusReserved   SpaceStatus = &quot;reserved&quot;
+    SpaceStatusMaintenance SpaceStatus = &quot;maintenance&quot;
+    SpaceStatusEVCharging SpaceStatus = &quot;ev_charging&quot;
+)
+
+func (s SpaceStatus) IsAvailable() bool {
+    return s == SpaceStatusAvailable
+}
+
+func (s SpaceStatus) IsOccupied() bool {
+    return s == SpaceStatusOccupied
+}
+</code></pre>
+<h3>3.3 Repository Interfaces</h3>
+<h4>3.3.1 ParkingTicketRepository</h4>
+<pre><code class="language-go">// domain/repository/parking_ticket_repository.go
+package repository
+
+import (
+    &quot;context&quot;
+    &quot;time&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+)
+
+type ParkingTicketRepository interface {
+    Create(ctx context.Context, ticket *entity.ParkingTicket) error
+    Update(ctx context.Context, ticket *entity.ParkingTicket) error
+    GetByID(ctx context.Context, id int64) (*entity.ParkingTicket, error)
+    GetByNo(ctx context.Context, ticketNo string) (*entity.ParkingTicket, error)
+    FindByVehicle(ctx context.Context, vehicleID int64) ([]*entity.ParkingTicket, error)
+    FindByPlate(ctx context.Context, plateNo string) ([]*entity.ParkingTicket, error)
+    FindActive(ctx context.Context) ([]*entity.ParkingTicket, error)
+    FindActiveByBuilding(ctx context.Context, buildingID int64) ([]*entity.ParkingTicket, error)
+    FindByDateRange(ctx context.Context, start, end time.Time) ([]*entity.ParkingTicket, error)
+    FindByStatus(ctx context.Context, status entity.TicketStatus) ([]*entity.ParkingTicket, error)
+    CountActive(ctx context.Context) (int64, error)
+    CountByBuilding(ctx context.Context, buildingID int64) (int64, error)
+    CountByDateRange(ctx context.Context, start, end time.Time) (int64, error)
+    Delete(ctx context.Context, id int64) error
+}
+</code></pre>
+<h4>3.3.2 ParkingSpaceRepository</h4>
+<pre><code class="language-go">// domain/repository/parking_space_repository.go
+package repository
+
+import (
+    &quot;context&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+)
+
+type ParkingSpaceRepository interface {
+    Create(ctx context.Context, space *entity.ParkingSpace) error
+    Update(ctx context.Context, space *entity.ParkingSpace) error
+    GetByID(ctx context.Context, id int64) (*entity.ParkingSpace, error)
+    GetByNo(ctx context.Context, floorID int64, spaceNo string) (*entity.ParkingSpace, error)
+    FindByFloor(ctx context.Context, floorID int64) ([]*entity.ParkingSpace, error)
+    FindByBuilding(ctx context.Context, buildingID int64) ([]*entity.ParkingSpace, error)
+    FindAvailable(ctx context.Context, buildingID int64, vehicleType string, isEV bool) (*entity.ParkingSpace, error)
+    FindAvailableByFloor(ctx context.Context, floorID int64) ([]*entity.ParkingSpace, error)
+    FindByStatus(ctx context.Context, status value_object.SpaceStatus) ([]*entity.ParkingSpace, error)
+    FindEVSpaces(ctx context.Context, buildingID int64) ([]*entity.ParkingSpace, error)
+    CountByStatus(ctx context.Context, status value_object.SpaceStatus) (int64, error)
+    CountByBuilding(ctx context.Context, buildingID int64) (int64, error)
+    CountAvailableByBuilding(ctx context.Context, buildingID int64) (int64, error)
+    Delete(ctx context.Context, id int64) error
+}
+</code></pre>
+<h4>3.3.3 PaymentRepository</h4>
+<pre><code class="language-go">// domain/repository/payment_repository.go
+package repository
+
+import (
+    &quot;context&quot;
+    &quot;time&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+)
+
+type PaymentRepository interface {
+    Create(ctx context.Context, payment *entity.Payment) error
+    Update(ctx context.Context, payment *entity.Payment) error
+    GetByID(ctx context.Context, id int64) (*entity.Payment, error)
+    GetByTicketID(ctx context.Context, ticketID int64) (*entity.Payment, error)
+    FindByStatus(ctx context.Context, status entity.PaymentStatus) ([]*entity.Payment, error)
+    FindByDateRange(ctx context.Context, start, end time.Time) ([]*entity.Payment, error)
+    FindByMethod(ctx context.Context, method entity.PaymentMethod) ([]*entity.Payment, error)
+    GetTotalRevenue(ctx context.Context, start, end time.Time) (float64, error)
+    GetRevenueByBuilding(ctx context.Context, buildingID int64, start, end time.Time) (float64, error)
+    CountByDateRange(ctx context.Context, start, end time.Time) (int64, error)
+    Delete(ctx context.Context, id int64) error
+}
+</code></pre>
+<h3>3.4 Domain Services</h3>
+<h4>3.4.1 PricingService</h4>
+<pre><code class="language-go">// domain/service/pricing_service.go
+package service
+
+import (
+    &quot;context&quot;
+    &quot;errors&quot;
+    &quot;time&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+)
+
+type PricingService struct {
+    rateRepo repository.ParkingRateRepository
+}
+
+func NewPricingService(rateRepo repository.ParkingRateRepository) *PricingService {
+    return &amp;PricingService{rateRepo: rateRepo}
+}
+
+func (s *PricingService) CalculateFee(
+    ctx context.Context,
+    ticket *entity.ParkingTicket,
+    rates []entity.ParkingRate,
+) (float64, error) {
+    if ticket.ExitTime == nil {
+        return 0, errors.New(&quot;ticket must have exit time to calculate fee&quot;)
+    }
+
+    duration := ticket.ExitTime.Sub(ticket.EntryTime)
+    hours := int(duration.Hours())
+    minutes := int(duration.Minutes()) % 60
+
+    var rate *entity.ParkingRate
+    for _, r := range rates {
+        if r.VehicleType == ticket.VehicleType {
+            rate = &amp;r
+            break
+        }
+    }
+
+    if rate == nil {
+        return 0, errors.New(&quot;no rate found for vehicle type&quot;)
+    }
+
+    fee := rate.FirstHour
+    hours--
+
+    if hours &gt; 0 {
+        fee += float64(hours) * rate.SubsequentHour
+    }
+
+    if minutes &gt; 0 {
+        fee += rate.SubsequentHour
+    }
+
+    if fee &gt; rate.MaxCharge {
+        fee = rate.MaxCharge
+    }
+
+    return fee, nil
+}
+
+func (s *PricingService) GetRatesForVehicleType(
+    ctx context.Context,
+    buildingID int64,
+    vehicleType string,
+) ([]entity.ParkingRate, error) {
+    return s.rateRepo.FindByBuildingAndType(ctx, buildingID, vehicleType)
+}
+</code></pre>
+<h4>3.4.2 SpaceAllocationService</h4>
+<pre><code class="language-go">// domain/service/space_allocation_service.go
+package service
+
+import (
+    &quot;context&quot;
+    &quot;errors&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+)
+
+type SpaceAllocationService struct {
+    spaceRepo repository.ParkingSpaceRepository
+}
+
+func NewSpaceAllocationService(spaceRepo repository.ParkingSpaceRepository) *SpaceAllocationService {
+    return &amp;SpaceAllocationService{spaceRepo: spaceRepo}
+}
+
+func (s *SpaceAllocationService) FindAvailableSpace(
+    ctx context.Context,
+    buildingID int64,
+    vehicleType string,
+    isEV bool,
+) (*entity.ParkingSpace, error) {
+    // Find space based on vehicle type and requirements
+    space, err := s.spaceRepo.FindAvailable(ctx, buildingID, vehicleType, isEV)
+    if err != nil {
+        return nil, err
+    }
+    if space == nil {
+        return nil, errors.New(&quot;no available parking space&quot;)
+    }
+    return space, nil
+}
+
+func (s *SpaceAllocationService) AllocateSpace(
+    ctx context.Context,
+    spaceID int64,
+    vehicleID string,
+) error {
+    space, err := s.spaceRepo.GetByID(ctx, spaceID)
+    if err != nil {
+        return err
+    }
+
+    if space.Status != value_object.SpaceStatusAvailable {
+        return errors.New(&quot;space is not available&quot;)
+    }
+
+    return space.Occupied(vehicleID)
+}
+
+func (s *SpaceAllocationService) ReleaseSpace(
+    ctx context.Context,
+    spaceID int64,
+) error {
+    space, err := s.spaceRepo.GetByID(ctx, spaceID)
+    if err != nil {
+        return err
+    }
+
+    if space.Status != value_object.SpaceStatusOccupied {
+        return errors.New(&quot;space is not occupied&quot;)
+    }
+
+    return space.Vacate()
+}
+</code></pre>
+<h3>3.5 Domain Errors</h3>
+<pre><code class="language-go">// domain/errors/errors.go
+package errors
+
+import &quot;errors&quot;
+
+var (
+    // Building errors
+    ErrBuildingNotFound      = errors.New(&quot;building not found&quot;)
+    ErrBuildingInactive      = errors.New(&quot;building is inactive&quot;)
+    ErrBuildingFull          = errors.New(&quot;building has reached maximum capacity&quot;)
+    
+    // Space errors
+    ErrSpaceNotFound         = errors.New(&quot;parking space not found&quot;)
+    ErrSpaceNotAvailable     = errors.New(&quot;parking space is not available&quot;)
+    ErrSpaceOccupied         = errors.New(&quot;parking space is already occupied&quot;)
+    ErrSpaceMaintenance      = errors.New(&quot;parking space is under maintenance&quot;)
+    ErrNoAvailableSpace      = errors.New(&quot;no available parking space found&quot;)
+    
+    // Ticket errors
+    ErrTicketNotFound        = errors.New(&quot;parking ticket not found&quot;)
+    ErrTicketNotActive       = errors.New(&quot;parking ticket is not active&quot;)
+    ErrTicketAlreadyExited   = errors.New(&quot;ticket already exited&quot;)
+    ErrTicketAlreadyPaid     = errors.New(&quot;ticket already paid&quot;)
+    ErrTicketExpired         = errors.New(&quot;ticket has expired&quot;)
+    
+    // Vehicle errors
+    ErrVehicleNotFound       = errors.New(&quot;vehicle not found&quot;)
+    ErrVehicleAlreadyExists  = errors.New(&quot;vehicle already exists&quot;)
+    ErrVehicleTypeInvalid    = errors.New(&quot;invalid vehicle type&quot;)
+    
+    // Payment errors
+    ErrPaymentNotFound       = errors.New(&quot;payment not found&quot;)
+    ErrPaymentAlreadyProcessed = errors.New(&quot;payment already processed&quot;)
+    ErrPaymentFailed         = errors.New(&quot;payment failed&quot;)
+    ErrInsufficientAmount    = errors.New(&quot;insufficient amount&quot;)
+    
+    // Discount errors
+    ErrDiscountNotFound      = errors.New(&quot;discount not found&quot;)
+    ErrDiscountExpired       = errors.New(&quot;discount has expired&quot;)
+    ErrDiscountInactive      = errors.New(&quot;discount is not active&quot;)
+    ErrDiscountLimitReached  = errors.New(&quot;discount usage limit reached&quot;)
+    
+    // Rate errors
+    ErrRateNotFound          = errors.New(&quot;parking rate not found&quot;)
+    
+    // Validation errors
+    ErrInvalidPlateNumber    = errors.New(&quot;invalid plate number&quot;)
+    ErrInvalidTicketNumber   = errors.New(&quot;invalid ticket number&quot;)
+    ErrInvalidAmount         = errors.New(&quot;invalid amount&quot;)
+    
+    // Authorization errors
+    ErrUnauthorized          = errors.New(&quot;unauthorized access&quot;)
+    ErrForbidden             = errors.New(&quot;forbidden access&quot;)
+    
+    // System errors
+    ErrSystemModeInvalid     = errors.New(&quot;invalid system mode&quot;)
+    ErrSystemInEmergency     = errors.New(&quot;system is in emergency mode&quot;)
+    ErrSystemInMaintenance   = errors.New(&quot;system is in maintenance mode&quot;)
+    
+    // Hardware errors
+    ErrHardwareNotConnected  = errors.New(&quot;hardware device not connected&quot;)
+    ErrHardwareError         = errors.New(&quot;hardware error occurred&quot;)
+    
+    // Printing errors
+    ErrPrinterNotAvailable   = errors.New(&quot;printer not available&quot;)
+    ErrPrintFailed           = errors.New(&quot;print job failed&quot;)
+    
+    // EV Charging errors
+    ErrEVChargerNotFound     = errors.New(&quot;EV charger not found&quot;)
+    ErrEVChargerNotAvailable = errors.New(&quot;EV charger not available&quot;)
+    ErrEVChargerInUse        = errors.New(&quot;EV charger is in use&quot;)
+)
+</code></pre>
+<hr>
+<h2>4. Application Layer</h2>
+<h3>4.1 Use Cases</h3>
+<h4>4.1.1 EntryVehicle - Use Case</h4>
+<pre><code class="language-go">// application/entry_vehicle.go
+package application
+
+import (
+    &quot;context&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/service&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/value_object&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/hardware&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/printing&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/messaging/kafka&quot;
+)
+
+type EntryVehicleUseCase struct {
+    ticketRepo          repository.ParkingTicketRepository
+    spaceRepo           repository.ParkingSpaceRepository
+    vehicleRepo         repository.VehicleRepository
+    rateRepo            repository.ParkingRateRepository
+    allocationService   *service.SpaceAllocationService
+    printer             *printing.TicketPrinter
+    ledCtrl             *hardware.LEDController
+    boomCtrl            *hardware.BoomController
+    lprService          *hardware.LPRService
+    kafkaProducer       *kafka.Producer
+}
+
+func NewEntryVehicleUseCase(
+    ticketRepo repository.ParkingTicketRepository,
+    spaceRepo repository.ParkingSpaceRepository,
+    vehicleRepo repository.VehicleRepository,
+    rateRepo repository.ParkingRateRepository,
+    allocationService *service.SpaceAllocationService,
+    printer *printing.TicketPrinter,
+    ledCtrl *hardware.LEDController,
+    boomCtrl *hardware.BoomController,
+    lprService *hardware.LPRService,
+    kafkaProducer *kafka.Producer,
+) *EntryVehicleUseCase {
+    return &amp;EntryVehicleUseCase{
+        ticketRepo:        ticketRepo,
+        spaceRepo:         spaceRepo,
+        vehicleRepo:       vehicleRepo,
+        rateRepo:          rateRepo,
+        allocationService: allocationService,
+        printer:           printer,
+        ledCtrl:           ledCtrl,
+        boomCtrl:          boomCtrl,
+        lprService:        lprService,
+        kafkaProducer:     kafkaProducer,
+    }
+}
+
+type EntryVehicleRequest struct {
+    BuildingID   int64  `json:&quot;building_id&quot;`
+    PlateNo      string `json:&quot;plate_no&quot;`
+    VehicleType  string `json:&quot;vehicle_type&quot;`
+    IsEV         bool   `json:&quot;is_ev&quot;`
+    EntryMethod  string `json:&quot;entry_method&quot;` // lpr, rfid, manual
+}
+
+type EntryVehicleResponse struct {
+    TicketNo   string    `json:&quot;ticket_no&quot;`
+    SpaceNo    string    `json:&quot;space_no&quot;`
+    ZoneCode   string    `json:&quot;zone_code&quot;`
+    FloorNo    int       `json:&quot;floor_no&quot;`
+    EntryTime  time.Time `json:&quot;entry_time&quot;`
+    QRCode     string    `json:&quot;qr_code&quot;`
+    IsEV       bool      `json:&quot;is_ev&quot;`
+    IsVIP      bool      `json:&quot;is_vip&quot;`
+}
+
+func (uc *EntryVehicleUseCase) Execute(ctx context.Context, req EntryVehicleRequest) (*EntryVehicleResponse, error) {
+    // 1. Validate request
+    if req.PlateNo == &quot;&quot; {
+        return nil, domainErr.ErrInvalidPlateNumber
+    }
+
+    // 2. Find available space
+    space, err := uc.allocationService.FindAvailableSpace(ctx, req.BuildingID, req.VehicleType, req.IsEV)
+    if err != nil {
+        return nil, err
+    }
+
+    // 3. Find or create vehicle
+    vehicle, err := uc.vehicleRepo.FindByPlate(ctx, req.PlateNo)
+    if err != nil {
+        vehicle, err = entity.NewVehicle(req.PlateNo, &quot;&quot;, &quot;&quot;, entity.VehicleType(req.VehicleType))
+        if err != nil {
+            return nil, err
+        }
+        vehicle.IsEV = req.IsEV
+        if err := uc.vehicleRepo.Create(ctx, vehicle); err != nil {
+            return nil, err
+        }
+    }
+
+    // 4. Check if vehicle is already parked
+    activeTickets, err := uc.ticketRepo.FindByVehicle(ctx, vehicle.ID)
+    if err == nil {
+        for _, ticket := range activeTickets {
+            if ticket.Status == entity.TicketStatusActive {
+                return nil, fmt.Errorf(&quot;vehicle already parked with ticket %s&quot;, ticket.TicketNo)
+            }
+        }
+    }
+
+    // 5. Create parking ticket
+    ticketNo := value_object.GenerateTicketNo()
+    ticket, err := entity.NewParkingTicket(
+        ticketNo.String(),
+        req.BuildingID,
+        space.FloorID,
+        space.ID,
+        vehicle.ID,
+        req.PlateNo,
+        req.VehicleType,
+    )
+    if err != nil {
+        return nil, err
+    }
+
+    // 6. Save ticket
+    if err := uc.ticketRepo.Create(ctx, ticket); err != nil {
+        return nil, err
+    }
+
+    // 7. Allocate space
+    if err := uc.allocationService.AllocateSpace(ctx, space.ID, fmt.Sprintf(&quot;%d&quot;, vehicle.ID)); err != nil {
+        return nil, err
+    }
+
+    // 8. Update LED status
+    if err := uc.ledCtrl.SetOccupied(space.ID); err != nil {
+        // Log error but continue
+    }
+
+    // 9. Open boom barrier
+    if err := uc.boomCtrl.Open(req.BuildingID); err != nil {
+        // Log error but continue
+    }
+
+    // 10. Print ticket
+    ticketPrint := &amp;entity.ParkingTicketPrint{
+        TicketNo:    ticket.TicketNo.String(),
+        EntryTime:   ticket.EntryTime,
+        PlateNo:     req.PlateNo,
+        VehicleType: req.VehicleType,
+        ZoneCode:    space.ZoneCode,
+        SpaceNo:     space.SpaceNo,
+        QRCode:      generateQRCode(ticket.TicketNo.String()),
+        Barcode:     ticket.TicketNo.String(),
+    }
+    if err := uc.printer.PrintTicket(ticketPrint); err != nil {
+        // Log error but continue
+    }
+
+    // 11. Publish event to Kafka
+    event := kafka.EntryEvent{
+        TicketNo:   ticket.TicketNo.String(),
+        PlateNo:    req.PlateNo,
+        SpaceNo:    space.SpaceNo,
+        BuildingID: req.BuildingID,
+        Timestamp:  time.Now(),
+    }
+    if err := uc.kafkaProducer.PublishEntryEvent(ctx, event); err != nil {
+        // Log error but continue
+    }
+
+    // 12. Build response
+    return &amp;EntryVehicleResponse{
+        TicketNo:   ticket.TicketNo.String(),
+        SpaceNo:    space.SpaceNo,
+        ZoneCode:   space.ZoneCode,
+        FloorNo:    space.FloorNo,
+        EntryTime:  ticket.EntryTime,
+        QRCode:     ticketPrint.QRCode,
+        IsEV:       req.IsEV,
+        IsVIP:      vehicle.IsVIP,
+    }, nil
+}
+
+func generateQRCode(ticketNo string) string {
+    return fmt.Sprintf(&quot;https://parking.com/ticket/%s&quot;, ticketNo)
+}
+</code></pre>
+<h4>4.1.2 ExitVehicle - Use Case</h4>
+<pre><code class="language-go">// application/exit_vehicle.go
+package application
+
+import (
+    &quot;context&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/service&quot;
+    domainErr &quot;github.com/yourproject/internal/modules/parking/domain/errors&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/hardware&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/printing&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/messaging/kafka&quot;
+)
+
+type ExitVehicleUseCase struct {
+    ticketRepo          repository.ParkingTicketRepository
+    spaceRepo           repository.ParkingSpaceRepository
+    paymentRepo         repository.PaymentRepository
+    rateRepo            repository.ParkingRateRepository
+    discountRepo        repository.DiscountRepository
+    pricingService      *service.PricingService
+    printer             *printing.ReceiptPrinter
+    ledCtrl             *hardware.LEDController
+    boomCtrl            *hardware.BoomController
+    kafkaProducer       *kafka.Producer
+}
+
+func NewExitVehicleUseCase(
+    ticketRepo repository.ParkingTicketRepository,
+    spaceRepo repository.ParkingSpaceRepository,
+    paymentRepo repository.PaymentRepository,
+    rateRepo repository.ParkingRateRepository,
+    discountRepo repository.DiscountRepository,
+    pricingService *service.PricingService,
+    printer *printing.ReceiptPrinter,
+    ledCtrl *hardware.LEDController,
+    boomCtrl *hardware.BoomController,
+    kafkaProducer *kafka.Producer,
+) *ExitVehicleUseCase {
+    return &amp;ExitVehicleUseCase{
+        ticketRepo:     ticketRepo,
+        spaceRepo:      spaceRepo,
+        paymentRepo:    paymentRepo,
+        rateRepo:       rateRepo,
+        discountRepo:   discountRepo,
+        pricingService: pricingService,
+        printer:        printer,
+        ledCtrl:        ledCtrl,
+        boomCtrl:       boomCtrl,
+        kafkaProducer:  kafkaProducer,
+    }
+}
+
+type ExitVehicleRequest struct {
+    TicketNo     string `json:&quot;ticket_no&quot;`
+    PlateNo      string `json:&quot;plate_no&quot;`
+    DiscountCode string `json:&quot;discount_code&quot;`
+    PaymentMethod string `json:&quot;payment_method&quot;`
+}
+
+type ExitVehicleResponse struct {
+    TicketNo    string    `json:&quot;ticket_no&quot;`
+    PlateNo     string    `json:&quot;plate_no&quot;`
+    EntryTime   time.Time `json:&quot;entry_time&quot;`
+    ExitTime    time.Time `json:&quot;exit_time&quot;`
+    Duration    string    `json:&quot;duration&quot;`
+    TotalAmount float64   `json:&quot;total_amount&quot;`
+    Discount    float64   `json:&quot;discount&quot;`
+    NetAmount   float64   `json:&quot;net_amount&quot;`
+    PaymentMethod string  `json:&quot;payment_method&quot;`
+    QRCode      string    `json:&quot;qr_code&quot;`
+}
+
+func (uc *ExitVehicleUseCase) Execute(ctx context.Context, req ExitVehicleRequest) (*ExitVehicleResponse, error) {
+    // 1. Find ticket
+    ticket, err := uc.ticketRepo.GetByNo(ctx, req.TicketNo)
+    if err != nil {
+        return nil, domainErr.ErrTicketNotFound
+    }
+
+    // 2. Validate ticket
+    if ticket.Status != entity.TicketStatusActive {
+        return nil, domainErr.ErrTicketNotActive
+    }
+    if ticket.ExitTime != nil {
+        return nil, domainErr.ErrTicketAlreadyExited
+    }
+
+    // 3. Verify plate number
+    if ticket.PlateNo.String() != req.PlateNo {
+        return nil, fmt.Errorf(&quot;plate number does not match ticket&quot;)
+    }
+
+    // 4. Set exit time and calculate fee
+    if err := ticket.Exit(); err != nil {
+        return nil, err
+    }
+
+    // 5. Get rates and calculate fee
+    rates, err := uc.rateRepo.FindByBuildingAndType(ctx, ticket.BuildingID, ticket.VehicleType)
+    if err != nil {
+        return nil, err
+    }
+
+    totalAmount, err := uc.pricingService.CalculateFee(ctx, ticket, rates)
+    if err != nil {
+        return nil, err
+    }
+
+    // 6. Apply discount if provided
+    discount := 0.0
+    if req.DiscountCode != &quot;&quot; {
+        discount, err = uc.applyDiscount(ctx, req.DiscountCode, ticket.ID)
+        if err != nil {
+            // Log error but continue without discount
+        }
+    }
+
+    // 7. Create payment
+    netAmount := totalAmount - discount
+    payment, err := entity.NewPayment(ticket.ID, netAmount, entity.PaymentMethod(req.PaymentMethod))
+    if err != nil {
+        return nil, err
+    }
+
+    // 8. Process payment (simplified)
+    payment.Confirm()
+
+    // 9. Update ticket with payment info
+    ticket.TotalAmount = totalAmount
+    ticket.Discount = discount
+    ticket.NetAmount = netAmount
+    ticket.PaymentStatus = entity.PaymentStatusPaid
+    ticket.PaymentMethod = entity.PaymentMethod(req.PaymentMethod)
+    ticket.UpdatedAt = time.Now()
+
+    if err := uc.ticketRepo.Update(ctx, ticket); err != nil {
+        return nil, err
+    }
+
+    // 10. Save payment
+    if err := uc.paymentRepo.Create(ctx, payment); err != nil {
+        return nil, err
+    }
+
+    // 11. Release parking space
+    space, err := uc.spaceRepo.GetByID(ctx, ticket.SpaceID)
+    if err != nil {
+        return nil, err
+    }
+
+    if err := space.Vacate(); err != nil {
+        return nil, err
+    }
+
+    if err := uc.spaceRepo.Update(ctx, space); err != nil {
+        return nil, err
+    }
+
+    // 12. Update LED status
+    if err := uc.ledCtrl.SetAvailable(space.ID); err != nil {
+        // Log error but continue
+    }
+
+    // 13. Open boom barrier
+    if err := uc.boomCtrl.Open(ticket.BuildingID); err != nil {
+        // Log error but continue
+    }
+
+    // 14. Print receipt
+    receipt := &amp;entity.ReceiptPrint{
+        ReceiptNo:    generateReceiptNo(),
+        TicketNo:     ticket.TicketNo.String(),
+        PlateNo:      ticket.PlateNo.String(),
+        EntryTime:    ticket.EntryTime,
+        ExitTime:     *ticket.ExitTime,
+        Duration:     formatDuration(*ticket.ExitTime, ticket.EntryTime),
+        RateType:     ticket.RateType,
+        RateAmount:   ticket.RateAmount,
+        TotalAmount:  totalAmount,
+        Discount:     discount,
+        NetAmount:    netAmount,
+        PaymentMethod: req.PaymentMethod,
+        PaymentDate:  time.Now(),
+        QRCode:       generateQRCode(ticket.TicketNo.String()),
+    }
+    if err := uc.printer.PrintReceipt(receipt); err != nil {
+        // Log error but continue
+    }
+
+    // 15. Publish exit event to Kafka
+    event := kafka.ExitEvent{
+        TicketNo:   ticket.TicketNo.String(),
+        PlateNo:    ticket.PlateNo.String(),
+        Amount:     netAmount,
+        BuildingID: ticket.BuildingID,
+        Timestamp:  time.Now(),
+    }
+    if err := uc.kafkaProducer.PublishExitEvent(ctx, event); err != nil {
+        // Log error but continue
+    }
+
+    // 16. Build response
+    return &amp;ExitVehicleResponse{
+        TicketNo:     ticket.TicketNo.String(),
+        PlateNo:      ticket.PlateNo.String(),
+        EntryTime:    ticket.EntryTime,
+        ExitTime:     *ticket.ExitTime,
+        Duration:     formatDuration(*ticket.ExitTime, ticket.EntryTime),
+        TotalAmount:  totalAmount,
+        Discount:     discount,
+        NetAmount:    netAmount,
+        PaymentMethod: req.PaymentMethod,
+        QRCode:       receipt.QRCode,
+    }, nil
+}
+
+func (uc *ExitVehicleUseCase) applyDiscount(ctx context.Context, code string, ticketID int64) (float64, error) {
+    discount, err := uc.discountRepo.FindByCode(ctx, code)
+    if err != nil {
+        return 0, domainErr.ErrDiscountNotFound
+    }
+
+    // Check if discount is valid
+    if !discount.IsActive {
+        return 0, domainErr.ErrDiscountInactive
+    }
+
+    if time.Now().After(discount.EndDate) || time.Now().Before(discount.StartDate) {
+        return 0, domainErr.ErrDiscountExpired
+    }
+
+    if discount.UsedCount &gt;= discount.MaxUses {
+        return 0, domainErr.ErrDiscountLimitReached
+    }
+
+    // Get ticket to calculate discount amount
+    ticket, err := uc.ticketRepo.GetByID(ctx, ticketID)
+    if err != nil {
+        return 0, err
+    }
+
+    var discountAmount float64
+    if discount.Type == &quot;percentage&quot; {
+        discountAmount = ticket.TotalAmount * (discount.Value / 100)
+    } else {
+        discountAmount = discount.Value
+    }
+
+    if discountAmount &gt; ticket.TotalAmount {
+        discountAmount = ticket.TotalAmount
+    }
+
+    // Record discount usage
+    usage := &amp;entity.DiscountUsage{
+        DiscountID: discount.ID,
+        TicketID:   ticketID,
+        UsedAt:     time.Now(),
+    }
+    if err := uc.discountRepo.CreateUsage(ctx, usage); err != nil {
+        return 0, err
+    }
+
+    // Update discount usage count
+    discount.UsedCount++
+    if err := uc.discountRepo.Update(ctx, discount); err != nil {
+        return 0, err
+    }
+
+    return discountAmount, nil
+}
+
+func formatDuration(exitTime, entryTime time.Time) string {
+    d := exitTime.Sub(entryTime)
+    hours := int(d.Hours())
+    minutes := int(d.Minutes()) % 60
+    return fmt.Sprintf(&quot;%d ชั่วโมง %d นาที&quot;, hours, minutes)
+}
+
+func generateReceiptNo() string {
+    return fmt.Sprintf(&quot;RCP-%s-%04d&quot;, time.Now().Format(&quot;20060102&quot;), 
+        time.Now().UnixNano()%10000)
+}
+</code></pre>
+<h3>4.2 DTOs</h3>
+<pre><code class="language-go">// application/dto.go
+package application
+
+import &quot;time&quot;
+
+// Entry/Exit DTOs
+type EntryRequest struct {
+    BuildingID   int64  `json:&quot;building_id&quot; binding:&quot;required&quot;`
+    PlateNo      string `json:&quot;plate_no&quot; binding:&quot;required&quot;`
+    VehicleType  string `json:&quot;vehicle_type&quot; binding:&quot;required&quot;`
+    IsEV         bool   `json:&quot;is_ev&quot;`
+    EntryMethod  string `json:&quot;entry_method&quot;`
+}
+
+type EntryResponse struct {
+    TicketNo   string    `json:&quot;ticket_no&quot;`
+    SpaceNo    string    `json:&quot;space_no&quot;`
+    ZoneCode   string    `json:&quot;zone_code&quot;`
+    FloorNo    int       `json:&quot;floor_no&quot;`
+    EntryTime  time.Time `json:&quot;entry_time&quot;`
+    QRCode     string    `json:&quot;qr_code&quot;`
+    IsEV       bool      `json:&quot;is_ev&quot;`
+    IsVIP      bool      `json:&quot;is_vip&quot;`
+}
+
+type ExitRequest struct {
+    TicketNo     string `json:&quot;ticket_no&quot; binding:&quot;required&quot;`
+    PlateNo      string `json:&quot;plate_no&quot; binding:&quot;required&quot;`
+    DiscountCode string `json:&quot;discount_code&quot;`
+    PaymentMethod string `json:&quot;payment_method&quot; binding:&quot;required&quot;`
+}
+
+type ExitResponse struct {
+    TicketNo     string    `json:&quot;ticket_no&quot;`
+    PlateNo      string    `json:&quot;plate_no&quot;`
+    EntryTime    time.Time `json:&quot;entry_time&quot;`
+    ExitTime     time.Time `json:&quot;exit_time&quot;`
+    Duration     string    `json:&quot;duration&quot;`
+    TotalAmount  float64   `json:&quot;total_amount&quot;`
+    Discount     float64   `json:&quot;discount&quot;`
+    NetAmount    float64   `json:&quot;net_amount&quot;`
+    PaymentMethod string   `json:&quot;payment_method&quot;`
+    QRCode       string    `json:&quot;qr_code&quot;`
+}
+
+// Payment DTOs
+type PaymentRequest struct {
+    TicketNo string  `json:&quot;ticket_no&quot; binding:&quot;required&quot;`
+    Amount   float64 `json:&quot;amount&quot; binding:&quot;required&quot;`
+    Method   string  `json:&quot;method&quot; binding:&quot;required&quot;`
+}
+
+type PaymentResponse struct {
+    PaymentID   int64     `json:&quot;payment_id&quot;`
+    TicketNo    string    `json:&quot;ticket_no&quot;`
+    Amount      float64   `json:&quot;amount&quot;`
+    Status      string    `json:&quot;status&quot;`
+    QRCode      string    `json:&quot;qr_code&quot;`
+    PaymentDate time.Time `json:&quot;payment_date&quot;`
+}
+
+type QRPaymentRequest struct {
+    TicketNo string  `json:&quot;ticket_no&quot; binding:&quot;required&quot;`
+    Amount   float64 `json:&quot;amount&quot; binding:&quot;required&quot;`
+    Discount float64 `json:&quot;discount&quot;`
+}
+
+type QRPaymentResponse struct {
+    QRCode    string `json:&quot;qr_code&quot;`
+    PaymentID int64  `json:&quot;payment_id&quot;`
+    Amount    float64 `json:&quot;amount&quot;`
+    ExpiresIn int    `json:&quot;expires_in&quot;`
+}
+
+// Statistics DTOs
+type StatisticsRequest struct {
+    BuildingID int64  `json:&quot;building_id&quot;`
+    Period     string `json:&quot;period&quot; binding:&quot;required&quot;` // daily, weekly, monthly, quarterly, yearly
+    StartDate  string `json:&quot;start_date&quot;`
+    EndDate    string `json:&quot;end_date&quot;`
+}
+
+type StatisticsResponse struct {
+    Period         string    `json:&quot;period&quot;`
+    Date           time.Time `json:&quot;date&quot;`
+    TotalEntries   int       `json:&quot;total_entries&quot;`
+    TotalExits     int       `json:&quot;total_exits&quot;`
+    TotalSpaces    int       `json:&quot;total_spaces&quot;`
+    AvgOccupancy   float64   `json:&quot;avg_occupancy&quot;`
+    MaxOccupancy   float64   `json:&quot;max_occupancy&quot;`
+    MinOccupancy   float64   `json:&quot;min_occupancy&quot;`
+    TotalRevenue   float64   `json:&quot;total_revenue&quot;`
+    AvgRevenue     float64   `json:&quot;avg_revenue&quot;`
+    EVRevenue      float64   `json:&quot;ev_revenue&quot;`
+}
+
+// Maintenance DTOs
+type MaintenanceRequest struct {
+    EquipmentID int64  `json:&quot;equipment_id&quot; binding:&quot;required&quot;`
+    Type        string `json:&quot;type&quot; binding:&quot;required&quot;`
+    Description string `json:&quot;description&quot; binding:&quot;required&quot;`
+    PerformedBy string `json:&quot;performed_by&quot; binding:&quot;required&quot;`
+    Duration    int    `json:&quot;duration&quot;`
+    Cost        float64 `json:&quot;cost&quot;`
+    Notes       string `json:&quot;notes&quot;`
+}
+
+type MaintenanceResponse struct {
+    LogID       int64     `json:&quot;log_id&quot;`
+    EquipmentID int64     `json:&quot;equipment_id&quot;`
+    Type        string    `json:&quot;type&quot;`
+    Description string    `json:&quot;description&quot;`
+    PerformedBy string    `json:&quot;performed_by&quot;`
+    Duration    int       `json:&quot;duration&quot;`
+    Cost        float64   `json:&quot;cost&quot;`
+    Status      string    `json:&quot;status&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+}
+
+// Emergency DTOs
+type EmergencyRequest struct {
+    BuildingID  int64  `json:&quot;building_id&quot; binding:&quot;required&quot;`
+    Type        string `json:&quot;type&quot; binding:&quot;required&quot;`
+    Severity    string `json:&quot;severity&quot; binding:&quot;required&quot;`
+    Description string `json:&quot;description&quot; binding:&quot;required&quot;`
+    Location    string `json:&quot;location&quot;`
+}
+
+type EmergencyResponse struct {
+    EventID     int64     `json:&quot;event_id&quot;`
+    Type        string    `json:&quot;type&quot;`
+    Severity    string    `json:&quot;severity&quot;`
+    Description string    `json:&quot;description&quot;`
+    Status      string    `json:&quot;status&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+}
+
+// Mode DTOs
+type ModeRequest struct {
+    Mode   string `json:&quot;mode&quot; binding:&quot;required&quot;` // auto, manual, emergency, maintenance
+    Reason string `json:&quot;reason&quot;`
+}
+
+type ModeResponse struct {
+    Mode      string    `json:&quot;mode&quot;`
+    ChangedBy string    `json:&quot;changed_by&quot;`
+    StartedAt time.Time `json:&quot;started_at&quot;`
+    IsActive  bool      `json:&quot;is_active&quot;`
+}
+</code></pre>
+<hr>
+<h2>5. Infrastructure Layer</h2>
+<h3>5.1 Repository Implementations</h3>
+<h4>5.1.1 ParkingTicketRepository - PostgreSQL Implementation</h4>
+<pre><code class="language-go">// infrastructure/persistence/postgres/parking_ticket_repo_impl.go
+package postgres
+
+import (
+    &quot;context&quot;
+    &quot;time&quot;
+    &quot;gorm.io/gorm&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+)
+
+type ParkingTicketRepositoryImpl struct {
+    db *gorm.DB
+}
+
+func NewParkingTicketRepository(db *gorm.DB) repository.ParkingTicketRepository {
+    return &amp;ParkingTicketRepositoryImpl{db: db}
+}
+
+func (r *ParkingTicketRepositoryImpl) Create(ctx context.Context, ticket *entity.ParkingTicket) error {
+    return r.db.WithContext(ctx).Create(ticket).Error
+}
+
+func (r *ParkingTicketRepositoryImpl) Update(ctx context.Context, ticket *entity.ParkingTicket) error {
+    return r.db.WithContext(ctx).Save(ticket).Error
+}
+
+func (r *ParkingTicketRepositoryImpl) GetByID(ctx context.Context, id int64) (*entity.ParkingTicket, error) {
+    var ticket entity.ParkingTicket
+    err := r.db.WithContext(ctx).First(&amp;ticket, id).Error
+    if err != nil {
+        return nil, err
+    }
+    return &amp;ticket, nil
+}
+
+func (r *ParkingTicketRepositoryImpl) GetByNo(ctx context.Context, ticketNo string) (*entity.ParkingTicket, error) {
+    var ticket entity.ParkingTicket
+    err := r.db.WithContext(ctx).Where(&quot;ticket_no = ?&quot;, ticketNo).First(&amp;ticket).Error
+    if err != nil {
+        return nil, err
+    }
+    return &amp;ticket, nil
+}
+
+func (r *ParkingTicketRepositoryImpl) FindByVehicle(ctx context.Context, vehicleID int64) ([]*entity.ParkingTicket, error) {
+    var tickets []*entity.ParkingTicket
+    err := r.db.WithContext(ctx).Where(&quot;vehicle_id = ?&quot;, vehicleID).Find(&amp;tickets).Error
+    return tickets, err
+}
+
+func (r *ParkingTicketRepositoryImpl) FindByPlate(ctx context.Context, plateNo string) ([]*entity.ParkingTicket, error) {
+    var tickets []*entity.ParkingTicket
+    err := r.db.WithContext(ctx).Where(&quot;plate_no = ?&quot;, plateNo).Find(&amp;tickets).Error
+    return tickets, err
+}
+
+func (r *ParkingTicketRepositoryImpl) FindActive(ctx context.Context) ([]*entity.ParkingTicket, error) {
+    var tickets []*entity.ParkingTicket
+    err := r.db.WithContext(ctx).Where(&quot;status = ?&quot;, entity.TicketStatusActive).Find(&amp;tickets).Error
+    return tickets, err
+}
+
+func (r *ParkingTicketRepositoryImpl) FindActiveByBuilding(ctx context.Context, buildingID int64) ([]*entity.ParkingTicket, error) {
+    var tickets []*entity.ParkingTicket
+    err := r.db.WithContext(ctx).Where(&quot;building_id = ? AND status = ?&quot;, buildingID, entity.TicketStatusActive).Find(&amp;tickets).Error
+    return tickets, err
+}
+
+func (r *ParkingTicketRepositoryImpl) FindByDateRange(ctx context.Context, start, end time.Time) ([]*entity.ParkingTicket, error) {
+    var tickets []*entity.ParkingTicket
+    err := r.db.WithContext(ctx).Where(&quot;created_at BETWEEN ? AND ?&quot;, start, end).Find(&amp;tickets).Error
+    return tickets, err
+}
+
+func (r *ParkingTicketRepositoryImpl) FindByStatus(ctx context.Context, status entity.TicketStatus) ([]*entity.ParkingTicket, error) {
+    var tickets []*entity.ParkingTicket
+    err := r.db.WithContext(ctx).Where(&quot;status = ?&quot;, status).Find(&amp;tickets).Error
+    return tickets, err
+}
+
+func (r *ParkingTicketRepositoryImpl) CountActive(ctx context.Context) (int64, error) {
+    var count int64
+    err := r.db.WithContext(ctx).Model(&amp;entity.ParkingTicket{}).Where(&quot;status = ?&quot;, entity.TicketStatusActive).Count(&amp;count).Error
+    return count, err
+}
+
+func (r *ParkingTicketRepositoryImpl) CountByBuilding(ctx context.Context, buildingID int64) (int64, error) {
+    var count int64
+    err := r.db.WithContext(ctx).Model(&amp;entity.ParkingTicket{}).Where(&quot;building_id = ?&quot;, buildingID).Count(&amp;count).Error
+    return count, err
+}
+
+func (r *ParkingTicketRepositoryImpl) CountByDateRange(ctx context.Context, start, end time.Time) (int64, error) {
+    var count int64
+    err := r.db.WithContext(ctx).Model(&amp;entity.ParkingTicket{}).Where(&quot;created_at BETWEEN ? AND ?&quot;, start, end).Count(&amp;count).Error
+    return count, err
+}
+
+func (r *ParkingTicketRepositoryImpl) Delete(ctx context.Context, id int64) error {
+    return r.db.WithContext(ctx).Delete(&amp;entity.ParkingTicket{}, id).Error
+}
+</code></pre>
+<h3>5.2 Hardware Controllers</h3>
+<h4>5.2.1 LED Controller</h4>
+<pre><code class="language-go">// infrastructure/hardware/led_controller.go
+package hardware
+
+import (
+    &quot;fmt&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+)
+
+type LEDController struct {
+    spaces map[int64]LEDStatus
+    mu     sync.RWMutex
+    conn   *SerialConnection // or TCP connection
+}
+
+type LEDStatus struct {
+    SpaceID int64
+    Color   string // green, red, blue, yellow, flashing_red
+    Blink   bool
+    Pattern string // solid, blink, flash
+}
+
+func NewLEDController(conn *SerialConnection) *LEDController {
+    return &amp;LEDController{
+        spaces: make(map[int64]LEDStatus),
+        conn:   conn,
+    }
+}
+
+func (c *LEDController) UpdateLED(spaceID int64, color string, pattern string) error {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+
+    c.spaces[spaceID] = LEDStatus{
+        SpaceID: spaceID,
+        Color:   color,
+        Pattern: pattern,
+        Blink:   pattern == &quot;blink&quot; || pattern == &quot;flash&quot;,
+    }
+
+    return c.sendCommand(spaceID, color, pattern)
+}
+
+func (c *LEDController) sendCommand(spaceID int64, color string, pattern string) error {
+    command := fmt.Sprintf(&quot;LED:%d:%s:%s\n&quot;, spaceID, color, pattern)
+    _, err := c.conn.Write([]byte(command))
+    return err
+}
+
+func (c *LEDController) SetAvailable(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;green&quot;, &quot;solid&quot;)
+}
+
+func (c *LEDController) SetOccupied(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;red&quot;, &quot;solid&quot;)
+}
+
+func (c *LEDController) SetReserved(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;blue&quot;, &quot;solid&quot;)
+}
+
+func (c *LEDController) SetMaintenance(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;yellow&quot;, &quot;blink&quot;)
+}
+
+func (c *LEDController) SetEVCharging(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;blue&quot;, &quot;blink&quot;)
+}
+
+func (c *LEDController) SetEmergency(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;red&quot;, &quot;flash&quot;)
+}
+</code></pre>
+<h4>5.2.2 Boom Barrier Controller</h4>
+<pre><code class="language-go">// infrastructure/hardware/boom_controller.go
+package hardware
+
+import (
+    &quot;fmt&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+)
+
+type BoomController struct {
+    barriers map[int64]BoomStatus
+    mu       sync.RWMutex
+    conn     *SerialConnection
+}
+
+type BoomStatus struct {
+    BarrierID int64
+    Position  string // up, down, opening, closing
+    Status    string // normal, error, blocked
+    LastUpdate time.Time
+}
+
+func NewBoomController(conn *SerialConnection) *BoomController {
+    return &amp;BoomController{
+        barriers: make(map[int64]BoomStatus),
+        conn:     conn,
+    }
+}
+
+func (c *BoomController) Open(buildingID int64) error {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+
+    command := fmt.Sprintf(&quot;BOOM:%d:OPEN\n&quot;, buildingID)
+    _, err := c.conn.Write([]byte(command))
+    if err != nil {
+        return err
+    }
+
+    c.barriers[buildingID] = BoomStatus{
+        BarrierID:  buildingID,
+        Position:   &quot;opening&quot;,
+        Status:     &quot;normal&quot;,
+        LastUpdate: time.Now(),
+    }
+    return nil
+}
+
+func (c *BoomController) Close(buildingID int64) error {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+
+    command := fmt.Sprintf(&quot;BOOM:%d:CLOSE\n&quot;, buildingID)
+    _, err := c.conn.Write([]byte(command))
+    if err != nil {
+        return err
+    }
+
+    c.barriers[buildingID] = BoomStatus{
+        BarrierID:  buildingID,
+        Position:   &quot;closing&quot;,
+        Status:     &quot;normal&quot;,
+        LastUpdate: time.Now(),
+    }
+    return nil
+}
+
+func (c *BoomController) GetStatus(buildingID int64) (*BoomStatus, error) {
+    c.mu.RLock()
+    defer c.mu.RUnlock()
+
+    status, ok := c.barriers[buildingID]
+    if !ok {
+        return nil, fmt.Errorf(&quot;barrier %d not found&quot;, buildingID)
+    }
+    return &amp;status, nil
+}
+</code></pre>
+<h4>5.2.3 LPR Service</h4>
+<pre><code class="language-go">// infrastructure/hardware/lpr_service.go
+package hardware
+
+import (
+    &quot;context&quot;
+    &quot;encoding/json&quot;
+    &quot;fmt&quot;
+    &quot;net/http&quot;
+    &quot;time&quot;
+)
+
+type LPRService struct {
+    cameraURL string
+    client    *http.Client
+}
+
+type LPRResponse struct {
+    PlateNo    string  `json:&quot;plate_no&quot;`
+    Confidence float64 `json:&quot;confidence&quot;`
+    ImageURL   string  `json:&quot;image_url&quot;`
+    Timestamp  string  `json:&quot;timestamp&quot;`
+}
+
+func NewLPRService(cameraURL string) *LPRService {
+    return &amp;LPRService{
+        cameraURL: cameraURL,
+        client: &amp;http.Client{
+            Timeout: 10 * time.Second,
+        },
+    }
+}
+
+func (s *LPRService) ScanPlate(ctx context.Context, cameraID int64) (*LPRResponse, error) {
+    url := fmt.Sprintf(&quot;%s/api/lpr/scan/%d&quot;, s.cameraURL, cameraID)
+    
+    req, err := http.NewRequestWithContext(ctx, &quot;GET&quot;, url, nil)
+    if err != nil {
+        return nil, err
+    }
+
+    resp, err := s.client.Do(req)
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        return nil, fmt.Errorf(&quot;LPR service returned status %d&quot;, resp.StatusCode)
+    }
+
+    var result LPRResponse
+    if err := json.NewDecoder(resp.Body).Decode(&amp;result); err != nil {
+        return nil, err
+    }
+
+    return &amp;result, nil
+}
+</code></pre>
+<h3>5.3 Payment Gateway Integration</h3>
+<pre><code class="language-go">// infrastructure/payment/payment_gateway.go
+package payment
+
+import (
+    &quot;bytes&quot;
+    &quot;context&quot;
+    &quot;encoding/json&quot;
+    &quot;fmt&quot;
+    &quot;net/http&quot;
+    &quot;time&quot;
+)
+
+type PaymentGateway struct {
+    apiURL    string
+    apiKey    string
+    secretKey string
+    client    *http.Client
+}
+
+type PaymentRequest struct {
+    Amount    float64 `json:&quot;amount&quot;`
+    Currency  string  `json:&quot;currency&quot;`
+    Reference string  `json:&quot;reference&quot;`
+    Method    string  `json:&quot;method&quot;`
+    Timestamp int64   `json:&quot;timestamp&quot;`
+}
+
+type PaymentResponse struct {
+    TransactionID string `json:&quot;transaction_id&quot;`
+    Status        string `json:&quot;status&quot;`
+    Message       string `json:&quot;message&quot;`
+    QRCode        string `json:&quot;qr_code,omitempty&quot;`
+}
+
+func NewPaymentGateway(apiURL, apiKey, secretKey string) *PaymentGateway {
+    return &amp;PaymentGateway{
+        apiURL:    apiURL,
+        apiKey:    apiKey,
+        secretKey: secretKey,
+        client: &amp;http.Client{
+            Timeout: 30 * time.Second,
+        },
+    }
+}
+
+func (g *PaymentGateway) ProcessPayment(ctx context.Context, req PaymentRequest) (*PaymentResponse, error) {
+    req.Timestamp = time.Now().Unix()
+    
+    body, err := json.Marshal(req)
+    if err != nil {
+        return nil, err
+    }
+
+    httpReq, err := http.NewRequestWithContext(ctx, &quot;POST&quot;, g.apiURL+&quot;/api/payment&quot;, bytes.NewBuffer(body))
+    if err != nil {
+        return nil, err
+    }
+
+    httpReq.Header.Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+    httpReq.Header.Set(&quot;X-API-Key&quot;, g.apiKey)
+    httpReq.Header.Set(&quot;X-Secret-Key&quot;, g.secretKey)
+
+    resp, err := g.client.Do(httpReq)
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK &amp;&amp; resp.StatusCode != http.StatusCreated {
+        return nil, fmt.Errorf(&quot;payment gateway returned status %d&quot;, resp.StatusCode)
+    }
+
+    var result PaymentResponse
+    if err := json.NewDecoder(resp.Body).Decode(&amp;result); err != nil {
+        return nil, err
+    }
+
+    return &amp;result, nil
+}
+
+func (g *PaymentGateway) GenerateQRCode(ctx context.Context, amount float64, reference string) (string, error) {
+    req := PaymentRequest{
+        Amount:    amount,
+        Currency:  &quot;THB&quot;,
+        Reference: reference,
+        Method:    &quot;qr&quot;,
+    }
+
+    resp, err := g.ProcessPayment(ctx, req)
+    if err != nil {
+        return &quot;&quot;, err
+    }
+
+    return resp.QRCode, nil
+}
+</code></pre>
+<h3>5.4 MQTT/Kafka Implementation</h3>
+<h4>5.4.1 Kafka Producer</h4>
+<pre><code class="language-go">// infrastructure/messaging/kafka/producer.go
+package kafka
+
+import (
+    &quot;context&quot;
+    &quot;encoding/json&quot;
+    &quot;time&quot;
+
+    &quot;github.com/IBM/sarama&quot;
+)
+
+type Producer struct {
+    producer sarama.SyncProducer
+    topic    string
+}
+
+type EntryEvent struct {
+    TicketNo   string    `json:&quot;ticket_no&quot;`
+    PlateNo    string    `json:&quot;plate_no&quot;`
+    SpaceNo    string    `json:&quot;space_no&quot;`
+    BuildingID int64     `json:&quot;building_id&quot;`
+    Timestamp  time.Time `json:&quot;timestamp&quot;`
+}
+
+type ExitEvent struct {
+    TicketNo   string    `json:&quot;ticket_no&quot;`
+    PlateNo    string    `json:&quot;plate_no&quot;`
+    Amount     float64   `json:&quot;amount&quot;`
+    BuildingID int64     `json:&quot;building_id&quot;`
+    Timestamp  time.Time `json:&quot;timestamp&quot;`
+}
+
+type PaymentEvent struct {
+    PaymentID   int64     `json:&quot;payment_id&quot;`
+    TicketNo    string    `json:&quot;ticket_no&quot;`
+    Amount      float64   `json:&quot;amount&quot;`
+    Method      string    `json:&quot;method&quot;`
+    Timestamp   time.Time `json:&quot;timestamp&quot;`
+}
+
+type SpaceEvent struct {
+    SpaceID     int64     `json:&quot;space_id&quot;`
+    SpaceNo     string    `json:&quot;space_no&quot;`
+    Status      string    `json:&quot;status&quot;`
+    BuildingID  int64     `json:&quot;building_id&quot;`
+    Timestamp   time.Time `json:&quot;timestamp&quot;`
+}
+
+func NewProducer(brokers []string, topic string) (*Producer, error) {
+    config := sarama.NewConfig()
+    config.Producer.RequiredAcks = sarama.WaitForAll
+    config.Producer.Retry.Max = 5
+    config.Producer.Return.Successes = true
+
+    producer, err := sarama.NewSyncProducer(brokers, config)
+    if err != nil {
+        return nil, err
+    }
+
+    return &amp;Producer{
+        producer: producer,
+        topic:    topic,
+    }, nil
+}
+
+func (p *Producer) PublishEntryEvent(ctx context.Context, event EntryEvent) error {
+    return p.publish(ctx, &quot;entry&quot;, event)
+}
+
+func (p *Producer) PublishExitEvent(ctx context.Context, event ExitEvent) error {
+    return p.publish(ctx, &quot;exit&quot;, event)
+}
+
+func (p *Producer) PublishPaymentEvent(ctx context.Context, event PaymentEvent) error {
+    return p.publish(ctx, &quot;payment&quot;, event)
+}
+
+func (p *Producer) PublishSpaceEvent(ctx context.Context, event SpaceEvent) error {
+    return p.publish(ctx, &quot;space&quot;, event)
+}
+
+func (p *Producer) publish(ctx context.Context, eventType string, data interface{}) error {
+    msg, err := json.Marshal(data)
+    if err != nil {
+        return err
+    }
+
+    partition, offset, err := p.producer.SendMessage(&amp;sarama.ProducerMessage{
+        Topic: p.topic,
+        Key:   sarama.StringEncoder(eventType),
+        Value: sarama.ByteEncoder(msg),
+        Headers: []sarama.RecordHeader{
+            {Key: []byte(&quot;event_type&quot;), Value: []byte(eventType)},
+            {Key: []byte(&quot;timestamp&quot;), Value: []byte(time.Now().Format(time.RFC3339))},
+        },
+    })
+    if err != nil {
+        return err
+    }
+
+    // Log successful publish
+    _ = partition
+    _ = offset
+    return nil
+}
+
+func (p *Producer) Close() error {
+    return p.producer.Close()
+}
+</code></pre>
+<h4>5.4.2 Kafka Consumer Group</h4>
+<pre><code class="language-go">// infrastructure/messaging/kafka/consumer_group.go
+package kafka
+
+import (
+    &quot;context&quot;
+    &quot;encoding/json&quot;
+    &quot;log&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+
+    &quot;github.com/IBM/sarama&quot;
+)
+
+type ConsumerGroup struct {
+    consumer sarama.ConsumerGroup
+    handlers map[string]EventHandler
+    mu       sync.RWMutex
+}
+
+type EventHandler interface {
+    Handle(ctx context.Context, eventType string, data []byte) error
+}
+
+type ConsumerGroupHandler struct {
+    consumer *ConsumerGroup
+    ready    chan bool
+}
+
+func NewConsumerGroup(brokers []string, groupID string, topics []string) (*ConsumerGroup, error) {
+    config := sarama.NewConfig()
+    config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
+    config.Consumer.Offsets.Initial = sarama.OffsetNewest
+    config.Consumer.Return.Errors = true
+
+    consumer, err := sarama.NewConsumerGroup(brokers, groupID, config)
+    if err != nil {
+        return nil, err
+    }
+
+    cg := &amp;ConsumerGroup{
+        consumer: consumer,
+        handlers: make(map[string]EventHandler),
+    }
+
+    // Start consuming
+    go cg.consume(topics)
+
+    return cg, nil
+}
+
+func (cg *ConsumerGroup) RegisterHandler(eventType string, handler EventHandler) {
+    cg.mu.Lock()
+    defer cg.mu.Unlock()
+    cg.handlers[eventType] = handler
+}
+
+func (cg *ConsumerGroup) consume(topics []string) {
+    handler := &amp;ConsumerGroupHandler{
+        consumer: cg,
+        ready:    make(chan bool),
+    }
+
+    ctx := context.Background()
+    for {
+        if err := cg.consumer.Consume(ctx, topics, handler); err != nil {
+            log.Printf(&quot;Error from consumer: %v&quot;, err)
+        }
+        if ctx.Err() != nil {
+            return
+        }
+        handler.ready = make(chan bool)
+    }
+}
+
+func (h *ConsumerGroupHandler) Setup(sarama.ConsumerGroupSession) error {
+    close(h.ready)
+    return nil
+}
+
+func (h *ConsumerGroupHandler) Cleanup(sarama.ConsumerGroupSession) error {
+    return nil
+}
+
+func (h *ConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+    for msg := range claim.Messages() {
+        eventType := string(msg.Headers[0].Value)
+        
+        h.consumer.mu.RLock()
+        handler, ok := h.consumer.handlers[eventType]
+        h.consumer.mu.RUnlock()
+
+        if !ok {
+            log.Printf(&quot;No handler for event type: %s&quot;, eventType)
+            session.MarkMessage(msg, &quot;&quot;)
+            continue
+        }
+
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        if err := handler.Handle(ctx, eventType, msg.Value); err != nil {
+            log.Printf(&quot;Error handling event: %v&quot;, err)
+            cancel()
+            session.MarkMessage(msg, &quot;&quot;)
+            continue
+        }
+        cancel()
+
+        session.MarkMessage(msg, &quot;&quot;)
+    }
+    return nil
+}
+
+func (cg *ConsumerGroup) Close() error {
+    return cg.consumer.Close()
+}
+</code></pre>
+<h3>5.5 QR Code Generation</h3>
+<pre><code class="language-go">// infrastructure/payment/qr_code.go
+package payment
+
+import (
+    &quot;encoding/base64&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+
+    &quot;github.com/skip2/go-qrcode&quot;
+)
+
+type QRCodeGenerator struct {
+    size      int
+    expirySec int
+}
+
+func NewQRCodeGenerator(size int, expirySec int) *QRCodeGenerator {
+    return &amp;QRCodeGenerator{
+        size:      size,
+        expirySec: expirySec,
+    }
+}
+
+func (g *QRCodeGenerator) GeneratePaymentQR(ticketNo string, amount float64, discount float64) (string, error) {
+    // Create payment data
+    netAmount := amount - discount
+    data := fmt.Sprintf(
+        &quot;PTT|%s|%.2f|%.2f|%d&quot;,
+        ticketNo,
+        netAmount,
+        discount,
+        time.Now().Unix()+int64(g.expirySec),
+    )
+
+    // Generate QR code
+    qrCode, err := qrcode.Encode(data, qrcode.Medium, g.size)
+    if err != nil {
+        return &quot;&quot;, err
+    }
+
+    // Encode as base64
+    return base64.StdEncoding.EncodeToString(qrCode), nil
+}
+
+func (g *QRCodeGenerator) GenerateTicketQR(ticketNo string) (string, error) {
+    data := fmt.Sprintf(&quot;https://parking.com/ticket/%s&quot;, ticketNo)
+    
+    qrCode, err := qrcode.Encode(data, qrcode.Medium, g.size)
+    if err != nil {
+        return &quot;&quot;, err
+    }
+
+    return base64.StdEncoding.EncodeToString(qrCode), nil
+}
+</code></pre>
+<hr>
+<h2>6. Interface Layer</h2>
+<h3>6.1 HTTP Handlers</h3>
+<h4>6.1.1 ParkingHandler</h4>
+<pre><code class="language-go">// interfaces/http/parking_handler.go
+package http
+
+import (
+    &quot;net/http&quot;
+    &quot;strconv&quot;
+
+    &quot;github.com/gin-gonic/gin&quot;
+    &quot;github.com/yourproject/internal/modules/parking/application&quot;
+)
+
+type ParkingHandler struct {
+    entryUseCase *application.EntryVehicleUseCase
+    exitUseCase  *application.ExitVehicleUseCase
+}
+
+func NewParkingHandler(
+    entryUseCase *application.EntryVehicleUseCase,
+    exitUseCase *application.ExitVehicleUseCase,
+) *ParkingHandler {
+    return &amp;ParkingHandler{
+        entryUseCase: entryUseCase,
+        exitUseCase:  exitUseCase,
+    }
+}
+
+func (h *ParkingHandler) EntryVehicle(c *gin.Context) {
+    var req application.EntryVehicleRequest
+    if err := c.ShouldBindJSON(&amp;req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{&quot;error&quot;: err.Error()})
+        return
+    }
+
+    resp, err := h.entryUseCase.Execute(c.Request.Context(), req)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{&quot;error&quot;: err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, resp)
+}
+
+func (h *ParkingHandler) ExitVehicle(c *gin.Context) {
+    var req application.ExitVehicleRequest
+    if err := c.ShouldBindJSON(&amp;req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{&quot;error&quot;: err.Error()})
+        return
+    }
+
+    resp, err := h.exitUseCase.Execute(c.Request.Context(), req)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{&quot;error&quot;: err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, resp)
+}
+
+func (h *ParkingHandler) GetAvailableSpaces(c *gin.Context) {
+    buildingID, err := strconv.ParseInt(c.Query(&quot;building_id&quot;), 10, 64)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{&quot;error&quot;: &quot;invalid building_id&quot;})
+        return
+    }
+
+    // Implementation
+    c.JSON(http.StatusOK, gin.H{&quot;message&quot;: &quot;available spaces&quot;})
+}
+
+func (h *ParkingHandler) GetTicketInfo(c *gin.Context) {
+    ticketNo := c.Param(&quot;ticket_no&quot;)
+    if ticketNo == &quot;&quot; {
+        c.JSON(http.StatusBadRequest, gin.H{&quot;error&quot;: &quot;ticket_no is required&quot;})
+        return
+    }
+
+    // Implementation
+    c.JSON(http.StatusOK, gin.H{&quot;ticket_no&quot;: ticketNo})
+}
+</code></pre>
+<h3>6.2 Routes</h3>
+<pre><code class="language-go">// interfaces/http/routes.go
+package http
+
+import (
+    &quot;github.com/gin-gonic/gin&quot;
+    &quot;github.com/yourproject/internal/modules/parking/interfaces/middleware&quot;
+)
+
+func SetupRoutes(
+    r *gin.Engine,
+    parkingHandler *ParkingHandler,
+    paymentHandler *PaymentHandler,
+    printingHandler *PrintingHandler,
+    adminHandler *AdminHandler,
+    memberHandler *MemberHandler,
+) {
+    api := r.Group(&quot;/api/v1/parking&quot;)
+
+    // Public endpoints (no auth required for entry/exit)
+    api.POST(&quot;/entry&quot;, parkingHandler.EntryVehicle)
+    api.POST(&quot;/exit&quot;, parkingHandler.ExitVehicle)
+    api.GET(&quot;/space/available&quot;, parkingHandler.GetAvailableSpaces)
+    api.GET(&quot;/qr/:ticket_no&quot;, parkingHandler.GetTicketInfo)
+
+    // Payment endpoints
+    payment := api.Group(&quot;/payment&quot;)
+    {
+        payment.POST(&quot;/qr&quot;, paymentHandler.GenerateQRPayment)
+        payment.POST(&quot;/confirm&quot;, paymentHandler.ConfirmPayment)
+        payment.POST(&quot;/discount&quot;, paymentHandler.ApplyDiscount)
+        payment.GET(&quot;/rates&quot;, paymentHandler.GetRates)
+    }
+
+    // Printing endpoints
+    printing := api.Group(&quot;/print&quot;)
+    {
+        printing.POST(&quot;/ticket/:ticket_id&quot;, printingHandler.PrintTicket)
+        printing.POST(&quot;/receipt/:ticket_id&quot;, printingHandler.PrintReceipt)
+        printing.POST(&quot;/invoice/:ticket_id&quot;, printingHandler.PrintInvoice)
+        printing.GET(&quot;/status/:printer_id&quot;, printingHandler.GetPrinterStatus)
+    }
+
+    // Member endpoints
+    member := api.Group(&quot;/member&quot;)
+    {
+        member.POST(&quot;/register&quot;, memberHandler.Register)
+        member.POST(&quot;/login&quot;, memberHandler.Login)
+        member.GET(&quot;/profile&quot;, middleware.AuthMiddleware(), memberHandler.GetProfile)
+        member.GET(&quot;/points&quot;, middleware.AuthMiddleware(), memberHandler.GetPoints)
+        member.POST(&quot;/redeem&quot;, middleware.AuthMiddleware(), memberHandler.RedeemPoints)
+    }
+
+    // Admin endpoints (require auth)
+    admin := api.Group(&quot;/admin&quot;)
+    admin.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware(&quot;admin&quot;))
+    {
+        // Building management
+        admin.GET(&quot;/buildings&quot;, adminHandler.GetBuildings)
+        admin.POST(&quot;/buildings&quot;, adminHandler.CreateBuilding)
+        admin.PUT(&quot;/buildings/:id&quot;, adminHandler.UpdateBuilding)
+        admin.DELETE(&quot;/buildings/:id&quot;, adminHandler.DeleteBuilding)
+
+        // Space management
+        admin.GET(&quot;/spaces&quot;, adminHandler.GetSpaces)
+        admin.POST(&quot;/spaces&quot;, adminHandler.CreateSpace)
+        admin.PUT(&quot;/spaces/:id&quot;, adminHandler.UpdateSpace)
+        admin.DELETE(&quot;/spaces/:id&quot;, adminHandler.DeleteSpace)
+
+        // Rate management
+        admin.GET(&quot;/rates&quot;, adminHandler.GetRates)
+        admin.POST(&quot;/rates&quot;, adminHandler.CreateRate)
+        admin.PUT(&quot;/rates/:id&quot;, adminHandler.UpdateRate)
+
+        // Discount management
+        admin.GET(&quot;/discounts&quot;, adminHandler.GetDiscounts)
+        admin.POST(&quot;/discounts&quot;, adminHandler.CreateDiscount)
+        admin.PUT(&quot;/discounts/:id&quot;, adminHandler.UpdateDiscount)
+        admin.DELETE(&quot;/discounts/:id&quot;, adminHandler.DeleteDiscount)
+
+        // Statistics
+        admin.GET(&quot;/statistics/daily&quot;, adminHandler.GetDailyStatistics)
+        admin.GET(&quot;/statistics/weekly&quot;, adminHandler.GetWeeklyStatistics)
+        admin.GET(&quot;/statistics/monthly&quot;, adminHandler.GetMonthlyStatistics)
+        admin.GET(&quot;/statistics/quarterly&quot;, adminHandler.GetQuarterlyStatistics)
+        admin.GET(&quot;/statistics/yearly&quot;, adminHandler.GetYearlyStatistics)
+
+        // Maintenance
+        admin.GET(&quot;/equipment&quot;, adminHandler.GetEquipment)
+        admin.POST(&quot;/equipment&quot;, adminHandler.CreateEquipment)
+        admin.PUT(&quot;/equipment/:id&quot;, adminHandler.UpdateEquipment)
+        admin.GET(&quot;/maintenance/schedule&quot;, adminHandler.GetMaintenanceSchedule)
+        admin.POST(&quot;/maintenance/log&quot;, adminHandler.CreateMaintenanceLog)
+
+        // Emergency
+        admin.GET(&quot;/emergency/events&quot;, adminHandler.GetEmergencyEvents)
+        admin.POST(&quot;/emergency/trigger&quot;, adminHandler.TriggerEmergency)
+        admin.POST(&quot;/emergency/resolve&quot;, adminHandler.ResolveEmergency)
+
+        // System mode
+        admin.GET(&quot;/mode&quot;, adminHandler.GetSystemMode)
+        admin.POST(&quot;/mode&quot;, adminHandler.SetSystemMode)
+
+        // Printer management
+        admin.GET(&quot;/printers&quot;, adminHandler.GetPrinters)
+        admin.POST(&quot;/printers&quot;, adminHandler.CreatePrinter)
+        admin.PUT(&quot;/printers/:id&quot;, adminHandler.UpdatePrinter)
+        admin.POST(&quot;/printers/:id/test&quot;, adminHandler.TestPrinter)
+    }
+
+    // WebSocket endpoints
+    r.GET(&quot;/ws/parking&quot;, WebSocketHandler)
+}
+</code></pre>
+<h3>6.3 Middleware</h3>
+<pre><code class="language-go">// interfaces/middleware/auth.go
+package middleware
+
+import (
+    &quot;net/http&quot;
+    &quot;strings&quot;
+
+    &quot;github.com/gin-gonic/gin&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/security&quot;
+)
+
+func AuthMiddleware() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        authHeader := c.GetHeader(&quot;Authorization&quot;)
+        if authHeader == &quot;&quot; {
+            c.JSON(http.StatusUnauthorized, gin.H{&quot;error&quot;: &quot;authorization header required&quot;})
+            c.Abort()
+            return
+        }
+
+        parts := strings.Split(authHeader, &quot; &quot;)
+        if len(parts) != 2 || parts[0] != &quot;Bearer&quot; {
+            c.JSON(http.StatusUnauthorized, gin.H{&quot;error&quot;: &quot;invalid token format&quot;})
+            c.Abort()
+            return
+        }
+
+        token := parts[1]
+        claims, err := security.ValidateToken(token)
+        if err != nil {
+            c.JSON(http.StatusUnauthorized, gin.H{&quot;error&quot;: &quot;invalid token&quot;})
+            c.Abort()
+            return
+        }
+
+        c.Set(&quot;user_id&quot;, claims.UserID)
+        c.Set(&quot;role&quot;, claims.Role)
+        c.Next()
+    }
+}
+
+func RoleMiddleware(role string) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        userRole, exists := c.Get(&quot;role&quot;)
+        if !exists {
+            c.JSON(http.StatusForbidden, gin.H{&quot;error&quot;: &quot;role not found&quot;})
+            c.Abort()
+            return
+        }
+
+        if userRole != role {
+            c.JSON(http.StatusForbidden, gin.H{&quot;error&quot;: &quot;insufficient permissions&quot;})
+            c.Abort()
+            return
+        }
+
+        c.Next()
+    }
+}
+</code></pre>
+<h3>6.4 WebSocket Handlers</h3>
+<pre><code class="language-go">// interfaces/websocket/realtime_handler.go
+package websocket
+
+import (
+    &quot;encoding/json&quot;
+    &quot;log&quot;
+    &quot;net/http&quot;
+    &quot;sync&quot;
+
+    &quot;github.com/gorilla/websocket&quot;
+)
+
+var upgrader = websocket.Upgrader{
+    CheckOrigin: func(r *http.Request) bool {
+        return true
+    },
+}
+
+type WebSocketHub struct {
+    clients    map[*websocket.Conn]bool
+    broadcast  chan []byte
+    register   chan *websocket.Conn
+    unregister chan *websocket.Conn
+    mu         sync.RWMutex
+}
+
+type WebSocketMessage struct {
+    Type    string      `json:&quot;type&quot;`
+    Payload interface{} `json:&quot;payload&quot;`
+}
+
+var hub *WebSocketHub
+var once sync.Once
+
+func GetHub() *WebSocketHub {
+    once.Do(func() {
+        hub = &amp;WebSocketHub{
+            clients:    make(map[*websocket.Conn]bool),
+            broadcast:  make(chan []byte),
+            register:   make(chan *websocket.Conn),
+            unregister: make(chan *websocket.Conn),
+        }
+        go hub.run()
+    })
+    return hub
+}
+
+func (h *WebSocketHub) run() {
+    for {
+        select {
+        case client := &lt;-h.register:
+            h.mu.Lock()
+            h.clients[client] = true
+            h.mu.Unlock()
+            log.Printf(&quot;New client connected. Total clients: %d&quot;, len(h.clients))
+
+        case client := &lt;-h.unregister:
+            h.mu.Lock()
+            if _, ok := h.clients[client]; ok {
+                delete(h.clients, client)
+                client.Close()
+            }
+            h.mu.Unlock()
+            log.Printf(&quot;Client disconnected. Total clients: %d&quot;, len(h.clients))
+
+        case message := &lt;-h.broadcast:
+            h.mu.RLock()
+            for client := range h.clients {
+                if err := client.WriteMessage(websocket.TextMessage, message); err != nil {
+                    log.Printf(&quot;Error broadcasting to client: %v&quot;, err)
+                    client.Close()
+                    h.mu.RUnlock()
+                    h.mu.Lock()
+                    delete(h.clients, client)
+                    h.mu.Unlock()
+                    h.mu.RLock()
+                }
+            }
+            h.mu.RUnlock()
+        }
+    }
+}
+
+func (h *WebSocketHub) Broadcast(eventType string, payload interface{}) {
+    msg := WebSocketMessage{
+        Type:    eventType,
+        Payload: payload,
+    }
+    data, err := json.Marshal(msg)
+    if err != nil {
+        log.Printf(&quot;Error marshaling message: %v&quot;, err)
+        return
+    }
+    h.broadcast &lt;- data
+}
+
+func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
+    conn, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Printf(&quot;Error upgrading connection: %v&quot;, err)
+        return
+    }
+
+    hub := GetHub()
+    hub.register &lt;- conn
+
+    defer func() {
+        hub.unregister &lt;- conn
+    }()
+
+    for {
+        _, _, err := conn.ReadMessage()
+        if err != nil {
+            if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+                log.Printf(&quot;WebSocket error: %v&quot;, err)
+            }
+            break
+        }
+    }
+}
+</code></pre>
+<hr>
+<h2>7. Database Migrations</h2>
+<pre><code class="language-sql">-- migrations/001_create_buildings_table.sql
+CREATE TABLE IF NOT EXISTS buildings (
+    id BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    address TEXT,
+    total_floors INTEGER NOT NULL DEFAULT 1,
+    total_spaces INTEGER NOT NULL DEFAULT 0,
+    has_ev_charger BOOLEAN DEFAULT FALSE,
+    has_lift BOOLEAN DEFAULT FALSE,
+    status VARCHAR(20) DEFAULT &#39;active&#39;,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/002_create_floors_table.sql
+CREATE TABLE IF NOT EXISTS floors (
+    id BIGSERIAL PRIMARY KEY,
+    building_id BIGINT NOT NULL REFERENCES buildings(id) ON DELETE CASCADE,
+    floor_no INTEGER NOT NULL,
+    name VARCHAR(100),
+    zone_code VARCHAR(50) NOT NULL,
+    zone_type VARCHAR(50) DEFAULT &#39;general&#39;,
+    total_spaces INTEGER NOT NULL DEFAULT 0,
+    has_ev_charger BOOLEAN DEFAULT FALSE,
+    has_lift BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(building_id, floor_no)
+);
+
+-- migrations/003_create_parking_spaces_table.sql
+CREATE TABLE IF NOT EXISTS parking_spaces (
+    id BIGSERIAL PRIMARY KEY,
+    floor_id BIGINT NOT NULL REFERENCES floors(id) ON DELETE CASCADE,
+    space_no VARCHAR(20) NOT NULL,
+    space_type VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT &#39;available&#39;,
+    is_ev_charger BOOLEAN DEFAULT FALSE,
+    is_handicap BOOLEAN DEFAULT FALSE,
+    width DECIMAL(5,2),
+    length DECIMAL(5,2),
+    height DECIMAL(5,2),
+    zone_code VARCHAR(50),
+    floor_no INTEGER,
+    led_color VARCHAR(20) DEFAULT &#39;green&#39;,
+    occupied_by VARCHAR(50),
+    entry_time TIMESTAMP WITH TIME ZONE,
+    exit_time TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(floor_id, space_no)
+);
+
+-- migrations/004_create_vehicles_table.sql
+CREATE TABLE IF NOT EXISTS vehicles (
+    id BIGSERIAL PRIMARY KEY,
+    plate_no VARCHAR(20) NOT NULL UNIQUE,
+    vehicle_type VARCHAR(50) NOT NULL,
+    brand VARCHAR(100),
+    model VARCHAR(100),
+    color VARCHAR(50),
+    is_ev BOOLEAN DEFAULT FALSE,
+    owner_name VARCHAR(255),
+    owner_phone VARCHAR(20),
+    owner_email VARCHAR(255),
+    rfid_tag VARCHAR(50),
+    is_vip BOOLEAN DEFAULT FALSE,
+    monthly_plan BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/005_create_parking_tickets_table.sql
+CREATE TABLE IF NOT EXISTS parking_tickets (
+    id BIGSERIAL PRIMARY KEY,
+    ticket_no VARCHAR(50) NOT NULL UNIQUE,
+    building_id BIGINT NOT NULL REFERENCES buildings(id),
+    floor_id BIGINT NOT NULL REFERENCES floors(id),
+    space_id BIGINT NOT NULL REFERENCES parking_spaces(id),
+    vehicle_id BIGINT NOT NULL REFERENCES vehicles(id),
+    plate_no VARCHAR(20) NOT NULL,
+    vehicle_type VARCHAR(50) NOT NULL,
+    entry_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    exit_time TIMESTAMP WITH TIME ZONE,
+    duration INTEGER DEFAULT 0,
+    rate_type VARCHAR(50),
+    rate_amount DECIMAL(10,2) DEFAULT 0,
+    total_amount DECIMAL(10,2) DEFAULT 0,
+    discount DECIMAL(10,2) DEFAULT 0,
+    net_amount DECIMAL(10,2) DEFAULT 0,
+    payment_status VARCHAR(20) DEFAULT &#39;pending&#39;,
+    payment_method VARCHAR(50),
+    qr_code TEXT,
+    status VARCHAR(20) DEFAULT &#39;active&#39;,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/006_create_parking_rates_table.sql
+CREATE TABLE IF NOT EXISTS parking_rates (
+    id BIGSERIAL PRIMARY KEY,
+    building_id BIGINT NOT NULL REFERENCES buildings(id),
+    vehicle_type VARCHAR(50) NOT NULL,
+    rate_type VARCHAR(50) DEFAULT &#39;standard&#39;,
+    first_hour DECIMAL(10,2) NOT NULL,
+    subsequent_hour DECIMAL(10,2) NOT NULL,
+    daily_rate DECIMAL(10,2),
+    monthly_rate DECIMAL(10,2),
+    event_rate DECIMAL(10,2),
+    overstay_fee DECIMAL(10,2),
+    max_charge DECIMAL(10,2),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(building_id, vehicle_type, rate_type)
+);
+
+-- migrations/007_create_payments_table.sql
+CREATE TABLE IF NOT EXISTS payments (
+    id BIGSERIAL PRIMARY KEY,
+    ticket_id BIGINT NOT NULL REFERENCES parking_tickets(id),
+    amount DECIMAL(10,2) NOT NULL,
+    discount DECIMAL(10,2) DEFAULT 0,
+    net_amount DECIMAL(10,2) NOT NULL,
+    method VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT &#39;pending&#39;,
+    qr_code TEXT,
+    payment_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/008_create_discounts_table.sql
+CREATE TABLE IF NOT EXISTS discounts (
+    id BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    type VARCHAR(20) NOT NULL,
+    value DECIMAL(10,2) NOT NULL,
+    description TEXT,
+    start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    max_uses INTEGER DEFAULT 1,
+    used_count INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/009_create_discount_usages_table.sql
+CREATE TABLE IF NOT EXISTS discount_usages (
+    id BIGSERIAL PRIMARY KEY,
+    discount_id BIGINT NOT NULL REFERENCES discounts(id),
+    ticket_id BIGINT NOT NULL REFERENCES parking_tickets(id),
+    used_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/010_create_print_documents_table.sql
+CREATE TABLE IF NOT EXISTS print_documents (
+    id BIGSERIAL PRIMARY KEY,
+    ticket_id BIGINT NOT NULL REFERENCES parking_tickets(id),
+    document_type VARCHAR(50) NOT NULL,
+    document_no VARCHAR(50) NOT NULL,
+    content TEXT,
+    qr_code_data TEXT,
+    printer_name VARCHAR(100),
+    status VARCHAR(20) DEFAULT &#39;pending&#39;,
+    printed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/011_create_equipment_table.sql
+CREATE TABLE IF NOT EXISTS equipment (
+    id BIGSERIAL PRIMARY KEY,
+    building_id BIGINT NOT NULL REFERENCES buildings(id),
+    code VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    model VARCHAR(100),
+    serial_no VARCHAR(100),
+    install_date TIMESTAMP WITH TIME ZONE,
+    warranty_end TIMESTAMP WITH TIME ZONE,
+    status VARCHAR(20) DEFAULT &#39;active&#39;,
+    last_maintenance TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/012_create_maintenance_logs_table.sql
+CREATE TABLE IF NOT EXISTS maintenance_logs (
+    id BIGSERIAL PRIMARY KEY,
+    equipment_id BIGINT NOT NULL REFERENCES equipment(id),
+    type VARCHAR(50) NOT NULL,
+    description TEXT,
+    performed_by VARCHAR(255),
+    duration INTEGER DEFAULT 0,
+    cost DECIMAL(10,2) DEFAULT 0,
+    status VARCHAR(20) DEFAULT &#39;completed&#39;,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/013_create_emergency_events_table.sql
+CREATE TABLE IF NOT EXISTS emergency_events (
+    id BIGSERIAL PRIMARY KEY,
+    building_id BIGINT NOT NULL REFERENCES buildings(id),
+    type VARCHAR(50) NOT NULL,
+    severity VARCHAR(20) NOT NULL,
+    description TEXT,
+    location VARCHAR(255),
+    status VARCHAR(20) DEFAULT &#39;active&#39;,
+    reported_by VARCHAR(255),
+    resolved_by VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP WITH TIME ZONE
+);
+
+-- migrations/014_create_system_modes_table.sql
+CREATE TABLE IF NOT EXISTS system_modes (
+    id BIGSERIAL PRIMARY KEY,
+    building_id BIGINT NOT NULL REFERENCES buildings(id),
+    mode VARCHAR(50) NOT NULL,
+    changed_by VARCHAR(255),
+    reason TEXT,
+    started_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    ended_at TIMESTAMP WITH TIME ZONE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/015_create_members_table.sql
+CREATE TABLE IF NOT EXISTS members (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    tier VARCHAR(50) DEFAULT &#39;silver&#39;,
+    points INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- migrations/016_create_statistics_table.sql
+CREATE TABLE IF NOT EXISTS parking_statistics (
+    id BIGSERIAL PRIMARY KEY,
+    building_id BIGINT NOT NULL REFERENCES buildings(id),
+    period VARCHAR(50) NOT NULL,
+    date DATE NOT NULL,
+    total_entries INTEGER DEFAULT 0,
+    total_exits INTEGER DEFAULT 0,
+    total_spaces INTEGER DEFAULT 0,
+    avg_occupancy DECIMAL(5,2) DEFAULT 0,
+    max_occupancy DECIMAL(5,2) DEFAULT 0,
+    min_occupancy DECIMAL(5,2) DEFAULT 0,
+    total_revenue DECIMAL(10,2) DEFAULT 0,
+    avg_revenue DECIMAL(10,2) DEFAULT 0,
+    ev_charging_revenue DECIMAL(10,2) DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(building_id, period, date)
+);
+
+-- Indexes
+CREATE INDEX idx_tickets_ticket_no ON parking_tickets(ticket_no);
+CREATE INDEX idx_tickets_plate_no ON parking_tickets(plate_no);
+CREATE INDEX idx_tickets_status ON parking_tickets(status);
+CREATE INDEX idx_tickets_building_id ON parking_tickets(building_id);
+CREATE INDEX idx_tickets_created_at ON parking_tickets(created_at);
+CREATE INDEX idx_payments_ticket_id ON payments(ticket_id);
+CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_spaces_status ON parking_spaces(status);
+CREATE INDEX idx_spaces_floor_id ON parking_spaces(floor_id);
+CREATE INDEX idx_emergency_building_id ON emergency_events(building_id);
+CREATE INDEX idx_emergency_status ON emergency_events(status);
+</code></pre>
+<hr>
+<h2>8. Workflow Diagram</h2>
+<h3>8.1 Vehicle Entry Flow</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           VEHICLE ENTRY FLOW                                         │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌──────────────┐                                                                   │
+│  │  Vehicle     │                                                                   │
+│  │  Arrives     │                                                                   │
+│  └──────┬───────┘                                                                   │
+│         │                                                                           │
+│         ▼                                                                           │
+│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐                        │
+│  │  LPR Camera  │────▶│  Plate No    │────▶│  Validate    │                        │
+│  │  Scan        │     │  Detection   │     │  Plate No    │                        │
+│  └──────────────┘     └──────────────┘     └──────┬───────┘                        │
+│                                                    │                                │
+│                                                    ▼                                │
+│                                     ┌──────────────────────────┐                    │
+│                                     │  Check Vehicle Status     │                    │
+│                                     │  - Is vehicle already?    │                    │
+│                                     │  - Is parking allowed?    │                    │
+│                                     └──────────┬───────────────┘                    │
+│                                                │                                    │
+│                                                ▼                                    │
+│                                     ┌──────────────────────────┐                    │
+│                                     │  Find Available Space    │                    │
+│                                     │  - Check building        │                    │
+│                                     │  - Check zone            │                    │
+│                                     │  - Check EV status       │                    │
+│                                     └──────────┬───────────────┘                    │
+│                                                │                                    │
+│                                                ▼                                    │
+│                                     ┌──────────────────────────┐                    │
+│                                     │  Create Parking Ticket   │                    │
+│                                     │  - Generate Ticket No    │                    │
+│                                     │  - Record Entry Time     │                    │
+│                                     │  - Assign Space          │                    │
+│                                     └──────────┬───────────────┘                    │
+│                                                │                                    │
+│                                                ▼                                    │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Update System State              │                  │
+│                              │  - Update Space Status           │                  │
+│                              │  - Update LED Color (Red)        │                  │
+│                              │  - Open Boom Barrier             │                  │
+│                              │  - Print Ticket                  │                  │
+│                              └──────────┬───────────────────────┘                  │
+│                                         │                                          │
+│                                         ▼                                          │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Publish Event to Kafka          │                  │
+│                              │  - Entry Event                   │                  │
+│                              │  - Space Event                   │                  │
+│                              └──────────┬───────────────────────┘                  │
+│                                         │                                          │
+│                                         ▼                                          │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Send WebSocket Update           │                  │
+│                              │  - Update Dashboard              │                  │
+│                              │  - Notify Mobile App             │                  │
+│                              └──────────┬───────────────────────┘                  │
+│                                         │                                          │
+│                                         ▼                                          │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Vehicle Enters Parking          │                  │
+│                              └──────────────────────────────────┘                  │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3>8.2 Vehicle Exit Flow</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           VEHICLE EXIT FLOW                                          │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌──────────────┐                                                                   │
+│  │  Vehicle     │                                                                   │
+│  │  Prepares    │                                                                   │
+│  │  to Exit     │                                                                   │
+│  └──────┬───────┘                                                                   │
+│         │                                                                           │
+│         ▼                                                                           │
+│  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐                        │
+│  │  Scan Ticket │────▶│  Validate    │────▶│  Verify      │                        │
+│  │  or Plate    │     │  Ticket      │     │  Plate No    │                        │
+│  └──────────────┘     └──────────────┘     └──────┬───────┘                        │
+│                                                    │                                │
+│                                                    ▼                                │
+│                                     ┌──────────────────────────┐                    │
+│                                     │  Calculate Fee           │                    │
+│                                     │  - Calculate Duration    │                    │
+│                                     │  - Apply Rate            │                    │
+│                                     │  - Apply Discount        │                    │
+│                                     └──────────┬───────────────┘                    │
+│                                                │                                    │
+│                                                ▼                                    │
+│                                     ┌──────────────────────────┐                    │
+│                                     │  Process Payment         │                    │
+│                                     │  - Generate QR Code      │                    │
+│                                     │  - Process Payment       │                    │
+│                                     │  - Confirm Payment       │                    │
+│                                     └──────────┬───────────────┘                    │
+│                                                │                                    │
+│                                                ▼                                    │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Update System State              │                  │
+│                              │  - Update Ticket Status          │                  │
+│                              │  - Release Space                 │                  │
+│                              │  - Update LED Color (Green)      │                  │
+│                              │  - Open Boom Barrier             │                  │
+│                              │  - Print Receipt                 │                  │
+│                              └──────────┬───────────────────────┘                  │
+│                                         │                                          │
+│                                         ▼                                          │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Publish Event to Kafka          │                  │
+│                              │  - Exit Event                   │                  │
+│                              │  - Payment Event                │                  │
+│                              │  - Space Event                  │                  │
+│                              └──────────┬───────────────────────┘                  │
+│                                         │                                          │
+│                                         ▼                                          │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Send WebSocket Update           │                  │
+│                              │  - Update Dashboard              │                  │
+│                              │  - Notify Mobile App             │                  │
+│                              └──────────┬───────────────────────┘                  │
+│                                         │                                          │
+│                                         ▼                                          │
+│                              ┌──────────────────────────────────┐                  │
+│                              │  Vehicle Exits Parking           │                  │
+│                              └──────────────────────────────────┘                  │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>9. System Flow</h2>
+<h3>9.1 Complete System Flow Diagram</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                         COMPLETE SYSTEM FLOW                                        │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐   │
+│  │                          FRONTEND LAYER                                      │   │
+│  │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐          │   │
+│  │  │  React Dashboard │  │  Mobile App      │  │  Admin Panel     │          │   │
+│  │  │  - Real-time     │  │  - QR Scanner    │  │  - Management    │          │   │
+│  │  │  - Charts        │  │  - Payment       │  │  - Reports       │          │   │
+│  │  │  - Controls      │  │  - History       │  │  - Settings      │          │   │
+│  │  └────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘          │   │
+│  └───────────┼─────────────────────┼─────────────────────┼─────────────────────┘   │
+│              │                     │                     │                          │
+│              ▼                     ▼                     ▼                          │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐   │
+│  │                          API GATEWAY / LOAD BALANCER                        │   │
+│  │                    (HTTP/REST, WebSocket, MQTT)                             │   │
+│  └──────────────────────────────────┬──────────────────────────────────────────┘   │
+│                                     │                                              │
+│                                     ▼                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐   │
+│  │                          INTERFACE LAYER                                     │   │
+│  │  ┌────────────────────┐  ┌────────────────────┐  ┌────────────────────┐     │   │
+│  │  │  HTTP Handlers     │  │  WebSocket         │  │  Middleware        │     │   │
+│  │  │  - Parking         │  │  - Real-time       │  │  - Auth            │     │   │
+│  │  │  - Payment         │  │  - Dashboard       │  │  - Rate Limit      │     │   │
+│  │  │  - Admin           │  │  - Notifications   │  │  - Logging         │     │   │
+│  │  └────────────────────┘  └────────────────────┘  └────────────────────┘     │   │
+│  └──────────────────────────────────┬──────────────────────────────────────────┘   │
+│                                     │                                              │
+│                                     ▼                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐   │
+│  │                          APPLICATION LAYER                                   │   │
+│  │  ┌────────────────────┐  ┌────────────────────┐  ┌────────────────────┐     │   │
+│  │  │  Use Cases         │  │  Use Cases         │  │  Use Cases         │     │   │
+│  │  │  - Entry Vehicle   │  │  - Exit Vehicle    │  │  - Process Payment │     │   │
+│  │  │  - Print Ticket    │  │  - Print Receipt   │  │  - Generate Report │     │   │
+│  │  └────────────────────┘  └────────────────────┘  └────────────────────┘     │   │
+│  └──────────────────────────────────┬──────────────────────────────────────────┘   │
+│                                     │                                              │
+│                                     ▼                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐   │
+│  │                          DOMAIN LAYER                                       │   │
+│  │  ┌────────────────────┐  ┌────────────────────┐  ┌────────────────────┐     │   │
+│  │  │  Entities          │  │  Value Objects     │  │  Domain Services   │     │   │
+│  │  │  - Building        │  │  - Plate No        │  │  - Pricing         │     │   │
+│  │  │  - Parking Space   │  │  - Ticket No       │  │  - Allocation      │     │   │
+│  │  │  - Ticket          │  │  - Money           │  │  - Validation      │     │   │
+│  │  └────────────────────┘  └────────────────────┘  └────────────────────┘     │   │
+│  └──────────────────────────────────┬──────────────────────────────────────────┘   │
+│                                     │                                              │
+│                                     ▼                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐   │
+│  │                          INFRASTRUCTURE LAYER                                │   │
+│  │                                                                             │   │
+│  │  ┌──────────────────────────────────────────────────────────────────────┐   │   │
+│  │  │                     DATA PERSISTENCE                                 │   │   │
+│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐    │   │   │
+│  │  │  │ PostgreSQL │  │  Redis     │  │  InfluxDB  │  │ Elasticsearch│    │   │   │
+│  │  │  │ - Tickets  │  │ - Cache    │  │ - Stats    │  │ - Search   │    │   │   │
+│  │  │  │ - Spaces   │  │ - Sessions │  │ - Metrics  │  │ - Logs     │    │   │   │
+│  │  │  │ - Payments │  │ - Real-time│  │ - Analytics│  │ - Audit    │    │   │   │
+│  │  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘    │   │   │
+│  │  └──────────────────────────────────────────────────────────────────────┘   │   │
+│  │                                                                             │   │
+│  │  ┌──────────────────────────────────────────────────────────────────────┐   │   │
+│  │  │                     MESSAGING &amp; STREAMING                           │   │   │
+│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐    │   │   │
+│  │  │  │   Kafka    │  │   MQTT     │  │  WebSocket │  │   gRPC     │    │   │   │
+│  │  │  │ - Events   │  │ - Hardware │  │ - Real-time│  │ - Services │    │   │   │
+│  │  │  │ - Streams  │  │ - Sensors  │  │ - Updates  │  │ - Internal │    │   │   │
+│  │  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘    │   │   │
+│  │  └──────────────────────────────────────────────────────────────────────┘   │   │
+│  │                                                                             │   │
+│  │  ┌──────────────────────────────────────────────────────────────────────┐   │   │
+│  │  │                     HARDWARE &amp; DEVICES                               │   │   │
+│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐    │   │   │
+│  │  │  │ LPR Camera │  │ RFID Reader│  │ Boom Barrier│  │ LED System │    │   │   │
+│  │  │  │ EV Charger │  │ Lift System│  │ Printers   │  │ Sensors    │    │   │   │
+│  │  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘    │   │   │
+│  │  └──────────────────────────────────────────────────────────────────────┘   │   │
+│  │                                                                             │   │
+│  │  ┌──────────────────────────────────────────────────────────────────────┐   │   │
+│  │  │                     EXTERNAL SERVICES                                 │   │   │
+│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐    │   │   │
+│  │  │  │ Payment    │  │ LLM/AI     │  │ Blockchain │  │ Notification│   │   │   │
+│  │  │  │ Gateway    │  │ Services   │  │ Services   │  │ Services   │    │   │   │
+│  │  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘    │   │   │
+│  │  └──────────────────────────────────────────────────────────────────────┘   │   │
+│  └─────────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>10. การติดตั้งและใช้งาน</h2>
+<h3>10.1 Docker Compose</h3>
+<pre><code class="language-yaml"># docker-compose.yml
+version: &#39;3.8&#39;
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: parking
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: parking
+    ports:
+      - &quot;5432:5432&quot;
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U parking&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  influxdb:
+    image: influxdb:2.7-alpine
+    environment:
+      INFLUXDB_INIT_MODE: setup
+      INFLUXDB_INIT_USERNAME: admin
+      INFLUXDB_INIT_PASSWORD: password
+      INFLUXDB_INIT_ORG: parking
+      INFLUXDB_INIT_BUCKET: parking_stats
+      INFLUXDB_INIT_RETENTION: 365d
+    ports:
+      - &quot;8086:8086&quot;
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - &quot;6379:6379&quot;
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;redis-cli&quot;, &quot;ping&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;
+    ports:
+      - &quot;9200:9200&quot;
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - &quot;5601:5601&quot;
+    depends_on:
+      - elasticsearch
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - &quot;2181:2181&quot;
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - &quot;9092:9092&quot;
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports:
+      - &quot;1883:1883&quot;
+      - &quot;9001:9001&quot;
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - &quot;8080:8080&quot;
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: parking
+      DB_PASSWORD: password
+      DB_NAME: parking
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_TOKEN: admin:password
+      INFLUX_ORG: parking
+      INFLUX_BUCKET: parking_stats
+      MQTT_BROKER: mosquitto:1883
+      REDIS_HOST: redis:6379
+      KAFKA_BROKERS: kafka:9092
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+    volumes:
+      - ./uploads:/app/uploads
+      - /dev/usb:/dev/usb  # For printers
+
+  frontend:
+    build: ./frontend
+    ports:
+      - &quot;3000:3000&quot;
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  influxdb_data:
+  elasticsearch_data:
+</code></pre>
+<h3>10.2 Environment Variables</h3>
+<pre><code class="language-env"># .env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=parking
+DB_PASSWORD=password
+DB_NAME=parking
+
+INFLUX_URL=http://localhost:8086
+INFLUX_TOKEN=admin:password
+INFLUX_ORG=parking
+INFLUX_BUCKET=parking_stats
+
+MQTT_BROKER=localhost:1883
+REDIS_HOST=localhost:6379
+
+KAFKA_BROKERS=localhost:9092
+ELASTICSEARCH_URL=http://localhost:9200
+
+# Printer Settings
+PRINTER_RECEIPT_HOST=localhost
+PRINTER_RECEIPT_PORT=9100
+PRINTER_INVOICE_HOST=localhost
+PRINTER_INVOICE_PORT=9101
+PRINTER_TICKET_HOST=localhost
+PRINTER_TICKET_PORT=9102
+
+# QR Code Settings
+QR_CODE_SIZE=256
+QR_CODE_EXPIRY=600
+
+# Payment Settings
+PAYMENT_GATEWAY_URL=https://payment.example.com
+PAYMENT_API_KEY=your_api_key
+PAYMENT_SECRET_KEY=your_secret_key
+
+# JWT Settings
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRY=86400
+
+# Rate Limit
+RATE_LIMIT_REQUESTS=100
+RATE_LIMIT_WINDOW=60
+
+# LLM Settings
+LLM_API_URL=https://api.llm.example.com
+LLM_API_KEY=your_llm_api_key
+
+# Blockchain Settings
+BLOCKCHAIN_URL=https://blockchain.example.com
+BLOCKCHAIN_API_KEY=your_blockchain_api_key
+
+# Notification Settings
+LINE_NOTIFY_TOKEN=your_line_token
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_email_password
+</code></pre>
+<h3>10.3 Installation Steps</h3>
+<pre><code class="language-bash"># 1. Clone repository
+git clone https://github.com/yourproject/smart-parking.git
+cd smart-parking
+
+# 2. Copy environment file
+cp .env.example .env
+
+# 3. Build and start services
+docker-compose up -d
+
+# 4. Run database migrations
+docker-compose exec backend go run cmd/migrate/main.go
+
+# 5. Create admin user
+docker-compose exec backend go run cmd/seed/main.go
+
+# 6. Access dashboard
+# Frontend: http://localhost:3000
+# API: http://localhost:8080
+# Kibana: http://localhost:5601
+</code></pre>
+<hr>
+<h2>11. Business Model</h2>
+<h3>11.1 Packaging &amp; Pricing</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Price</th>
+<th>Spaces</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Starter</strong></td>
+<td>฿49,900</td>
+<td>50</td>
+<td>1 Building, LPR, QR Payment, Basic Report</td>
+</tr>
+<tr>
+<td><strong>Professional</strong></td>
+<td>฿149,900</td>
+<td>200</td>
+<td>3 Buildings, EV Charging, RFID, Statistics</td>
+</tr>
+<tr>
+<td><strong>Enterprise</strong></td>
+<td>฿499,900</td>
+<td>500+</td>
+<td>Unlimited Buildings, Lift System, Custom Reports</td>
+</tr>
+<tr>
+<td><strong>Ultimate</strong></td>
+<td>฿999,900</td>
+<td>1000+</td>
+<td>Full Features, On-premise, 24/7 Support</td>
+</tr>
+</tbody></table>
+<h3>11.2 Hardware Packages</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Price</th>
+<th>Components</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Basic Kit</strong></td>
+<td>฿250,000</td>
+<td>LPR Camera, Boom Barrier, LED, Ticket Printer</td>
+</tr>
+<tr>
+<td><strong>Standard Kit</strong></td>
+<td>฿500,000</td>
+<td>Basic + RFID, EV Charger, Payment Kiosk</td>
+</tr>
+<tr>
+<td><strong>Premium Kit</strong></td>
+<td>฿1,000,000</td>
+<td>Standard + Lift System, Full CCTV, Emergency System</td>
+</tr>
+</tbody></table>
+<h3>11.3 Revenue Model</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    Revenue Model                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Hardware Sales (One-time)                                     │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Basic Kit: ฿250,000                                     │ │
+│  │  Standard Kit: ฿500,000                                  │ │
+│  │  Premium Kit: ฿1,000,000                                 │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  Subscription (Annual)                                         │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Starter: ฿15,000/ปี                                     │ │
+│  │  Professional: ฿45,000/ปี                                │ │
+│  │  Enterprise: ฿150,000/ปี                                 │ │
+│  │  Ultimate: ฿300,000/ปี                                   │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  Transaction Fee                                               │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  QR Payment: 1-2% per transaction                        │ │
+│  │  EV Charging: 5-10% per session                          │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  Professional Services                                         │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Installation: ฿50,000-200,000                           │ │
+│  │  Training: ฿20,000-50,000                                │ │
+│  │  Custom Integration: ฿100,000-500,000                   │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>12. Prompt สำหรับการขยายระบบ</h2>
+<h3>Prompt 1: เพิ่มระบบจองที่จอดล่วงหน้า (Pre-booking)</h3>
+<pre><code>ต้องการเพิ่มระบบจองที่จอดรถล่วงหน้าผ่าน Mobile App และ Website
+
+รายละเอียด:
+1. ผู้ใช้สามารถเลือกโซน/ชั้น/วันที่/เวลาที่ต้องการจอง
+2. ระบบแสดงที่จอดว่างและราคา
+3. ชำระเงินล่วงหน้า (Deposit) ผ่าน QR Code
+4. ระบบกันที่จอดไว้ 15 นาทีก่อนถึงเวลาจอง
+5. แจ้งเตือนผ่าน Line/Email เมื่อถึงเวลาจอง
+6. ยกเลิกการจองและคืนเงิน (Refund) ตามนโยบาย
+
+สิ่งที่ต้องเพิ่ม:
+- Booking Entity และ CRUD
+- Pre-payment System
+- Space Reservation Logic
+- Notification Service
+- Booking Dashboard
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/domain/entity/booking.go
+- internal/modules/parking/application/booking/
+- internal/modules/parking/interfaces/http/booking_handler.go
+- frontend/src/pages/Booking/
+</code></pre>
+<h3>Prompt 2: เพิ่มระบบวิเคราะห์ Predictive Analytics</h3>
+<pre><code>ต้องการเพิ่มระบบวิเคราะห์และพยากรณ์อัตราการจอดรถ
+
+รายละเอียด:
+1. วิเคราะห์ข้อมูลย้อนหลัง 1 ปี
+2. พยากรณ์อัตราการจอดในวัน/เดือนถัดไป
+3. แนะนำการปรับราคาตามความต้องการ (Dynamic Pricing)
+4. แจ้งเตือนเมื่อคาดการณ์ว่าจะเต็ม
+5. แสดง Heatmap ของการจอดแต่ละโซน
+
+สิ่งที่ต้องเพิ่ม:
+- ML Model (Python/TensorFlow)
+- Predictive Service
+- Dynamic Pricing Engine
+- Heatmap Visualization
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/analytics/
+- python/models/parking_forecast.py
+- frontend/src/components/Heatmap/
+</code></pre>
+<h3>Prompt 3: เพิ่มระบบ Integration กับ ERP</h3>
+<pre><code>ต้องการเชื่อมต่อระบบ Parking กับ ERP ที่มีอยู่
+
+รายละเอียด:
+1. ส่งข้อมูลรายได้ไปยังระบบบัญชีอัตโนมัติ
+2. ซิงค์ข้อมูลพนักงานและบัตร RFID
+3. สร้าง Invoice และส่งไปยังระบบ ERP
+4. เชื่อมต่อกับระบบ CRM
+5. API Gateway สำหรับการ Integration
+
+สิ่งที่ต้องเพิ่ม:
+- ERP Adapter
+- Invoice Export Service
+- Data Synchronization
+- Webhook System
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/integration/
+- internal/modules/parking/application/sync/
+- internal/modules/parking/interfaces/webhook/
+</code></pre>
+<h3>Prompt 4: เพิ่มระบบกล้อง AI และความปลอดภัย</h3>
+<pre><code>ต้องการเพิ่มระบบกล้อง AI สำหรับความปลอดภัย
+
+รายละเอียด:
+1. ตรวจจับใบหน้าและจดจำ (Face Recognition)
+2. ตรวจจับพฤติกรรมผิดปกติ (Anomaly Detection)
+3. นับจำนวนรถอัตโนมัติ (Vehicle Counting)
+4. ตรวจจับป้ายทะเบียนที่ถูกขโมย
+5. ระบบแจ้งเตือนเหตุการณ์ผิดปกติ
+6. บันทึกวิดีโอและค้นหาย้อนหลัง
+
+สิ่งที่ต้องเพิ่ม:
+- AI Camera Service
+- Face Recognition
+- Anomaly Detection
+- Video Recording &amp; Search
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/ai/
+- internal/modules/parking/infrastructure/video/
+- frontend/src/components/CameraView/
+</code></pre>
+<h3>Prompt 5: เพิ่มระบบ Loyalty &amp; Membership</h3>
+<pre><code>ต้องการเพิ่มระบบสมาชิกและสิทธิประโยชน์
+
+รายละเอียด:
+1. สมัครสมาชิก (Member Registration)
+2. สะสมแต้ม (Points Accumulation)
+3. แลกส่วนลด (Discount Redemption)
+4. ระดับสมาชิก (Tier Levels: Silver, Gold, Platinum)
+5. สิทธิพิเศษตามระดับ (Free parking, EV charging)
+6. แจ้งเตือนโปรโมชั่น
+
+สิ่งที่ต้องเพิ่ม:
+- Member Entity และ CRUD
+- Points System
+- Tier Management
+- Promotion Engine
+- Member Dashboard
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/domain/entity/member.go
+- internal/modules/parking/application/membership/
+- internal/modules/parking/application/promotion/
+- frontend/src/pages/Membership/
+</code></pre>
+<h3>Prompt 6: เพิ่มระบบ Report &amp; Dashboard ขั้นสูง</h3>
+<pre><code>ต้องการเพิ่มระบบรายงานและ Dashboard แบบ Advance
+
+รายละเอียด:
+1. Dashboard แบบ Real-time (ทุก 5 วินาที)
+2. รายงานแบบ Interactive (กรองข้อมูลเอง)
+3. Export Report เป็น Excel, PDF, CSV
+4. Scheduled Report (ส่งอีเมลอัตโนมัติ)
+5. เปรียบเทียบข้อมูลข้ามปี/ไตรมาส
+6. KPI Dashboard (Occupancy, Revenue, EV Usage)
+
+สิ่งที่ต้องเพิ่ม:
+- Advanced Report Engine
+- Interactive Dashboard
+- Export Service
+- Scheduled Report
+- KPI Calculator
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/report/
+- internal/modules/parking/application/dashboard/
+- frontend/src/pages/Reports/
+- frontend/src/components/Charts/
+</code></pre>
+<hr>
+<h2>13. ภาคผนวก</h2>
+<h3>13.1 Hardware Specifications</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Model</th>
+<th>จำนวน</th>
+<th>ราคา (บาท)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>LPR Camera</strong></td>
+<td>Hikvision DS-2CD7A26G0</td>
+<td>4</td>
+<td>35,000</td>
+</tr>
+<tr>
+<td><strong>CCTV Camera</strong></td>
+<td>Hikvision DS-2CD2347G2-LU</td>
+<td>20</td>
+<td>15,000</td>
+</tr>
+<tr>
+<td><strong>RFID Reader</strong></td>
+<td>Zebra FX9600</td>
+<td>2</td>
+<td>25,000</td>
+</tr>
+<tr>
+<td><strong>RFID Tag</strong></td>
+<td>UHF Passive</td>
+<td>1,000</td>
+<td>5,000</td>
+</tr>
+<tr>
+<td><strong>Boom Barrier</strong></td>
+<td>Nice PLATINUM</td>
+<td>2</td>
+<td>45,000</td>
+</tr>
+<tr>
+<td><strong>LED Indicator</strong></td>
+<td>Green/Red LED</td>
+<td>200</td>
+<td>2,000</td>
+</tr>
+<tr>
+<td><strong>Ultrasonic Sensor</strong></td>
+<td>HC-SR04</td>
+<td>200</td>
+<td>100</td>
+</tr>
+<tr>
+<td><strong>EV Charger</strong></td>
+<td>EVBox Troniq</td>
+<td>10</td>
+<td>80,000</td>
+</tr>
+<tr>
+<td><strong>LCD Display</strong></td>
+<td>32&quot; Digital Signage</td>
+<td>4</td>
+<td>15,000</td>
+</tr>
+<tr>
+<td><strong>Payment Kiosk</strong></td>
+<td>Self-service Kiosk</td>
+<td>2</td>
+<td>50,000</td>
+</tr>
+<tr>
+<td><strong>Ticket Printer</strong></td>
+<td>Zebra ZD420</td>
+<td>2</td>
+<td>20,000</td>
+</tr>
+<tr>
+<td><strong>QR Scanner</strong></td>
+<td>Zebra DS4608</td>
+<td>4</td>
+<td>8,000</td>
+</tr>
+<tr>
+<td><strong>Receipt Printer</strong></td>
+<td>Epson TM-T88VII</td>
+<td>2</td>
+<td>12,000</td>
+</tr>
+<tr>
+<td><strong>Invoice Printer</strong></td>
+<td>Epson LQ-590II</td>
+<td>1</td>
+<td>8,000</td>
+</tr>
+<tr>
+<td><strong>Industrial PC</strong></td>
+<td>Advantech IPC</td>
+<td>4</td>
+<td>25,000</td>
+</tr>
+<tr>
+<td><strong>Network Switch</strong></td>
+<td>PoE Switch 24-port</td>
+<td>6</td>
+<td>12,000</td>
+</tr>
+<tr>
+<td><strong>UPS</strong></td>
+<td>APC SMT1500</td>
+<td>4</td>
+<td>15,000</td>
+</tr>
+<tr>
+<td><strong>Lift Control</strong></td>
+<td>PLC Controller</td>
+<td>1</td>
+<td>100,000</td>
+</tr>
+<tr>
+<td><strong>Emergency Light</strong></td>
+<td>LED Emergency</td>
+<td>20</td>
+<td>2,500</td>
+</tr>
+<tr>
+<td><strong>รวม</strong></td>
+<td></td>
+<td></td>
+<td><strong>~1,000,000</strong></td>
+</tr>
+</tbody></table>
+<h3>13.2 API Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Method</th>
+<th>Description</th>
+<th>Auth</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/v1/parking/entry</code></td>
+<td>POST</td>
+<td>Vehicle entry</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/exit</code></td>
+<td>POST</td>
+<td>Vehicle exit</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/space/available</code></td>
+<td>GET</td>
+<td>Get available spaces</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/qr/:ticket_no</code></td>
+<td>GET</td>
+<td>Get ticket info</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/payment/qr</code></td>
+<td>POST</td>
+<td>Generate QR payment</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/payment/confirm</code></td>
+<td>POST</td>
+<td>Confirm payment</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/payment/discount</code></td>
+<td>POST</td>
+<td>Apply discount</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/payment/rates</code></td>
+<td>GET</td>
+<td>Get parking rates</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/print/ticket/:id</code></td>
+<td>POST</td>
+<td>Print ticket</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/print/receipt/:id</code></td>
+<td>POST</td>
+<td>Print receipt</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/print/invoice/:id</code></td>
+<td>POST</td>
+<td>Print invoice</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/member/register</code></td>
+<td>POST</td>
+<td>Member registration</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/member/login</code></td>
+<td>POST</td>
+<td>Member login</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/member/profile</code></td>
+<td>GET</td>
+<td>Get member profile</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/buildings</code></td>
+<td>GET</td>
+<td>Get buildings</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/buildings</code></td>
+<td>POST</td>
+<td>Create building</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/spaces</code></td>
+<td>GET</td>
+<td>Get spaces</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/rates</code></td>
+<td>GET</td>
+<td>Get rates</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/discounts</code></td>
+<td>GET</td>
+<td>Get discounts</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/statistics/daily</code></td>
+<td>GET</td>
+<td>Daily statistics</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/equipment</code></td>
+<td>GET</td>
+<td>Get equipment</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/mode</code></td>
+<td>GET</td>
+<td>Get system mode</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>/api/v1/parking/admin/emergency/events</code></td>
+<td>GET</td>
+<td>Get emergency events</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<h3>13.3 Glossary</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>LPR</strong></td>
+<td>License Plate Recognition - ระบบจดจำป้ายทะเบียน</td>
+</tr>
+<tr>
+<td><strong>RFID</strong></td>
+<td>Radio Frequency Identification - ระบบระบุคลื่นความถี่วิทยุ</td>
+</tr>
+<tr>
+<td><strong>EV</strong></td>
+<td>Electric Vehicle - รถยนต์ไฟฟ้า</td>
+</tr>
+<tr>
+<td><strong>QR Code</strong></td>
+<td>Quick Response Code - รหัสตอบสนองเร็ว</td>
+</tr>
+<tr>
+<td><strong>IoT</strong></td>
+<td>Internet of Things - อินเทอร์เน็ตของสรรพสิ่ง</td>
+</tr>
+<tr>
+<td><strong>M2M</strong></td>
+<td>Machine to Machine - การสื่อสารระหว่างเครื่องจักร</td>
+</tr>
+<tr>
+<td><strong>PLC</strong></td>
+<td>Programmable Logic Controller - ตัวควบคุมตรรกะที่ตั้งโปรแกรมได้</td>
+</tr>
+<tr>
+<td><strong>ESC/POS</strong></td>
+<td>Epson Standard Code for Point of Service - รหัสมาตรฐานสำหรับจุดบริการ</td>
+</tr>
+<tr>
+<td><strong>DDD</strong></td>
+<td>Domain-Driven Design - การออกแบบที่ขับเคลื่อนด้วยโดเมน</td>
+</tr>
+<tr>
+<td><strong>Kafka</strong></td>
+<td>Apache Kafka - แพลตฟอร์มสตรีมมิ่งแบบกระจาย</td>
+</tr>
+<tr>
+<td><strong>Elasticsearch</strong></td>
+<td>Elasticsearch - เครื่องมือค้นหาและวิเคราะห์แบบกระจาย</td>
+</tr>
+<tr>
+<td><strong>InfluxDB</strong></td>
+<td>InfluxDB - ฐานข้อมูลอนุกรมเวลาสำหรับการวิเคราะห์</td>
+</tr>
+<tr>
+<td><strong>WebSocket</strong></td>
+<td>WebSocket - โปรโตคอลการสื่อสารแบบสองทิศทาง</td>
+</tr>
+<tr>
+<td><strong>REST</strong></td>
+<td>Representational State Transfer - สถาปัตยกรรม API</td>
+</tr>
+<tr>
+<td><strong>JWT</strong></td>
+<td>JSON Web Token - โทเค็นสำหรับการรับรองความถูกต้อง</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>สรุป</h2>
+<p>ระบบ Smart Parking Management System เป็นโซลูชันที่ครบวงจรสำหรับการบริหารจัดการอาคารจอดรถอัจฉริยะ โดยมี:</p>
+<ol>
+<li><strong>Multi-Building &amp; Multi-Zone</strong> - รองรับหลายอาคาร หลายชั้น หลายโซน</li>
+<li><strong>Smart Entry/Exit</strong> - LPR, RFID, QR Code, Boom Barrier</li>
+<li><strong>EV Charging</strong> - รองรับการชาร์จรถไฟฟ้า</li>
+<li><strong>Parking Guidance</strong> - LED แสดงสถานะ, แผนที่นำทาง</li>
+<li><strong>Payment System</strong> - QR Code, Cash, Card, RFID</li>
+<li><strong>Printing System</strong> - บัตรจอดรถ, ใบเสร็จ, ใบแจ้งหนี้</li>
+<li><strong>Discount System</strong> - QR Code ส่วนลด, โปรโมชั่น</li>
+<li><strong>Statistics &amp; Reports</strong> - รายชั่วโมง/วัน/สัปดาห์/เดือน/ปี/ไตรมาส</li>
+<li><strong>Emergency System</strong> - ไฟฉุกเฉิน, แจ้งเตือน</li>
+<li><strong>Maintenance System</strong> - ตารางบำรุงรักษา, แจ้งเตือน</li>
+<li><strong>Anti-Crash System</strong> - ระบบป้องกันการกระแทก</li>
+<li><strong>Auto/Manual Mode</strong> - สลับโหมดการทำงาน</li>
+</ol>
+<p>เหมาะสำหรับการขายให้กับ:</p>
+<ul>
+<li>ห้างสรรพสินค้าและศูนย์การค้า</li>
+<li>อาคารสำนักงานและคอนโดมิเนียม</li>
+<li>โรงพยาบาลและมหาวิทยาลัย</li>
+<li>สนามบินและสถานีขนส่ง</li>
+<li>โรงแรมและรีสอร์ท</li>
+</ul>
+
+</div>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

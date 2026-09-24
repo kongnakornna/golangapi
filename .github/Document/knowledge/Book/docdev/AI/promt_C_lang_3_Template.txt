@@ -1,0 +1,349 @@
+## 📌 Prompt สำหรับ AI (ใช้กับ ChatGPT, Claude, Gemini) – เล่มภาษาไทย
+
+คัดลอกข้อความด้านล่างนี้ไปวางใน AI เพื่อให้มันเขียนเนื้อหาทั้งเล่มให้คุณ
+
+```text
+คุณคือผู้เขียนหนังสือเทคนิคภาษาไทยระดับผู้เชี่ยวชาญด้าน C# และ .NET 
+จงเขียนหนังสือเรื่อง "Mastering C# .NET 2026: จากพื้นฐานสู่ Enterprise Application + Database + Cache + Message Queue" 
+ตามสารบัญ 120 บาทที่ให้ไว้ด้านล่างนี้ อย่างละเอียด
+
+ข้อกำหนด:
+1. แต่ละบทต้องมีความยาว 800–2000 คำ
+2. ทุกบทต้องประกอบด้วย:
+   - คำอธิบายแนวคิด (Concept Explanation)
+   - ตัวอย่างโค้ดที่รันได้จริง (Runnable Code Example)
+   - ตารางสรุป (ถ้ามีการเปรียบเทียบ)
+   - แบบฝึกหัดท้ายบท 3–5 ข้อ
+   - ส่วน "แหล่งอ้างอิง" ท้ายบท (References)
+3. บทที่มีการออกแบบ Workflow, Task List, Checklist, Dataflow Diagram (Draw.io) ให้:
+   - แสดงเทมเพลตเป็น Markdown Table หรือลิงก์ดาวน์โหลด
+   - อธิบายวิธีการใช้งานแต่ละจุด (step-by-step)
+   - แทรกรูปภาพโดยระบุเป็น "รูปที่ X: คำอธิบาย"
+4. สำหรับบทที่เกี่ยวข้องกับ Draw.io: ให้อธิบายวิธีการวาด Flowchart แบบ Top-to-Bottom (TB) พร้อมแสดงตัวอย่างโค้ด Mermaid หรือ ASCII flowchart
+5. ใช้ภาษาไทยที่เป็นทางการ แต่เข้าใจง่าย ไม่ใช้ศัพท์เทคนิคที่ซับซ้อนเกินไปโดยไม่มีการอธิบาย
+6. เขียนทีละบทตามลำดับ เริ่มจากบทที่ 1 ถึงบทที่ 120
+
+---
+## สารบัญ 120 บาท (ให้ยึดตามนี้ทุกประการ)
+
+### ภาค 0: เครื่องมือและแนวทางการเรียนรู้ (บทที่ 1–6)
+**บทที่ 1:** บทนำ – หนังสือเล่มนี้เหมาะกับใคร, ภาพรวม C# .NET 2026, วิธีอ่านหนังสือ, แหล่งอ้างอิง
+**บทที่ 2:** นิยามพื้นฐาน – .NET, C#, ORM, DTO, CRUD, Cache, Message Queue, Broker
+**บทที่ 3:** หัวข้อสำคัญของหนังสือ (Roadmap) – สายงาน Developer, สถาปัตยกรรม, ฐานข้อมูล, Redis, RabbitMQ, Testing
+**บทที่ 4:** การออกแบบคู่มือ – รูปแบบหนังสือ, สัญลักษณ์, มาตรฐานโค้ด
+**บทที่ 5:** การออกแบบ Workflow สำหรับนักพัฒนา – Git, CI/CD, Testing Workflow
+**บทที่ 6:** แผนภาพการทำงาน + Dataflow Diagram ด้วย Draw.io – รู้จัก Draw.io, การวาด Flowchart TB, ตัวอย่าง Dataflow (HTTP Request → Response), อธิบายแต่ละโหนด, เทมเพลต
+
+### ภาค 1: พื้นฐานภาษา C# (บทที่ 7–40)
+**บทที่ 7:** การติดตั้ง Visual Studio และสภาพแวดล้อม
+**บทที่ 8:** โปรเจกต์แรก Hello World และโครงสร้างไฟล์
+**บทที่ 9:** ตัวแปรและชนิดข้อมูลเบื้องต้น (string, int)
+**บทที่ 10:** การรับข้อมูลผู้ใช้และการแปลงชนิด (Parse, TryParse)
+**บทที่ 11:** ชนิดข้อมูลตัวเลข (int, double, float, decimal) และการแปลง implicit/explicit
+**บทที่ 12:** ชนิดข้อมูล bool, char และ escape sequences
+**บทที่ 13:** Value Types vs Reference Types
+**บทที่ 14:** ตัวดำเนินการ (Operators) และลำดับการประเมิน
+**บทที่ 15:** การดีบักเบื้องต้น (Breakpoints, Runtime vs Compile Error)
+**บทที่ 16:** โปรเจกต์: เครื่องคิดเลขบวกเลข
+**บทที่ 17:** String interpolation, Concatenation, String.Format
+**บทที่ 18:** มาตรฐานการเขียนโค้ด (Naming Conventions, Formatting)
+**บทที่ 19:** Cheatsheet ชนิดข้อมูลใน C#
+**บทที่ 20:** ตัวดำเนินการเชิงตรรกะ (&&, ||, !) และ relational
+**บทที่ 21:** คำสั่ง if, else, else if, nested if
+**บทที่ 22:** ขอบเขตของตัวแปร (Scope)
+**บทที่ 23:** คำสั่ง switch และ switch expression
+**บทที่ 24:** โปรเจกต์: Quiz App แบบข้อความ
+**บทที่ 25:** การสร้างตัวเลขสุ่ม (Random class)
+**บทที่ 26:** ตัวดำเนินการ modulo (%) และการใช้งาน
+**บทที่ 27:** โปรเจกต์: เครื่องคิดเลขแบบมีเงื่อนไข
+**บทที่ 28:** Cheatsheet การตัดสินใจใน C#
+**บทที่ 29:** ภาพรวมลูป (for, while, do-while, foreach)
+**บทที่ 30:** for loop – โครงสร้าง, การนับขึ้น/ลง, Thread.Sleep
+**บทที่ 31:** while loop – การนับรอบและ infinite loop, เกมทายตัวเลข
+**บทที่ 32:** do-while loop
+**บทที่ 33:** break และ continue
+**บทที่ 34:** โปรเจกต์: Rocket Landing Simulation
+**บทที่ 35:** โปรเจกต์: Text Adventure Game
+**บทที่ 36:** โปรเจกต์: Average Calculator
+**บทที่ 37:** Cheatsheet ลูปใน C#
+**บทที่ 38:** อาร์เรย์มิติเดียว (declaration, access, Length)
+**บทที่ 39:** foreach loop กับอาร์เรย์
+**บทที่ 40:** อาร์เรย์สองมิติและสามมิติ
+**บทที่ 41:** Jagged Arrays
+**บทที่ 42:** โปรเจกต์: Weather Simulator (อุณหภูมิ)
+**บทที่ 43:** การเรียงลำดับอาร์เรย์ (Array.Sort, Reverse)
+**บทที่ 44:** Cheatsheet อาร์เรย์
+**บทที่ 45:** รู้จักเมธอด – เหตุผล, โครงสร้าง
+**บทที่ 46:** เมธอดแบบ void (ไม่รับพารามิเตอร์, รับพารามิเตอร์)
+**บทที่ 47:** เมธอดที่คืนค่า (return, expression-bodied)
+**บทที่ 48:** Parameter Modifiers (ref, out, in)
+**บทที่ 49:** Recursion และ local functions
+**บทที่ 50:** Method Overloading
+**บทที่ 51:** โปรเจกต์: Weather Simulator (แบบมีเมธอด)
+**บทที่ 52:** Cheatsheet เมธอด
+**บทที่ 53:** คลาสและออบเจ็กต์ – fields, new keyword
+**บทที่ 54:** Constructor (default, custom, overloading)
+**บทที่ 55:** Properties (auto-implemented, custom get/set, computed)
+**บทที่ 56:** Access Modifiers (public, private, protected, internal)
+**บทที่ 57:** Instance methods และ static methods
+**บทที่ 58:** คีย์เวิร์ด this
+**บทที่ 59:** Partial classes และ Inner classes
+**บทที่ 60:** โปรเจกต์: Quiz App (แบบ OOP)
+**บทที่ 61:** Static fields และ static class
+**บทที่ 62:** is และ as operators
+**บทที่ 63:** Cheatsheet OOP
+**บทที่ 64:** List<T> – สร้าง, เพิ่ม, ลบ, เข้าถึง, Sort
+**บทที่ 65:** การค้นหาใน List (Find, FindAll, Any, Contains)
+**บทที่ 66:** Dictionary<TKey, TValue> – การประกาศ, เพิ่ม, อัปเดต, ลบ, วนลูป
+**บทที่ 67:** LINQ พื้นฐาน (Where, Select, OrderBy)
+**บทที่ 68:** ArrayList และ Hashtable (Legacy) – ข้อเสีย
+**บทที่ 69:** Nullable Types (int?, ??) และ null-coalescing
+**บทที่ 70:** โปรเจกต์: Advanced Dictionary Operations
+**บทที่ 71:** Cheatsheet Collections
+**บทที่ 72:** try-catch พื้นฐาน
+**บทที่ 73:** finally และ throw
+**บทที่ 74:** การจัดการ Exception หลายประเภท
+**บทที่ 75:** Call Stack และการ propagate Exception
+**บทที่ 76:** การสร้าง Custom Exception
+**บทที่ 77:** Cheatsheet Exception Handling
+**บทที่ 78:** Inheritance – base class, derived class, protected
+**บทที่ 79:** Method Overriding (virtual, override, sealed, new)
+**บทที่ 80:** Abstract classes และ abstract methods
+**บทที่ 81:** Constructor Inheritance (base keyword)
+**บทที่ 82:** ทุกคลาสสืบทอดจาก object (ToString, Equals, GetType)
+**บทที่ 83:** sealed class
+**บทที่ 84:** Cheatsheet Inheritance
+
+### ภาค 2: ฐานข้อมูลและ ORM (บทที่ 85–99)
+**บทที่ 85:** ภาพรวมฐานข้อมูล – SQL Server, Oracle, PostgreSQL, MongoDB
+**บทที่ 86:** SQL Server + Entity Framework Core CRUD – ติดตั้ง, DbContext, Migration, Add/Update/Delete/Query
+**บทที่ 87:** Oracle + ManagedDataAccess / EF Core
+**บทที่ 88:** PostgreSQL + Npgsql / EF Core
+**บทที่ 89:** MongoDB + C# Driver – Document model, CRUD, Aggregation
+**บทที่ 90:** DTO และ AutoMapper – การ Map, Projection
+**บทที่ 91:** Repository Pattern และ Unit of Work
+**บทที่ 92:** Full-stack Example – Blog API + Angular (CRUD ครบวงจร)
+**บทที่ 93:** Task List Template สำหรับโปรเจกต์ฐานข้อมูล (พร้อมเทมเพลต)
+**บทที่ 94:** Checklist Template สำหรับการตรวจสอบฐานข้อมูล (พร้อมเทมเพลต)
+**บทที่ 95:** Dataflow Diagram สำหรับระบบฐานข้อมูล (Draw.io) – พร้อมไฟล์ตัวอย่าง
+**บทที่ 96:** การจัดการ Connection String และ Environment Variables
+**บทที่ 97:** Performance Tuning สำหรับฐานข้อมูล (AsNoTracking, Include, Raw SQL, Index)
+**บทที่ 98:** Unit Test สำหรับ Data Access Layer (InMemory, Testcontainers)
+**บทที่ 99:** แหล่งอ้างอิงฐานข้อมูลสำหรับ C#
+
+### ภาค 3: Caching และ Message Queue (บทที่ 100–112)
+**บทที่ 100:** Redis – In-Memory Cache (ติดตั้ง, StackExchange.Redis, Set/Get, Expiration)
+**บทที่ 101:** Redis สำหรับ Cache ใน ASP.NET Core (IDistributedCache, ResponseCaching)
+**บทที่ 102:** Redis Pub/Sub – Message Queue แบบเบา (Publisher, Subscriber)
+**บทที่ 103:** RabbitMQ – Concepts (Exchange, Queue, Binding, Routing Key) และการติดตั้ง
+**บทที่ 104:** สร้าง Producer และ Consumer ด้วย C# (Publish, Consume, Acknowledge, Dead Letter)
+**บทที่ 105:** Workflow การทำงานของ Redis + RabbitMQ ในระบบจริง (พร้อม Diagram)
+**บทที่ 106:** Task List Template สำหรับ Redis/RabbitMQ
+**บทที่ 107:** Checklist Template สำหรับ Cache และ Message Queue
+**บทที่ 108:** Full-stack Example – e-Commerce API + Redis Cache + RabbitMQ ส่งอีเมล
+**บทที่ 109:** Mop Config – การจัดการ Configuration หลาย Environment (JSON, Env Var)
+**บทที่ 110:** แผนภาพ Dataflow แบบเต็มระบบ (Draw.io) – Client → API → Redis → DB → RabbitMQ → Consumer
+**บทที่ 111:** ข้อดี ข้อเสีย และข้อควรระวังของ Redis และ RabbitMQ
+**บทที่ 112:** แหล่งอ้างอิง Redis และ RabbitMQ
+
+### ภาค 4: หัวข้อขั้นสูง (บทที่ 113–120)
+**บทที่ 113:** WPF และ MVVM – Data Binding, Commands, Todo List + EF Core
+**บทที่ 114:** Unity Game Development – GameObject, Component, Pong, Zig Zag
+**บทที่ 115:** TDD (Test-Driven Development) – Red-Green-Refactor, Flight Booking Example
+**บทที่ 116:** Clean Code และ Refactoring – Naming, DRY, KISS, Comments
+**บทที่ 117:** SOLID Principles – SRP, OCP, LSP, ISP, DIP พร้อมตัวอย่าง
+**บทที่ 118:** Design Patterns พื้นฐาน – Singleton, Factory, Repository, DI
+**บทที่ 119:** Async/Multithreading – async/await, Task, Parallel, Deadlock
+**บทที่ 120:** ภาคผนวก – เทมเพลต Task List (Excel/PDF), เทมเพลต Checklist, ไฟล์ Draw.io, โค้ดตัวอย่าง GitHub, อภิธานศัพท์สองภาษา, เฉลยแบบฝึกหัด
+
+---
+เริ่มเขียนได้ทันที โดยเริ่มจากบทที่ 1
+```
+
+---
+
+## 📌 Prompt สำหรับ AI (ใช้กับ ChatGPT, Claude, Gemini) – เล่มภาษาอังกฤษ
+
+```text
+You are a senior technical author and .NET expert. 
+Write the book "Mastering C# .NET 2026: From Fundamentals to Enterprise Apps + Database + Cache + Message Queue" 
+in English, following the 120-chapter table of contents below.
+
+Requirements:
+1. Each chapter: 800–2000 words
+2. Every chapter must include:
+   - Concept explanation
+   - Runnable code examples
+   - Summary table (if comparisons exist)
+   - 3–5 exercises at the end
+   - "References" section at the end of each chapter
+3. For chapters covering Workflow, Task List, Checklist, Dataflow Diagram (Draw.io):
+   - Provide templates as Markdown tables or download links
+   - Explain step-by-step usage
+   - Include figure placeholders: "Figure X: description"
+4. For Draw.io chapters: explain how to draw Top-to-Bottom (TB) flowcharts, provide Mermaid or ASCII flowchart examples.
+5. Use professional yet accessible English.
+6. Write chapter by chapter from Chapter 1 to Chapter 120.
+
+---
+## Table of Contents (120 Chapters) – Follow exactly
+
+### Part 0: Tools and Learning Approach (Chapters 1–6)
+**Chapter 1:** Introduction – Target audience, C# .NET 2026 overview, how to read this book, references
+**Chapter 2:** Basic Definitions – .NET, C#, ORM, DTO, CRUD, Cache, Message Queue, Broker
+**Chapter 3:** Book Roadmap – Developer roles, architectures, databases, Redis, RabbitMQ, Testing
+**Chapter 4:** Documentation Design – Book format, symbols, code standards
+**Chapter 5:** Workflow Design for Developers – Git, CI/CD, Testing Workflow
+**Chapter 6:** Workflow Diagrams + Dataflow Diagram with Draw.io – Draw.io intro, TB flowchart, Dataflow example (HTTP Request → Response), node explanation, template
+
+### Part 1: C# Fundamentals (Chapters 7–40)
+**Chapter 7:** Installing Visual Studio and Environment
+**Chapter 8:** First Project Hello World and File Structure
+**Chapter 9:** Variables and Basic Data Types (string, int)
+**Chapter 10:** User Input and Type Conversion (Parse, TryParse)
+**Chapter 11:** Numeric Types (int, double, float, decimal), implicit/explicit conversion
+**Chapter 12:** bool, char, escape sequences
+**Chapter 13:** Value Types vs Reference Types
+**Chapter 14:** Operators and Evaluation Order
+**Chapter 15:** Basic Debugging (Breakpoints, Runtime vs Compile Error)
+**Chapter 16:** Mini Project: Addition Calculator
+**Chapter 17:** String interpolation, Concatenation, String.Format
+**Chapter 18:** Coding Standards (Naming Conventions, Formatting)
+**Chapter 19:** Cheatsheet: Data Types in C#
+**Chapter 20:** Logical Operators (&&, ||, !) and Relational
+**Chapter 21:** if, else, else if, nested if
+**Chapter 22:** Variable Scope
+**Chapter 23:** switch statement and switch expression
+**Chapter 24:** Project: Text-based Quiz App
+**Chapter 25:** Generating Random Numbers (Random class)
+**Chapter 26:** Modulo operator (%) and usage
+**Chapter 27:** Project: Conditional Calculator
+**Chapter 28:** Cheatsheet: Decision Making in C#
+**Chapter 29:** Loop Overview (for, while, do-while, foreach)
+**Chapter 30:** for loop – structure, counting up/down, Thread.Sleep
+**Chapter 31:** while loop – counter and infinite loop, number guessing game
+**Chapter 32:** do-while loop
+**Chapter 33:** break and continue
+**Chapter 34:** Project: Rocket Landing Simulation
+**Chapter 35:** Project: Text Adventure Game
+**Chapter 36:** Project: Average Calculator
+**Chapter 37:** Cheatsheet: Loops in C#
+**Chapter 38:** One-dimensional Arrays (declaration, access, Length)
+**Chapter 39:** foreach loop with arrays
+**Chapter 40:** Two-dimensional and Three-dimensional Arrays
+**Chapter 41:** Jagged Arrays
+**Chapter 42:** Project: Weather Simulator (temperature)
+**Chapter 43:** Array Sorting (Array.Sort, Reverse)
+**Chapter 44:** Cheatsheet: Arrays
+**Chapter 45:** Introduction to Methods – why, structure
+**Chapter 46:** void Methods (no parameters, with parameters)
+**Chapter 47:** Methods that Return Values (return, expression-bodied)
+**Chapter 48:** Parameter Modifiers (ref, out, in)
+**Chapter 49:** Recursion and local functions
+**Chapter 50:** Method Overloading
+**Chapter 51:** Project: Weather Simulator (with methods)
+**Chapter 52:** Cheatsheet: Methods
+**Chapter 53:** Classes and Objects – fields, new keyword
+**Chapter 54:** Constructors (default, custom, overloading)
+**Chapter 55:** Properties (auto-implemented, custom get/set, computed)
+**Chapter 56:** Access Modifiers (public, private, protected, internal)
+**Chapter 57:** Instance methods and static methods
+**Chapter 58:** this keyword
+**Chapter 59:** Partial classes and Inner classes
+**Chapter 60:** Project: Quiz App (OOP style)
+**Chapter 61:** Static fields and static class
+**Chapter 62:** is and as operators
+**Chapter 63:** Cheatsheet: OOP
+**Chapter 64:** List<T> – create, add, remove, access, Sort
+**Chapter 65:** Searching in List (Find, FindAll, Any, Contains)
+**Chapter 66:** Dictionary<TKey, TValue> – declare, add, update, remove, iterate
+**Chapter 67:** Basic LINQ (Where, Select, OrderBy)
+**Chapter 68:** ArrayList and Hashtable (Legacy) – drawbacks
+**Chapter 69:** Nullable Types (int?, ??) and null-coalescing
+**Chapter 70:** Project: Advanced Dictionary Operations
+**Chapter 71:** Cheatsheet: Collections
+**Chapter 72:** Basic try-catch
+**Chapter 73:** finally and throw
+**Chapter 74:** Handling Multiple Exception Types
+**Chapter 75:** Call Stack and Exception Propagation
+**Chapter 76:** Creating Custom Exceptions
+**Chapter 77:** Cheatsheet: Exception Handling
+**Chapter 78:** Inheritance – base class, derived class, protected
+**Chapter 79:** Method Overriding (virtual, override, sealed, new)
+**Chapter 80:** Abstract classes and abstract methods
+**Chapter 81:** Constructor Inheritance (base keyword)
+**Chapter 82:** Every class inherits from object (ToString, Equals, GetType)
+**Chapter 83:** sealed class
+**Chapter 84:** Cheatsheet: Inheritance
+
+### Part 2: Databases and ORM (Chapters 85–99)
+**Chapter 85:** Database Overview – SQL Server, Oracle, PostgreSQL, MongoDB
+**Chapter 86:** SQL Server + Entity Framework Core CRUD – Setup, DbContext, Migration, Add/Update/Delete/Query
+**Chapter 87:** Oracle + ManagedDataAccess / EF Core
+**Chapter 88:** PostgreSQL + Npgsql / EF Core
+**Chapter 89:** MongoDB + C# Driver – Document model, CRUD, Aggregation
+**Chapter 90:** DTO and AutoMapper – Mapping, Projection
+**Chapter 91:** Repository Pattern and Unit of Work
+**Chapter 92:** Full-stack Example – Blog API + Angular (complete CRUD)
+**Chapter 93:** Task List Template for Database Projects (with template)
+**Chapter 94:** Checklist Template for Database Verification (with template)
+**Chapter 95:** Dataflow Diagram for Database Systems (Draw.io) – with sample file
+**Chapter 96:** Managing Connection Strings and Environment Variables
+**Chapter 97:** Performance Tuning for Databases (AsNoTracking, Include, Raw SQL, Index)
+**Chapter 98:** Unit Test for Data Access Layer (InMemory, Testcontainers)
+**Chapter 99:** Database References for C#
+
+### Part 3: Caching and Message Queue (Chapters 100–112)
+**Chapter 100:** Redis – In-Memory Cache (install, StackExchange.Redis, Set/Get, Expiration)
+**Chapter 101:** Redis for Caching in ASP.NET Core (IDistributedCache, ResponseCaching)
+**Chapter 102:** Redis Pub/Sub – Lightweight Message Queue (Publisher, Subscriber)
+**Chapter 103:** RabbitMQ – Concepts (Exchange, Queue, Binding, Routing Key) and Installation
+**Chapter 104:** Building Producer and Consumer in C# (Publish, Consume, Acknowledge, Dead Letter)
+**Chapter 105:** Workflow of Redis + RabbitMQ in Real Systems (with Diagram)
+**Chapter 106:** Task List Template for Redis/RabbitMQ
+**Chapter 107:** Checklist Template for Cache and Message Queue
+**Chapter 108:** Full-stack Example – e-Commerce API + Redis Cache + RabbitMQ Email Sending
+**Chapter 109:** Mop Config – Multi-Environment Configuration Management (JSON, Env Var)
+**Chapter 110:** Complete System Dataflow Diagram (Draw.io) – Client → API → Redis → DB → RabbitMQ → Consumer
+**Chapter 111:** Pros, Cons, and Caveats of Redis and RabbitMQ
+**Chapter 112:** Redis and RabbitMQ References
+
+### Part 4: Advanced Topics (Chapters 113–120)
+**Chapter 113:** WPF and MVVM – Data Binding, Commands, Todo List + EF Core
+**Chapter 114:** Unity Game Development – GameObject, Component, Pong, Zig Zag
+**Chapter 115:** TDD (Test-Driven Development) – Red-Green-Refactor, Flight Booking Example
+**Chapter 116:** Clean Code and Refactoring – Naming, DRY, KISS, Comments
+**Chapter 117:** SOLID Principles – SRP, OCP, LSP, ISP, DIP with examples
+**Chapter 118:** Basic Design Patterns – Singleton, Factory, Repository, DI
+**Chapter 119:** Async/Multithreading – async/await, Task, Parallel, Deadlock
+**Chapter 120:** Appendices – Task List Template (Excel/PDF), Checklist Template, Draw.io files, GitHub sample code, Bilingual glossary, Exercise answers
+
+---
+Start writing immediately, beginning with Chapter 1.
+```
+
+---
+
+## วิธีใช้ Prompt
+
+1. คัดลอก prompt ที่ต้องการ (ภาษาไทยหรืออังกฤษ)
+2. เปิด AI ที่รองรับบริบทยาว (ChatGPT, Claude, Gemini)
+3. วาง prompt ลงในช่องสนทนา
+4. AI จะเริ่มเขียนบทที่ 1 ให้คุณ
+5. เมื่อได้บทที่ 1 แล้ว ให้สั่ง "เขียนบทที่ 2 ต่อ" หรือ "continue to chapter 2"
+6. ทำซ้ำจนครบ 120 บาท
+
+**หมายเหตุ:** หาก AI ตอบว่าบริบทเกิน ให้แบ่งส่งเป็นช่วง เช่น ส่งเฉพาะภาค 0 ก่อน แล้วค่อยส่งภาค 1 ทีละ 10 บท
+
+---
+
+## สิ่งที่คุณจะได้จาก prompt นี้
+
+- ✅ หนังสือ 2 เล่ม (ไทย/อังกฤษ) อย่างละ 120 บาท ครอบคลุมทุกหัวข้อ
+- ✅ โค้ดตัวอย่างที่รันได้จริง
+- ✅ แผนภาพ Draw.io (อธิบายเป็นข้อความ + ตัวอย่าง Mermaid/ASCII)
+- ✅ เทมเพลต Task List และ Checklist (ในรูปแบบ Markdown table)
+- ✅ แบบฝึกหัดและเฉลยท้ายบท
+- ✅ แหล่งอ้างอิงที่เชื่อถือได้
+
+พร้อมเริ่มสร้างหนังสือได้ทันที!

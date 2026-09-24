@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrutinize Report — icmongolang Full Audit</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f1117; color: #e1e4e8; line-height: 1.6; padding: 24px; }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 1.6em; margin-bottom: 4px; color: #fff; }
+  .date { color: #8b949e; font-size: 0.9em; margin-bottom: 24px; }
+  .intent { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px 20px; margin-bottom: 28px; }
+  .intent h2 { font-size: 1.1em; color: #58a6ff; margin-bottom: 8px; }
+  .intent p { color: #c9d1d9; }
+  .intent .alt { background: #1c2333; border-left: 3px solid #f0883e; padding: 8px 12px; margin-top: 10px; border-radius: 0 6px 6px 0; color: #d2a8ff; font-size: 0.92em; }
+  .finding { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; position: relative; }
+  .finding.blocker { border-left: 4px solid #f85149; }
+  .finding.major { border-left: 4px solid #f0883e; }
+  .finding.medium { border-left: 4px solid #d29922; }
+  .finding.nit { border-left: 4px solid #484f58; }
+  .severity-badge { display: inline-block; font-size: 0.7em; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; margin-right: 8px; vertical-align: middle; }
+  .blocker .severity-badge { background: #f8514933; color: #f85149; }
+  .major .severity-badge { background: #f0883e33; color: #f0883e; }
+  .medium .severity-badge { background: #d2992233; color: #d29922; }
+  .nit .severity-badge { background: #484f5833; color: #8b949e; }
+  .finding h3 { font-size: 1em; display: inline; }
+  .finding .loc { color: #79c0ff; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.88em; margin-top: 6px; display: block; }
+  .finding .why { color: #d2a8ff; margin-top: 8px; font-size: 0.93em; }
+  .finding .evidence { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 10px 14px; margin-top: 8px; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.85em; color: #8b949e; white-space: pre-wrap; }
+  .finding .fix { background: #0d2818; border: 1px solid #238636; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-size: 0.9em; color: #7ee787; }
+  .section-title { font-size: 1.15em; color: #f0f6fc; margin: 28px 0 14px 0; border-bottom: 1px solid #21262d; padding-bottom: 6px; }
+  .verdict-box { background: #161b22; border: 2px solid #f0883e; border-radius: 10px; padding: 20px 24px; margin-top: 28px; text-align: center; }
+  .verdict-box .verdict-label { font-size: 1.4em; font-weight: 700; color: #f0883e; }
+  .verdict-box .verdict-reason { color: #8b949e; margin-top: 6px; font-size: 0.95em; }
+  .summary-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .summary-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid #30363d; color: #8b949e; font-size: 0.85em; text-transform: uppercase; }
+  .summary-table td { padding: 8px 12px; border-bottom: 1px solid #21262d; font-size: 0.92em; }
+  .summary-table tr:hover { background: #1c2333; }
+  code { background: #1c2333; padding: 2px 6px; border-radius: 4px; font-family: 'Cascadia Code', monospace; font-size: 0.9em; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Scrutinize Report — icmongolang</h1>
+<p class="date">2026-07-23 &middot; Full codebase security &amp; business logic audit</p>
+
+<!-- ===== INTENT ===== -->
+<div class="intent">
+  <h2>1. เจตนา</h2>
+  <p>ตรวจสอบโค้ดทั้งระบบ icmongolang (Go backend สำหรับ IoT + ระบบจัดการอู่รถ) ว่ามีจุดเสี่ยงด้านความปลอดภัย (secret leak, auth bypass) และจุดเสี่ยงทางธุรกิจ (financial logic, race condition) ที่ควรแก้ก่อน deploy production หรือไม่</p>
+  <div class="alt">
+    <strong>มีวิธีที่ง่ายกว่าไหม?</strong><br>
+    หลาย finding โดยเฉพาะเรื่อง secrets ที่ commit ใน git แก้ได้ทันทีโดยไม่ต้องแก้โค้ด — เพียงใส่ <code>.env.*</code> เข้า <code>.gitignore</code> แล้วใช้ environment variables แทน hardcoded values ใน config files ส่วนเรื่อง auth bypass (rate limit, refresh token validation) แก้ได้เล็ก ๆ โดยเชื่อมต่อ middleware ที่มีอยู่แล้วเข้ากับ route ที่ขาดไป
+  </div>
+</div>
+
+<!-- ===== SUMMARY ===== -->
+<h2 class="section-title">Summary</h2>
+<table class="summary-table">
+  <tr><th>Severity</th><th>Count</th><th>Key Issues</th></tr>
+  <tr><td><span class="severity-badge" style="background:#f8514933;color:#f85149">BLOCKER</span></td><td>4</td><td>Secrets committed to git (JWT keys, DB creds, RSA private keys, InfluxDB token)</td></tr>
+  <tr><td><span class="severity-badge" style="background:#f0883e33;color:#f0883e">MAJOR</span></td><td>7</td><td>Payment refund no validation, pagination bug, no rate limit on login, refresh token not DB-validated, PO receive race condition, DB errors swallowed, authUC discarded</td></tr>
+  <tr><td><span class="severity-badge" style="background:#d2992233;color:#d29922">MEDIUM</span></td><td>6</td><td>Quotation client-controlled totals, PO discount not calculated, CSP unsafe-inline, user enumeration, rate limiter behind proxy, WebSocket goroutine leak</td></tr>
+  <tr><td><span class="severity-badge" style="background:#484f5833;color:#8b949e">NIT</span></td><td>3</td><td>Nil repos passed to IoT usecase, hardcoded company in PDFs, Redis no password</td></tr>
+</table>
+
+<!-- ===== BLOCKERS ===== -->
+<h2 class="section-title">Blockers (ต้องแก้ก่อน deploy)</h2>
+
+<div class="finding blocker">
+  <span class="severity-badge">Blocker</span>
+  <h3>JWT Secret + RSA Private Keys committed to git</h3>
+  <span class="loc">config/config.default.yml:13, 16, 19</span>
+  <p class="why">HMAC secret (<code>9056b94a...</code>) และ RSA private keys (base64) ทั้ง access-token และ refresh-token อยู่ใน version control — ใครก็ตามที่เข้าถึง repo ได้สามารถ forge JWT สำหรับ user ใดก็ได้ รวมถึง admin/superuser</p>
+  <div class="evidence">config/config.default.yml:13 — SecretKey: 9056b94a8611363c2c43aa3760d65a48c834744b877b5041fa99a919d5aaf635
+config/config.default.yml:16 — AccessTokenPrivateKey: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQ...
+config/config.default.yml:19 — RefreshTokenPrivateKey: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQ...</div>
+  <div class="fix">แก้ไข: ย้าย secrets ทั้งหมดไป environment variables, เพิ่ม config/config.default.yml เข้า .gitignore (เฉพาะส่วน secrets), ใช้ BFG Repo-Cleaner ลบออกจาก git history, generate คีย์ใหม่ทั้งหมด</div>
+</div>
+
+<div class="finding blocker">
+  <span class="severity-badge">Blocker</span>
+  <h3>.env.dev with DB credentials committed to git</h3>
+  <span class="loc">.env.dev:16-19 (tracked in git)</span>
+  <p class="why">DB password (<code>postgres</code>) และ LAN IP (<code>192.168.1.41</code>) อยู่ใน version control — .gitignore ไม่ได้ exclude <code>.env.*</code> เลย ทำให้ credentials อยู่ใน git history ถาวร</p>
+  <div class="evidence">.gitignore — ไม่มี .env* entry เลย
+$ git ls-files .env.dev → .env.dev (tracked)
+$ git ls-files .env.prod → .env.prod (tracked)</div>
+  <div class="fix">แก้ไข: เพิ่ม <code>.env*</code> เข้า .gitignore, ใช้ <code>git rm --cached .env.dev .env.prod</code> เพื่อ untrack, rotate DB password ใหม่</div>
+</div>
+
+<div class="finding blocker">
+  <span class="severity-badge">Blocker</span>
+  <h3>Super user password hardcoded in config</h3>
+  <span class="loc">config/config.default.yml:25</span>
+  <p class="why">Root password (<code>root_password</code>) อยู่ใน git — ใคร clone repo ก็รู้ password ของ super user ทันที</p>
+  <div class="evidence">config/config.default.yml:25 — Password: root_password
+internal/modules/users/usecase/usecase.go:357 — u.logger.Infof("Superuser not found, creating from config: %s", ...)</div>
+  <div class="fix">แก้ไข: ลบออกจาก default config, ให้ผู้ใช้ set password ผ่าน environment variable เท่านั้น (เช่น <code>FIRST_SUPERUSER_PASSWORD</code>)</div>
+</div>
+
+<div class="finding blocker">
+  <span class="severity-badge">Blocker</span>
+  <h3>InfluxDB token + SMTP password committed to git</h3>
+  <span class="loc">config/config.default.yml:81, 65</span>
+  <p class="why">InfluxDB full-access token และ SMTP credentials อยู่ใน git — สามารถ extract time-series data ทั้งหมด และส่งอีเมลผ่าน SMTP server ได้</p>
+  <div class="evidence">config/config.default.yml:81 — token: "HVkYVgEZzbLeT_C6_tUS6SOnUAKO08zd..."
+config/config.default.yml:65 — Password: icmon</div>
+  <div class="fix">แก้ไข: ย้ายไป environment variables ทั้งคู่, rotate token/password ใหม่</div>
+</div>
+
+<!-- ===== MAJORS ===== -->
+<h2 class="section-title">Major (ต้องแก้ก่อนใช้จริง)</h2>
+
+<div class="finding major">
+  <span class="severity-badge">Major</span>
+  <h3>ProcessRefund: ไม่มี business validation เลย</h3>
+  <span class="loc">internal/modules/payment/usecase/usecase.go:63-74</span>
+  <p class="why">ไม่เช็คสถานะปัจจุบัน (จ่ายแล้ว/ยกเลิกแล้ว), ไม่เช็คว่า refund amount ≤ payment amount, ไม่เช็ค over-refund (refund ซ้ำ), ไม่บันทึก PaymentHistory — ผลคือ double-refund หรือ refund เกินยอดจริง</p>
+  <div class="evidence">usecase.go:63-74:
+func (u *paymentUseCase) ProcessRefund(...) {
+    payment, err := u.pgRepo.Get(ctx, id)     // ไม่เช็ค status
+    values["status"] = "REFUNDED"               // ไม่เช็คว่า refunded แล้ว
+    values["refunded_amount"] = amount           // ไม่เช็คว่า amount <= payment.Amount
+    return u.pgRepo.Update(ctx, payment, values) // ไม่บันทึก PaymentHistory
+}</div>
+  <div class="fix">แก้ไข: เพิ่ม validation — 1) เช็ค status == "PAID", 2) เช็ค amount <= (Amount - RefundedAmount), 3) บันทึก PaymentHistory record, 4) wrap ใน DB transaction</div>
+</div>
+
+<div class="finding major">
+  <span class="severity-badge">Major</span>
+  <h3>Job List pagination bug: total = len(fetched items)</h3>
+  <span class="loc">internal/modules/job/delivery/http/handlers.go:175</span>
+  <p class="why">คำนวณ total จากจำนวน items ที่ fetch มาในหน้านั้น ไม่ใช่ count จริงจาก DB — ทำให้หน้า UI แสดง totalPages = 1 เสมอ แม้ข้อมูลมีหลายหน้า</p>
+  <div class="evidence">handlers.go:175 — total := int64(len(jobs))
+ถ้า DB มี 500 jobs, fetch page 1 (limit=10) → total = 10, totalPages = 1
+PO handler (purchaseorder/delivery/http/handlers.go:188) ใช้ CountByFilter() อย่างถูกต้อง</div>
+  <div class="fix">แก้ไข: เรียก <code>pgRepo.CountByFilter()</code> ก่อน fetch เหมือน PO handler</div>
+</div>
+
+<div class="finding major">
+  <span class="severity-badge">Major</span>
+  <h3>Login routes ไม่มี rate limit</h3>
+  <span class="loc">internal/modules/auth/delivery/http/routes.go:35-51</span>
+  <p class="why"><code>MapAuthRoute</code> (ใช้จริง) ไม่ได้เชื่อม <code>RateLimitMiddleware</code> เข้ากับ <code>/login</code> และ <code>/signin</code> — ทำให้ brute-force attack ได้ไม่จำกัด</p>
+  <div class="evidence">routes.go:35-51 — MapAuthRoute:
+router.Route("/auth", func(r chi.Router) {
+    r.Group(func(r chi.Router) {
+        r.Post("/login", h.Login())    // ← ไม่มี rate limit
+        r.Post("/signin", h.SignIn())  // ← ไม่มี rate limit
+...
+RateLimit middleware ถูกสร้างแล้ว (middleware.go:19) แต่ไม่ได้ใช้กับ auth routes</div>
+  <div class="fix">แก้ไข: เพิ่ม <code>r.Use(mw.RateLimit())</code> ใน authenticated group ของ MapAuthRoute</div>
+</div>
+
+<div class="finding major">
+  <span class="severity-badge">Major</span>
+  <h3>Refresh token ไม่ validate against DB</h3>
+  <span class="loc">internal/modules/auth/delivery/http/routes.go:45-51</span>
+  <p class="why">Refresh token flow ใช้แค่ JWT signature verification — ไม่ได้เช็คว่า token ยังมีอยู่ใน DB หรือถูก revoke แล้ว ทำให้ token ที่ logout แล้วยังใช้ได้</p>
+  <div class="evidence">routes.go:45-51:
+r.Use(mw.Verifier(false))   // parse JWT
+r.Use(mw.Authenticator())   // check parse error
+r.Get("/refresh", h.RefreshToken())  // ไม่เรียก authPgRepo.FindRefreshToken()
+→ authPgRepoVar ถูก discard ด้วย _ = authPgRepoVar (handlers.go:141)</div>
+  <div class="fix">แก้ไข: 1) เรียก <code>authPgRepo.FindRefreshToken()</code> ใน RefreshToken handler, 2) เรียก <code>mw.CurrentUser()</code> ใน refresh/logout routes, 3) ไม่ discard authPgRepoVar</div>
+</div>
+
+<div class="finding major">
+  <span class="severity-badge">Major</span>
+  <h3>Payment repository: DB errors silently swallowed</h3>
+  <span class="loc">internal/modules/payment/repository/pg_repository.go:57-58</span>
+  <p class="why"><code>Search</code>, <code>GetByCustomerId</code>, <code>GetOutstandingByCustomerId</code>, <code>GetPaymentHistory</code> ไม่ได้ check <code>query.Error</code> — return error เป็น nil เสมอ ทำให้ caller ไม่รู้ว่า query พัง</p>
+  <div class="evidence">pg_repository.go:57 — query.Where("deleted = ?", false).Limit(limit).Offset(offset).Find(&objs)
+                                                               return objs, nil    // ← error ไม่ถูก check
+pg_repository.go:68 — r.DB...Find(&objs)
+                       return objs, nil                       // ← error ไม่ถูก check</div>
+  <div class="fix">แก้ไข: เพิ่ม <code>if query.Error != nil { return nil, query.Error }</code> หลังทุก query chain</div>
+</div>
+
+<div class="finding major">
+  <span class="severity-badge">Major</span>
+  <h3>PO Receive: race condition (read-modify-write without lock)</h3>
+  <span class="loc">internal/modules/purchaseorder/usecase/usecase.go:113-174</span>
+  <p class="why">อ่าน QuantityReceived, บวกใน memory, แล้วเขียนกลับ — ไม่มี SELECT FOR UPDATE หรือ optimistic lock ทำให้ concurrent receive 2 requests อ่านค่าเดียวกัน แล้วบวกได้ค่าผิด</p>
+  <div class="evidence">usecase.go:137 — newReceived := detail.QuantityReceived + item.ReceivedQuantity
+ถ้า concurrent request อ่าน QuantityReceived=0 พร้อมกัน → ทั้งคู่ได้ newReceived=5 → เขียนทับกัน → ได้ 5 แทน 10</div>
+  <div class="fix">แก้ไข: ใช้ <code>UPDATE ... SET quantity_received = quantity_received + ? WHERE id = ?</code> (atomic increment) แทน read-modify-write</div>
+</div>
+
+<div class="finding major">
+  <span class="severity-badge">Major</span>
+  <h3>Auth usecase ถูกสร้างแล้วทิ้ง (dead code)</h3>
+  <span class="loc">internal/server/handlers.go:140-143</span>
+  <p class="why"><code>authPgRepoVar</code> และ <code>authUC</code> ถูกสร้างแต่ discard ด้วย <code>_ =</code> — auth module ไม่ได้เชื่อมเข้าระบบเลย ทำให้ auth features (refresh token DB check, logout all) ไม่ทำงานจริง</p>
+  <div class="evidence">handlers.go:140-143:
+authPgRepoVar := authPgRepo.CreateAuthPgRepository(db)
+_ = authPgRepoVar                // ← ทิ้ง
+authUC := authUsecase.CreateAuthUseCaseI(userUC, cfg, logger)
+_ = authUC                        // ← ทิ้ง</div>
+  <div class="fix">แก้ไข: เชื่อม authPgRepoVar เข้า auth handler/routes ให้ใช้งานจริง</div>
+</div>
+
+<!-- ===== MEDIUM ===== -->
+<h2 class="section-title">Medium</h2>
+
+<div class="finding medium">
+  <span class="severity-badge">Medium</span>
+  <h3>Quotation: client ควบคุม total/subtotal ได้เอง</h3>
+  <span class="loc">internal/modules/quotation/delivery/http/handlers.go:291-315</span>
+  <p class="why">接受 client ส่ง Subtotal, TaxAmount, Total มาเอง โดยไม่คำนวณ server-side — client สามารถ set total = 0 ได้</p>
+  <div class="evidence">handlers.go:298-314:
+if req.Subtotal != nil { values["subtotal"] = *req.Subtotal }
+if req.TaxAmount != nil { values["tax_amount"] = *req.TaxAmount }
+if req.Total != nil { values["total"] = *req.Total }
+→ ไม่มี server-side calculation จาก line items</div>
+  <div class="fix">แก้ไข: คำนวณ Subtotal/TaxAmount/Total จาก line items server-side, ignore client values</div>
+</div>
+
+<div class="finding medium">
+  <span class="severity-badge">Medium</span>
+  <h3>PO discount ไม่ถูกนำไปคำนวณใน total</h3>
+  <span class="loc">internal/modules/purchaseorder/repository/pg_repository.go:48-62</span>
+  <p class="why">เก็บ DiscountValue/DiscountType ไว้ แต่ total คำนวณแค่ <code>subtotal + taxAmount + shippingCost</code> — discount ไม่ถูก subtract</p>
+  <div class="evidence">pg_repository.go:59 — total := subtotal + taxAmount + header.ShippingCost
+header.DiscountValue ไม่ได้นำมาใช้ในการคำนวณ</div>
+  <div class="fix">แก้ไข: เพิ่ม logic หัก discount ก่อนคำนวณ total (ตาม DiscountType: percentage หรือ fixed)</div>
+</div>
+
+<div class="finding medium">
+  <span class="severity-badge">Medium</span>
+  <h3>WebSocket hub: goroutine leak จาก topic subscription</h3>
+  <span class="loc">pkg/websocket/hub.go:101-116</span>
+  <p class="why">เมื่อ client unsubscribe จาก topic สุดท้าย topic entry ถูกลบ แต่ goroutine ที่ subscribe ยัง run อยู่ — ไม่มี cancel mechanism ทำให้ goroutine สะสมเรื่อย ๆ</p>
+  <div class="evidence">hub.go:101 — go func() { /* subscribe loop */ }()  // spawn goroutine
+hub.go:114-116 (Unsubscribe) — delete(h.topics, topic)  // แต่ goroutine ไม่ถูก stop</div>
+  <div class="fix">แก้ไข: เพิ่ม context.WithCancel ใน goroutine, เรียก cancel() เมื่อ unsubscribe</div>
+</div>
+
+<div class="finding medium">
+  <span class="severity-badge">Medium</span>
+  <h3>User enumeration ผ่าน error messages ต่างกัน</h3>
+  <span class="loc">internal/modules/users/usecase/usecase.go:306-312</span>
+  <p class="why">Return "user not found" vs "wrong password" ต่างกัน — attacker ใช้เวลาหรือ response difference เพื่อเดาว่า email มีอยู่จริงหรือไม่</p>
+  <div class="evidence">usecase.go:306 — return "", "", httpErrors.ErrNotFound(err)    // "user not found"
+usecase.go:312 — return "", "", httpErrors.ErrWrongPassword(...)  // "wrong password"</div>
+  <div class="fix">แก้ไข: return error message เดียวกัน ("invalid credentials") สำหรับทั้งสองกรณี</div>
+</div>
+
+<div class="finding medium">
+  <span class="severity-badge">Medium</span>
+  <h3>Rate limiter ใช้ RemoteAddr เท่านั้น — หลัง proxy ใช้ไม่ได้</h3>
+  <span class="loc">internal/middleware/rate_limit.go:131-136</span>
+  <p class="why">Behind reverse proxy/load balancer, RemoteAddr จะเป็น IP ของ proxy ทุกครั้ง — ทุก user ใช้ rate limit bucket เดียวกัน ทำให้ user คนเดียวโดน limit แล้ว user ทุกคนโดนด้วย</p>
+  <div class="evidence">rate_limit.go:131-136:
+func getClientIP(r *http.Request) string {
+    host, _, err := net.SplitHostPort(r.RemoteAddr)
+    // ไม่อ่าน X-Forwarded-For หรือ X-Real-IP</div>
+  <div class="fix">แก้ไข: อ่าน <code>X-Forwarded-For</code> header ก่อน fallback เป็น RemoteAddr (และเช็ค trusted proxy list)</div>
+</div>
+
+<div class="finding medium">
+  <span class="severity-badge">Medium</span>
+  <h3>CSP อนุญาต 'unsafe-inline'</h3>
+  <span class="loc">internal/middleware/security.go:28-29</span>
+  <p class="why">อนุญาต inline script/style — ทำให้ XSS โจมตีได้ง่ายขึ้น</p>
+  <div class="evidence">security.go:28-29:
+script-src 'self' 'unsafe-inline';
+style-src 'self' 'unsafe-inline';</div>
+  <div class="fix">แก้ไข: ลบ 'unsafe-inline', ใช nonce หรือ hash แทน</div>
+</div>
+
+<!-- ===== NITS ===== -->
+<h2 class="section-title">Nit</h2>
+
+<div class="finding nit">
+  <span class="severity-badge">Nit</span>
+  <h3>Nil repositories passed to IoT usecase</h3>
+  <span class="loc">internal/server/handlers.go:209-210</span>
+  <p class="why">ตั้งค่าเป็น nil แล้วส่งเข้า usecase — ถ้า usecase เรียก method จะ panic ทันที</p>
+  <div class="evidence">handlers.go:209-210:
+var commandLogRepo iotRepo.CommandLogRepository   // nil
+var deviceAlertRepo iotRepo.DeviceAlertRepository // nil</div>
+  <div class="fix">แก้ไข: สร้าง repo instances จริง หรือ implement no-op implementations</div>
+</div>
+
+<div class="finding nit">
+  <span class="severity-badge">Nit</span>
+  <h3>Hardcoded company info ใน PDF templates ทุก module</h3>
+  <span class="loc">internal/modules/job/delivery/http/handlers.go, payment, quotation, purchaseorder</span>
+  <p class="why">ชื่อบริษัท ที่อยู่ เบอร์โทร เลขประจำตัวผู้เสียภาษี ถูก hardcode ใน handler ทุก module — เปลี่ยนทีต้องแก้หลายจุด</p>
+  <div class="fix">แก้ไข: ย้ายไป config หรือ tenant table, inject เข้า report builder</div>
+</div>
+
+<div class="finding nit">
+  <span class="severity-badge">Nit</span>
+  <h3>Redis ไม่มี password</h3>
+  <span class="loc">config/config.default.yml:41</span>
+  <p class="why">Redis ไม่มี authentication — ใครก็เชื่อมต่อและอ่าน/เขียน cache/queue ได้</p>
+  <div class="fix">แก้ไข: ตั้ง password ใน Redis config, ใส่ใน .env (ไม่ hardcode)</div>
+</div>
+
+<!-- ===== VERDICT ===== -->
+<div class="verdict-box">
+  <div class="verdict-label">REWORK — รื้อทำใหม่ (บางส่วน)</div>
+  <div class="verdict-reason">
+    เหตุผลใหญ่: <strong>Secrets ทั้งหมด commit อยู่ใน git</strong> (JWT keys, DB password, RSA private keys, InfluxDB token, SMTP password) — ใคร clone repo ก็ forge JWT เข้า system ได้ทันที ต้อง rotate ทุก secret แล้วลบออกจาก git history ก่อน deploy<br><br>
+    ถัดไป: Payment validation ว่างเปล่า (refund/cancel ไม่เช็คสถานะ/ยอดเงิน), rate limit ไม่ได้เชื่อมกับ login, refresh token ไม่ validate against DB — ทั้ง 3 เรื่องนี้ถ้า deploy ตอนนี้จะเกิด financial loss และ auth bypass ได้จริง
+  </div>
+</div>
+
+</div>
+</body>
+</html>

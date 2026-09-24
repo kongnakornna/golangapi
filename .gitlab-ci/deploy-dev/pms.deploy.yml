@@ -1,0 +1,29 @@
+pms-dev-deploy:
+  #  stage: deploy-dev
+  extends: .deploy-kube-dev
+  before_script:
+    # Overwrite this value globally.
+    - APP_NAME=pms
+
+    # Export them for all jobs.
+    - export APP_NAME
+
+    - export MIN_REPLICAS=1
+    - export MAX_REPLICAS=1
+    - export CPU_LIMIT="300m"
+    - export MEMORY_LIMIT="512Mi"
+    - export APP_BASE_PATH=/
+  only:
+    changes:
+      - .gitlab-ci/build/build-dev.yml
+      - .gitlab-ci/build/pms.build.yml
+      - .gitlab-ci/deploy-dev/deploy-dev.yml
+      - .gitlab-ci/deploy-dev/pms.deploy.yml
+      - api/**/*.go
+      - cmd/pms/*.go
+      - build/develop/Dockerfile
+      - config/**/*
+      - deployments/deployment.yml
+      - docs/**/*
+      - pkg/**/*.go
+      - vendor/**/*

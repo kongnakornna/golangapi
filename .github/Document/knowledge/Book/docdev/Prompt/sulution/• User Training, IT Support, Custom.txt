@@ -1,0 +1,21 @@
+• User Training, IT Support, Customer Service, IT Solutions, Data Center, PHP Web Developer
+• User Training
+• Maintain optimal workflow.
+
+
+
+Product backlog 
+
+Gitflow Workflow
+main: เก็บโค้ดที่พร้อมใช้งานใน production เท่านั้น
+develop: เป็น branch หลักสำหรับการพัฒนา feature ต่างๆ
+feature/xxx: branch สำหรับพัฒนา feature ใหม่แต่ละตัว
+release/xxx: branch สำหรับเตรียมการ release เวอร์ชันใหม่
+hotfix/xxx: branch สำหรับแก้ไข bug เร่งด่วนใน production
+
+A GitHub actions that automate the Gitflow workflow where one has a develop branch for continuous development and a main (production) branch that would automatically deploy to production. In between that, a release branch is created from develop to perform release preparation tasks before being merged to main branch. Occasionally, a hotfix branch is created from main for hot fixes.
+
+
+Enchant Code
+
+gitflow-workflow-action

@@ -1,0 +1,73 @@
+{{define "content"}}
+<div class="header">
+  <div class="company-info">
+    <h1>{{.Company.Name}}</h1>
+    <p>{{.Company.Address}}</p>
+    <p>Tel: {{.Company.Phone}} | Tax ID: {{.Company.TaxID}}</p>
+  </div>
+  <div class="doc-title">
+    <h2>ใบเพิ่มหนี้ / DEBIT NOTE</h2>
+    <p class="doc-no">เลขที่: {{.DebitNoteNo}}</p>
+    <p style="font-size:11px;color:#666;">วันที่: {{.Date | formatDate}}</p>
+  </div>
+</div>
+
+<div class="info-section">
+  <div class="info-box">
+    <h3>ข้อมูลลูกค้า</h3>
+    <p><strong>{{.CustomerName}}</strong></p>
+    <p>{{.CustomerAddr}}</p>
+  </div>
+  <div class="info-box">
+    <h3>อ้างอิงใบแจ้งหนี้</h3>
+    <p>เลขที่ใบแจ้งหนี้: {{.InvoiceNo}}</p>
+    <p><strong>เหตุผล:</strong> {{.Reason}}</p>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:40px;">#</th>
+      <th>รายการ</th>
+      <th style="width:60px;" class="text-center">จำนวน</th>
+      <th style="width:90px;" class="text-right">ราคา/หน่วย</th>
+      <th style="width:100px;" class="text-right">จำนวนเงิน</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Items}}
+    <tr>
+      <td>{{.LineNo}}</td>
+      <td>{{.Description}}</td>
+      <td class="text-center">{{.Quantity}}</td>
+      <td class="text-right">{{.UnitPrice | formatMoney}}</td>
+      <td class="text-right">{{.TotalPrice | formatMoney}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+
+<div class="summary">
+  <table>
+    <tr><td class="label">ยอดเพิ่มหนี้</td><td class="value">{{.Subtotal | formatMoney}}</td></tr>
+    <tr><td class="label">ภาษี 7%</td><td class="value">{{.TaxAmount | formatMoney}}</td></tr>
+    <tr class="grand-total"><td class="label">ยอดสุทธิ</td><td class="value">{{.GrandTotal | formatMoney}}</td></tr>
+  </table>
+</div>
+
+<div class="amount-words">
+  <p><strong>จำนวนเงิน (ตัวอักษร):</strong> {{.AmountWords}}</p>
+</div>
+
+<div class="footer">
+  <div class="sign-box">
+    <p class="sign-line">ผู้มีอำนาจ</p>
+    <p>&nbsp;</p>
+  </div>
+  <div class="sign-box">
+    <p class="sign-line">ผู้รับ</p>
+    <p>&nbsp;</p>
+  </div>
+</div>
+{{end}}

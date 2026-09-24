@@ -1,0 +1,883 @@
+swagger: "2.0"
+basePath: /api
+info:
+  title: Go IoT API
+  version: "1.0"
+  description: API for ICMON project
+  contact: {}
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: PDPA
+    description: API การจัดการ PDPA ของผู้ใช้ (ความยินยอม คำขอสิทธิ DSAR บัญชี และนโยบายความเป็นส่วนตัว) โดยทุก endpoint จำเป็นต้องผ่านการยืนยันตัวตน (Bearer token)
+paths:
+  /v1/pdpa/consent:
+    post:
+      tags:
+        - PDPA
+      summary: ลงทะเบียนความยินยอม (Grant Consent)
+      description: ลงทะเบียนความยินยอมของผู้ใช้สำหรับวัตถุประสงค์ที่กำหนด (จำเป็น / การตลาด / การวิเคราะห์) และส่งเหตุการณ์ไปยัง Kafka topic ที่เกี่ยวข้อง
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/GrantConsentRequest"
+      responses:
+        "200":
+          description: ลงทะเบียนความยินยอมสำเร็จ คืนสถานะความยินยอมล่าสุดของผู้ใช้
+          schema:
+            $ref: "#/definitions/ConsentStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง (MissingRequiredField / InvalidRequestPayload)
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+    delete:
+      tags:
+        - PDPA
+      summary: เพิกถอนความยินยอม (Revoke Consent)
+      description: เพิกถอนความยินยอมของผู้ใช้สำหรับวัตถุประสงค์ที่กำหนด และปรับสถานะความยินยอมเป็น Revoked
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/RevokeConsentRequest"
+      responses:
+        "200":
+          description: เพิกถอนความยินยอมสำเร็จ คืนสถานะความยินยอมล่าสุดของผู้ใช้
+          schema:
+            $ref: "#/definitions/ConsentStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/consent/history:
+    get:
+      tags:
+        - PDPA
+      summary: ประวัติความยินยอม (Consent History)
+      description: ดึงประวัติการให้/เพิกถอนความยินยอมของผู้ใช้ โดยสามารถกรองตามวัตถุประสงค์ได้
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          type: string
+          format: uuid
+          description: ID ของผู้ใช้ (UUID)
+        - name: purpose
+          in: query
+          required: false
+          type: integer
+          description: วัตถุประสงค์ของความยินยอม (1=Necessary, 5=Marketing, 6=Analytics)
+          enum:
+            - 1
+            - 5
+            - 6
+      responses:
+        "200":
+          description: คืนรายการความยินยอม ตามประวัติของผู้ใช้
+          schema:
+            $ref: "#/definitions/ConsentStatusListResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง (เช่น user_id ไม่ถูกต้อง)
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/dsar:
+    post:
+      tags:
+        - PDPA
+      summary: ยื่นคำขอสิทธิของเจ้าของข้อมูล (Submit DSAR)
+      description: ยื่นคำขอสิทธิภายใต้ PDPA เช่น สิทธิเข้าถึงข้อมูล (Access) สิทธิลบข้อมูล (Erasure) หรือสิทธิเพิกถอนความยินยอม (WithdrawConsent) โดยสถานะเริ่มต้นเป็น Pending
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/SubmitDSARRequest"
+      responses:
+        "200":
+          description: ยื่นคำขอสำเร็จ คืนสถานะของคำขอ DSAR
+          schema:
+            $ref: "#/definitions/DSARStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+    get:
+      tags:
+        - PDPA
+      summary: รายการคำขอ DSAR
+      description: ดึงรายการคำขอสิทธิของเจ้าของข้อมูล โดยกรองตามผู้ใช้ และ/หรือสถานะของคำขอ
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          type: string
+          format: uuid
+          description: ID ของผู้ใช้ (UUID)
+        - name: status
+          in: query
+          required: false
+          type: integer
+          description: สถานะของคำขอ (1=Pending, 3=Processing, 4=Completed, 5=Rejected)
+          enum:
+            - 1
+            - 3
+            - 4
+            - 5
+      responses:
+        "200":
+          description: คืนรายการคำขอ DSAR ของผู้ใช้
+          schema:
+            $ref: "#/definitions/DSARStatusListResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/dsar/{id}:
+    get:
+      tags:
+        - PDPA
+      summary: รายละเอียดคำขอ DSAR
+      description: ดึงรายละเอียดของคำขอ DSAR ตาม ID (UUID)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uuid
+          description: ID ของคำขอ DSAR (UUID)
+      responses:
+        "200":
+          description: คืนรายละเอียดของคำขอ DSAR
+          schema:
+            $ref: "#/definitions/DSARStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: ไม่พบคำขอ DSAR ที่ระบุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/dsar/{id}/process:
+    post:
+      tags:
+        - PDPA
+      summary: เริ่มดำเนินการคำขอ DSAR
+      description: เริ่มดำเนินการกับคำขอ DSAR ที่ระบุ (เปลี่ยนสถานะเป็น Processing) สำหรับผู้ดูแลระบบเท่านั้น
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uuid
+          description: ID ของคำขอ DSAR (UUID)
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ProcessDSARRequest"
+      responses:
+        "200":
+          description: เริ่มดำเนินการคำขอสำเร็จ คืนสถานะล่าสุดของคำขอ
+          schema:
+            $ref: "#/definitions/DSARStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: ต้องมีสิทธิ์ผู้ดูแลระบบ (admin) ในการดำเนินการนี้
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: ไม่พบคำขอ DSAR ที่ระบุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/account/suspend:
+    post:
+      tags:
+        - PDPA
+      summary: ระงับบัญชีผู้ใช้
+      description: ระงับบัญชีผู้ใช้ชั่วคราว พร้อมกำหนดระยะเวลาการเก็บรักษาข้อมูล (retention years) สำหรับผู้ดูแลระบบเท่านั้น
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/SuspendAccountRequest"
+      responses:
+        "200":
+          description: ระงับบัญชีสำเร็จ คืนสถานะบัญชีและกำหนดเวลาเก็บรักษาข้อมูล
+          schema:
+            $ref: "#/definitions/UserAccountStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: ต้องมีสิทธิ์ผู้ดูแลระบบ (admin) ในการดำเนินการนี้
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/account/terminate:
+    post:
+      tags:
+        - PDPA
+      summary: ยกเลิกบัญชีผู้ใช้
+      description: ยกเลิก (terminate) บัญชีผู้ใช้ตามคำขอสิทธิลบข้อมูล (Erasure) สำหรับผู้ดูแลระบบเท่านั้น
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/TerminateAccountRequest"
+      responses:
+        "200":
+          description: ยกเลิกบัญชีสำเร็จ คืนสถานะของบัญชี
+          schema:
+            $ref: "#/definitions/UserAccountStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: ต้องมีสิทธิ์ผู้ดูแลระบบ (admin) ในการดำเนินการนี้
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/account/confirm-deletion:
+    post:
+      tags:
+        - PDPA
+      summary: ยืนยันการลบข้อมูลผู้ใช้
+      description: ยืนยันการลบข้อมูลของผู้ใช้ พร้อมบันทึกเวลายืนยันการลบ (deletion_confirmed_at) สำหรับผู้ดูแลระบบเท่านั้น
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/ConfirmDeletionRequest"
+      responses:
+        "200":
+          description: ยืนยันการลบข้อมูลสำเร็จ คืนสถานะของบัญชี
+          schema:
+            $ref: "#/definitions/UserAccountStatusResponse"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: ต้องมีสิทธิ์ผู้ดูแลระบบ (admin) ในการดำเนินการนี้
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/policy:
+    get:
+      tags:
+        - PDPA
+      summary: นโยบายความเป็นส่วนตัวปัจจุบัน
+      description: ดึงนโยบายความเป็นส่วนตัว (PDPA Policy) เวอร์ชันที่ใช้งานอยู่ (status ใช้งานจริง)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: คืนนโยบายความเป็นส่วนตัวเวอร์ชันที่ใช้งานอยู่
+          schema:
+            $ref: "#/definitions/PdpaPolicy"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: ไม่พบนโยบายที่ใช้งานอยู่
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      tags:
+        - PDPA
+      summary: สร้างนโยบายความเป็นส่วนตัว
+      description: สร้างนโยบายความเป็นส่วนตัวเวอร์ชันใหม่สำหรับผู้ดูแลระบบเท่านั้น (ข้อมูลอ้างอิงตาม entity PdpaPolicy)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PdpaPolicyCreateRequest"
+      responses:
+        "200":
+          description: สร้างนโยบายสำเร็จ คืนข้อมูลนโยบายที่สร้าง
+          schema:
+            $ref: "#/definitions/PdpaPolicy"
+        "400":
+          description: ข้อมูลที่ส่งไม่ถูกต้อง
+          schema:
+            $ref: "#/definitions/Error"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: ต้องมีสิทธิ์ผู้ดูแลระบบ (admin) ในการดำเนินการนี้
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/policy/versions:
+    get:
+      tags:
+        - PDPA
+      summary: เวอร์ชันทั้งหมดของนโยบายความเป็นส่วนตัว
+      description: ดึงรายการนโยบายความเป็นส่วนตัวทุกเวอร์ชัน พร้อมจำนวนทั้งหมด
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: คืนรายการนโยบายทุกเวอร์ชัน
+          schema:
+            $ref: "#/definitions/PdpaPolicyList"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+  /v1/pdpa/admin/reports:
+    get:
+      tags:
+        - PDPA
+      summary: รายงานการจัดการ PDPA สำหรับผู้ดูแลระบบ
+      description: ดึงรายงานสำหรับผู้ดูแลระบบ (Administrator Report) ที่แสดงข้อมูลนโยบายและสถิติที่เกี่ยวข้อง สำหรับผู้ดูแลระบบเท่านั้น
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: คืนรายงานผู้ดูแลระบบ
+          schema:
+            $ref: "#/definitions/AdminReportsResponse"
+        "401":
+          description: ไม่มีการยืนยันตัวตน หรือ token ไม่ถูกต้อง/หมดอายุ
+          schema:
+            $ref: "#/definitions/Error"
+        "403":
+          description: ต้องมีสิทธิ์ผู้ดูแลระบบ (admin) ในการดำเนินการนี้
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์
+          schema:
+            $ref: "#/definitions/Error"
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: 'โปรดพิมพ์ "Bearer " ตามด้วย access token เช่น "Bearer eyJhbGciOiJSUzI1NiIs..."'
+  OAuth2Password:
+    type: oauth2
+    flow: password
+    tokenUrl: /api/auth/login
+    scopes:
+      read: อ่านข้อมูล
+      write: เขียนข้อมูล
+definitions:
+  Error:
+    type: object
+    description: โครงสร้างข้อผิดพลาดมาตรฐาน
+    properties:
+      msg:
+        type: string
+        description: ข้อความแสดงข้อผิดพลาด
+      status:
+        type: integer
+        format: int64
+        description: รหัสสถานะ HTTP
+      statusText:
+        type: string
+        description: ข้อความอธิบายสถานะ HTTP
+  ConsentPurpose:
+    type: integer
+    description: วัตถุประสงค์ของความยินยอม
+    enum:
+      - 1
+      - 5
+      - 6
+    x-enum-varnames:
+      - Necessary
+      - Marketing
+      - Analytics
+  ConsentStatus:
+    type: integer
+    description: สถานะของความยินยอม
+    enum:
+      - 0
+      - 1
+      - 2
+      - 3
+    x-enum-varnames:
+      - Revoked
+      - Granted
+      - Expired
+      - Deleted
+  DSARType:
+    type: integer
+    description: ประเภทของคำขอสิทธิของเจ้าของข้อมูล
+    enum:
+      - 1
+      - 3
+      - 7
+    x-enum-varnames:
+      - Access
+      - Erasure
+      - WithdrawConsent
+  DSARStatus:
+    type: integer
+    description: สถานะของคำขอ DSAR
+    enum:
+      - 1
+      - 3
+      - 4
+      - 5
+    x-enum-varnames:
+      - Pending
+      - Processing
+      - Completed
+      - Rejected
+  AccountStatus:
+    type: integer
+    description: สถานะของบัญชีผู้ใช้
+    enum:
+      - 1
+      - 2
+      - 4
+    x-enum-varnames:
+      - Active
+      - Suspended
+      - Terminated
+  GrantConsentRequest:
+    type: object
+    required:
+      - user_id
+      - purpose
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      purpose:
+        $ref: "#/definitions/ConsentPurpose"
+  RevokeConsentRequest:
+    type: object
+    required:
+      - user_id
+      - purpose
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      purpose:
+        $ref: "#/definitions/ConsentPurpose"
+  ConsentStatusResponse:
+    type: object
+    description: สถานะความยินยอมของวัตถุประสงค์หนึ่ง
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      purpose:
+        type: string
+        description: ชื่อของวัตถุประสงค์ (ข้อความ)
+      status:
+        $ref: "#/definitions/ConsentStatus"
+      is_active:
+        type: boolean
+        description: ระบุว่าความยินยอมยังมีผลอยู่หรือไม่
+      granted_at:
+        type: string
+        format: date-time
+        description: เวลาที่ให้ความยินยอม
+      expires_at:
+        type: string
+        format: date-time
+        description: เวลาที่ความยินยอมหมดอายุ
+  ConsentStatusListResponse:
+    type: object
+    description: รายการสถานะความยินยอม
+    properties:
+      consents:
+        type: array
+        items:
+          $ref: "#/definitions/ConsentStatusResponse"
+      total:
+        type: integer
+        format: int64
+        description: จำนวนรายการทั้งหมด
+  SubmitDSARRequest:
+    type: object
+    required:
+      - user_id
+      - request_type
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      request_type:
+        $ref: "#/definitions/DSARType"
+  DSARStatusResponse:
+    type: object
+    description: สถานะของคำขอ DSAR หนึ่งรายการ
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: ID ของคำขอ DSAR (UUID)
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      request_type:
+        $ref: "#/definitions/DSARType"
+      status:
+        $ref: "#/definitions/DSARStatus"
+      requested_at:
+        type: string
+        format: date-time
+        description: เวลาที่ยื่นคำขอ
+      completed_at:
+        type: string
+        format: date-time
+        x-nullable: true
+        description: เวลาที่ดำเนินการคำขอเสร็จสมบูรณ์ (ว่างถ้ายังไม่เสร็จ)
+      rejection_reason:
+        type: string
+        description: เหตุผลที่คำขอถูกปฏิเสธ (ว่างถ้าไม่ถูกปฏิเสธ)
+  DSARStatusListResponse:
+    type: object
+    description: รายการคำขอ DSAR
+    properties:
+      requests:
+        type: array
+        items:
+          $ref: "#/definitions/DSARStatusResponse"
+      total:
+        type: integer
+        format: int64
+        description: จำนวนรายการทั้งหมด
+  ProcessDSARRequest:
+    type: object
+    required:
+      - dsar_request_id
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      dsar_request_id:
+        type: string
+        format: uuid
+        description: ID ของคำขอ DSAR (UUID)
+  SuspendAccountRequest:
+    type: object
+    required:
+      - user_id
+      - retention_years
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      retention_years:
+        type: integer
+        format: int64
+        example: 2
+        description: ระยะเวลาการเก็บรักษาข้อมูล (ปี)
+  TerminateAccountRequest:
+    type: object
+    required:
+      - user_id
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+  ConfirmDeletionRequest:
+    type: object
+    required:
+      - user_id
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+  UserAccountStatusResponse:
+    type: object
+    description: สถานะของบัญชีผู้ใช้ที่เกี่ยวข้องกับ PDPA
+    properties:
+      user_id:
+        type: string
+        format: uuid
+        description: ID ของผู้ใช้ (UUID)
+      status:
+        $ref: "#/definitions/AccountStatus"
+      retention_deadline:
+        type: string
+        format: date-time
+        description: กำหนดเส้นตายการเก็บรักษาข้อมูล
+      deletion_confirmed_at:
+        type: string
+        format: date-time
+        description: เวลาที่ยืนยันการลบข้อมูล
+      auto_deleted_at:
+        type: string
+        format: date-time
+        x-nullable: true
+        description: เวลาที่ระบบลบข้อมูลอัตโนมัติ (ถ้ามี)
+  UserAccountStatusListResponse:
+    type: object
+    description: รายการสถานะบัญชีผู้ใช้
+    properties:
+      accounts:
+        type: array
+        items:
+          $ref: "#/definitions/UserAccountStatusResponse"
+      total:
+        type: integer
+        format: int64
+        description: จำนวนรายการทั้งหมด
+  PdpaPolicy:
+    type: object
+    description: นโยบายความเป็นส่วนตัว (อ้างอิงตาม entity PdpaPolicy)
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: ID ของนโยบาย (UUID)
+      policy_key:
+        type: string
+        description: คีย์เฉพาะของนโยบาย
+      version:
+        type: string
+        description: เวอร์ชันของนโยบาย
+      title_en:
+        type: string
+        description: ชื่อหัวข้อนโยบาย (ภาษาอังกฤษ)
+      title_th:
+        type: string
+        description: ชื่อหัวข้อนโยบาย (ภาษาไทย)
+      content_en:
+        type: string
+        x-nullable: true
+        description: เนื้อหานโยบาย (ภาษาอังกฤษ)
+      content_th:
+        type: string
+        x-nullable: true
+        description: เนื้อหานโยบาย (ภาษาไทย)
+      status:
+        type: integer
+        format: int64
+        description: สถานะของนโยบาย (เช่น อยู่ระหว่างใช้งาน / ร่าง)
+      effective_at:
+        type: string
+        format: date-time
+        x-nullable: true
+        description: เวลาที่นโยบายมีผลบังคับใช้
+      published_at:
+        type: string
+        format: date-time
+        x-nullable: true
+        description: เวลาที่เผยแพร่นโยบาย
+      created_by:
+        type: string
+        x-nullable: true
+        description: ผู้สร้างนโยบาย
+      created_at:
+        type: string
+        format: date-time
+        description: เวลาที่สร้าง
+      updated_at:
+        type: string
+        format: date-time
+        description: เวลาที่แก้ไขล่าสุด
+      deleted_at:
+        type: string
+        format: date-time
+        x-nullable: true
+        description: เวลาที่ถูกลบ (soft delete)
+  PdpaPolicyList:
+    type: object
+    description: รายการนโยบายความเป็นส่วนตัวทุกเวอร์ชัน
+    properties:
+      policies:
+        type: array
+        items:
+          $ref: "#/definitions/PdpaPolicy"
+      total:
+        type: integer
+        format: int64
+        description: จำนวนรายการทั้งหมด
+  PdpaPolicyCreateRequest:
+    type: object
+    description: ข้อมูลสำหรับสร้างนโยบายความเป็นส่วนตัว (อ้างอิงตาม entity PdpaPolicy)
+    required:
+      - policy_key
+      - version
+      - title_en
+      - title_th
+      - effective_at
+    properties:
+      policy_key:
+        type: string
+        description: คีย์เฉพาะของนโยบาย
+      version:
+        type: string
+        description: เวอร์ชันของนโยบาย
+      title_en:
+        type: string
+        description: ชื่อหัวข้อนโยบาย (ภาษาอังกฤษ)
+      title_th:
+        type: string
+        description: ชื่อหัวข้อนโยบาย (ภาษาไทย)
+      content_en:
+        type: string
+        description: เนื้อหานโยบาย (ภาษาอังกฤษ)
+      content_th:
+        type: string
+        description: เนื้อหานโยบาย (ภาษาไทย)
+      status:
+        type: integer
+        format: int64
+        example: 1
+        description: สถานะของนโยบาย
+      effective_at:
+        type: string
+        format: date-time
+        description: เวลาที่นโยบายมีผลบังคับใช้
+      created_by:
+        type: string
+        description: ผู้สร้างนโยบาย
+  AdminReportsResponse:
+    type: object
+    description: รายงานสำหรับผู้ดูแลระบบ (อ้างอิงตาม entity PdpaPolicy)
+    properties:
+      reports:
+        type: array
+        items:
+          $ref: "#/definitions/PdpaPolicy"
+      total:
+        type: integer
+        format: int64
+        description: จำนวนรายการทั้งหมด

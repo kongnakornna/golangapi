@@ -1,0 +1,18 @@
+.apply-kong:
+  stage: apply-host
+  image: registryii.thaibevapp.com/tbdev/baseimage/alpine:latest
+  when: manual
+  script:
+    - apk add curl gettext
+    - cat .ci_kong.sh | envsubst '$KONG_HOST_DOMAIN,$KONG_EP,$KONG_HOST_PROXY' | sh
+  interruptible: false
+  only:
+    refs:
+      - master
+    changes:
+      - .ci_kong.sh
+
+include:
+  - local: /.gitlab-ci/apply-host/host-dev.apply.yml
+  - local: /.gitlab-ci/apply-host/host-uat.apply.yml
+  - local: /.gitlab-ci/apply-host/host-prod.apply.yml

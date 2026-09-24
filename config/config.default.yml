@@ -1,0 +1,128 @@
+server:
+  AppVersion: 1.0.0
+  Port: 5000
+  Mode: Development
+  ProcessTimeout: 60
+  ReadTimeout: 5
+  WriteTimeout: 60
+  MigrateOnStart: true
+  Timezone: "Asia/Bangkok"      # <-- add this
+  BaseUrl: "http://localhost:5000/api"  
+
+jwt:
+  SecretKey: ""
+  Issuer: go-dev
+  AccessTokenExpireDuration: 3600
+  AccessTokenPrivateKey: ""
+  AccessTokenPublicKey: ""
+  RefreshTokenExpireDuration: 1440
+  RefreshTokenPrivateKey: ""
+  RefreshTokenPublicKey: ""
+
+firstSuperUser:
+  Email: ""
+  Name: ""
+  Password: ""
+
+logger:
+  Encoding: console
+  Level: debug
+
+postgres:
+  Host: localhost
+  Port: 5432
+  User: "postgres"
+  Password: "postgres"
+  Dbname: icmongolang
+  ConnectionTimeout: 10
+  MaxOpenConns: 25
+  MaxIdleConns: 10
+  ConnMaxLifetimeMin: 5
+
+redis:
+  Addr: localhost:6379
+  Password:
+  Db: 0
+  MinIdleConns: 200
+  PoolSize: 12000
+  PoolTimeout: 240
+
+taskRedis:
+  Addr: localhost:6379
+  Db: 1
+  PoolTimeout: 240
+
+email:
+  From: kongnakornna@gmail.com
+  Name: Go restapi
+  Link: https://icmongolang
+  LogoLink: https://media.vov.vn/sites/default/files/styles/front_large/public/2022-12/nhung-dieu-thu-vi-ve-logo-apple-ma-ban-chua-biet-4.png
+  Copyright: Copyright © 2026 example inc. All rights reserved.
+  VerificationSubject: Your account verification code
+  ResetSubject: Your account password reset token
+
+smtpEmail:
+  Host:  smtp.icmon.io
+  Port: 2525
+  User: ""
+  Password: ""
+  UseTls: true
+  UseSsl: false
+  Timeout: 30
+
+mqtt:
+  # broker: "mqtt://172.17.0.1:1883"
+  broker: "mqtt://localhost"
+  # Optional: overrides the port embedded in broker (defaults from broker URL).
+  # Can be set via ICMON_MQTT_PORT in .env.
+  port: 1883
+  client_id: "icmongolang_client"
+  username: ""
+  password: ""
+  qos: 1
+  connection_timeout: 30
+
+influxdb:
+  url: "http://localhost:9087"
+  token: ""
+  org: "cmon_org"
+  bucket: "AIRCOM1"
+  timeout: 30
+  username: ""
+  password: ""
+
+kafka:
+  brokers:
+    - "localhost:9092"
+  topic: "icmon-events"
+  group_id: "icmon-consumer-group"
+  timeout: 30
+
+elasticsearch:
+  addresses:
+    - "http://localhost:9200"
+  username: ""
+  password: ""
+  index: "vector_embeddings"
+  timeout: 10
+
+llm:
+  # Embedding provider (OpenAI-compatible /v1 endpoint, served by Ollama)
+  # Chat model (DeepSeek) runs in the `ai` service: http://localhost:8001
+  base_url: "http://localhost:11434/v1"
+  api_key: ""
+  model: "nomic-embed-text"
+  timeout: 30
+  dims: 768
+
+vectorDb:
+  # Vector database backend: "elasticsearch" หรือ "pgvector"
+  # elasticsearch → ใช้ dense_vector index ใน Elasticsearch (index ชื่อนี้)
+  # pgvector      → ใช้ตาราง vector_documents ใน PostgreSQL (ต้องติดตั้ง extension vector)
+  provider: "pgvector"
+  index: "vector_documents"
+  dims: 768
+
+upload:
+  dir: "./uploads"
+  max_avatar_bytes: 2097152

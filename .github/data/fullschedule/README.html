@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>README</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+<style>
+
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #24292e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #24292e;
+}
+
+h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h2 {
+  font-size: 1.5em;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+
+h6 {
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #656d76;
+}
+
+/* Paragraphs */
+p {
+  margin: 16px 0;
+}
+
+/* Inline */
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+del {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  background-color: #eff1f3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #24292e;
+}
+
+a {
+  color: #0969da;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 3px;
+}
+
+a:hover { opacity: 0.8; }
+
+/* Blockquotes */
+blockquote {
+  margin: 16px 0;
+  padding: 0 1em;
+  border-left: 3px solid #d0d7de;
+  color: #656d76;
+}
+
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
+
+/* Lists */
+ul, ol {
+  padding-left: 2em;
+  margin: 16px 0;
+}
+
+li { margin: 4px 0; }
+ul ul, ul ol, ol ul, ol ol { margin: 0; }
+li > p { margin: 0; }
+
+input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: #0969da;
+}
+
+/* Code Blocks */
+pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  line-height: 1.45;
+  margin: 16px 0;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: auto;
+  max-width: 100%;
+  overflow: auto;
+  display: block;
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) td {
+  background-color: #f6f8fa;
+}
+
+/* Horizontal Rule */
+hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 24px 0;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Math (KaTeX MathML) */
+.math-block {
+  display: block;
+  text-align: center;
+  margin: 16px 0;
+  padding: 8px 0;
+  overflow-x: auto;
+}
+
+.math-inline {
+  display: inline;
+}
+
+.math-error {
+  color: #cf222e;
+  background-color: rgba(207, 34, 46, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Mermaid */
+pre.mermaid {
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  padding: 16px 0;
+}
+
+/* Footnotes */
+.footnotes-section {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #d0d7de;
+  font-size: 0.9em;
+  color: #656d76;
+}
+
+.footnotes-section ol {
+  padding-left: 1.5em;
+}
+
+.footnotes-section li {
+  margin: 8px 0;
+}
+
+sup.footnote-ref a {
+  color: #0969da;
+  text-decoration: none;
+  font-size: 0.85em;
+  padding: 0 2px;
+}
+
+sup.footnote-ref a:hover {
+  text-decoration: underline;
+}
+
+a.footnote-backref {
+  color: #0969da;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+/* Details/Summary */
+details {
+  margin: 8px 0;
+  border-left: 2px solid rgba(128, 128, 128, 0.3);
+  padding-left: 12px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 0;
+  color: #24292e;
+}
+
+summary:hover {
+  color: #0969da;
+}
+
+/* Print */
+@media print {
+  body { background: white; }
+  .markdown-body { max-width: none; padding: 0; }
+  pre { white-space: pre-wrap; word-wrap: break-word; }
+  a { color: #24292e; text-decoration: underline; }
+  pre.mermaid { page-break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<div class="markdown-body">
+<h1>Full Schedule Module — ระบบบริหารจัดการตารางงาน (แยกจากระบบเดิม)</h1>
+<p>โมดูล <strong>Full Schedule</strong> ถูกออกแบบใหม่ทั้งหมด แยกจากระบบ schedule เดิม (<code>sd_iot_schedule</code>)
+โดยมีตารางฐานข้อมูล (database) ของตัวเอง (<code>fs_*</code>) และตรรกะการประมวลผลของตัวเอง
+รองรับการทำงาน 3 โหมด (Mode) ตามที่กำหนด:</p>
+<table>
+<thead>
+<tr>
+<th align="left">โหมด</th>
+<th align="left">รหัส</th>
+<th align="left">คำอธิบาย</th>
+<th align="left">ตัวอย่าง</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ปกติ (Weekly)</td>
+<td align="left"><code>normal</code></td>
+<td align="left">ทำงานซ้ำตามวันในสัปดาห์ Sunday–Saturday</td>
+<td align="left">เปิดไฟสวนทุกวันจันทร์–ศุกร์ 18:00</td>
+</tr>
+<tr>
+<td align="left">ปฏิทิน (Calendar)</td>
+<td align="left"><code>full</code></td>
+<td align="left">ทำงานตามเดือน (1–12) + วันที่ (1–31)</td>
+<td align="left">ส่งอีเมลเตือนทุกวันที่ 1 และ 15 ของทุกเดือน</td>
+</tr>
+<tr>
+<td align="left">Batch (Cron)</td>
+<td align="left"><code>batch</code></td>
+<td align="left">ทำงานตาม Cron Expression บน Server</td>
+<td align="left"><code>0 2 * * *</code> รันทุกวัน 02:00</td>
+</tr>
+</tbody></table>
+<p>Event type รองรับ <code>device</code> (ON/OFF) และ <code>email</code> (start/stop ส่ง email alert)</p>
+<hr>
+<h2>1. ภาพรวมระบบ</h2>
+<pre><code>┌──────────────┐        ┌──────────────────────────────────────────────┐
+│  User / API  │        │                  PostgreSQL                  │
+│  Client      │─REST──▶│  fs_schedule / fs_schedule_device            │
+└──────────────┘        │  fs_schedule_history / fs_schedule_settings  │
+                        └──────────────┬───────────────────────────────┘
+                                       │
+       ┌───────────────┬───────────────┼───────────────┬───────────────┐
+       ▼               ▼               ▼               ▼               ▼
+ ┌──────────┐   ┌──────────────┐  ┌─────────────┐  ┌──────────┐  ┌─────────────┐
+ │  CRUD    │   │ Manual Trg.  │  │  History    │  │ Report   │  │ Scheduler   │
+ │  Create  │   │ Trigger Now  │  │  Log       │  │ Success/ │  │ Worker      │
+ │  List    │   │ (skip cond)  │  │  system     │  │ Failed   │  │ (ticker     │
+ │  Update  │   │              │  │  manual     │  │ summary  │  │  + cron)    │
+ │  Delete  │   │              │  │             │  │          │  │             │
+ └──────────┘   └──────────────┘  └─────────────┘  └──────────┘  └──────┬──────┘
+                                                                        │
+                                                              ┌─────────▼─────────┐
+                                                              │  Executor         │
+                                                              │  • device → MQTT  │
+                                                              │  • email → SMTP   │
+                                                              │  • verify success │
+                                                              └───────────────────┘
+</code></pre>
+<p><strong>ส่วนประกอบหลัก</strong></p>
+<ol>
+<li><strong>API Service</strong> — CRUD schedule, settings, history, report, <code>POST /{id}/trigger</code> (สั่งงานเอง)</li>
+<li><strong>Calculator (Recurrence)</strong> — คำนวณ <code>next_run_at</code> จาก 3 โหมด (weekly / calendar / cron)</li>
+<li><strong>Scheduler Worker</strong> — ticker ทุก <code>SCHEDULER_INTERVAL</code> (ค่าเริ่มต้น 1 นาที) ดึงงานที่ถึงกำหนดมาทำ
+ใช้ Redis Lock (<code>SET NX EX</code>) เพื่อกันการสั่งงานซ้ำ (idempotency)</li>
+<li><strong>Executor</strong> — ส่งคำสั่งจริง (MQTT ON/OFF / ส่งอีเมล) แล้ว <strong>ตรวจสอบผลสำเร็จ</strong></li>
+<li><strong>Idempotency / Lock</strong> — กันงานที่ทำไปแล้วไม่ถูกสั่งซ้ำ (due flag + dist lock)</li>
+</ol>
+<hr>
+<h2>2. Flow Diagram</h2>
+<h3>2.1 Flow การสร้าง / แก้ไข Schedule</h3>
+<pre><code class="language-mermaid">flowchart TD
+    A[POST /api/v1/fullschedule] --&gt; B{Valid mode?}
+    B -- no --&gt; BAD[400 Bad Request]
+    B -- yes --&gt; C{Parse time_start 00:00–23:59}
+    C -- no --&gt; BAD
+    C -- yes --&gt; D{event_type / action ถูกต้อง?}
+    D -- no --&gt; BAD
+    D -- yes --&gt; E{Validate per mode}
+    E --&gt;|normal| E1{มี days_of_week 1-7?}
+    E1 -- no --&gt; BAD
+    E1 -- yes --&gt; F
+    E --&gt;|full| E2{มี months 1-12 + dates 1-31?}
+    E2 -- no --&gt; BAD
+    E2 -- yes --&gt; F
+    E --&gt;|batch| E3{Cron expr. parse ได้?}
+    E3 -- no --&gt; BAD
+    E3 -- yes --&gt; F
+    F[สร้าง/อัปเดต fs_schedule] --&gt; G[Map device IDs → fs_schedule_device]
+    G --&gt; H[คำนวณ next_run_at ด้วย Calculator]
+    H --&gt; I{status = active?}
+    I -- yes --&gt; J[บันทึก next_run_at]
+    I -- no --&gt; K[บันทึกไม่มี next_run_at]
+    J --&gt; DONE[200 OK]
+    K --&gt; DONE
+</code></pre>
+<h3>2.2 Flow การทำงานของ Scheduler Worker (อัตโนมัติ)</h3>
+<pre><code class="language-mermaid">flowchart TD
+    S[ทุก SCHEDULER_INTERVAL] --&gt; Q[&quot;SELECT due schedules&lt;br/&gt;status=active AND next_run_at &lt;= now&quot;]
+    Q --&gt; N{มีหรือไม่}
+    N -- no --&gt; S
+    N -- yes --&gt; L[&quot;Redis Lock key: fs:lock:{id}&lt;br/&gt;SET NX EX 300s&quot;]
+    L --&gt; GOT{ได้ Lock?}
+    GOT -- no (กำลังทำงานอยู่) --&gt; S
+    GOT -- yes --&gt; H[&quot;สร้าง fs_schedule_history&lt;br/&gt;status=processing&quot;]
+    H --&gt; M{mode = batch?}
+    M -- yes --&gt; CB[&quot;Cron ได้เวลา?&lt;br/&gt;robfig/cron Next vs now&quot;]
+    CB -- no --&gt; S
+    CB -- yes --&gt; EX
+    M -- no --&gt; EX[&quot;Executor&lt;br/&gt;device → MQTT ON/OFF&lt;br/&gt;email → SMTP&quot;]
+    EX --&gt; V[Verify สำเร็จ]
+    V --&gt; U[&quot;update history success/failed&lt;br/&gt;duration_ms, message&quot;]
+    U --&gt; R[&quot;update fs_schedule&lt;br/&gt;last_run_at, run_count, counters&quot;]
+    R --&gt; NX[คำนวณ next_run_at ใหม่]
+    NX --&gt; NXT[&quot;mode=manual? → reset manual_trigger=false, next_run=ตามตารางปกติ&quot;]
+    NXT --&gt; S
+</code></pre>
+<h3>2.3 Flow สั่งงานด้วยตนเอง (Manual Trigger)</h3>
+<pre><code class="language-mermaid">flowchart TD
+    A[&quot;POST /api/v1/fullschedule/{id}/trigger&quot;] --&gt; B[เช็ค schedule มีอยู่]
+    B -- no --&gt; NF[404 Not Found]
+    B -- yes --&gt; C[&quot;ตั้ง manual_trigger = true&lt;br/&gt;next_run_at = now() - 1s&quot;]
+    C --&gt; D[Worker ครบรอบ ticker]
+    D --&gt; E[ดึง manual schedule&lt;br/&gt;ข้ามเงื่อนไขวัน/เวลา/เดือน]
+    E --&gt; F[Executor ทำงานจริงทันที]
+    F --&gt; G[บันทึก history triggered_by = manual]
+    G --&gt; H[reset manual_trigger = false&lt;br/&gt;คำนวณ next_run ตามตารางใหม่]
+    H --&gt; R[200 OK + history_id]
+</code></pre>
+<blockquote>
+<p>หมายเหตุ: Manual trigger จะ <strong>ข้ามเงื่อนไข</strong> วัน/เวลา/เดือน/วันในสัปดาห์ แต่ยัง <strong>เก็บประวัติ</strong> และรายงานความสำเร็จเหมือนปกติ ระบบสั่งงานเองจะไม่ถูกสั่งซ้ำ (idempotency lock)</p>
+</blockquote>
+<h3>2.4 Flow การแมปอุปกรณ์ IoT + ตรวจสอบสถานะ</h3>
+<pre><code class="language-mermaid">flowchart LR
+    A[schedule.event_type=device] --&gt; B[อ่าน device_ids จาก fs_schedule_device]
+    B --&gt; C{device มีอยู่?}
+    C -- no --&gt; FAIL[บันทึก failed]
+    C -- yes --&gt; D[จับ device: device_id + mqtt fields]
+    D --&gt; E[action ON → publish mqtt_control_on&lt;br/&gt;action OFF → publish mqtt_control_off]
+    E --&gt; F{Publish สำเร็จ?}
+    F -- no --&gt; FAIL
+    F -- yes --&gt; G[Verify สถานะ: เช็ค device status / mqtt ack]
+    G --&gt; V{ตรงกับ action?}
+    V -- yes --&gt; OK[บันทึก success]
+    V -- no --&gt; FAIL
+</code></pre>
+<hr>
+<h2>3. Logical Data Model</h2>
+<p>ตารางทั้งหมดใช้ prefix <code>fs_</code> (Full Schedule) เพื่อแยกจากระบบเดิมโดยสิ้นเชิง</p>
+<h3>3.1 <code>fs_schedule</code> — ตารางหลัก</h3>
+<table>
+<thead>
+<tr>
+<th align="left">column</th>
+<th align="left">type</th>
+<th align="left">คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left">รหัส schedule</td>
+</tr>
+<tr>
+<td align="left">name</td>
+<td align="left">VARCHAR(255)</td>
+<td align="left">ชื่อ event</td>
+</tr>
+<tr>
+<td align="left">mode</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>normal</code> / <code>full</code> / <code>batch</code></td>
+</tr>
+<tr>
+<td align="left">status</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>active</code> / <code>inactive</code></td>
+</tr>
+<tr>
+<td align="left">time_start</td>
+<td align="left">VARCHAR(5)</td>
+<td align="left"><code>00:00</code>–<code>23:59</code> (ไม่ใช้กับ batch)</td>
+</tr>
+<tr>
+<td align="left">event_type</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>device</code> / <code>email</code></td>
+</tr>
+<tr>
+<td align="left">event_action</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>ON</code> / <code>OFF</code> / <code>start</code> / <code>stop</code></td>
+</tr>
+<tr>
+<td align="left">days_of_week</td>
+<td align="left">INTEGER[]</td>
+<td align="left">normal: 1=Sunday … 7=Saturday</td>
+</tr>
+<tr>
+<td align="left">months</td>
+<td align="left">INTEGER[]</td>
+<td align="left">full: 1–12</td>
+</tr>
+<tr>
+<td align="left">dates</td>
+<td align="left">INTEGER[]</td>
+<td align="left">full: 1–31 (ข้ามวันที่ไม่ตรงเดือนอัตโนมัติ)</td>
+</tr>
+<tr>
+<td align="left">cron_expr</td>
+<td align="left">VARCHAR(100)</td>
+<td align="left">batch: cron expression</td>
+</tr>
+<tr>
+<td align="left">manual_trigger</td>
+<td align="left">BOOLEAN</td>
+<td align="left">ธงสั่งงานเอง</td>
+</tr>
+<tr>
+<td align="left">last_run_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left">ทำงานครั้งล่าสุด</td>
+</tr>
+<tr>
+<td align="left">next_run_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left">กำหนดครั้งถัดไป (ใช้ index query)</td>
+</tr>
+<tr>
+<td align="left">run_count</td>
+<td align="left">BIGINT</td>
+<td align="left">จำนวนครั้งที่รัน</td>
+</tr>
+<tr>
+<td align="left">success_count</td>
+<td align="left">BIGINT</td>
+<td align="left">จำนวนสำเร็จ</td>
+</tr>
+<tr>
+<td align="left">failed_count</td>
+<td align="left">BIGINT</td>
+<td align="left">จำนวนล้มเหลว</td>
+</tr>
+<tr>
+<td align="left">created_by</td>
+<td align="left">UUID</td>
+<td align="left">ผู้สร้าง</td>
+</tr>
+<tr>
+<td align="left">created_at / updated_at / deleted_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left">timestamps</td>
+</tr>
+</tbody></table>
+<p>Index: <code>idx_fs_schedule_due (status, next_run_at) WHERE status=&#39;active&#39; AND deleted_at IS NULL</code>
+Index: <code>idx_fs_schedule_mode_mode (mode, status)</code></p>
+<h3>3.2 <code>fs_schedule_device</code> — แมปอุปกรณ์ IoT</h3>
+<table>
+<thead>
+<tr>
+<th align="left">column</th>
+<th align="left">type</th>
+<th align="left">คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">schedule_id</td>
+<td align="left">UUID FK → fs_schedule</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">device_id</td>
+<td align="left">INT</td>
+<td align="left">device ID จาก sd_iot_device</td>
+</tr>
+<tr>
+<td align="left">device_sn</td>
+<td align="left">VARCHAR(255)</td>
+<td align="left">SN อุปกรณ์ (กัน cache)</td>
+</tr>
+<tr>
+<td align="left">created_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>UNIQUE <code>(schedule_id, device_id)</code></p>
+<h3>3.3 <code>fs_schedule_history</code> — ประวัติการทำงาน</h3>
+<table>
+<thead>
+<tr>
+<th align="left">column</th>
+<th align="left">type</th>
+<th align="left">คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">schedule_id</td>
+<td align="left">UUID FK → fs_schedule</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">device_id</td>
+<td align="left">INT</td>
+<td align="left">target device (ถ้า event_type=device)</td>
+</tr>
+<tr>
+<td align="left">triggered_by</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>system</code> / <code>manual</code></td>
+</tr>
+<tr>
+<td align="left">trigger_source</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>automatic</code> / <code>manual</code> / <code>cron</code></td>
+</tr>
+<tr>
+<td align="left">status</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>processing</code> / <code>success</code> / <code>failed</code> / <code>skipped</code></td>
+</tr>
+<tr>
+<td align="left">event_action</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left">action ที่ส่งจริง</td>
+</tr>
+<tr>
+<td align="left">payload</td>
+<td align="left">TEXT</td>
+<td align="left">JSON payload ที่ส่ง</td>
+</tr>
+<tr>
+<td align="left">message</td>
+<td align="left">TEXT</td>
+<td align="left">ผลลัพธ์ / error</td>
+</tr>
+<tr>
+<td align="left">duration_ms</td>
+<td align="left">BIGINT</td>
+<td align="left">เวลาที่ใช้</td>
+</tr>
+<tr>
+<td align="left">retry_count</td>
+<td align="left">INT</td>
+<td align="left">จำนวน retry</td>
+</tr>
+<tr>
+<td align="left">executed_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left">เวลาสำเร็จ/ล้มเหลว</td>
+</tr>
+<tr>
+<td align="left">timezone</td>
+<td align="left">VARCHAR(50)</td>
+<td align="left">timezone ที่รัน</td>
+</tr>
+<tr>
+<td align="left">date / time</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left">วันที่/เวลา (สะดวก report)</td>
+</tr>
+<tr>
+<td align="left">created_at / updated_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>Index: <code>idx_fs_schedule_history_schedule (schedule_id, created_at DESC)</code>
+Index: <code>idx_fs_schedule_history_status (status, created_at)</code></p>
+<h3>3.4 <code>fs_schedule_settings</code> — ตั้งค่าของ schedule (เช่น recipient email, retry)</h3>
+<table>
+<thead>
+<tr>
+<th align="left">column</th>
+<th align="left">type</th>
+<th align="left">คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">schedule_id</td>
+<td align="left">UUID FK → fs_schedule</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">key</td>
+<td align="left">VARCHAR(100)</td>
+<td align="left">เช่น <code>email_recipients</code>, <code>retry_policy</code>, <code>verify_timeout_s</code></td>
+</tr>
+<tr>
+<td align="left">value</td>
+<td align="left">JSONB</td>
+<td align="left">ค่าแบบยืดหยุ่น</td>
+</tr>
+<tr>
+<td align="left">created_at / updated_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>UNIQUE <code>(schedule_id, key)</code></p>
+<hr>
+<h3>3.5 Master Data — Group / Zone / Area (data แบบลำดับชั้น)</h3>
+<p>ตารางใหม่ 4 ตาราง (prefix <code>fs_</code> ทั้งหมด, soft delete ด้วย <code>deleted_at</code>)</p>
+<table>
+<thead>
+<tr>
+<th align="left">ตาราง</th>
+<th align="left">column</th>
+<th align="left">type</th>
+<th align="left">คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>fs_groups</code></td>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left">กลุ่ม (ระดับสูงสุด)</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">name</td>
+<td align="left">VARCHAR(255) NOT NULL</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">description</td>
+<td align="left">TEXT</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">status</td>
+<td align="left">VARCHAR(20)</td>
+<td align="left"><code>active</code> / <code>inactive</code></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">sort_id</td>
+<td align="left">INTEGER NOT NULL DEFAULT 0</td>
+<td align="left">ลำดับการแสดงผล</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">created_at / updated_at / deleted_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">created_by / updated_by / version</td>
+<td align="left">UUID / UUID / BIGINT</td>
+<td align="left">audit (default version 1)</td>
+</tr>
+<tr>
+<td align="left"><code>fs_zones</code></td>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left">โซน ใต้กลุ่ม</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">group_id</td>
+<td align="left">UUID FK → fs_groups</td>
+<td align="left">ต้องมี parent จริง</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">name / description / timestamps</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">sort_id</td>
+<td align="left">INTEGER NOT NULL DEFAULT 0</td>
+<td align="left">ลำดับการแสดงผล</td>
+</tr>
+<tr>
+<td align="left"><code>fs_areas</code></td>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left">พื้นที่ ใต้โซน</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">zone_id</td>
+<td align="left">UUID FK → fs_zones</td>
+<td align="left">ต้องมี parent จริง</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">name / description / timestamps</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">sort_id</td>
+<td align="left">INTEGER NOT NULL DEFAULT 0</td>
+<td align="left">ลำดับการแสดงผล</td>
+</tr>
+<tr>
+<td align="left"><code>fs_device_area</code></td>
+<td align="left">id</td>
+<td align="left">UUID PK</td>
+<td align="left">แมปอุปกรณ์ลงพื้นที่</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">area_id</td>
+<td align="left">UUID FK → fs_areas (CASCADE)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">device_id</td>
+<td align="left">INT NOT NULL</td>
+<td align="left">ref → <code>sd_iot_device</code></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">device_sn</td>
+<td align="left">VARCHAR(255)</td>
+<td align="left">snapshot SN ตอนแมป</td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">created_at</td>
+<td align="left">TIMESTAMPTZ</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>UNIQUE <code>(area_id, device_id)</code> / index <code>deleted_at</code> ทุกตาราง master</p>
+<blockquote>
+<p><strong>API list (groups/zones/areas):</strong> เรียงตาม <code>sort_id ASC, created_at DESC</code> (default)
+โดย <code>/api/areas</code> รองรับ query <code>sort=asc|desc</code>; zones/areas จะ <code>INNER JOIN</code> ตาราง parent
+(ที่ยังไม่ถูกลบ) เพื่อคืน <code>group_name</code>/<code>zone_name</code> ใน response — record ที่ parent
+ถูกลบ (soft delete) จะไม่ถูกแสดง</p>
+</blockquote>
+<p>การแก้ไข <code>fs_schedule</code> เพิ่มคอลัมน์ scope (optional ทั้งหมด, FK nullable)</p>
+<table>
+<thead>
+<tr>
+<th align="left">column</th>
+<th align="left">type</th>
+<th align="left">คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">group_id</td>
+<td align="left">UUID FK → fs_groups</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">zone_id</td>
+<td align="left">UUID FK → fs_zones</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">area_id</td>
+<td align="left">UUID FK → fs_areas</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h3>3.6 กลไก resolve อุปกรณ์เป้าหมาย (Target Device Resolution)</h3>
+<p>ลำดับความสำคัญ (เข้มสุดก่อน):</p>
+<ol>
+<li><code>device_ids</code> ที่ระบุโดยตรง (จาก <code>fs_schedule_device</code>)</li>
+<li>Scope — พิจารณาจากระดับที่เจาะจงสุดก่อน:<ul>
+<li><code>area_id</code> → อุปกรณ์จาก <code>fs_device_area.area_id</code></li>
+<li><code>zone_id</code> → join <code>fs_areas</code> แล้วกรอง <code>zone_id</code></li>
+<li><code>group_id</code> → join <code>fs_areas</code> + <code>fs_zones</code> แล้วกรอง <code>group_id</code></li>
+<li>Distinct ด้วย <code>device_id</code> (อุปกรณ์ที่อยู่ในหลาย area ไม่ถูก run ซ้ำ)</li>
+</ul>
+</li>
+<li>Fallback → <code>fs_schedule_device</code> (เท่ากับข้อ 1 เดิม)</li>
+<li>ไม่มีอุปกรณ์ทั้งจากข้อ 1–3 → error <code>no target devices</code></li>
+</ol>
+<p>Validation scope เมื่อสร้าง/แก้ไข schedule (และเมื่อแก้ไข master data):</p>
+<ul>
+<li><code>zone</code> ที่เลือกต้องอยู่ใน <code>group</code> ที่เลือก ไม่ใช่ → <code>zone_id does not belong to group_id</code></li>
+<li><code>area</code> ที่เลือกต้องอยู่ใน <code>zone</code> ที่เลือก ไม่ใช่ → <code>area_id does not belong to zone_id</code></li>
+<li>ลบ <code>group</code> ได้เมื่อไม่มี <code>zone</code> / ลบ <code>zone</code> ได้เมื่อไม่มี <code>area</code> / ลบ <code>area</code> ได้เมื่อไม่มีการแมปอุปกรณ์</li>
+</ul>
+<p><strong>Scope lock (กันการรันซ้ำ):</strong> lock เดิม <code>fs:schedule:lock:{schedule_id}</code>; schedules
+ที่ใช้ scope เดียวกันยังถือว่าแยกกันได้เพราะ suggestion = distinct device_id,
+แต่ถ้าต้องการกัน schedule 2 ตัวทับขอบเขตเดียวกันให้ lock meta-key
+<code>fs:schedule:scope-lock:{group_id}:{zone_id}:{area_id}</code> (เฉพาะที่มีค่า)</p>
+<h3>3.7 Scope Preview API</h3>
+<p><code>GET /api/v1/fullschedule/scope/preview?group_id=&amp;zone_id=&amp;area_id=</code>
+→ <code>{ group_id?, zone_id?, area_id?, device_count }</code> ใช้เช็คก่อนบันทึก schedule ว่า
+ขอบเขตนี้ครอบคลุมอุปกรณ์กี่ตัว</p>
+<h3>3.8 Report + Scope Filter</h3>
+<p><code>GET /api/v1/fullschedule/report?from=&amp;to=&amp;group_id=&amp;zone_id=&amp;area_id=</code>
+กรองรายงานด้วย scope เดียวกับ schedule (ดูจาก column scope บน <code>fs_schedule</code>)</p>
+<hr>
+<h2>4. API Specification</h2>
+<p>Base: <code>/api/v1/fullschedule</code> (มาร์คที: mount ใต้ <code>/api</code>)</p>
+<table>
+<thead>
+<tr>
+<th align="left">Method</th>
+<th align="left">Path</th>
+<th align="left">คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">POST</td>
+<td align="left"><code>/api/v1/fullschedule</code></td>
+<td align="left">สร้าง schedule</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule</code></td>
+<td align="left">รายการ schedule (filter mode/status, paging)</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule/{id}</code></td>
+<td align="left">ดู schedule</td>
+</tr>
+<tr>
+<td align="left">PUT</td>
+<td align="left"><code>/api/v1/fullschedule/{id}</code></td>
+<td align="left">แก้ไข schedule</td>
+</tr>
+<tr>
+<td align="left">DELETE</td>
+<td align="left"><code>/api/v1/fullschedule/{id}</code></td>
+<td align="left">ลบ schedule (soft delete)</td>
+</tr>
+<tr>
+<td align="left">POST</td>
+<td align="left"><code>/api/v1/fullschedule/{id}/trigger</code></td>
+<td align="left">สั่งงานด้วยตนเอง (ข้ามเงื่อนไข)</td>
+</tr>
+<tr>
+<td align="left">POST</td>
+<td align="left"><code>/api/v1/fullschedule/{id}/settings</code></td>
+<td align="left">ตั้งค่า schedule</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule/{id}/settings</code></td>
+<td align="left">ดูตั้งค่า</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule/{id}/history</code></td>
+<td align="left">ประวัติของ schedule</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule/history</code></td>
+<td align="left">ประวัติทั้งหมด (paging + filter)</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule/report</code></td>
+<td align="left">รายงานสรุป (from/to, schedule_id, + scope filter)</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule/scope/preview</code></td>
+<td align="left">preview จำนวนอุปกรณ์ของ scope</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/fullschedule/devices</code></td>
+<td align="left">รายการอุปกรณ์ IoT ที่แมปได้</td>
+</tr>
+<tr>
+<td align="left">POST</td>
+<td align="left"><code>/api/v1/groups</code></td>
+<td align="left">สร้าง group</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/groups</code></td>
+<td align="left">รายการ group</td>
+</tr>
+<tr>
+<td align="left">GET / PUT / DELETE</td>
+<td align="left"><code>/api/v1/groups/{id}</code></td>
+<td align="left">ดู / แก้ / ลบ group</td>
+</tr>
+<tr>
+<td align="left">POST</td>
+<td align="left"><code>/api/v1/zones</code></td>
+<td align="left">สร้าง zone (ต้องระบุ group_id)</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/zones?group_id=</code></td>
+<td align="left">รายการ zone (กรองตาม group_id ได้)</td>
+</tr>
+<tr>
+<td align="left">GET / PUT / DELETE</td>
+<td align="left"><code>/api/v1/zones/{id}</code></td>
+<td align="left">ดู / แก้ / ลบ zone</td>
+</tr>
+<tr>
+<td align="left">POST</td>
+<td align="left"><code>/api/v1/areas</code></td>
+<td align="left">สร้าง area (ต้องระบุ zone_id)</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/areas?zone_id=</code></td>
+<td align="left">รายการ area (กรองตาม zone_id ได้)</td>
+</tr>
+<tr>
+<td align="left">GET / PUT / DELETE</td>
+<td align="left"><code>/api/v1/areas/{id}</code></td>
+<td align="left">ดู / แก้ / ลบ area</td>
+</tr>
+<tr>
+<td align="left">POST</td>
+<td align="left"><code>/api/v1/areas/{id}/devices</code></td>
+<td align="left">แทนที่ชุดอุปกรณ์ของ area (<code>{&quot;device_ids&quot;:[...]}</code>)</td>
+</tr>
+<tr>
+<td align="left">GET</td>
+<td align="left"><code>/api/v1/areas/{id}/devices</code></td>
+<td align="left">ดูอุปกรณ์ที่แมปกับ area</td>
+</tr>
+</tbody></table>
+<h3>ตัวอย่าง Request — สร้าง (mode = normal)</h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;เปิดไฟสวนกลางคืน&quot;,
+  &quot;mode&quot;: &quot;normal&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;time_start&quot;: &quot;18:00&quot;,
+  &quot;event_type&quot;: &quot;device&quot;,
+  &quot;event_action&quot;: &quot;ON&quot;,
+  &quot;days_of_week&quot;: [2, 3, 4, 5, 6],
+  &quot;device_ids&quot;: [1, 2],
+  &quot;settings&quot;: { &quot;verify_timeout_s&quot;: 5 }
+}
+</code></pre>
+<h3>ตัวอย่าง Request — สร้าง (mode = full / calendar)</h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;ส่งอีเมลสรุปรายเดือน&quot;,
+  &quot;mode&quot;: &quot;full&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;time_start&quot;: &quot;09:30&quot;,
+  &quot;event_type&quot;: &quot;email&quot;,
+  &quot;event_action&quot;: &quot;start&quot;,
+  &quot;months&quot;: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  &quot;dates&quot;: [1, 15]
+}
+</code></pre>
+<blockquote>
+<p>หมายเหตุ: วันที่ 29/30/31 ที่ไม่มีในเดือน (เช่น 31 ก.พ.) จะถูกข้ามอัตโนมัติโดย Calculator</p>
+</blockquote>
+<h3>ตัวอย่าง Request — สร้าง (mode = batch / cron)</h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;ล้าง log ทุกวัน 02:00&quot;,
+  &quot;mode&quot;: &quot;batch&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;cron_expr&quot;: &quot;0 2 * * *&quot;,
+  &quot;event_type&quot;: &quot;email&quot;,
+  &quot;event_action&quot;: &quot;stop&quot;
+}
+</code></pre>
+<h3>ตัวอย่าง Request — สร้าง (ใช้ scope แทน device_ids)</h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;เปิดไฟโซนขาย = A1 (กลุ่ม อาคารหลัก)&quot;,
+  &quot;mode&quot;: &quot;normal&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;time_start&quot;: &quot;08:00&quot;,
+  &quot;event_type&quot;: &quot;device&quot;,
+  &quot;event_action&quot;: &quot;ON&quot;,
+  &quot;days_of_week&quot;: [1, 2, 3, 4, 5, 6, 7],
+  &quot;group_id&quot;: &quot;&lt;uuid กลุ่ม&gt;&quot;,
+  &quot;zone_id&quot;: &quot;&lt;uuid โซน&gt;&quot;,
+  &quot;area_id&quot;: &quot;&lt;uuid พื้นที่&gt;&quot;
+}
+</code></pre>
+<blockquote>
+<p>scope validation: <code>area</code> ต้องอยู่ใน <code>zone</code> ที่ระบุ และ <code>zone</code> ต้องอยู่ใน <code>group</code> ที่ระบุ
+(ระบุเฉพาะ <code>area_id</code> ก็พอ — chain ถูกตรวจจาก parent จริงของมัน)</p>
+</blockquote>
+<h3>Manual Trigger</h3>
+<pre><code>POST /api/v1/fullschedule/{id}/trigger
+→ { &quot;message&quot;: &quot;triggered&quot;, &quot;history_id&quot;: &quot;&lt;uuid&gt;&quot; }
+</code></pre>
+<hr>
+<h2>5. Core Logic — การคำนวณ <code>next_run_at</code></h2>
+<h3>5.1 Normal (weekly)</h3>
+<pre><code>candidate = วันถัดไปจาก now (วนสูงสุด 366 วัน)
+ถ้า weekday(candidate) ∈ days_of_week และ time(candidate) != ปัจจุบัน
+   → next_run = candidate + time_start
+</code></pre>
+<h3>5.2 Full (calendar)</h3>
+<pre><code>candidate = วันถัดไปจาก now (วนสูงสุด 366 วัน)
+ถ้า month(candidate) ∈ months และ day(candidate) ∈ dates
+   และวันที่ candidate ตรงกับ time.Date จริง (กัน 29/30/31 ก.พ.)
+   → next_run = candidate + time_start
+</code></pre>
+<h3>5.3 Batch (cron)</h3>
+<pre><code>ใช้ robfig/cron/v3
+next_run = parser.Parse(cron_expr).Next(now)
+</code></pre>
+<h3>การกันทำงานซ้ำ (Idempotency)</h3>
+<ol>
+<li><strong>Redis Distributd Lock</strong>: <code>SET fs:lock:{schedule_id} &lt;uuid&gt; NX EX 300</code><ul>
+<li>ได้ lock → ทำ, ไม่ได้ → ข้าม</li>
+</ul>
+</li>
+<li><strong>due flag</strong>: หลัง worker รัน schedule แล้วตั้ง <code>next_run_at</code> ให้เป็นค่านวณถัดไปทันที
+ดังนั้น query <code>next_run_at &lt;= now</code> จะไม่เจองานเดิมซ้ำ</li>
+<li><strong>history guard</strong>: worker ตรวจ <code>status=&#39;processing&#39;</code> เก่าที่ค้างเกิน timeout → กันไม่สร้างซ้ำ</li>
+</ol>
+<hr>
+<h2>6. โครงสร้างโปรเจกต์ (Golang)</h2>
+<pre><code>internal/modules/fullschedule/
+├── model.go                  # GORM models + TableName (fs_*) (+ Group/Zone/Area/AreaDevice, ScopeFilter)
+├── master.go                 # errors + MasterPgRepository/MasterUseCaseI/MasterHandlers interfaces
+├── handler.go                # HTTP handler interface
+├── usecase.go                # FullScheduleUseCaseI interface
+├── pg_repository.go          # repository interface
+├── delivery/http/
+│   ├── routes.go             # chi router (+ MapMasterRoutes)
+│   ├── handlers.go           # HTTP handlers
+│   └── master_handlers.go    # group/zone/area handlers + scope preview
+├── presenter/
+│   ├── presenters.go         # request/response DTO
+│   └── master_presenters.go  # master DTO + scope fields
+├── repository/
+│   ├── pg_repository.go      # PgRepo implementation (+ scope filter ใน report)
+│   └── master_pg_repository.go  # master CRUD + GetDeviceIDsByScope
+├── usecase/
+│   ├── usecase.go            # business logic (+ scope resolution/lock)
+│   ├── master_usecase.go     # master validation + delete guards + preview
+│   ├── calculator.go         # next_run computation
+│   └── calculator_test.go
+├── executor/
+│   └── executor.go           # device MQTT / email SMTP
+└── scheduler/
+    └── scheduler.go          # ticker worker + redis lock
+</code></pre>
+<p><strong>Command</strong></p>
+<ul>
+<li><code>cmd/api</code> (main <code>cmd/serve.go</code>) — เปิด scheduler goroutine พร้อม API server</li>
+<li><code>cmd/worker</code> — processor เดิม (ยังคงอยู่) + scheduler ที่แยก process ได้</li>
+</ul>
+<hr>
+<h2>7. โครงสร้างโปรเจกต์ (FastAPI Python)</h2>
+<pre><code>fullschedule-py/
+├── app/
+│   ├── main.py               # FastAPI entrypoint + include routers + start worker
+│   ├── core/
+│   │   ├── config.py         # pydantic-settings
+│   │   ├── calculator.py     # next_run computation
+│   │   ├── executor.py       # device/email execution
+│   │   └── scheduler.py      # APScheduler worker
+│   ├── db/
+│   │   ├── base.py           # SQLAlchemy Base
+│   │   └── session.py        # engine/session
+│   ├── models/
+│   │   └── schedule.py       # Schedule/History/Settings/DeviceMap + Group/Zone/Area/AreaDevice
+│   ├── schemas/
+│   │   └── schedule.py       # Pydantic request/response (+ master DTO)
+│   ├── services/
+│   │   ├── schedule.py       # ScheduleService (CRUD/run/report/tz fix)
+│   │   └── master.py         # MasterService + validate_scope + resolve_scope_device_ids
+│   ├── api/v1/
+│   │   ├── routes.py         # /fullschedule router
+│   │   └── master_routes.py  # /groups /zones /areas /scope/preview
+│   └── utils/
+│       └── redis_lock.py     # idempotency lock
+├── worker.py                 # รัน APScheduler แยก process
+├── requirements.txt
+├── .env.example
+└── README.md
+</code></pre>
+<hr>
+<h2>8. โหมดการทำงาน (Mode Selection)</h2>
+<table>
+<thead>
+<tr>
+<th align="left">ความต้องการ</th>
+<th align="left">ใช้โหมด</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ทำงานซ้ำวันในสัปดาห์ (เปิดไฟทุกจันทร์–ศุกร์)</td>
+<td align="left"><code>normal</code></td>
+</tr>
+<tr>
+<td align="left">ทำงานตามวันที่ปฏิทิน (วันที่ 1-15 ทุกเดือน)</td>
+<td align="left"><code>full</code></td>
+</tr>
+<tr>
+<td align="left">ทำงานตาม Cron บน Server (ล้าง log คืนละครั้ง)</td>
+<td align="left"><code>batch</code></td>
+</tr>
+<tr>
+<td align="left">อยากสั่งตอนนี้เลย โดยไม่รอเงื่อนไข</td>
+<td align="left"><code>POST /{id}/trigger</code></td>
+</tr>
+<tr>
+<td align="left">เปลี่ยนสถานะเปิด/ปิดชั่วคราว</td>
+<td align="left">ตั้ง <code>status = inactive</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>9. Security / Best Practices</h2>
+<ul>
+<li>Soft delete (<code>deleted_at</code>) ทุกตารางหลัก → ไม่ลบข้อมูลจริง</li>
+<li>Redis lock TTL ช่วยให้ worker ที่ crash ไม่ค้างงาน</li>
+<li>ตรวจสอบ device_id ว่ามีอยู่จริงก่อน map (กัน stale device)</li>
+<li><code>next_run_at &lt;= now</code> + <code>status=&#39;active&#39;</code> ทำเป็น partial index เพื่อ query เร็ว</li>
+<li>ทุกการรัน (อัตโนมัติ/ด้วยตนเอง/cron) ถูกบันทึกเป็น history + นับใน report</li>
+</ul>
+
+</div>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

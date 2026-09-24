@@ -1,0 +1,14 @@
+jobsyncemployee-prod-deploy:
+  extends: .cronjob-kube-prod
+  before_script:
+    # Overwrite this value globally.
+    - APP_NAME=jobsyncemployee
+
+    # Export them for all jobs.
+    - export APP_NAME
+
+    - export MIN_REPLICAS=1
+    - export MAX_REPLICAS=1
+    - export CPU_LIMIT="800m"
+    - export MEMORY_LIMIT="1024Mi"
+    - export JOB_DURATION="*/5 * * * *"

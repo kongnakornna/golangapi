@@ -1,0 +1,27 @@
+reportglobalvaluescoredetail-build:
+  stage: build
+  extends: .build
+  before_script:
+    - apk add --no-cache jq docker-cli
+    - export ROBOT_NAME=$(cat $HARBOR_ROBOT_FILE | jq -r '.name')
+    - export ROBOT_SECRET=$(cat $HARBOR_ROBOT_FILE | jq -r '.secret')
+    - echo "$ROBOT_SECRET" | docker login --username "$ROBOT_NAME" --password-stdin "$HARBOR_REGISTRY"
+    # Overwrite this value globally.
+    - APP_NAME=reportglobalvaluescoredetail
+
+    # Export them for all jobs.
+    - export APP_NAME
+  only:
+    changes:
+      - .gitlab-ci/build/build-dev.yml
+      - .gitlab-ci/build/reportglobalvaluescoredetail.build.yml
+      - .gitlab-ci/deploy-dev/deploy-dev.yml
+      - .gitlab-ci/deploy-dev/reportglobalvaluescoredetail.deploy.yml
+      - api/**/*.go
+      - build/develop/Dockerfile
+      - cmd/reportglobalvaluescoredetail/*.go
+      - config/**/*
+      - deployments/deployment.yml
+      - docs/**/*
+      - pkg/**/*.go
+      - vendor/**/*

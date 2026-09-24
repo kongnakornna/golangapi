@@ -1,0 +1,35 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Agent local state (generated when skills are INSTALLED into a project)
+# These dirs are ignored because they're outputs, not sources.
+# The discovery files in THIS repo (.cursor/rules/, .windsurf/rules/, etc.)
+# are tracked — they help agents discover skills when the repo is opened.
+# .claude/skills/ — only ignore the installed skills dir, not the whole .claude/
+# .cursor/skills/
+# .github/skills/ — note: .github/workflows/ and copilot-instructions.md ARE tracked
+# .agents/skills/
+
+# npx skills lock files (generated on install)
+.skill-lock.json
+skills-lock.json
+
+# Node (if someone runs npx in the repo)
+node_modules/
+
+# Local sandbox / scratch files (not part of the repo)
+.ai-jail
+post-ln.md
+
+# Temporary
+*.tmp
+*.bak

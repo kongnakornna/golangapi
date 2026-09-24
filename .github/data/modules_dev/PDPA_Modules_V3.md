@@ -1,0 +1,1872 @@
+### ระบบจัดการสิทธิ์ส่วนบุคคล (PDPA Module)  
+
+> **Version 3.0** – รองรับการลบข้อมูลทันทีเมื่อยกเลิกการใช้งาน (Termination) และการลบอัตโนมัติหลัง 1 ปีนับจากวันที่ระงับการใช้งาน (Suspension) พร้อมระบบยืนยันการลบ
+
+---
+
+## สารบัญ
+
+1. [ภาพรวมระบบ](#1-ภาพรวมระบบ)
+2. [โครงสร้างโมดูล](#2-โครงสร้างโมดูล)
+3. [Domain Layer](#3-domain-layer)
+   - 3.1 Entities (ปรับปรุง)
+   - 3.2 Value Objects
+   - 3.3 Repository Interfaces
+   - 3.4 Domain Services
+   - 3.5 Domain Errors
+4. [Application Layer](#4-application-layer)
+   - 4.1 Use Cases (เพิ่ม ImmediateDeletion, ปรับ AutoDelete)
+   - 4.2 DTOs
+5. [Infrastructure Layer](#5-infrastructure-layer)
+   - 5.1 Repository Implementations
+   - 5.2 Localization (i18n)
+   - 5.3 Scheduler / Cron Job
+   - 5.4 Event Publishers & Consumers
+6. [Interface Layer](#6-interface-layer)
+   - 6.1 HTTP Handlers
+   - 6.2 Routes
+   - 6.3 Middleware
+7. [Database Migrations (ปรับปรุง)](#7-database-migrations)
+8. [Workflow Diagram (เพิ่ม Immediate Delete & Auto-Delete)](#8-workflow-diagram)
+9. [System Flow (อธิบายเพิ่ม)](#9-system-flow)
+10. [การติดตั้งและใช้งาน](#10-การติดตั้งและใช้งาน)
+11. [Business Model](#11-business-model)
+12. [ภาคผนวก – Docker Compose](#12-ภาคผนวก--docker-compose)
+13. [Prompt สำหรับการขยายระบบในอนาคต](#13-prompt-สำหรับการขยายระบบในอนาคต)
+14. [Data Flow Diagram (DFD) ระดับ 0 และ 1](#14-data-flow-diagram-dfd-ระดับ-0-และ-1)
+
+---
+
+## 1. ภาพรวมระบบ
+
+โมดูล `pdpa` จัดการสิทธิ์ส่วนบุคคลตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA) โดยมีฟังก์ชันหลัก:
+
+- **บันทึกความยินยอม** (Consent Logging) แบบ granular (แยกตามวัตถุประสงค์)
+- **จัดการคำร้องขอใช้สิทธิ์** (DSAR – Data Subject Access Request) ได้แก่ การเข้าถึง (ACCESS), การลบ (ERASURE), การถอนความยินยอม (WITHDRAW_CONSENT)
+- **ถอนความยินยอม** (Revoke) – ผู้ใช้สามารถถอนความยินยอมสำหรับวัตถุประสงค์ใด ๆ ได้ตลอดเวลา โดยระบบจะบันทึกการถอนและหยุดส่งอีเมล/บริการที่เกี่ยวข้องทันที
+- **การลบข้อมูลเมื่อยกเลิกหรือระงับการใช้งาน** – ระบบสนับสนุนการลบข้อมูลส่วนบุคคลตามสถานะบัญชีผู้ใช้:
+  - **กรณียกเลิกการใช้งาน (Termination)** และมีการยืนยันการลบ → **ลบข้อมูลทันที** (Immediate Deletion)
+  - **กรณีระงับการใช้งาน (Suspension)** โดยไม่มีการยืนยันลบทันที → **ลบข้อมูลอัตโนมัติหลัง 1 ปี** นับจากวันที่ระงับ (SuspendedAt + 1 ปี)
+- **รายงานและวิเคราะห์** ด้วย LLM
+- **แจ้งเตือนทางอีเมล** และ **Real-time ผ่าน WebSocket**
+- **รองรับหลายภาษา** (Thai, English) – API Response, Email Template, และ Error Messages
+
+**เทคโนโลยีที่ใช้:**
+
+| องค์ประกอบ | เทคโนโลยี | บทบาท |
+| :--- | :--- | :--- |
+| Frontend | Angular 16+ (Standalone + NgRx) | แสดง Cookie Banner, ฟอร์ม DSAR, Dashboard Admin, แจ้งเตือนแบบ Real-time |
+| API Gateway | Go + Gin | รับ HTTP Request, ตรวจสอบ JWT, เรียก Use Cases, รองรับการแปลภาษา |
+| Application Core | Go (Clean Architecture) | ดำเนินการตามกฎธุรกิจ |
+| Cache Layer | Redis | เก็บสถานะการยินยอมล่าสุด (TTL 30 วัน) |
+| Database | PostgreSQL | เก็บ Consent Log, DSAR Request, Audit Trail, User Account Status อย่างถาวร |
+| Message Queue | Kafka | สื่อสารแบบ Async ระหว่าง API กับ Workers (DSAR, LLM, Email, Revoke, Account Event) |
+| Search Engine | Elasticsearch | เก็บ Index สำหรับค้นหา Consent Log และสร้างรายงานเร็ว |
+| Real-time | WebSocket (Gorilla) | ส่งอัปเดตสถานะ DSAR ไปยัง Frontend |
+| Async Workers | Go Routines + Kafka Consumer Group | ประมวลผล DSAR, เรียก LLM, สร้าง Embedding, จัดการการลบอัตโนมัติ, รับ Event การระงับ/ยกเลิก |
+| Scheduler | Cron (robfig/cron/v3) | ทำงานทุกคืนเพื่อลบข้อมูลที่หมดอายุ (Suspended + 1 ปี) |
+
+---
+
+## 2. โครงสร้างโมดูล
+
+```
+internal/modules/pdpa/
+│
+├── domain/
+│   ├── entity/
+│   │   ├── consent_log.go              # ปรับปรุง: เพิ่มฟิลด์สำหรับสถานะผู้ใช้
+│   │   ├── dsar_request.go
+│   │   ├── audit_trail.go
+│   │   └── user_account_status.go      # ใหม่: เก็บสถานะการระงับ/ยกเลิกของผู้ใช้
+│   ├── value_object/
+│   │   ├── consent_purpose.go
+│   │   ├── consent_status.go           # เพิ่ม REVOKED, EXPIRED, DELETED
+│   │   ├── dsar_type.go
+│   │   ├── dsar_status.go
+│   │   └── account_status.go           # ใหม่: ACTIVE, SUSPENDED, TERMINATED
+│   ├── repository/
+│   │   ├── consent_repository.go       # เพิ่ม DeleteByUserID (ลบทั้งหมด)
+│   │   ├── dsar_repository.go
+│   │   ├── audit_repository.go
+│   │   └── user_account_status_repository.go  # ใหม่
+│   ├── service/
+│   │   ├── consent_validator.go
+│   │   ├── anonymization_service.go
+│   │   ├── localization_service.go
+│   │   └── deletion_policy_service.go   # ใหม่: กำหนดนโยบายการลบตามสถานะ
+│   └── errors/
+│       └── errors.go                   # เพิ่ม ErrAccountNotSuspended, ErrDeletionNotConfirmed
+│
+├── application/
+│   ├── record_consent.go
+│   ├── revoke_consent.go
+│   ├── immediate_deletion.go           # ใหม่: ลบข้อมูลทันทีเมื่อยืนยันการลบ
+│   ├── auto_delete_expired_consents.go # ปรับปรุง: ใช้ SuspendedAt + 1 ปี
+│   ├── submit_dsar.go
+│   ├── process_dsar.go
+│   ├── get_consent_history.go
+│   ├── get_dsar_status.go
+│   ├── get_admin_report.go
+│   ├── handle_account_event.go         # ใหม่: รับ Event การระงับ/ยกเลิกจากระบบผู้ใช้
+│   └── dto.go                          # ปรับปรุง: เพิ่มฟิลด์สำหรับการยืนยันการลบ
+│
+├── infrastructure/
+│   ├── persistence/
+│   │   ├── postgres/
+│   │   │   ├── consent_repo_impl.go    # ปรับปรุง: เพิ่ม DeleteByUserID
+│   │   │   ├── dsar_repo_impl.go
+│   │   │   ├── user_account_status_repo_impl.go  # ใหม่
+│   │   │   └── models.go               # ปรับปรุง: เพิ่มตาราง user_account_statuses
+│   │   └── redis/
+│   │       └── consent_cache.go        # ปรับปรุง: ลบ cache ทั้งหมดเมื่อลบข้อมูล
+│   ├── messaging/
+│   │   ├── kafka_producer.go           # เพิ่ม PublishAccountEvent, PublishImmediateDeletionEvent
+│   │   └── consumers/
+│   │       ├── dsar_worker.go
+│   │       ├── llm_worker.go
+│   │       ├── email_worker.go
+│   │       ├── blockchain_worker.go
+│   │       ├── revoke_consumer.go
+│   │       └── account_event_consumer.go  # ใหม่: รับ Event การระงับ/ยกเลิกจากระบบผู้ใช้
+│   ├── search/
+│   │   └── elasticsearch/
+│   │       └── consent_indexer.go      # ปรับปรุง: ลบ index ทั้งหมดของผู้ใช้เมื่อลบ
+│   └── scheduler/
+│       └── consent_cleanup_job.go      # ปรับปรุง: ใช้ suspended_at เป็นเกณฑ์
+│
+└── interfaces/
+    ├── http/
+    │   ├── consent_handler.go
+    │   ├── dsar_handler.go
+    │   ├── admin_handler.go
+    │   ├── deletion_handler.go         # ใหม่: จัดการ API การยืนยันลบ
+    │   ├── routes.go
+    │   └── dto.go
+    ├── websocket/
+    │   └── dsar_broadcaster.go
+    └── localization/
+        ├── locales/
+        │   ├── en.toml
+        │   └── th.toml
+        └── i18n.go
+```
+
+---
+
+## 3. Domain Layer
+
+### 3.1 Entities (ปรับปรุง)
+
+#### `consent_log.go`
+```go
+package entity
+
+import (
+    "time"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/value_object"
+)
+
+type ConsentLog struct {
+    ID             uuid.UUID                  `json:"id"`
+    UserID         uuid.UUID                  `json:"user_id"`
+    SessionID      string                     `json:"session_id"`
+    Purpose        valueobject.ConsentPurpose `json:"purpose"`
+    Status         valueobject.ConsentStatus  `json:"status"`          // GRANTED, REVOKED, EXPIRED, DELETED
+    IPAddress      string                     `json:"ip_address"`
+    UserAgent      string                     `json:"user_agent"`
+    GrantedAt      time.Time                  `json:"granted_at"`
+    ExpiresAt      time.Time                  `json:"expires_at"`      // 1 ปีนับจาก GrantedAt
+    RevokedAt      *time.Time                 `json:"revoked_at"`      // เวลาที่ถอน (ถ้ามี)
+    AutoDeletedAt  *time.Time                 `json:"auto_deleted_at"` // เวลาที่ถูกลบโดยระบบ (หลัง Suspended + 1 ปี หรือ Immediate)
+}
+```
+
+#### `user_account_status.go` (ใหม่)
+```go
+package entity
+
+import (
+    "time"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/value_object"
+)
+
+type UserAccountStatus struct {
+    ID                   uuid.UUID                      `json:"id"`
+    UserID               uuid.UUID                      `json:"user_id"`
+    Status               valueobject.AccountStatus      `json:"status"`                // ACTIVE, SUSPENDED, TERMINATED
+    SuspendedAt          *time.Time                     `json:"suspended_at"`          // วันที่เริ่มระงับ (ถ้ามี)
+    TerminatedAt         *time.Time                     `json:"terminated_at"`         // วันที่ยกเลิก (ถ้ามี)
+    DeletionConfirmedAt  *time.Time                     `json:"deletion_confirmed_at"` // วันที่ยืนยันการลบทันที (เฉพาะ TERMINATED)
+    RetentionDeadline    *time.Time                     `json:"retention_deadline"`    // วันที่ต้องลบ (SuspendedAt + 1 ปี) สำหรับกรณี SUSPENDED
+    UpdatedAt            time.Time                      `json:"updated_at"`
+}
+```
+
+#### `dsar_request.go` (ไม่เปลี่ยนแปลง)
+```go
+type DSARRequest struct {
+    ID              uuid.UUID
+    UserID          uuid.UUID
+    RequestType     valueobject.DSARType
+    Status          valueobject.DSARStatus
+    RequestedAt     time.Time
+    CompletedAt     *time.Time
+    DataPayload     []byte
+    RejectionReason string
+    OTPCode         string
+    OTPExpiredAt    time.Time
+}
+```
+
+### 3.2 Value Objects (เพิ่ม)
+
+#### `account_status.go` (ใหม่)
+```go
+package valueobject
+
+type AccountStatus string
+
+const (
+    AccountActive    AccountStatus = "ACTIVE"
+    AccountSuspended AccountStatus = "SUSPENDED"
+    AccountTerminated AccountStatus = "TERMINATED"
+)
+```
+
+#### `consent_status.go` (ไม่เปลี่ยนแปลง)
+```go
+const (
+    ConsentGranted ConsentStatus = "GRANTED"
+    ConsentRevoked ConsentStatus = "REVOKED"
+    ConsentExpired ConsentStatus = "EXPIRED"
+    ConsentDeleted ConsentStatus = "DELETED"
+)
+```
+
+### 3.3 Repository Interfaces (เพิ่ม)
+
+#### `consent_repository.go` (เพิ่ม DeleteByUserID)
+```go
+package repository
+
+import (
+    "context"
+    "time"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/entity"
+    "internal/modules/pdpa/domain/value_object"
+)
+
+type ConsentRepository interface {
+    Save(ctx context.Context, log *entity.ConsentLog) error
+    FindByUserID(ctx context.Context, userID uuid.UUID) ([]entity.ConsentLog, error)
+    FindLatestByUserAndPurpose(ctx context.Context, userID uuid.UUID, purpose valueobject.ConsentPurpose) (*entity.ConsentLog, error)
+    Revoke(ctx context.Context, userID uuid.UUID, purpose valueobject.ConsentPurpose) error
+    FindExpiredRevoked(ctx context.Context, cutoffDate time.Time) ([]entity.ConsentLog, error)   // ยังคงไว้สำหรับ Revoke
+    DeletePermanently(ctx context.Context, id uuid.UUID) error
+    IsConsentActive(ctx context.Context, userID uuid.UUID, purpose valueobject.ConsentPurpose) (bool, error)
+    
+    // ใหม่: ลบข้อมูล Consent ทั้งหมดของผู้ใช้ (ใช้ใน Immediate Deletion และ Auto Delete)
+    DeleteByUserID(ctx context.Context, userID uuid.UUID) error
+}
+```
+
+#### `user_account_status_repository.go` (ใหม่)
+```go
+package repository
+
+import (
+    "context"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/entity"
+    "internal/modules/pdpa/domain/value_object"
+)
+
+type UserAccountStatusRepository interface {
+    Save(ctx context.Context, status *entity.UserAccountStatus) error
+    FindByUserID(ctx context.Context, userID uuid.UUID) (*entity.UserAccountStatus, error)
+    FindSuspendedWithoutDeletion(ctx context.Context, cutoffDate time.Time) ([]entity.UserAccountStatus, error) // หาบัญชีที่ถูกระงับและเลยกำหนดเวลา
+    UpdateStatus(ctx context.Context, userID uuid.UUID, status valueobject.AccountStatus) error
+    UpdateDeletionConfirmed(ctx context.Context, userID uuid.UUID, confirmedAt time.Time) error
+}
+```
+
+### 3.4 Domain Services
+
+#### `deletion_policy_service.go` (ใหม่)
+```go
+package service
+
+import (
+    "time"
+    "internal/modules/pdpa/domain/entity"
+    "internal/modules/pdpa/domain/value_object"
+)
+
+type DeletionPolicyService struct{}
+
+// ตรวจสอบว่าสามารถลบทันทีได้หรือไม่ (ต้องเป็น TERMINATED และมีการยืนยันการลบ)
+func (s *DeletionPolicyService) CanImmediateDeletion(status *entity.UserAccountStatus) bool {
+    return status.Status == valueobject.AccountTerminated && status.DeletionConfirmedAt != nil
+}
+
+// ตรวจสอบว่าข้อมูลพร้อมถูกลบอัตโนมัติหรือไม่ (ต้องเป็น SUSPENDED และ RetentionDeadline <= now)
+func (s *DeletionPolicyService) IsReadyForAutoDeletion(status *entity.UserAccountStatus, now time.Time) bool {
+    if status.Status != valueobject.AccountSuspended {
+        return false
+    }
+    if status.RetentionDeadline == nil {
+        return false
+    }
+    return !status.RetentionDeadline.After(now)
+}
+
+// คำนวณ RetentionDeadline สำหรับกรณี SUSPENDED (SuspendedAt + retentionYears)
+func (s *DeletionPolicyService) CalculateRetentionDeadline(suspendedAt time.Time, retentionYears int) time.Time {
+    return suspendedAt.AddDate(retentionYears, 0, 0)
+}
+```
+
+#### `localization_service.go` (เหมือนเดิม)
+
+### 3.5 Domain Errors (เพิ่ม)
+
+#### `errors.go`
+```go
+package errors
+
+import "errors"
+
+var (
+    ErrConsentNotFound          = errors.New("consent record not found")
+    ErrConsentAlreadyRevoked    = errors.New("consent already revoked")
+    ErrConsentExpired           = errors.New("consent expired")
+    ErrDSARNotFound             = errors.New("DSAR request not found")
+    ErrDSARAlreadyProcessed     = errors.New("DSAR request already processed")
+    ErrInvalidPurpose           = errors.New("invalid consent purpose")
+    ErrOTPExpired               = errors.New("OTP expired or invalid")
+    ErrRateLimitExceeded        = errors.New("too many DSAR requests, please try again later")
+    ErrRevokeNotAllowed         = errors.New("cannot revoke non-granted consent")
+    ErrAccountNotFound          = errors.New("user account status not found")
+    ErrAccountNotSuspended      = errors.New("account is not suspended")
+    ErrAccountNotTerminated     = errors.New("account is not terminated")
+    ErrDeletionNotConfirmed     = errors.New("deletion not confirmed for this account")
+    ErrImmediateDeletionNotAllowed = errors.New("immediate deletion is not allowed for this account")
+)
+```
+
+---
+
+## 4. Application Layer
+
+### 4.1 Use Cases (เพิ่มและปรับปรุง)
+
+#### `record_consent.go` (ปรับปรุง – ตรวจสอบสถานะผู้ใช้)
+```go
+package application
+
+import (
+    "context"
+    "time"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/entity"
+    "internal/modules/pdpa/domain/value_object"
+    "internal/modules/pdpa/domain/repository"
+    "internal/modules/pdpa/infrastructure/cache"
+    "internal/modules/pdpa/infrastructure/messaging"
+    domainerrors "internal/modules/pdpa/domain/errors"
+)
+
+type RecordConsentUseCase struct {
+    consentRepo       repository.ConsentRepository
+    accountStatusRepo repository.UserAccountStatusRepository
+    cache             cache.ConsentCache
+    producer          messaging.KafkaProducer
+}
+
+func (uc *RecordConsentUseCase) Execute(ctx context.Context, userID uuid.UUID, sessionID string, purposes map[string]bool, ip, ua string) error {
+    // ตรวจสอบสถานะผู้ใช้: ถ้า SUSPENDED หรือ TERMINATED จะไม่สามารถบันทึก consent ได้
+    status, err := uc.accountStatusRepo.FindByUserID(ctx, userID)
+    if err == nil && (status.Status == valueobject.AccountSuspended || status.Status == valueobject.AccountTerminated) {
+        return domainerrors.ErrAccountNotActive
+    }
+
+    // ... (ส่วนบันทึก consent เหมือนเดิม)
+}
+```
+
+#### `revoke_consent.go` (ไม่เปลี่ยนแปลง)
+
+#### `immediate_deletion.go` (ใหม่ – ลบข้อมูลทันทีเมื่อยืนยัน)
+```go
+package application
+
+import (
+    "context"
+    "time"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/repository"
+    "internal/modules/pdpa/domain/service"
+    "internal/modules/pdpa/infrastructure/cache"
+    "internal/modules/pdpa/infrastructure/messaging"
+    "internal/modules/pdpa/infrastructure/search"
+    domainerrors "internal/modules/pdpa/domain/errors"
+)
+
+type ImmediateDeletionUseCase struct {
+    consentRepo       repository.ConsentRepository
+    dsarRepo          repository.DSARRepository
+    accountStatusRepo repository.UserAccountStatusRepository
+    cache             cache.ConsentCache
+    indexer           search.ConsentIndexer
+    producer          messaging.KafkaProducer
+    policy            service.DeletionPolicyService
+}
+
+func (uc *ImmediateDeletionUseCase) Execute(ctx context.Context, userID uuid.UUID) error {
+    // 1. ดึงสถานะบัญชี
+    status, err := uc.accountStatusRepo.FindByUserID(ctx, userID)
+    if err != nil {
+        return domainerrors.ErrAccountNotFound
+    }
+
+    // 2. ตรวจสอบว่าสามารถลบทันทีได้หรือไม่
+    if !uc.policy.CanImmediateDeletion(status) {
+        return domainerrors.ErrImmediateDeletionNotAllowed
+    }
+
+    // 3. ลบ Consent Logs ทั้งหมด
+    if err := uc.consentRepo.DeleteByUserID(ctx, userID); err != nil {
+        return err
+    }
+
+    // 4. ลบ DSAR Requests ทั้งหมด (ถ้ามี)
+    if err := uc.dsarRepo.DeleteByUserID(ctx, userID); err != nil {
+        // log error แต่ไม่หยุด
+    }
+
+    // 5. ลบ Redis Cache ทั้งหมดของผู้ใช้
+    uc.cache.DeleteAllByUser(ctx, userID)
+
+    // 6. ลบ Elasticsearch Index
+    uc.indexer.DeleteByUserID(ctx, userID)
+
+    // 7. ส่ง Event การลบทันที
+    uc.producer.PublishImmediateDeletionEvent(ctx, userID)
+
+    // 8. บันทึก Audit Trail
+    uc.producer.PublishAuditEvent(ctx, "IMMEDIATE_DELETION", userID, nil)
+
+    // 9. อัปเดตสถานะบัญชี (เพิ่มฟิลด์ deleted_at หรือเปลี่ยนสถานะเป็น DELETED)
+    // อาจเพิ่มสถานะ DELETED ใน AccountStatus หรือเก็บ timestamp การลบ
+
+    return nil
+}
+```
+
+#### `auto_delete_expired_consents.go` (ปรับปรุง – ใช้ SuspendedAt + 1 ปี)
+```go
+package application
+
+import (
+    "context"
+    "time"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/repository"
+    "internal/modules/pdpa/domain/service"
+    "internal/modules/pdpa/infrastructure/messaging"
+    "internal/modules/pdpa/infrastructure/search"
+    "internal/modules/pdpa/infrastructure/cache"
+)
+
+type AutoDeleteExpiredConsentsUseCase struct {
+    consentRepo       repository.ConsentRepository
+    accountStatusRepo repository.UserAccountStatusRepository
+    cache             cache.ConsentCache
+    indexer           search.ConsentIndexer
+    producer          messaging.KafkaProducer
+    policy            service.DeletionPolicyService
+}
+
+// retentionYears กำหนดอายุการเก็บข้อมูล (ค่าเริ่มต้น 1)
+func (uc *AutoDeleteExpiredConsentsUseCase) Execute(ctx context.Context, retentionYears int) error {
+    now := time.Now()
+    // ค้นหาบัญชีที่ถูกระงับ (SUSPENDED) ซึ่ง RetentionDeadline <= now
+    expiredAccounts, err := uc.accountStatusRepo.FindSuspendedWithoutDeletion(ctx, now)
+    if err != nil {
+        return err
+    }
+
+    for _, status := range expiredAccounts {
+        // ตรวจสอบอีกครั้งว่า RetentionDeadline ผ่านแล้ว
+        if !uc.policy.IsReadyForAutoDeletion(&status, now) {
+            continue
+        }
+
+        userID := status.UserID
+
+        // 1. ลบ Consent Logs ทั้งหมด
+        if err := uc.consentRepo.DeleteByUserID(ctx, userID); err != nil {
+            // log error และข้าม
+            continue
+        }
+
+        // 2. ลบ DSAR Requests (ถ้ามี)
+        // (สมมติว่ามี DeleteByUserID ใน DSAR repo)
+        // uc.dsarRepo.DeleteByUserID(ctx, userID)
+
+        // 3. ลบ Redis Cache
+        uc.cache.DeleteAllByUser(ctx, userID)
+
+        // 4. ลบ Elasticsearch Index
+        uc.indexer.DeleteByUserID(ctx, userID)
+
+        // 5. ส่ง Event
+        uc.producer.PublishAutoDeletionEvent(ctx, userID, status.SuspendedAt)
+
+        // 6. อัปเดตสถานะบัญชีเป็น DELETED หรือบันทึก AutoDeletedAt
+        // uc.accountStatusRepo.UpdateStatus(ctx, userID, valueobject.AccountDeleted)
+    }
+    return nil
+}
+```
+
+#### `handle_account_event.go` (ใหม่ – รับ Event จากระบบผู้ใช้)
+```go
+package application
+
+import (
+    "context"
+    "time"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/entity"
+    "internal/modules/pdpa/domain/value_object"
+    "internal/modules/pdpa/domain/repository"
+    "internal/modules/pdpa/domain/service"
+)
+
+type HandleAccountEventUseCase struct {
+    accountStatusRepo repository.UserAccountStatusRepository
+    policy            service.DeletionPolicyService
+}
+
+// รับ Event เมื่อผู้ใช้ถูกระงับ (SUSPENDED)
+func (uc *HandleAccountEventUseCase) HandleSuspended(ctx context.Context, userID uuid.UUID, suspendedAt time.Time, retentionYears int) error {
+    // คำนวณ RetentionDeadline = suspendedAt + retentionYears
+    deadline := uc.policy.CalculateRetentionDeadline(suspendedAt, retentionYears)
+
+    status := &entity.UserAccountStatus{
+        UserID:            userID,
+        Status:            valueobject.AccountSuspended,
+        SuspendedAt:       &suspendedAt,
+        RetentionDeadline: &deadline,
+        UpdatedAt:         time.Now(),
+    }
+    return uc.accountStatusRepo.Save(ctx, status)
+}
+
+// รับ Event เมื่อผู้ใช้ถูกยกเลิก (TERMINATED)
+func (uc *HandleAccountEventUseCase) HandleTerminated(ctx context.Context, userID uuid.UUID, terminatedAt time.Time) error {
+    status := &entity.UserAccountStatus{
+        UserID:        userID,
+        Status:        valueobject.AccountTerminated,
+        TerminatedAt:  &terminatedAt,
+        UpdatedAt:     time.Now(),
+        // DeletionConfirmedAt ยังเป็น nil รอการยืนยัน
+    }
+    return uc.accountStatusRepo.Save(ctx, status)
+}
+
+// รับ Event การยืนยันลบ (Deletion Confirmed) สำหรับบัญชีที่ TERMINATED
+func (uc *HandleAccountEventUseCase) ConfirmDeletion(ctx context.Context, userID uuid.UUID) error {
+    status, err := uc.accountStatusRepo.FindByUserID(ctx, userID)
+    if err != nil {
+        return err
+    }
+    if status.Status != valueobject.AccountTerminated {
+        return domainerrors.ErrAccountNotTerminated
+    }
+    now := time.Now()
+    status.DeletionConfirmedAt = &now
+    status.UpdatedAt = now
+    return uc.accountStatusRepo.Save(ctx, status)
+}
+```
+
+#### `submit_dsar.go` (ปรับปรุง – ตรวจสอบสถานะผู้ใช้)
+```go
+// ใน SubmitDSARUseCase ให้เช็คสถานะผู้ใช้ ถ้า SUSPENDED หรือ TERMINATED จะไม่อนุญาตให้ยื่น DSAR
+```
+
+#### `get_consent_history.go` (ไม่เปลี่ยนแปลง)
+
+#### `get_admin_report.go` (ไม่เปลี่ยนแปลง)
+
+### 4.2 DTOs (ปรับปรุง)
+
+#### `dto.go`
+```go
+package dto
+
+import "github.com/google/uuid"
+
+type RecordConsentRequest struct {
+    Purposes map[string]bool `json:"purposes"`
+}
+
+type RevokeConsentRequest struct {
+    Purpose string `json:"purpose" binding:"required,oneof=NECESSARY ANALYTICS MARKETING"`
+}
+
+type SubmitDSARRequest struct {
+    RequestType string `json:"request_type" binding:"required,oneof=ACCESS ERASURE WITHDRAW_CONSENT"`
+}
+
+type DSARResponse struct {
+    ID        uuid.UUID `json:"id"`
+    Status    string    `json:"status"`
+    CreatedAt string    `json:"created_at"`
+}
+
+type ConsentHistoryResponse struct {
+    Purpose     string  `json:"purpose"`
+    Status      string  `json:"status"`
+    GrantedAt   string  `json:"granted_at"`
+    ExpiresAt   string  `json:"expires_at"`
+    RevokedAt   *string `json:"revoked_at,omitempty"`
+    AutoDeletedAt *string `json:"auto_deleted_at,omitempty"`
+}
+
+type ConfirmDeletionRequest struct {
+    UserID uuid.UUID `json:"user_id" binding:"required"`
+}
+
+type AccountStatusResponse struct {
+    Status               string  `json:"status"`
+    SuspendedAt          *string `json:"suspended_at,omitempty"`
+    TerminatedAt         *string `json:"terminated_at,omitempty"`
+    DeletionConfirmedAt  *string `json:"deletion_confirmed_at,omitempty"`
+    RetentionDeadline    *string `json:"retention_deadline,omitempty"`
+}
+
+type ErrorResponse struct {
+    Error   string `json:"error"`
+    Code    string `json:"code"`
+    Message string `json:"message"`
+}
+```
+
+---
+
+## 5. Infrastructure Layer
+
+### 5.1 Repository Implementations (ปรับปรุง)
+
+#### `consent_repo_impl.go` (เพิ่ม DeleteByUserID)
+```go
+package postgres
+
+import (
+    "context"
+    "time"
+    "gorm.io/gorm"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/entity"
+    "internal/modules/pdpa/domain/value_object"
+    "internal/modules/pdpa/infrastructure/persistence/postgres/models"
+)
+
+func (r *consentRepoImpl) DeleteByUserID(ctx context.Context, userID uuid.UUID) error {
+    // Hard delete ทั้งหมด
+    return r.db.WithContext(ctx).
+        Where("user_id = ?", userID).
+        Delete(&models.ConsentLogModel{}).Error
+}
+
+// Revoke, FindExpiredRevoked, DeletePermanently, IsConsentActive เหมือนเดิม
+```
+
+#### `user_account_status_repo_impl.go` (ใหม่)
+```go
+package postgres
+
+import (
+    "context"
+    "time"
+    "gorm.io/gorm"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/domain/entity"
+    "internal/modules/pdpa/domain/value_object"
+    "internal/modules/pdpa/infrastructure/persistence/postgres/models"
+)
+
+type userAccountStatusRepoImpl struct {
+    db *gorm.DB
+}
+
+func (r *userAccountStatusRepoImpl) FindByUserID(ctx context.Context, userID uuid.UUID) (*entity.UserAccountStatus, error) {
+    var model models.UserAccountStatusModel
+    err := r.db.WithContext(ctx).Where("user_id = ?", userID).First(&model).Error
+    if err != nil {
+        return nil, err
+    }
+    return modelToEntity(&model), nil
+}
+
+func (r *userAccountStatusRepoImpl) FindSuspendedWithoutDeletion(ctx context.Context, now time.Time) ([]entity.UserAccountStatus, error) {
+    var models []models.UserAccountStatusModel
+    err := r.db.WithContext(ctx).
+        Where("status = ? AND retention_deadline <= ?", valueobject.AccountSuspended, now).
+        Find(&models).Error
+    if err != nil {
+        return nil, err
+    }
+    return modelsToEntities(models), nil
+}
+
+func (r *userAccountStatusRepoImpl) Save(ctx context.Context, status *entity.UserAccountStatus) error {
+    model := entityToModel(status)
+    // Upsert: ถ้ามีอยู่แล้วให้อัปเดต
+    return r.db.WithContext(ctx).Save(model).Error
+}
+
+// ... อื่น ๆ
+```
+
+#### `models.go` (ปรับปรุง)
+```go
+package models
+
+import (
+    "time"
+    "github.com/google/uuid"
+)
+
+type ConsentLogModel struct {
+    ID            uuid.UUID  `gorm:"type:uuid;primaryKey"`
+    UserID        uuid.UUID  `gorm:"type:uuid;index"`
+    SessionID     string     `gorm:"index"`
+    Purpose       string     `gorm:"type:varchar(50);index"`
+    Status        string     `gorm:"type:varchar(20)"`
+    IPAddress     string     `gorm:"type:varchar(45)"`
+    UserAgent     string
+    GrantedAt     time.Time  `gorm:"index"`
+    ExpiresAt     time.Time
+    RevokedAt     *time.Time `gorm:"index"`
+    AutoDeletedAt *time.Time `gorm:"index"`
+}
+
+type UserAccountStatusModel struct {
+    ID                   uuid.UUID  `gorm:"type:uuid;primaryKey"`
+    UserID               uuid.UUID  `gorm:"type:uuid;uniqueIndex"`
+    Status               string     `gorm:"type:varchar(20)"`
+    SuspendedAt          *time.Time
+    TerminatedAt         *time.Time
+    DeletionConfirmedAt  *time.Time
+    RetentionDeadline    *time.Time
+    UpdatedAt            time.Time
+}
+
+type DSARRequestModel struct {
+    // ... เหมือนเดิม
+}
+```
+
+#### `consent_cache.go` (เพิ่ม DeleteAllByUser)
+```go
+func (c *redisConsentCache) DeleteAllByUser(ctx context.Context, userID uuid.UUID) error {
+    // ใช้ pattern "consent:" + userID.String() + ":*" เพื่อลบทั้งหมด
+    pattern := "consent:" + userID.String() + ":*"
+    iter := c.client.Scan(ctx, 0, pattern, 0).Iterator()
+    for iter.Next(ctx) {
+        if err := c.client.Del(ctx, iter.Val()).Err(); err != nil {
+            return err
+        }
+    }
+    return iter.Err()
+}
+```
+
+### 5.2 Localization (i18n) – เพิ่มข้อความ
+
+**active.en.toml** เพิ่ม:
+```toml
+[ImmediateDeletionSuccess]
+other = "Data deleted immediately as per termination confirmation"
+
+[AutoDeletionExecuted]
+other = "Expired data (suspended + 1 year) has been deleted"
+
+[AccountSuspended]
+other = "Account suspended, data will be retained for 1 year"
+
+[AccountTerminated]
+other = "Account terminated, pending deletion confirmation"
+
+[DeletionConfirmed]
+other = "Deletion confirmed, data will be removed immediately"
+
+[ErrAccountNotActive]
+other = "Account is not active, cannot perform this action"
+```
+
+**active.th.toml** เพิ่ม:
+```toml
+[ImmediateDeletionSuccess]
+other = "ลบข้อมูลทันทีตามการยืนยันการยกเลิกใช้งาน"
+
+[AutoDeletionExecuted]
+other = "ลบข้อมูลที่หมดอายุ (ระงับ + 1 ปี) เรียบร้อยแล้ว"
+
+[AccountSuspended]
+other = "ระงับบัญชีผู้ใช้ ข้อมูลจะถูกเก็บไว้ 1 ปี"
+
+[AccountTerminated]
+other = "ยกเลิกบัญชีผู้ใช้ รอการยืนยันการลบ"
+
+[DeletionConfirmed]
+other = "ยืนยันการลบแล้ว ข้อมูลจะถูกลบทันที"
+
+[ErrAccountNotActive]
+other = "บัญชีผู้ใช้ไม่สามารถใช้งานได้ ไม่สามารถดำเนินการนี้"
+```
+
+### 5.3 Scheduler / Cron Job (ปรับปรุง)
+
+#### `consent_cleanup_job.go`
+```go
+package scheduler
+
+import (
+    "context"
+    "log"
+    "time"
+    "github.com/robfig/cron/v3"
+    "internal/modules/pdpa/application"
+)
+
+type ConsentCleanupJob struct {
+    useCase *application.AutoDeleteExpiredConsentsUseCase
+}
+
+func NewConsentCleanupJob(uc *application.AutoDeleteExpiredConsentsUseCase) *ConsentCleanupJob {
+    return &ConsentCleanupJob{useCase: uc}
+}
+
+func (j *ConsentCleanupJob) Run() {
+    log.Println("Running consent cleanup job...")
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+    defer cancel()
+    // กำหนด retention = 1 ปี
+    if err := j.useCase.Execute(ctx, 1); err != nil {
+        log.Printf("Error cleaning up expired consents: %v", err)
+    } else {
+        log.Println("Consent cleanup completed successfully")
+    }
+}
+
+func StartScheduler(job *ConsentCleanupJob) {
+    c := cron.New()
+    _, err := c.AddFunc("0 2 * * *", job.Run)
+    if err != nil {
+        log.Fatal(err)
+    }
+    c.Start()
+}
+```
+
+### 5.4 Event Publishers & Consumers (เพิ่ม)
+
+#### `kafka_producer.go` (เพิ่ม)
+```go
+func (p *KafkaProducer) PublishImmediateDeletionEvent(ctx context.Context, userID uuid.UUID) error {
+    event := map[string]interface{}{
+        "event_type": "data.immediate_deletion",
+        "user_id":    userID.String(),
+        "deleted_at": time.Now(),
+    }
+    return p.publish("pdpa.data.deleted", event)
+}
+
+func (p *KafkaProducer) PublishAutoDeletionEvent(ctx context.Context, userID uuid.UUID, suspendedAt *time.Time) error {
+    event := map[string]interface{}{
+        "event_type":  "data.auto_deletion",
+        "user_id":     userID.String(),
+        "suspended_at": suspendedAt,
+        "deleted_at":  time.Now(),
+    }
+    return p.publish("pdpa.data.deleted", event)
+}
+
+func (p *KafkaProducer) PublishAccountEvent(ctx context.Context, eventType string, userID uuid.UUID, data map[string]interface{}) error {
+    event := map[string]interface{}{
+        "event_type": eventType,
+        "user_id":    userID.String(),
+        "data":       data,
+        "timestamp":  time.Now(),
+    }
+    return p.publish("pdpa.account.event", event)
+}
+```
+
+#### `account_event_consumer.go` (ใหม่)
+```go
+package consumers
+
+import (
+    "context"
+    "encoding/json"
+    "time"
+    "github.com/IBM/sarama"
+    "github.com/google/uuid"
+    "internal/modules/pdpa/application"
+)
+
+type AccountEventConsumer struct {
+    handleUC *application.HandleAccountEventUseCase
+}
+
+func (c *AccountEventConsumer) Consume(message *sarama.ConsumerMessage) error {
+    var event map[string]interface{}
+    if err := json.Unmarshal(message.Value, &event); err != nil {
+        return err
+    }
+    eventType, ok := event["event_type"].(string)
+    if !ok {
+        return nil
+    }
+    userIDStr, _ := event["user_id"].(string)
+    userID, _ := uuid.Parse(userIDStr)
+    data, _ := event["data"].(map[string]interface{})
+
+    ctx := context.Background()
+    switch eventType {
+    case "account.suspended":
+        suspendedAt, _ := time.Parse(time.RFC3339, data["suspended_at"].(string))
+        retentionYears := 1 // จาก config
+        return c.handleUC.HandleSuspended(ctx, userID, suspendedAt, retentionYears)
+    case "account.terminated":
+        terminatedAt, _ := time.Parse(time.RFC3339, data["terminated_at"].(string))
+        return c.handleUC.HandleTerminated(ctx, userID, terminatedAt)
+    case "account.deletion_confirmed":
+        return c.handleUC.ConfirmDeletion(ctx, userID)
+    }
+    return nil
+}
+```
+
+---
+
+## 6. Interface Layer
+
+### 6.1 HTTP Handlers (เพิ่ม DeletionHandler)
+
+#### `deletion_handler.go` (ใหม่)
+```go
+package http
+
+import (
+    "net/http"
+    "github.com/gin-gonic/gin"
+    "internal/modules/pdpa/application"
+    "internal/modules/pdpa/interface/http/dto"
+    "internal/modules/pdpa/interface/localization"
+)
+
+type DeletionHandler struct {
+    immediateUC *application.ImmediateDeletionUseCase
+    confirmUC   *application.HandleAccountEventUseCase
+    localizer   *localization.I18nManager
+}
+
+// ยืนยันการลบสำหรับบัญชีที่ TERMINATED
+func (h *DeletionHandler) ConfirmDeletion(c *gin.Context) {
+    var req dto.ConfirmDeletionRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        h.errorResponse(c, http.StatusBadRequest, "INVALID_REQUEST", err.Error())
+        return
+    }
+    userID := req.UserID
+    // ตรวจสอบสิทธิ์: เฉพาะ admin หรือผู้ใช้คนนั้น
+    // ...
+
+    if err := h.confirmUC.ConfirmDeletion(c.Request.Context(), userID); err != nil {
+        h.errorResponse(c, http.StatusBadRequest, "CONFIRM_FAILED", err.Error())
+        return
+    }
+    // หลังจากยืนยันแล้ว ให้เรียก Immediate Deletion ทันที
+    if err := h.immediateUC.Execute(c.Request.Context(), userID); err != nil {
+        h.errorResponse(c, http.StatusInternalServerError, "DELETION_FAILED", err.Error())
+        return
+    }
+    lang := c.GetHeader("Accept-Language")
+    msg := h.localizer.Translate(c.Request.Context(), "ImmediateDeletionSuccess", lang)
+    c.JSON(http.StatusOK, gin.H{"message": msg})
+}
+
+// รับ Event การระงับ/ยกเลิกจากระบบผู้ใช้ (อาจเป็น webhook หรือ internal)
+func (h *DeletionHandler) AccountEvent(c *gin.Context) {
+    var event map[string]interface{}
+    if err := c.ShouldBindJSON(&event); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    // เรียกใช้ HandleAccountEventUseCase หรือส่งไป Kafka
+    // ...
+    c.JSON(http.StatusOK, gin.H{"status": "received"})
+}
+
+func (h *DeletionHandler) errorResponse(c *gin.Context, code int, errCode, errMsg string) {
+    lang := c.GetHeader("Accept-Language")
+    translated := h.localizer.Translate(c.Request.Context(), errCode, lang)
+    if translated == "" {
+        translated = errMsg
+    }
+    c.JSON(code, gin.H{"error": translated, "code": errCode})
+}
+```
+
+### 6.2 Routes (เพิ่ม)
+```go
+func RegisterRoutes(r *gin.RouterGroup, handlers *Handlers, authMiddleware gin.HandlerFunc) {
+    pdpa := r.Group("/pdpa")
+    pdpa.Use(authMiddleware)
+
+    pdpa.POST("/consent", handlers.Consent.RecordConsent)
+    pdpa.DELETE("/consent", handlers.Consent.RevokeConsent)
+    pdpa.GET("/consent/history", handlers.Consent.GetHistory)
+
+    pdpa.POST("/dsar", handlers.DSAR.Submit)
+    pdpa.GET("/dsar/:id/status", handlers.DSAR.GetStatus)
+    pdpa.GET("/dsar/:id/download", handlers.DSAR.DownloadData)
+
+    // Admin routes
+    admin := pdpa.Group("/admin")
+    admin.Use(adminAuthMiddleware)
+    admin.GET("/report", handlers.Admin.GetReport)
+
+    // Deletion routes
+    pdpa.POST("/deletion/confirm", handlers.Deletion.ConfirmDeletion)   // ยืนยันลบทันที
+
+    // Webhook สำหรับรับ Event จากระบบผู้ใช้ (ไม่ต้อง auth? หรือใช้ token)
+    pdpa.POST("/events/account", handlers.Deletion.AccountEvent)
+}
+```
+
+### 6.3 Middleware (เหมือนเดิม)
+
+---
+
+## 7. Database Migrations (ปรับปรุง)
+
+```sql
+-- 1. Consent Logs (ปรับปรุง)
+CREATE TABLE consent_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    session_id VARCHAR(255),
+    purpose VARCHAR(50) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'GRANTED',
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    granted_at TIMESTAMP DEFAULT NOW(),
+    expires_at TIMESTAMP,
+    revoked_at TIMESTAMP,
+    auto_deleted_at TIMESTAMP,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_consent_user_id ON consent_logs (user_id);
+CREATE INDEX idx_consent_purpose ON consent_logs (purpose);
+CREATE INDEX idx_consent_status ON consent_logs (status);
+CREATE INDEX idx_consent_revoked_at ON consent_logs (revoked_at);
+
+-- 2. DSAR Requests (ไม่เปลี่ยนแปลง)
+CREATE TABLE dsar_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    request_type VARCHAR(20) NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    requested_at TIMESTAMP DEFAULT NOW(),
+    completed_at TIMESTAMP,
+    data_payload JSONB,
+    rejection_reason TEXT,
+    otp_code VARCHAR(255),
+    otp_expired_at TIMESTAMP,
+    CONSTRAINT fk_user_dsar FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_dsar_user_id ON dsar_requests (user_id);
+CREATE INDEX idx_dsar_status ON dsar_requests (status);
+
+-- 3. User Account Status (ใหม่)
+CREATE TABLE user_account_statuses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL UNIQUE,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    suspended_at TIMESTAMP,
+    terminated_at TIMESTAMP,
+    deletion_confirmed_at TIMESTAMP,
+    retention_deadline TIMESTAMP,   -- วันที่ต้องลบ (สำหรับ SUSPENDED)
+    updated_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT fk_user_status FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_status_user_id ON user_account_statuses (user_id);
+CREATE INDEX idx_status_retention ON user_account_statuses (retention_deadline) WHERE status = 'SUSPENDED';
+
+-- 4. Audit Trail (ไม่เปลี่ยนแปลง)
+CREATE TABLE pdpa_audit_trails (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID,
+    action VARCHAR(50) NOT NULL,
+    details JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+---
+
+## 8. Workflow Diagram (เพิ่ม Immediate Delete & Auto-Delete)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Admin
+    participant Frontend
+    participant API
+    participant UC
+    participant DB
+    participant Redis
+    participant Kafka
+    participant Worker
+    participant Scheduler
+    participant AccountSystem
+
+    %% กรณีที่ 1: ระงับการใช้งาน (SUSPENDED)
+    AccountSystem->>Kafka: Event account.suspended
+    Kafka->>Worker: AccountEventConsumer
+    Worker->>UC: HandleSuspended (บันทึก status=SUSPENDED, retention_deadline=NOW+1yr)
+    UC->>DB: บันทึก user_account_statuses
+    Worker-->>User: แจ้งเตือน (Email) ว่าข้อมูลจะถูกลบใน 1 ปี
+
+    %% กรณีที่ 2: ยกเลิกการใช้งาน (TERMINATED) และยืนยันการลบทันที
+    AccountSystem->>Kafka: Event account.terminated
+    Kafka->>Worker: AccountEventConsumer
+    Worker->>UC: HandleTerminated (บันทึก status=TERMINATED)
+    UC->>DB: บันทึก user_account_statuses
+
+    Admin->>Frontend: ยืนยันการลบข้อมูล (confirm deletion)
+    Frontend->>API: POST /deletion/confirm
+    API->>UC: ConfirmDeletion + ImmediateDeletion
+    UC->>DB: อัปเดต deletion_confirmed_at
+    UC->>DB: ลบ Consent Logs ทั้งหมด
+    UC->>Redis: ลบ Cache ทั้งหมด
+    UC->>Kafka: ส่ง Event data.immediate_deletion
+    UC->>Elasticsearch: ลบ Index
+    API-->>Frontend: 200 OK (ลบสำเร็จ)
+
+    %% กรณีที่ 3: Auto-Delete หลัง 1 ปี (จาก SUSPENDED)
+    Note over Scheduler: ทุกวันเวลา 02:00
+    Scheduler->>UC: AutoDeleteExpiredConsents
+    UC->>DB: ค้นหา user_account_statuses WHERE status=SUSPENDED AND retention_deadline <= NOW()
+    UC->>DB: ลบ Consent Logs ของผู้ใช้เหล่านั้น
+    UC->>Redis: ลบ Cache
+    UC->>Kafka: ส่ง Event data.auto_deletion
+    UC->>Elasticsearch: ลบ Index
+    UC->>DB: อัปเดตสถานะบัญชีเป็น DELETED (หรือบันทึก auto_deleted_at)
+```
+
+---
+
+## 9. System Flow (อธิบายเพิ่ม)
+
+### 9.1 การระงับการใช้งาน (Suspension)
+- ระบบผู้ใช้ (Account System) ส่ง Event `account.suspended` ผ่าน Kafka
+- PDPA Module รับ Event และบันทึกสถานะ `SUSPENDED` พร้อม `suspended_at` และ `retention_deadline` = `suspended_at + 1 ปี`
+- ผู้ใช้ยังคงสามารถเข้าถึงข้อมูลได้ แต่ไม่สามารถให้/ถอน Consent หรือยื่น DSAR ได้
+- ระบบจะแจ้งเตือนผู้ใช้ทางอีเมลว่าข้อมูลจะถูกลบอัตโนมัติหลังจาก 1 ปี
+- ข้อมูล Consent และ DSAR จะยังคงอยู่จนกว่าจะถึง `retention_deadline`
+
+### 9.2 การยกเลิกการใช้งาน (Termination) และการยืนยันการลบ
+- ระบบผู้ใช้ส่ง Event `account.terminated`
+- PDPA Module บันทึกสถานะ `TERMINATED` พร้อม `terminated_at`
+- หาก Admin หรือผู้ใช้ (หรือ DPO) ยืนยันการลบ (Confirm Deletion) ระบบจะ:
+  1. อัปเดต `deletion_confirmed_at` = NOW()
+  2. เรียก `ImmediateDeletionUseCase` เพื่อลบข้อมูลทั้งหมดทันที
+  3. ลบ Consent Logs, DSAR Requests, Redis Cache, Elasticsearch Index
+  4. ส่ง Event `data.immediate_deletion` เพื่อให้ระบบอื่นทราบ
+- การลบทันทีนี้ไม่ต้องรอ 1 ปี
+
+### 9.3 การลบข้อมูลอัตโนมัติ (Auto-Delete) สำหรับกรณีที่ถูกระงับ
+- Cron Job ทำงานทุกวันเวลา 02:00 น.
+- ค้นหาบัญชีที่มี `status = 'SUSPENDED'` และ `retention_deadline <= NOW()`
+- สำหรับแต่ละบัญชี:
+  - ลบ Consent Logs ทั้งหมด (hard delete)
+  - ลบ Redis Cache
+  - ลบ Elasticsearch Index
+  - ส่ง Event `data.auto_deletion`
+  - อัปเดตสถานะบัญชีเป็น `DELETED` (หรือเพิ่ม `auto_deleted_at`)
+- ระบบจะไม่ลบ DSAR Requests? (อาจต้องลบตามนโยบาย) – สามารถขยายได้
+
+### 9.4 การหยุดส่งอีเมล/บริการเมื่อถอน Consent หรือระงับ/ยกเลิก
+- ทุกครั้งที่ระบบจะส่งอีเมลหรือดำเนินการใด ๆ ที่ต้องอาศัยความยินยอม ให้ตรวจสอบ `IsConsentActive()` และสถานะบัญชี
+- ถ้าสถานะบัญชีไม่ใช่ ACTIVE หรือ Consent ถูก Revoked จะไม่ดำเนินการ
+- เมื่อได้รับ Event `consent.revoked` หรือ `data.immediate_deletion` หรือ `data.auto_deletion` ระบบอื่น (Marketing, Analytics) จะหยุดประมวลผลทันที
+
+---
+
+## 10. การติดตั้งและใช้งาน
+
+**ข้อกำหนดเบื้องต้น:** Go 1.21+, PostgreSQL, Redis, Kafka, Elasticsearch
+
+### ไฟล์ `.env` (ปรับปรุง)
+```env
+# PostgreSQL
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=admin
+DB_PASSWORD=secret
+DB_NAME=pdpa_db
+
+# Redis
+REDIS_HOST=localhost:6379
+
+# Kafka
+KAFKA_BROKERS=localhost:9092
+KAFKA_TOPIC_CONSENT=pdpa.consent.log
+KAFKA_TOPIC_DSAR=pdpa.dsar.request
+KAFKA_TOPIC_REVOKE=pdpa.consent.revoked
+KAFKA_TOPIC_DELETE=pdpa.data.deleted
+KAFKA_TOPIC_ACCOUNT=pdpa.account.event
+
+# JWT
+JWT_SECRET=your_secret_key
+
+# Email
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=user@gmail.com
+SMTP_PASS=password
+
+# Elasticsearch
+ELASTICSEARCH_URL=http://localhost:9200
+
+# Retention (ปี) สำหรับ SUSPENDED
+RETENTION_YEARS=1
+
+# Default Language
+DEFAULT_LANG=en
+```
+
+### คำสั่งรัน
+```bash
+# Migrate Database
+go run cmd/migrate/main.go
+
+# Run API Server
+go run cmd/api/main.go
+
+# Run Workers (แยก Terminal)
+go run cmd/workers/dsar/main.go
+go run cmd/workers/llm/main.go
+go run cmd/workers/email/main.go
+go run cmd/workers/revoke/main.go
+go run cmd/workers/account/main.go   # ใหม่: AccountEventConsumer
+
+# Run Scheduler
+go run cmd/scheduler/main.go
+```
+
+---
+
+## 11. Business Model
+
+- **SaaS**: คิดค่าบริการตามจำนวนผู้ใช้ (ต่อ 1,000 ราย) หรือตามจำนวน DSAR Request และ Revoke Request
+- **Enterprise**: ขายลิขสิทธิ์รายปี พร้อม Support และ Custom Integration
+- **ต้นทุนหลัก**: ค่า Kafka/Elasticsearch, ค่า LLM API, ทีมพัฒนา
+- **ฟีเจอร์ Premium**: การยืนยันการลบแบบอัตโนมัติผ่าน Workflow, รายงานการลบข้อมูลตามกฎหมาย, การแจ้งเตือน DPO
+
+---
+
+## 12. ภาคผนวก – Docker Compose (ปรับปรุง)
+```yaml
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: pdpa
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+    ports:
+      - "9092:9092"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+```
+
+---
+
+## 13. Prompt สำหรับการขยายระบบในอนาคต
+
+1. **Blockchain Integration**: เพิ่ม Consumer สำหรับบันทึก Hash การ Immediate Deletion และ Auto Deletion ลง Smart Contract
+2. **Advanced LLM Report**: ปรับปรุง LLM Worker ให้วิเคราะห์แนวโน้มการลบข้อมูลและคำแนะนำในการปรับปรุง Privacy Policy
+3. **Mobile SDK**: สร้าง gRPC Gateway สำหรับ Mobile
+4. **Data Breach Notification**: ระบบตรวจจับการเข้าถึงผิดปกติและแจ้งเตือน DPO
+5. **Multi-Tenancy**: เพิ่ม `tenant_id` เพื่อรองรับหลายองค์กร
+6. **Webhook**: ให้ผู้ใช้ภายนอกสามารถ subscribe Event การลบข้อมูล (Immediate/Auto) เพื่อดำเนินการเอง
+7. **Audit Report**: สร้าง Dashboard สำหรับ DPO แสดงประวัติการลบข้อมูล (Immediate vs Auto) และสถานะบัญชี
+8. **Cooling-off Period**: รองรับการยกเลิกการระงับ (Unsuspend) ภายใน 30 วัน โดยให้ reset retention_deadline ใหม่
+
+---
+
+## 14. Data Flow Diagram (DFD) ระดับ 0 และ 1
+
+### 14.1 DFD ระดับ 0 (Context Diagram)
+
+```mermaid
+flowchart TD
+    subgraph External["เอนทิตีภายนอก"]
+        User["👤 ผู้ใช้"]
+        Admin["👨‍💼 ผู้ดูแล/DPO"]
+        AccountSystem["🏢 ระบบผู้ใช้ (Account System)"]
+        EmailSvc["📧 SMTP"]
+        LLM["🧠 LLM API"]
+        Marketing["📢 Marketing"]
+    end
+
+    subgraph System["ขอบเขตระบบ PDPA"]
+        PDPA["⚙️ ระบบจัดการสิทธิ์ PDPA"]
+    end
+
+    User -->|"ให้/ถอน Consent, ขอ DSAR, ดูประวัติ"| PDPA
+    PDPA -->|"แสดง Consent, สถานะ DSAR, ดาวน์โหลดข้อมูล"| User
+    Admin -->|"ยืนยันการลบ, ขอรายงาน"| PDPA
+    PDPA -->|"รายงาน, สถานะการลบ"| Admin
+    AccountSystem -->|"Event account.suspended / account.terminated / account.deletion_confirmed"| PDPA
+    PDPA -->|"แจ้งเตือน, OTP"| EmailSvc
+    EmailSvc -->|"ส่งอีเมลถึง"| User
+    PDPA -->|"ข้อมูล DSAR, Consent Log"| LLM
+    LLM -->|"ผลวิเคราะห์"| PDPA
+    PDPA -->|"Event: consent.revoked, data.deleted"| Marketing
+```
+
+### 14.2 DFD ระดับ 1 (กระบวนการหลัก)
+
+```mermaid
+flowchart TD
+    subgraph External["เอนทิตีภายนอก"]
+        User["👤 ผู้ใช้"]
+        Admin["👨‍💼 ผู้ดูแล"]
+        Account["🏢 Account System"]
+        Email["📧 SMTP"]
+        LLM["🧠 LLM"]
+        Marketing["📢 Marketing"]
+    end
+
+    subgraph P1["🔥 การจัดการความยินยอม"]
+        P1_Record["1.1 บันทึก/อัปเดต Consent"]
+        P1_Revoke["1.2 ถอนความยินยอม"]
+        P1_Validate["1.3 ตรวจสอบ Consent + สถานะบัญชี"]
+    end
+
+    subgraph P2["📋 การจัดการ DSAR"]
+        P2_Submit["2.1 สร้าง DSAR + OTP"]
+        P2_Verify["2.2 ยืนยัน OTP"]
+        P2_Process["2.3 ประมวลผล DSAR"]
+        P2_Download["2.4 ดาวน์โหลดข้อมูล"]
+    end
+
+    subgraph P3["⏳ การจัดการการลบข้อมูล"]
+        P3_HandleAccount["3.1 รับ Event ระงับ/ยกเลิก"]
+        P3_Confirm["3.2 ยืนยันการลบทันที"]
+        P3_Immediate["3.3 ลบข้อมูลทันที"]
+        P3_Scheduler["3.4 Cron Job (ทุกวัน 02:00)"]
+        P3_Auto["3.5 ลบข้อมูลอัตโนมัติ (Suspended+1yr)"]
+    end
+
+    subgraph P4["📊 การสร้างรายงาน"]
+        P4_Query["4.1 สอบถามข้อมูล"]
+        P4_LLM["4.2 เรียก LLM"]
+        P4_Response["4.3 สรุปรายงาน"]
+    end
+
+    subgraph Stores["🗄️ ที่เก็บข้อมูล"]
+        DB[(PostgreSQL)]
+        Redis[(Redis Cache)]
+        ES[(Elasticsearch)]
+        Kafka[(Kafka)]
+    end
+
+    %% การไหล Process 1
+    User -->|POST /consent| P1_Record
+    User -->|DELETE /consent| P1_Revoke
+    P1_Record -->|บันทึก| DB
+    P1_Record -->|Set Cache| Redis
+    P1_Record -->|Publish consent.log| Kafka
+    P1_Revoke -->|อัปเดต status=REVOKED| DB
+    P1_Revoke -->|Delete Cache| Redis
+    P1_Revoke -->|Publish consent.revoked| Kafka
+    Marketing -->|ตรวจสอบ consent| P1_Validate
+    P1_Validate -->|Query| DB
+    P1_Validate -->|Query| Redis
+
+    %% การไหล Process 2 (เหมือนเดิม)
+    User -->|POST /dsar| P2_Submit
+    P2_Submit -->|บันทึก DSAR| DB
+    P2_Submit -->|ส่ง OTP| Email
+    Email -->|OTP| User
+    User -->|PUT /dsar/:id/verify| P2_Verify
+    P2_Verify -->|เช็ค OTP| DB
+    P2_Verify -->|Publish dsar.request| Kafka
+    Kafka -->|Consume| P2_Process
+    P2_Process -->|Query| DB
+    P2_Process -->|Update status| DB
+    P2_Process -->|Publish dsar.completed| Kafka
+    Kafka -->|WebSocket| User
+    User -->|GET /dsar/:id/download| P2_Download
+    P2_Download -->|Read payload| DB
+
+    %% การไหล Process 3 (ใหม่)
+    Account -->|Event| Kafka
+    Kafka -->|Consume| P3_HandleAccount
+    P3_HandleAccount -->|บันทึก SUSPENDED/TERMINATED| DB
+    P3_HandleAccount -->|set retention_deadline (ถ้า SUSPENDED)| DB
+    P3_HandleAccount -->|ส่งอีเมลแจ้ง| Email
+
+    Admin -->|POST /deletion/confirm| P3_Confirm
+    P3_Confirm -->|อัปเดต deletion_confirmed_at| DB
+    P3_Confirm -->|เรียก| P3_Immediate
+    P3_Immediate -->|ลบ Consent ทั้งหมด| DB
+    P3_Immediate -->|ลบ Cache| Redis
+    P3_Immediate -->|ลบ Index| ES
+    P3_Immediate -->|Publish data.immediate_deletion| Kafka
+
+    P3_Scheduler -->|ทุกวัน| P3_Auto
+    P3_Auto -->|ค้นหา SUSPENDED + retention_deadline <= now| DB
+    P3_Auto -->|ลบ Consent| DB
+    P3_Auto -->|ลบ Cache| Redis
+    P3_Auto -->|ลบ Index| ES
+    P3_Auto -->|Publish data.auto_deletion| Kafka
+
+    Kafka -->|Consume| Marketing
+    Kafka -->|Consume| Email (เพื่อหยุดส่ง)
+
+    %% การไหล Process 4
+    Admin -->|GET /admin/report| P4_Query
+    P4_Query -->|Query| ES
+    P4_Query -->|Query| DB
+    P4_Query -->|ส่งข้อมูล| P4_LLM
+    P4_LLM -->|เรียก| LLM
+    LLM -->|ผล| P4_LLM
+    P4_LLM -->|สร้าง Report| P4_Response
+    P4_Response -->|Report| Admin
+```
+
+---
+
+## สรุป
+
+เอกสารนี้ครอบคลุมการออกแบบโมดูล `pdpa` ฉบับสมบูรณ์ Version 3.0 ที่รองรับ:
+
+- การบันทึกความยินยอมแบบ Granular
+- การถอนความยินยอม (Revoke) พร้อมหยุดบริการที่เกี่ยวข้องทันที
+- **การลบข้อมูลตามสถานะบัญชีผู้ใช้**:
+  - **ระงับ (Suspended)** → ลบอัตโนมัติหลังจาก 1 ปีนับจากวันที่ระงับ
+  - **ยกเลิก (Terminated)** และยืนยันการลบ → **ลบทันที** โดยไม่ต้องรอ
+- การแปลภาษา (i18n) สำหรับ API และ Email
+- การทำงานแบบ Async ด้วย Kafka และ Scheduler
+- การประสานงานกับระบบผู้ใช้ผ่าน Event-driven architecture
+
+ระบบนี้พร้อมนำไปใช้งานจริงและสามารถขยายเพิ่มเติมตามความต้องการทางธุรกิจได้อย่างยืดหยุ่น 🚀
+
+# DOCS
+
+# นโยบายการคุ้มครองข้อมูลส่วนบุคคล (PDPA) ของระบบ icmongolang
+
+> **Version 3.0** – รองรับการลบข้อมูลตามสถานะบัญชีผู้ใช้ (Suspension / Termination) และการยืนยันการลบทันที
+
+---
+
+## สารบัญ
+
+- [1. บทนำและขอบเขตการใช้งาน](#1-บทนำและขอบเขตการใช้งาน)
+- [2. คำนิยาม](#2-คำนิยาม)
+- [3. หลักการคุ้มครองข้อมูลส่วนบุคคล](#3-หลักการคุ้มครองข้อมูลส่วนบุคคล)
+- [4. ฐานทางกฎหมายในการประมวลผลข้อมูล](#4-ฐานทางกฎหมายในการประมวลผลข้อมูล)
+- [5. บัญชีข้อมูลส่วนบุคคลในระบบ](#5-บัญชีข้อมูลส่วนบุคคลในระบบ)
+- [6. ข้อมูลส่วนบุคคลที่มีความอ่อนไหว](#6-ข้อมูลส่วนบุคคลที่มีความอ่อนไหว)
+- [7. การเก็บรวบรวมและการประมวลผลข้อมูล](#7-การเก็บรวบรวมและการประมวลผลข้อมูล)
+- [8. สิทธิของเจ้าของข้อมูล (Data Subject Rights)](#8-สิทธิของเจ้าของข้อมูล-data-subject-rights)
+- [9. มาตรการรักษาความมั่นคงปลอดภัย](#9-มาตรการรักษาความมั่นคงปลอดภัย)
+- [10. การเก็บรักษาและระยะเวลา](#10-การเก็บรักษาและระยะเวลา)
+- [11. การแจ้งเหตุละเมิดข้อมูลส่วนบุคคล](#11-การแจ้งเหตุละเมิดข้อมูลส่วนบุคคล)
+- [12. การเปิดเผยและผู้ประมวลผลข้อมูลภายนอก](#12-การเปิดเผยและผู้ประมวลผลข้อมูลภายนอก)
+- [13. บทบาทและความรับผิดชอบ](#13-บทบาทและความรับผิดชอบ)
+- [14. การทบทวนและปรับปรุงนโยบาย](#14-การทบทวนและปรับปรุงนโยบาย)
+- [15. Data Flow](#15-data-flow)
+- [16. การลบข้อมูลตามสถานะบัญชีผู้ใช้](#16-การลบข้อมูลตามสถานะบัญชีผู้ใช้)
+
+---
+
+## 1. บทนำและขอบเขตการใช้งาน
+
+- ✅ **วัตถุประสงค์** — เพื่อกำหนดแนวปฏิบัติในการคุ้มครองข้อมูลส่วนบุคคลของระบบ icmongolang ให้สอดคล้องกับพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) และกฎหมายที่เกี่ยวข้อง
+- ✅ **ขอบเขต** — ครอบคลุมทุกระบบย่อยของ icmongolang ได้แก่ ระบบจัดการผู้ใช้และสิทธิ์การเข้าถึง (Auth, User, Access Management) ระบบจัดการลูกค้า (Customer Management) ระบบชุดโมดูลยูทิลิตี้และบริการ (Utility and Service Modules) ระบบ IoT Flow Management ซึ่งรับข้อมูลจากอุปกรณ์ผ่าน MQTT/HTTP และระบบจัดการสิทธิ์ส่วนบุคคล (PDPA Module)
+- ✅ **ผู้มีส่วนเกี่ยวข้อง** — เจ้าของข้อมูล (Data Subject) ได้แก่ ผู้ใช้ระบบ ลูกค้า ผู้ดูแลระบบ และผู้ที่ให้ข้อมูลผ่านบริการหรืออุปกรณ์ IoT
+- ✅ **ข้อมูลที่ครอบคลุม** — ครอบคลุมทั้งข้อมูลส่วนบุคคลทั่วไป (Personal Data) และข้อมูลส่วนบุคคลที่มีความอ่อนไหว (Sensitive Data) ที่ระบบเก็บรวบรวม ประมวลผล เก็บรักษา หรือเปิดเผย
+
+---
+
+## 2. คำนิยาม
+
+- ✅ **ข้อมูลส่วนบุคคล (Personal Data)** — ข้อมูลเกี่ยวกับบุคคลธรรมดาซึ่งทำให้สามารถระบุตัวบุคคลนั้นได้ไม่ว่าทางตรงหรือทางอ้อม เช่น ชื่อ อีเมล ชื่อผู้ใช้ หมายเลขโทรศัพท์
+- ✅ **ข้อมูลส่วนบุคคลที่มีความอ่อนไหว (Sensitive Data)** — ข้อมูลตามมาตรา 26 แห่ง พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 เช่น เชื้อชาติ ชาติพันธุ์ ความเชื่อทางศาสนา ข้อมูลสุขภาพ ข้อมูลชีวภาพ
+- ✅ **เจ้าของข้อมูล (Data Subject)** — บุคคลธรรมดาที่เป็นเจ้าของข้อมูลส่วนบุคคล
+- ✅ **ผู้ควบคุมข้อมูลส่วนบุคคล (Data Controller)** — ผู้มีอำนาจตัดสินใจเกี่ยวกับการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลส่วนบุคคล
+- ✅ **ผู้ประมวลผลข้อมูลส่วนบุคคล (Data Processor)** — ผู้ดำเนินการเกี่ยวกับการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูลส่วนบุคคลตามคำสั่งหรือในนามของผู้ควบคุมข้อมูลส่วนบุคคล
+- ✅ **การประมวลผลข้อมูล (Processing)** — การดำเนินการใด ๆ กับข้อมูลส่วนบุคคล เช่น การเก็บรวบรวม การใช้ การบันทึก การจัดเก็บ การแก้ไข การทำสำเนา การเปิดเผย การลบ หรือการทำลาย
+
+### 2.1 คำนิยามเกี่ยวกับสถานะบัญชีและการลบข้อมูล
+
+| คำศัพท์ | คำนิยาม |
+| :--- | :--- |
+| **บัญชีที่ใช้งาน (Active Account)** | บัญชีผู้ใช้ที่อยู่ในสถานะปกติ สามารถใช้งานระบบได้ทุกฟังก์ชัน รวมถึงการให้/ถอนความยินยอม และการยื่นคำร้อง DSAR |
+| **บัญชีที่ถูกระงับ (Suspended Account)** | บัญชีผู้ใช้ที่ถูกระงับการใช้งานชั่วคราว โดยเจ้าของข้อมูลไม่สามารถเข้าถึงระบบได้ แต่ข้อมูลส่วนบุคคลยังคงถูกเก็บรักษาไว้เป็นระยะเวลา 1 ปีนับจากวันที่ถูกระงับ |
+| **บัญชีที่ถูกยกเลิก (Terminated Account)** | บัญชีผู้ใช้ที่ถูกยกเลิกการใช้งานอย่างถาวร โดยเจ้าของข้อมูลไม่สามารถเข้าถึงระบบได้อีกต่อไป และข้อมูลส่วนบุคคลจะถูกลบเมื่อมีการยืนยันการลบ |
+| **การยืนยันการลบ (Deletion Confirmation)** | การดำเนินการยืนยันจากผู้ดูแลระบบ (DPO หรือ Admin) หรือเจ้าของข้อมูล ในการลบข้อมูลส่วนบุคคลของบัญชีที่ถูกยกเลิก (Terminated) ซึ่งจะส่งผลให้ข้อมูลถูกลบออกจากระบบทันที |
+| **การลบข้อมูลทันที (Immediate Deletion)** | กระบวนการลบข้อมูลส่วนบุคคลทั้งหมดของเจ้าของข้อมูลออกจากระบบทันที หลังจากได้รับการยืนยันการลบสำหรับบัญชีที่ถูกยกเลิก (Terminated) |
+| **การลบข้อมูลอัตโนมัติ (Auto Deletion)** | กระบวนการลบข้อมูลส่วนบุคคลทั้งหมดของเจ้าของข้อมูลโดยอัตโนมัติ เมื่อบัญชีผู้ใช้ถูกระงับ (Suspended) ครบระยะเวลา 1 ปีนับจากวันที่ถูกระงับ |
+
+---
+
+## 3. หลักการคุ้มครองข้อมูลส่วนบุคคล
+
+| หลักการ | รายละเอียด | การปฏิบัติในระบบ |
+| :--- | :--- | :--- |
+| 🔒 ความชอบด้วยกฎหมาย (Lawfulness) | ประมวลผลข้อมูลอย่างชอบด้วยกฎหมายและเป็นธรรม | กำหนดฐานทางกฎหมายสำหรับทุกการประมวลผล (ดูข้อ 4) |
+| 🎯 ความจำกัดวัตถุประสงค์ (Purpose Limitation) | เก็บรวบรวมเท่าที่จำเป็นตามวัตถุประสงค์ที่แจ้งไว้ | แยกโมดูลตามวัตถุประสงค์ชัดเจน เช่น Auth/User, Customer, IoT, PDPA |
+| ➖ การลดปริมาณข้อมูล (Data Minimisation) | เก็บข้อมูลเท่าที่จำเป็นเท่านั้น | ฟิลด์ PII จัดเก็บเท่าที่ใช้จริง เช่น email, username, password (hashed) |
+| ✅ ความถูกต้อง (Accuracy) | ข้อมูลต้องถูกต้องและเป็นปัจจุบัน | ให้สิทธิเจ้าของข้อมูลขอแก้ไขข้อมูลได้ (Right to Rectification) |
+| ⏳ การจำกัดการเก็บรักษา (Storage Limitation) | เก็บข้อมูลเท่าที่จำเป็นตามระยะเวลาที่กำหนด | IoT Logging Management มีการลบข้อมูลเก่าอัตโนมัติ (Auto Cleanup) และ PDPA Module มีการลบข้อมูลตามสถานะบัญชี (ดูข้อ 10 และ 16) |
+| 🛡️ ความมั่นคงปลอดภัย (Integrity and Confidentiality) | ป้องกันการเข้าถึงโดยมิชอบ การสูญหาย หรือการรั่วไหล | ใช้การเข้ารหัส, RBAC, JWT, Cookie HttpOnly (ดูข้อ 9) |
+| 📋 ความรับผิดชอบ (Accountability) | สามารถแสดงการปฏิบัติตามหลักการได้ | จัดทำเอกสารนโยบายฉบับนี้และกำหนดบทบาทผู้รับผิดชอบ |
+
+---
+
+## 4. ฐานทางกฎหมายในการประมวลผลข้อมูล
+
+- ✅ **มาตรา 24 (ความยินยอม Consent)** — ใช้ในการเก็บรวบรวมข้อมูลส่วนบุคคลที่เกินความจำเป็นตามวัตถุประสงค์ หรือกรณีที่กฎหมายกำหนดให้ต้องขอความยินยอม
+- ✅ **มาตรา 24(1) วัตถุประสงค์ตามกฎหมาย** — การประมวลผลเพื่อให้เป็นไปตามกฎหมายที่เกี่ยวข้องกับการดำเนินงานของระบบ
+- ✅ **มาตรา 24(2) สัญญา (Contract)** — การประมวลผลข้อมูลผู้ใช้และลูกค้าเพื่อดำเนินการตามสัญญา เช่น การลงทะเบียนใช้งาน (Register) การจัดการบัญชีผู้ใช้ และการให้บริการ
+- ✅ **มาตรา 24(3) ประโยชน์โดยชอบด้วยกฎหมาย (Legitimate Interest)** — การประมวลผลเพื่อความมั่นคงปลอดภัยของระบบ การตรวจสอบสิทธิ์การเข้าถึง การป้องกันการทุจริตหรือการละเมิดบริการ และการดำเนินการตามนโยบายการลบข้อมูลตามสถานะบัญชี
+- ✅ **มาตรา 24(5) จำเป็นแก่การปฏิบัติหน้าที่ตามกฎหมาย** — การปฏิบัติตามหน้าที่ของหน่วยงานของรัฐหรือกฎหมายที่เกี่ยวข้อง
+
+### ข้อควรพิจารณา
+
+- ❌ **ห้ามประมวลผลข้อมูลโดยไม่มีฐานทางกฎหมาย** — การดำเนินการกับข้อมูลส่วนบุคคลทุกรายการต้องอ้างอิงฐานทางกฎหมายได้เสมอ
+- ❌ **ห้ามประมวลผลข้อมูลที่มีความอ่อนไหว** โดยไม่มีฐานตาม **มาตรา 26** ได้แก่ การได้รับความยินยอมโดยชัดแจ้ง การดำเนินการตามกฎหมาย การจำเป็นเพื่อการคุ้มครองชีวิตหรือร่างกาย เป็นต้น
+
+---
+
+## 5. บัญชีข้อมูลส่วนบุคคลในระบบ
+
+### 5.1 โมดูลจัดการผู้ใช้และสิทธิ์การเข้าถึง
+
+`docs/modules/1-Auth_User_Management_Module.md`, `docs/modules/3-Access_Management_Module.md`
+
+| รายการข้อมูล | ประเภท | แหล่งที่มา | ฐานทางกฎหมาย | ระยะเวลาจัดเก็บ |
+| :--- | :--- | :--- | :--- | :--- |
+| ชื่อผู้ใช้ (Username) | Personal Data | ฟอร์มลงทะเบียน | ม.24(2) สัญญา | ตลอดอายุการใช้งานบัญชี + ตามนโยบายการลบข้อมูล (ข้อ 16) |
+| อีเมล (Email) | Personal Data | ฟอร์มลงทะเบียน | ม.24(2) สัญญา | ตลอดอายุการใช้งานบัญชี + ตามนโยบายการลบข้อมูล (ข้อ 16) |
+| รหัสผ่าน (Password) | Personal Data | ฟอร์มลงทะเบียน/เข้าสู่ระบบ | ม.24(2) สัญญา | เก็บเป็น bcrypt hash เท่านั้น ไม่เก็บค่าเดิม + ลบตามนโยบาย |
+| บทบาท/สิทธิ์ (Role, RBAC) | Personal Data | ระบบจัดการสิทธิ์ | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | ตลอดอายุการใช้งานบัญชี + ลบตามนโยบาย |
+| ข้อมูลลูกค้า (Customer) | Personal Data | โมดูล Customer Management | ม.24(2) สัญญา | ตามระยะเวลากฎหมาย/สัญญา + ลบตามนโยบาย |
+| สถานะบัญชี (Account Status) | Personal Data | ระบบผู้ใช้ / PDPA Module | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | เก็บจนกว่าข้อมูลถูกลบตามนโยบาย |
+
+### 5.2 โมดูลจัดการสิทธิ์ส่วนบุคคล (PDPA Module)
+
+`internal/modules/pdpa/`
+
+| รายการข้อมูล | ประเภท | แหล่งที่มา | ฐานทางกฎหมาย | ระยะเวลาจัดเก็บ |
+| :--- | :--- | :--- | :--- | :--- |
+| บันทึกความยินยอม (Consent Log) | Personal Data | การให้/ถอนความยินยอม | ม.24 ความยินยอม / ม.24(2) สัญญา | ตามนโยบายการลบข้อมูล (ข้อ 10 และ 16) |
+| คำร้อง DSAR | Personal Data | การยื่นคำร้องขอใช้สิทธิ์ | ม.24(2) สัญญา / ม.30-35 | ตามนโยบายการลบข้อมูล (ข้อ 10 และ 16) |
+| Audit Trail (PDPA) | Personal Data | ระบบบันทึกการดำเนินการ | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | ตามระยะเวลาที่กฎหมายกำหนด |
+| สถานะบัญชี (UserAccountStatus) | Personal Data | ระบบผู้ใช้ / PDPA Module | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | เก็บจนกว่าข้อมูลถูกลบตามนโยบาย |
+
+### 5.3 โมดูล IoT Flow และข้อมูลจากอุปกรณ์
+
+`docs/modules/IoT_Flow_Module.md`, `docs/modules/IoT_Flow_Module_V3.md`
+
+| รายการข้อมูล | ประเภท | แหล่งที่มา | ฐานทางกฎหมาย | ระยะเวลาจัดเก็บ |
+| :--- | :--- | :--- | :--- | :--- |
+| ข้อมูลเซนเซอร์/อุปกรณ์ (Sensor Data) | Personal Data (หากระบุตัวบุคคลได้) | อุปกรณ์ IoT ผ่าน MQTT/HTTP | ม.24(2)/ม.24(3) | ตามนโยบายการเก็บรักษาโมดูล IoT + ลบตามนโยบาย |
+| ข้อมูลเชิงเวลา (Time-series) | Personal Data (หากระบุตัวบุคคลได้) | Flow Engine → InfluxDB | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | บันทึกแบบ Batch Writer + ตามนโยบายการลบ |
+| ข้อมูล Log การทำงาน (Flow Logs) | Personal Data (หากระบุตัวบุคคลได้) | Elasticsearch | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | Logging Management ลบข้อมูลเก่าอัตโนมัติ |
+| session การเชื่อมต่อ WebSocket | Personal Data | ตาราง `ws_sessions` | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | จนกว่าหมดอายุ (expires_at) |
+| ข้อความ WebSocket (ws_messages) | Personal Data (หากระบุตัวบุคคลได้) | ตาราง `ws_messages` | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | ตามระยะเวลาการเก็บข้อความ |
+| API Key | Personal Data (ระบุตัวผู้ใช้ได้) | `/api/apikeys`, `/apimanager/key` | ม.24(2)/ม.24(3) | ตลอดอายุการใช้งาน + ตามนโยบายการลบ |
+| ข้อมูล Pipeline LLM Request/Response | Personal Data (ข้อความผู้ใช้/ผลลัพธ์) | Kafka topic flow.llm.request | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | ตามนโยบายการเก็บรักษา + ลบตามนโยบาย |
+| ข้อมูล Pipeline Embedding Request | Personal Data (หากระบุตัวบุคคลได้) | Kafka topic flow.embedding.request | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | ตามนโยบายการเก็บรักษา + ลบตามนโยบาย |
+| ข้อมูล Pipeline Blockchain Request | Personal Data (หากระบุตัวบุคคลได้) | Kafka topic flow.blockchain.request | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | ตามนโยบายการเก็บรักษา + ลบตามนโยบาย |
+
+### 5.4 โมดูลยูทิลิตี้และบริการ
+
+`docs/modules/4-Utility_and_Service_Modules.md`
+
+| รายการข้อมูล | ประเภท | แหล่งที่มา | ฐานทางกฎหมาย | ระยะเวลาจัดเก็บ |
+| :--- | :--- | :--- | :--- | :--- |
+| เอกสารแปล/เอกสารอัปโหลด (translations, documents) | Personal Data (หากมีข้อมูลบุคคล) | โมดูลยูทิลิตี้ | ม.24(2)/ม.24(3) | ตามนโยบายการเก็บเอกสาร + ลบตามนโยบาย |
+| งานประมวลผลแบตช์ (batch_jobs, batch_job_logs) | Personal Data (หากมีข้อมูลบุคคล) | ระบบงานแบตช์ | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | ตามนโยบายการเก็บ Log + ลบตามนโยบาย |
+| ข้อมูล Session/Cookie | Personal Data | JWT Access + Refresh Token (HttpOnly Cookie) | ม.24(3) ประโยชน์โดยชอบด้วยกฎหมาย | จนกว่าหมดอายุของ Token |
+
+---
+
+## 6. ข้อมูลส่วนบุคคลที่มีความอ่อนไหว
+
+- ✅ **ข้อกำหนด** — ระบบจะไม่เก็บรวบรวมข้อมูลที่มีความอ่อนไหวตามมาตรา 26 เว้นแต่จะได้รับความยินยอมโดยชัดแจ้งจากเจ้าของข้อมูล หรือมีฐานทางกฎหมายอื่นรองรับ
+- ❌ **ห้ามเก็บข้อมูลอ่อนไหวโดยไม่จำเป็น** — เช่น เชื้อชาติ ศาสนา ข้อมูลสุขภาพ ข้อมูลชีวภาพ ระบบจะหลีกเลี่ยงการจัดเก็บโดยค่าเริ่มต้น
+- ✅ **การประเมินผลกระทบความเป็นส่วนตัว (PIA/DPIA)** — ควรดำเนินการประเมินเมื่อมีการนำระบบไปใช้กับข้อมูลที่มีความเสี่ยงสูงต่อสิทธิและเสรีภาพของเจ้าของข้อมูล
+
+---
+
+## 7. การเก็บรวบรวมและการประมวลผลข้อมูล
+
+- ✅ **การเก็บรวบรวม** — จัดเก็บข้อมูลผ่านฟอร์มลงทะเบียน การเข้าสู่ระบบ การยืนยันตัวตน (SignIn/Login ผ่าน email หรือ username) การให้/ถอนความยินยอม (PDPA Module) และการรับข้อมูลจากอุปกรณ์ IoT ผ่าน MQTT/HTTP
+- ✅ **การแจ้งวัตถุประสงค์** — แจ้งวัตถุประสงค์ ขอบเขต และฐานทางกฎหมายของการเก็บข้อมูลให้เจ้าของข้อมูลทราบก่อนหรือขณะเก็บรวบรวม
+- ✅ **การประมวลผลแบบเรียลไทม์** — ข้อมูลจากอุปกรณ์ IoT ไหลผ่าน Flow Engine (Goroutines, Channels) สู่ Kafka → Worker ต่าง ๆ (InfluxDB Batch Writer, Elasticsearch Bulk Indexer, WebSocket Broadcaster, LLM/Embedding Consumer ฯลฯ)
+- ✅ **การประมวลผล AI** — ข้อมูลอาจถูกส่งไปยัง LLM/AI Embedding เพื่อสรุป ตอบคำถาม หรือทำรายงาน Semantic Search/RAG ต้องแจ้งวัตถุประสงค์และขอความยินยอมหากเป็นการประมวลผลข้อมูลอัตโนมัติที่ส่งผลต่อตัวบุคคลอย่างมีนัยสำคัญ
+- ✅ **การเปิดเผย** — เปิดเผยข้อมูลบุคคลภายนอกเฉพาะเมื่อได้รับความยินยอม มีฐานทางกฎหมาย หรือตามคำสั่งหน่วยงานของรัฐที่ชอบด้วยกฎหมาย
+
+---
+
+## 8. สิทธิของเจ้าของข้อมูล (Data Subject Rights)
+
+| สิทธิ | รายละเอียด | การปฏิบัติในระบบ |
+| :--- | :--- | :--- |
+| สิทธิขอถอนความยินยอม | ถอนความยินยอมเมื่อใดก็ได้ | จัดให้มี API `DELETE /pdpa/consent` สำหรับถอนความยินยอมตาม ม.24 (PDPA Module) |
+| สิทธิขอเข้าถึงข้อมูล | ขอเข้าถึงและขอรับสำเนาข้อมูลส่วนบุคคล | จัดให้มี API/ช่องทางขอเข้าถึงข้อมูลผ่าน DSAR ตาม ม.30 (PDPA Module) |
+| สิทธิขอรับและโอนย้ายข้อมูล (Data Portability) | ขอรับข้อมูลในรูปแบบที่อ่านได้และโอนย้ายไปยังผู้ควบคุมอื่น | จัดรูปแบบข้อมูลที่เครื่องอ่านได้ (Machine Readable) ผ่าน DSAR (PDPA Module) |
+| สิทธิคัดค้านการประมวลผล | คัดค้านการเก็บรวบรวม ใช้ หรือเปิดเผยข้อมูล | พิจารณาคัดค้านตาม ม.32 ผ่านระบบจัดการสิทธิ์ |
+| สิทธิขอให้ลบหรือทำลายข้อมูล | ขอลบ หรือทำให้ข้อมูลไม่สามารถระบุตัวบุคคลได้ | จัดให้มีช่องทางลบข้อมูลตาม ม.33 ผ่าน DSAR และนโยบายการลบข้อมูลตามสถานะบัญชี (ข้อ 16) |
+| สิทธิขอให้ระงับการใช้ข้อมูล | ขอระงับการใช้ข้อมูลชั่วคราว | ระงับการประมวลผลตาม ม.34 ผ่านระบบจัดการผู้ใช้ |
+| สิทธิขอให้แก้ไขข้อมูล | ขอแก้ไขข้อมูลให้ถูกต้องและเป็นปัจจุบัน | จัดให้มีช่องทางแก้ไขข้อมูลตาม ม.35 |
+| สิทธิร้องเรียน | ร้องเรียนต่อหน่วยงานที่กำกับดูแล | แจ้งช่องทางการร้องเรียนต่อ สคส. (PDPC) |
+
+### 8.1 การใช้สิทธิขอให้ลบข้อมูล (Right to Erasure)
+
+ระบบสนับสนุนการลบข้อมูลส่วนบุคคลผ่าน 2 ช่องทางหลัก:
+
+1. **การยื่นคำร้อง DSAR ประเภท ERASURE** — เจ้าของข้อมูลสามารถยื่นคำร้องขอให้ลบข้อมูลส่วนบุคคลผ่านระบบ DSAR ซึ่งจะดำเนินการตามขั้นตอนการยืนยันตัวตน (OTP) และประมวลผลตามที่กฎหมายกำหนด
+2. **การลบข้อมูลตามสถานะบัญชี** — ระบบจะดำเนินการลบข้อมูลโดยอัตโนมัติตามสถานะของบัญชีผู้ใช้ ดังนี้:
+   - **กรณียกเลิกการใช้งาน (Terminated)** และมีการยืนยันการลบ → ลบข้อมูลทันที
+   - **กรณีระงับการใช้งาน (Suspended)** โดยไม่มีการยืนยันลบทันที → ลบข้อมูลอัตโนมัติหลัง 1 ปีนับจากวันที่ถูกระงับ
+
+---
+
+## 9. มาตรการรักษาความมั่นคงปลอดภัย
+
+- ✅ **การเข้ารหัสรหัสผ่าน** — รหัสผ่านถูกจัดเก็บเป็น bcrypt hash ไม่มีการจัดเก็บค่าเดิม (Plain Text)
+- ✅ **การจัดการสิทธิ์การเข้าถึง (RBAC)** — ควบคุมการเข้าถึงข้อมูลตามบทบาทของผู้ใช้ โดยมีโมดูล Access Management คอยจัดการ
+- ✅ **JWT และ Cookie** — Access Token และ Refresh Token ถูกตั้งค่าเป็น `HttpOnly` + `SameSite=Lax` เพื่อลดความเสี่ยงการโจมตี XSS และ CSRF
+- ✅ **การตรวจสอบสิทธิ์ WebSocket** — การเชื่อมต่อ WebSocket ตรวจสอบผ่าน `?token=` หรือ `Authorization: Bearer` และยืนยัน session ในตาราง `ws_sessions` (token + expires_at) หากไม่ถูกต้องจะตอบ HTTP 401
+- ✅ **การควบคุม API Key** — การสร้างและใช้งาน API Key ผ่าน `/apimanager/key` ต้องมีการจัดการสิทธิ์และติดตามผู้ใช้งาน
+- ✅ **Logging และตรวจสอบย้อนหลัง** — จัดเก็บ Log การเข้าถึงและการทำงาน (Elasticsearch) เพื่อการตรวจสอบย้อนหลังและตรวจจับเหตุผิดปกติ รวมถึง Audit Trail ของ PDPA Module
+- ✅ **การเข้ารหัสข้อมูลระหว่างทางและขณะจัดเก็บ** — ใช้ HTTPS/TLS สำหรับการสื่อสาร และเข้ารหัสข้อมูลที่จัดเก็บในฐานข้อมูลตามความเหมาะสม
+- ✅ **การประเมินความเสี่ยง** — ดำเนินการประเมินความเสี่ยงด้านความมั่นคงปลอดภัยและความเป็นส่วนตัวเป็นระยะ รวมทั้งเมื่อมีการเปลี่ยนแปลงที่สำคัญของระบบ
+
+---
+
+## 10. การเก็บรักษาและระยะเวลา
+
+- ✅ **หลักการ** — เก็บรักษาข้อมูลส่วนบุคคลเท่าที่จำเป็นตามวัตถุประสงค์ หรือตามระยะเวลาที่กฎหมายกำหนด แล้วจึงลบ/ทำลาย หรือทำให้ไม่สามารถระบุตัวบุคคลได้
+- ✅ **Logging Management ใน IoT** — โมดูล IoT Logging Management เก็บข้อมูลเป็นค่าเฉลี่ยรายปี (Annual Averages) และมีกลไก **Auto Delete** สำหรับข้อมูลเก่าเพื่อควบคุมปริมาณการจัดเก็บ
+- ✅ **Session และ Token** — ข้อมูล session ในตาราง `ws_sessions` จะถูกจัดเก็บจนกว่าหมดอายุ (`expires_at`) จากนั้นระบบจะไม่ยอมรับการใช้งานต่อ
+- ✅ **ตารางกลาง (Central Schema)** — ตาราง `translations`, `documents`, `batch_jobs`, `batch_job_logs`, `ws_sessions`, `ws_messages` มีนโยบายการเก็บรักษาและ cleanup ตามชนิดข้อมูล (Data Cleanup Worker)
+- ✅ **ระยะเวลาตามกฎหมาย** — เอกสารและข้อมูลที่กฎหมายกำหนดให้เก็บ เช่น เอกสารทางบัญชี ภาษี หรือสัญญา ให้เก็บตามระยะเวลาที่กฎหมายกำหนด
+
+### 10.1 การเก็บรักษาข้อมูลตามสถานะบัญชี
+
+ระบบ PDPA Module จะจัดเก็บข้อมูลส่วนบุคคลตามสถานะบัญชีผู้ใช้ ดังนี้:
+
+| สถานะบัญชี | ระยะเวลาการเก็บรักษา | การดำเนินการ |
+| :--- | :--- | :--- |
+| **ACTIVE** | ตามระยะเวลาปกติ (ตลอดอายุการใช้งานบัญชี หรือตามกฎหมาย) | ข้อมูลถูกเก็บรักษาตามนโยบายปกติ |
+| **SUSPENDED** | 1 ปีนับจากวันที่ถูกระงับ (`retention_deadline`) | ข้อมูลจะถูกลบอัตโนมัติเมื่อครบ 1 ปี |
+| **TERMINATED** | เก็บไว้จนกว่าจะมีการยืนยันการลบ | เมื่อยืนยันการลบ → ลบข้อมูลทันที |
+| **DELETED** | ข้อมูลถูกลบแล้ว | ไม่มีการเก็บข้อมูลส่วนบุคคล |
+
+---
+
+## 11. การแจ้งเหตุละเมิดข้อมูลส่วนบุคคล
+
+- ✅ **การตรวจจับ** — ใช้ระบบ Logging และระบบแจ้งเตือน (Monitoring) เพื่อตรวจจับการเข้าถึงหรือการใช้งานโดยไม่ได้รับอนุญาต รวมถึงการตรวจสอบ Audit Trail ของ PDPA Module
+- ✅ **การแจ้งต่อ สคส. (PDPC)** — ในกรณีที่มีเหตุละเมิดข้อมูลส่วนบุคคลและมีความเสี่ยงที่จะกระทบต่อสิทธิและเสรีภาพของบุคคล ต้องแจ้งต่อสำนักงานคณะกรรมการคุ้มครองข้อมูลส่วนบุคคลภายใน 72 ชั่วโมงนับแต่ทราบเหตุ ตามมาตรา 37(4)
+- ✅ **การแจ้งเจ้าของข้อมูล** — แจ้งเหตุละเมิดและมาตรการแก้ไขให้เจ้าของข้อมูลทราบโดยไม่ชักช้า เมื่อมีความเสี่ยงสูงที่จะกระทบต่อสิทธิและเสรีภาพของบุคคล ตามมาตรา 37(5)
+- ✅ **บันทึกรายละเอียด** — บันทึกรายละเอียดของเหตุละเมิด กฎหมายที่เกี่ยวข้อง มาตรการเยียวยา และแนวทางป้องกันการเกิดซ้ำ
+
+---
+
+## 12. การเปิดเผยและผู้ประมวลผลข้อมูลภายนอก
+
+- ✅ **การเปิดเผยข้อมูล** — ไม่เปิดเผยข้อมูลส่วนบุคคลแก่บุคคลภายนอก เว้นแต่ได้รับความยินยอม มีฐานทางกฎหมาย หรือตามคำสั่งของหน่วยงานที่มีอำนาจ
+- ✅ **ผู้ประมวลผลข้อมูลภายนอก (Data Processor)** — กรณีจ้างบุคคลภายนอกประมวลผลข้อมูล เช่น บริการ Cloud, ผู้ให้บริการ AI/LLM, ผู้ให้บริการโครงสร้างพื้นฐาน ต้องมีสัญญาประมวลผลข้อมูล (DPA) ตามมาตรา 40 และควบคุมไม่ให้ประมวลผลนอกขอบเขตที่กำหนด
+- ✅ **การโอนข้อมูลระหว่างประเทศ** — การโอนข้อมูลส่วนบุคคลไปยังต่างประเทศต้องเป็นไปตามมาตรา 28 โดยประเทศปลายทางต้องมีมาตรฐานการคุ้มครองข้อมูลที่เพียงพอหรือมีมาตรการคุ้มครองที่เหมาะสม
+- ✅ **การกำกับผู้ให้บริการ** — ดูแลให้ผู้ให้บริการและผู้ประมวลผลภายนอกปฏิบัติตามนโยบายความเป็นส่วนตัวและกฎหมายที่เกี่ยวข้อง
+
+---
+
+## 13. บทบาทและความรับผิดชอบ
+
+| บทบาท | ความรับผิดชอบ |
+| :--- | :--- |
+| ผู้ควบคุมข้อมูลส่วนบุคคล (Data Controller) | ตัดสินใจเรื่องการเก็บรวบรวม ใช้ เปิดเผยข้อมูล และแจ้งวัตถุประสงค์/ฐานทางกฎหมาย รวมถึงกำหนดนโยบายการลบข้อมูลตามสถานะบัญชี |
+| ผู้ประมวลผลข้อมูลส่วนบุคคล (Data Processor) | ดำเนินการกับข้อมูลตามคำสั่งและตามสัญญา DPA เท่านั้น รวมถึงการดำเนินการลบข้อมูลตามนโยบายที่กำหนด |
+| เจ้าหน้าที่คุ้มครองข้อมูลส่วนบุคคล (DPO) | กำกับดูแลการปฏิบัติตาม PDPA ตอบข้อร้องเรียน ประสานงานกับ สคส. (PDPC) และควบคุมการยืนยันการลบข้อมูลสำหรับบัญชีที่ถูกยกเลิก (Terminated) |
+| ผู้ดูแลระบบ (System Administrator) | บริหารจัดการสิทธิ์การเข้าถึง RBAC และควบคุมการเข้าถึงข้อมูล รวมถึงการจัดการสถานะบัญชีผู้ใช้ |
+| นักพัฒนา/ทีมปฏิบัติการ (Dev/Ops) | พัฒนาโดยคำนึงถึง Privacy by Design และรักษาความมั่นคงปลอดภัยของระบบ รวมถึงการพัฒนา PDPA Module ให้รองรับนโยบายการลบข้อมูล |
+
+---
+
+## 14. การทบทวนและปรับปรุงนโยบาย
+
+- ✅ **การทบทวนเป็นระยะ** — ทบทวนนโยบายฉบับนี้อย่างน้อยปีละครั้ง หรือเมื่อมีการเปลี่ยนแปลงกฎหมาย โครงสร้างระบบ หรือแนวทางการประมวลผลข้อมูลอย่างมีนัยสำคัญ
+- ✅ **การเผยแพร่** — เผยแพร่เอกสารฉบับนี้ให้ผู้ที่เกี่ยวข้องและเจ้าของข้อมูลสามารถเข้าถึงได้ง่าย
+- ✅ **การบันทึกเวอร์ชัน** — จัดเก็บประวัติการแก้ไขเอกสารเพื่อการตรวจสอบย้อนหลัง
+- ✅ **การขอความเห็นทางกฎหมาย** — ในกรณีที่มีข้อสงสัยเกี่ยวกับการตีความกฎหมายหรือแนวปฏิบัติ ควรปรึกษาผู้เชี่ยวชาญด้านกฎหมายคุ้มครองข้อมูลส่วนบุคคล
+
+---
+
+## 15. Data Flow
+
+ข้อมูลส่วนบุคคลที่ระบบจัดเก็บและประมวลผลจะไหลผ่านระบบตามเส้นทางหลักดังต่อไปนี้ โดยระบบจะดำเนินการตามหลักการ Privacy by Design และ Privacy by Default ตามที่กำหนดในข้อ 6.1 ด้วยการเก็บรวบรวมข้อมูลเท่าที่จำเป็นเท่านั้น
+
+### 15.1 การเก็บรวบรวมข้อมูล (Collection)
+
+1. ข้อมูลจากผู้ใช้ (User) ถูกส่งผ่าน REST API หรือหน้าเว็บ ตรวจสอบสิทธิ์ด้วย JWT หรือ Cookie ที่ตั้งค่า `HttpOnly` และ `SameSite=Lax`
+2. ข้อมูลจากอุปกรณ์ IoT ถูกส่งผ่าน MQTT หรือ HTTP เข้าสู่ Flow Engine ซึ่งทำงานแบบ Goroutines และ Channels ก่อนส่งต่อไปยัง Kafka
+3. ข้อมูลที่ส่งแบบเรียลไทม์ผ่าน WebSocket จะต้องผ่านการตรวจสอบสิทธิ์ด้วย `?token=` หรือ `Authorization: Bearer` และตรวจสอบกับตาราง `ws_sessions` หากไม่ถูกต้องระบบจะตอบ HTTP 401
+4. **ข้อมูลความยินยอม (Consent)** ถูกเก็บรวบรวมผ่าน PDPA Module เมื่อผู้ใช้ให้หรือถอนความยินยอมผ่าน API `POST /pdpa/consent` หรือ `DELETE /pdpa/consent`
+
+### 15.2 การประมวลผลข้อมูล (Processing)
+
+1. Flow Engine ส่งข้อมูลไปยัง Kafka เพื่อให้ Workers แบ่งงานกันประมวลผล ได้แก่ InfluxDB Batch Writer, Elasticsearch Bulk Indexer, WebSocket Broadcaster, LLM Consumer และ Embedding Consumer
+2. ข้อมูลที่ใช้กับระบบ AI/LLM จะถูกประมวลผลผ่าน Semantic Search / RAG โดยระบบจะส่งเฉพาะข้อมูลที่จำเป็นเท่านั้น และไม่อนุญาตให้ใช้ข้อมูลส่วนบุคคลของบุคคลหนึ่งเพื่อให้บริการหรือตอบคำถามของบุคคลอื่น
+3. **PDPA Module** ประมวลผลคำร้อง DSAR และการจัดการความยินยอม โดยส่งข้อมูลไปยัง Kafka เพื่อให้ Workers ประมวลผลแบบ Async
+
+### 15.3 การเปิดเผยข้อมูล (Disclosure)
+
+1. ระบบจะไม่เปิดเผยข้อมูลส่วนบุคคล เว้นแต่ได้รับความยินยอมจากเจ้าของข้อมูล มีฐานทางกฎหมายอื่น หรือได้รับคำสั่งจากหน่วยงานที่มีอำนาจตามกฎหมาย
+2. หากต้องส่งข้อมูลให้ผู้ประมวลผลข้อมูลภายนอก ระบบจะจัดทำสัญญาประมวลผลข้อมูลส่วนบุคคล (DPA) ตามมาตรา 40 และปฏิบัติตามข้อกำหนดด้านการโอนข้อมูลระหว่างประเทศตามมาตรา 28
+
+### 15.4 การจัดเก็บข้อมูล (Storage)
+
+1. ข้อมูลทั้งหมดถูกจัดเก็บในระบบฐานข้อมูลและระบบจัดเก็บข้อมูลของระบบ โดยมีมาตรการรักษาความปลอดภัยตามที่กำหนดในข้อ 9 และข้อ 10 เช่น การเข้ารหัสรหัสผ่านด้วย bcrypt และการควบคุมการเข้าถึงแบบ RBAC ผ่าน Access Management
+2. บันทึกการใช้งานระบบ (Logging) จัดเก็บใน Elasticsearch โดยมีระยะเวลาการจัดเก็บตามที่ระบุในบัญชีข้อมูลส่วนบุคคล (ข้อ 5)
+3. **PDPA Module** จัดเก็บ Consent Logs, DSAR Requests, Audit Trails และ User Account Status ใน PostgreSQL พร้อม Redis Cache สำหรับสถานะความยินยอมล่าสุด
+
+### 15.5 การลบข้อมูลและระยะเวลาจัดเก็บ (Deletion & Retention)
+
+1. ระบบมี Data Cleanup Worker และเส้นทาง Auto Delete สำหรับการลบข้อมูลตามรอบระยะเวลาที่กำหนด เช่น
+   - IoT Logging Management ระบบจะเก็บเฉพาะค่าเฉลี่ยรายปีเท่านั้น
+   - Session ต่าง ๆ จะถูกเก็บไว้จนกว่าจะถึงค่า `expires_at` แล้วจึงถูกลบ
+   - ระบบจะทำการ cleanup ตาราง `translations`, `documents`, `batch_jobs`, `batch_job_logs`, `ws_sessions` และ `ws_messages` ตามรอบเวลาที่กำหนดไว้
+2. **PDPA Module** มีกลไกการลบข้อมูลตามสถานะบัญชี (ดูข้อ 16) โดย:
+   - Cron Job ทำงานทุกวันเวลา 02:00 น. เพื่อลบข้อมูลของบัญชีที่ถูกระงับ (Suspended) ครบ 1 ปี
+   - Immediate Deletion จะถูกเรียกเมื่อมีการยืนยันการลบสำหรับบัญชีที่ถูกยกเลิก (Terminated)
+3. เมื่อครบกำหนดระยะเวลาจัดเก็บ ระบบจะลบหรือทำให้ข้อมูลไม่สามารถระบุตัวตนได้ (De-identification / Anonymisation) ตามที่กำหนดในข้อ 7.2
+
+---
+
+## 16. การลบข้อมูลตามสถานะบัญชีผู้ใช้
+
+ระบบ PDPA Module รองรับการลบข้อมูลส่วนบุคคลตามสถานะบัญชีผู้ใช้ โดยแยกเป็น 2 กรณีหลัก ดังนี้
+
+### 16.1 กรณีระงับการใช้งาน (Suspension)
+
+เมื่อบัญชีผู้ใช้ถูกระงับการใช้งาน (Account Suspended) ระบบจะดำเนินการดังนี้:
+
+1. ระบบผู้ใช้ (Account System) ส่ง Event `account.suspended` ผ่าน Kafka ไปยัง PDPA Module
+2. PDPA Module บันทึกสถานะบัญชีเป็น `SUSPENDED` พร้อมข้อมูล:
+   - `suspended_at` = วันที่ถูกระงับ
+   - `retention_deadline` = suspended_at + 1 ปี
+3. ระบบส่งอีเมลแจ้งเตือนเจ้าของข้อมูลว่า "บัญชีของคุณถูกระงับ ข้อมูลส่วนบุคคลจะถูกเก็บไว้เป็นเวลา 1 ปี และจะถูกลบโดยอัตโนมัติหลังจากนั้น"
+4. ในระหว่างที่ถูกระงับ (1 ปี):
+   - เจ้าของข้อมูลไม่สามารถเข้าถึงระบบได้
+   - ไม่สามารถให้/ถอนความยินยอม หรือยื่นคำร้อง DSAR ได้
+   - ข้อมูล Consent Logs, DSAR Requests และข้อมูลอื่น ๆ ยังคงถูกเก็บรักษาไว้
+5. เมื่อครบ 1 ปีนับจากวันที่ถูกระงับ (`retention_deadline`):
+   - Cron Job (ทำงานทุกวันเวลา 02:00 น.) ตรวจพบว่าบัญชีนี้ถึงกำหนดลบ
+   - ระบบลบข้อมูลส่วนบุคคลทั้งหมดของเจ้าของข้อมูลออกจากระบบ (Hard Delete)
+   - ลบ Consent Logs, DSAR Requests, Redis Cache, Elasticsearch Index
+   - ส่ง Event `data.auto_deletion` ไปยัง Kafka เพื่อให้ระบบอื่น ๆ ทราบ
+   - อัปเดตสถานะบัญชีเป็น `DELETED`
+
+### 16.2 กรณียกเลิกการใช้งาน (Termination) และการยืนยันการลบ
+
+เมื่อบัญชีผู้ใช้ถูกยกเลิกการใช้งานอย่างถาวร (Account Terminated) ระบบจะดำเนินการดังนี้:
+
+1. ระบบผู้ใช้ (Account System) ส่ง Event `account.terminated` ผ่าน Kafka ไปยัง PDPA Module
+2. PDPA Module บันทึกสถานะบัญชีเป็น `TERMINATED` พร้อม `terminated_at`
+3. ระบบส่งอีเมลแจ้งเตือนเจ้าของข้อมูลและผู้ดูแลระบบ (DPO) ว่า "บัญชีของคุณถูกยกเลิกการใช้งาน ข้อมูลส่วนบุคคลจะถูกลบเมื่อได้รับการยืนยันจากผู้ดูแลระบบเท่านั้น"
+4. ผู้ดูแลระบบ (DPO หรือ Admin) จะตรวจสอบความถูกต้องและดำเนินการยืนยันการลบผ่าน API `POST /pdpa/deletion/confirm`
+5. เมื่อได้รับการยืนยันการลบ:
+   - ระบบอัปเดต `deletion_confirmed_at` = NOW()
+   - เรียกกระบวนการ Immediate Deletion ทันที:
+     - ลบ Consent Logs ทั้งหมด (Hard Delete)
+     - ลบ DSAR Requests ทั้งหมด (Hard Delete)
+     - ลบ Redis Cache ทั้งหมดของผู้ใช้
+     - ลบ Elasticsearch Index ทั้งหมดของผู้ใช้
+     - ส่ง Event `data.immediate_deletion` ไปยัง Kafka
+     - บันทึก Audit Trail
+   - อัปเดตสถานะบัญชีเป็น `DELETED`
+6. ระบบส่งอีเมลแจ้งเตือนเจ้าของข้อมูลว่า "ข้อมูลส่วนบุคคลของคุณถูกลบออกจากระบบเรียบร้อยแล้ว"
+
+> **หมายเหตุ:** หากไม่มีการยืนยันการลบ ข้อมูลจะยังคงถูกเก็บรักษาไว้ตามระยะเวลาที่กฎหมายกำหนด หรือจนกว่าจะมีการดำเนินการอื่น ๆ ตามนโยบาย
+
+### 16.3 สรุปนโยบายการลบข้อมูล
+
+| สถานะบัญชี | การดำเนินการ | ระยะเวลา | การแจ้งเตือน |
+| :--- | :--- | :--- | :--- |
+| **ACTIVE** | เก็บข้อมูลตามปกติ | ตลอดอายุการใช้งาน | - |
+| **SUSPENDED** | เก็บข้อมูลไว้ รอการลบอัตโนมัติ | 1 ปีนับจากวันที่ถูกระงับ | แจ้งเตือนเมื่อถูกระงับ และก่อนลบ |
+| **TERMINATED** | เก็บข้อมูลไว้ รอการยืนยันการลบ | จนกว่าจะยืนยันการลบ | แจ้งเตือนเมื่อถูกยกเลิก และเมื่อลบแล้ว |
+| **DELETED** | ข้อมูลถูกลบแล้ว | - | แจ้งเตือนเมื่อลบแล้ว |
+
+### 16.4 การหยุดส่งอีเมล/บริการเมื่อมีการลบข้อมูล
+
+เมื่อมีการลบข้อมูล (ทั้ง Immediate Deletion และ Auto Deletion) ระบบจะดำเนินการดังนี้:
+
+1. ส่ง Event `data.immediate_deletion` หรือ `data.auto_deletion` ไปยัง Kafka
+2. ระบบอื่น ๆ (Email Worker, Marketing System, Analytics) ที่รับ Event นี้จะ:
+   - หยุดส่งอีเมลหรือข้อความไปยังเจ้าของข้อมูลทันที
+   - หยุดการประมวลผลข้อมูลที่เกี่ยวข้อง
+   - ลบข้อมูลที่เกี่ยวข้องในระบบของตน (ถ้ามี)
+
+---
+ 
+
+

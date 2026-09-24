@@ -1,0 +1,73 @@
+docker run -d -p 3001:8080 -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+
+
+This error means **Local AI Pilot** cannot communicate with your backend (Ollama) or load the requested model (Deepseek-R1). 
+
+Here is a step-by-step troubleshooting guide to fix this:
+
+### 1. First, check if Ollama is actually running
+- **Windows/Mac**: Look for the Ollama icon in your system tray (near the clock). If it isn't there, launch the Ollama desktop app.
+- **Terminal check**: Open a Command Prompt or Terminal and run:
+  ```bash
+  ollama list
+  ```
+  - If you get an error (e.g., `connection refused`), Ollama isn't running. Start it by running `ollama serve` in a terminal, or restart the desktop app.
+
+### 2. Verify the Deepseek-R1 model is downloaded
+- Run this command in your terminal:
+  ```bash
+  ollama list
+  ```
+- Look for `deepseek-r1` (or `deepseek-r1:7b`, `:14b`, etc., depending on your setup).
+- **If it’s missing**, pull it:
+  ```bash
+  ollama pull deepseek-r1
+  ```
+  *(If you are low on RAM/VRAM, use the smaller 7b version: `ollama pull deepseek-r1:7b`)*
+
+### 3. Check the API URL in Local AI Pilot
+- Open Local AI Pilot's settings/preferences.
+- Find the connection settings for Ollama.
+- Ensure the **API URL** is exactly: `http://localhost:11434`
+  - *Note:* If you changed Ollama's default port, adjust accordingly. Do **not** add `/v1` or `/api` at the end unless explicitly required by Pilot.
+
+### 4. Force a "Hard Reset" (Clears stuck cache)
+Sometimes the app caches a bad connection state.
+
+- **Close** Local AI Pilot completely.
+- **Restart** Ollama (right-click the tray icon → "Quit", then re-open it).
+- **Wait 5 seconds** for Ollama to fully initialize, then re-open Local AI Pilot.
+
+### 5. Check your system resources (Memory)
+Deepseek-R1 models are huge. If you have 16GB of RAM or less, the 14b/32b models will crash or time out during loading.
+
+- Open Task Manager (Ctrl+Shift+Esc) or Activity Monitor.
+- Check if your RAM/VRAM is at 100%. If it is:
+  - Pull a smaller quantized version: `ollama pull deepseek-r1:7b-q4_0` (this uses ~4GB RAM).
+  - Go to Local AI Pilot settings and explicitly select this smaller model instead of the default.
+
+### 6. Check Ollama's logs (for the specific error)
+Run Ollama in a terminal window to see the live error:
+
+- Close the Ollama desktop app.
+- Open a terminal and run: `ollama serve`
+- Try connecting from Local AI Pilot again.
+- Look at the terminal output. 
+  - If you see `"model not found"`, pull it manually.
+  - If you see `"cuda out of memory"`, you need a smaller model.
+  - If you see `"context deadline exceeded"`, your computer is taking too long to load the model into memory.
+
+---
+
+**Quickest fix to try right now:** 
+Restart your computer, open Ollama *first*, wait 10 seconds, then open Local AI Pilot. This clears network ports and memory fragmentation better than anything else.
+
+If it still fails after these steps, reply with:
+- Your computer's RAM and GPU model.
+- The exact model name you are trying to use (e.g., `deepseek-r1:14b`).
+- The error shown in the Ollama terminal logs.
+
+I can then give you a targeted fix.
+
+
+ollama run deepseek-r1:7b

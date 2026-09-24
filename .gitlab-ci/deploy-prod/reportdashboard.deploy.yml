@@ -1,0 +1,15 @@
+reportdashboard-prod-deploy:
+  stage: deploy-prod
+  extends: .deploy-kube-prod
+  before_script:
+    # Overwrite this value globally.
+    - APP_NAME=reportdashboard
+
+    # Export them for all jobs.
+    - export APP_NAME
+
+    - export MIN_REPLICAS=3
+    - export MAX_REPLICAS=9
+    - export CPU_LIMIT="800m"
+    - export MEMORY_LIMIT="1024Mi"
+    - export APP_BASE_PATH=/reporting/dashboard

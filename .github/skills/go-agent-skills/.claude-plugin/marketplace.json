@@ -1,0 +1,46 @@
+{
+  "name": "eduardo-sl",
+  "owner": { "name": "Eduardo Spinelli de Lima" },
+  "metadata": { "description": "Skills for Go development" },
+  "plugins": [
+    {
+      "name": "go-agent-skills",
+      "source": ".",
+      "skills": [
+        "./skills/(code-quality)/go-coding-standards",
+        "./skills/(code-quality)/go-code-review",
+        "./skills/(code-quality)/go-error-handling",
+        "./skills/(architecture)/go-architecture-review",
+        "./skills/(architecture)/go-interface-design",
+        "./skills/(architecture)/go-api-design",
+        "./skills/(safety)/go-concurrency-review",
+        "./skills/(safety)/go-security-audit",
+        "./skills/(safety)/go-performance-review",
+        "./skills/(testing)/go-test-quality",
+        "./skills/(testing)/go-test-table-driven",
+        "./skills/(workflow)/go-dependency-audit",
+        "./skills/(workflow)/git-commit",
+        "./skills/(code-quality)/go-context",
+        "./skills/(code-quality)/go-modernize",
+        "./skills/(data)/go-database",
+        "./skills/(architecture)/go-design-patterns",
+        "./skills/(safety)/go-observability",
+        "./skills/(code-quality)/go-data-structures",
+        "./skills/(code-quality)/go-documentation",
+        "./skills/(architecture)/go-project-layout",
+        "./skills/(architecture)/go-dependency-injection",
+        "./skills/(architecture)/go-cli",
+        "./skills/(architecture)/go-grpc",
+        "./skills/(safety)/go-troubleshooting",
+        "./skills/(workflow)/go-ci",
+        "./skills/(workflow)/go-refactoring",
+        "./skills/(workflow)/go-semantic-tools",
+        "./skills/(safety)/go-defensive-coding",
+        "./skills/(workflow)/go-binary-size",
+        "./skills/(architecture)/go-openapi",
+        "./skills/(architecture)/go-graphql",
+        "./skills/(workflow)/go-skills-router"
+      ]
+    }
+  ]
+}

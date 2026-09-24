@@ -1,0 +1,15 @@
+reportarchived-uat-deploy:
+  stage: deploy-uat
+  extends: .deploy-kube-uat
+  before_script:
+    # Overwrite this value globally.
+    - APP_NAME=reportarchived
+
+    # Export them for all jobs.
+    - export APP_NAME
+
+    - export MIN_REPLICAS=1
+    - export MAX_REPLICAS=1
+    - export CPU_LIMIT="800m"
+    - export MEMORY_LIMIT="1024Mi"
+    - export APP_BASE_PATH=/reporting/archived-report

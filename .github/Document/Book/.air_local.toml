@@ -1,0 +1,16 @@
+root = "."
+tmp_dir = "tmp"
+env_files = [".env.dev"]   # โหลด env โดยอัตโนมัติ
+
+[build]
+  # ใช้ array: [binary, argument1, argument2, ...]
+  entrypoint = ["./tmp/main.exe", "serve"]
+  cmd = "go build -o ./tmp/main.exe ./"
+  env = ["GOOS=windows", "GOARCH=amd64"]
+  clean_on_exit = true
+
+[log]
+  time = true
+
+[misc]
+  clean_on_exit = true

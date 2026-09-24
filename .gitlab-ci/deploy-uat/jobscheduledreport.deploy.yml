@@ -1,0 +1,14 @@
+jobscheduledreport-uat-deploy:
+  extends: .cronjob-kube-uat
+  before_script:
+    # Overwrite this value globally.
+    - APP_NAME=jobscheduledreport
+
+    # Export them for all jobs.
+    - export APP_NAME
+
+    - export MIN_REPLICAS=1
+    - export MAX_REPLICAS=1
+    - export CPU_LIMIT="1500m"
+    - export MEMORY_LIMIT="1536Mi"
+    - export JOB_DURATION="*/2 * * * *"

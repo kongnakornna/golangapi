@@ -36,7 +36,7 @@ func (m *GormTransactionManager) Execute(ctx context.Context, fn TxFunc) error {
 }
 
 // ExecuteWithOptions ดำเนินการธุรกรรมพร้อมตัวเลือก
-func (m *GormTransactionManager) ExecuteWithOptions(ctx context.Context, opts *sql.TxOptions, fn TxFunc) error {
+func (m *GormTransactionManager) ExecuteWithOptions(ctx context.Context, opts *sql.TxOptions, fn TxFunc) (err error) {
 	// เริ่มต้นธุรกรรม
 	tx := m.db.WithContext(ctx)
 	if opts != nil {
@@ -53,17 +53,17 @@ func (m *GormTransactionManager) ExecuteWithOptions(ctx context.Context, opts *s
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
-			panic(r) // โยน panic ออกไปอีกครั้ง
+			err = fmt.Errorf("panic in transaction: %v", r)
 		}
 	}()
 
 	// ดำเนินการฟังก์ชันธุรกรรม
-	if err := fn(ctx, tx); err != nil {
+	if fnErr := fn(ctx, tx); fnErr != nil {
 		// ย้อนกลับธุรกรรม
 		if rbErr := tx.Rollback().Error; rbErr != nil {
-			return fmt.Errorf("failed to rollback transaction: %v (original error: %w)", rbErr, err)
+			return fmt.Errorf("failed to rollback transaction: %v (original error: %w)", rbErr, fnErr)
 		}
-		return err
+		return fnErr
 	}
 
 	// ยืนยันธุรกรรม
@@ -75,7 +75,7 @@ func (m *GormTransactionManager) ExecuteWithOptions(ctx context.Context, opts *s
 }
 
 // RunInTransaction ดำเนินการฟังก์ชันภายในธุรกรรม (แบบง่าย)
-func RunInTransaction(db *gorm.DB, fn func(*gorm.DB) error) error {
+func RunInTransaction(db *gorm.DB, fn func(*gorm.DB) error) (err error) {
 	tx := db.Begin()
 	if tx.Error != nil {
 		return tx.Error
@@ -84,13 +84,13 @@ func RunInTransaction(db *gorm.DB, fn func(*gorm.DB) error) error {
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
-			panic(r)
+			err = fmt.Errorf("panic in transaction: %v", r)
 		}
 	}()
 
-	if err := fn(tx); err != nil {
+	if fnErr := fn(tx); fnErr != nil {
 		tx.Rollback()
-		return err
+		return fnErr
 	}
 
 	return tx.Commit().Error
@@ -237,7 +237,7 @@ func (tc *TransactionContext) Rollback() error {
 func (tc *TransactionContext) Complete(err error) error {
 	if err != nil {
 		if rbErr := tc.Rollback(); rbErr != nil {
-			return fmt.Errorf("rollback failed: %v, original error: %w", rbErr, err)
+			return fmt.Errorf("🔴 rollback failed: %v, original error: %w", rbErr, err)
 		}
 		return err
 	}
@@ -245,19 +245,18 @@ func (tc *TransactionContext) Complete(err error) error {
 }
 
 // WithTransaction ดำเนินการฟังก์ชันภายในธุรกรรม (พร้อมบริบท)
-func WithTransaction(ctx context.Context, db *gorm.DB, fn func(context.Context, *gorm.DB) error) error {
-	tc, err := NewTransactionContext(ctx, db)
-	if err != nil {
-		return err
+func WithTransaction(ctx context.Context, db *gorm.DB, fn func(context.Context, *gorm.DB) error) (err error) {
+	tc, tcErr := NewTransactionContext(ctx, db)
+	if tcErr != nil {
+		return tcErr
 	}
 
 	defer func() {
 		if r := recover(); r != nil {
 			tc.Rollback()
-			panic(r)
+			err = fmt.Errorf("panic in transaction: %v", r)
 		}
 	}()
 
-	err = fn(tc.Context(), tc.DB())
-	return tc.Complete(err)
+	return tc.Complete(fn(tc.Context(), tc.DB()))
 }

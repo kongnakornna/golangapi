@@ -1,0 +1,820 @@
+# 📘 **Python Basic**  
+## Mastering Python 2026: จากพื้นฐานสู่ Web Development (FastAPI + Django) และ AI/Machine Learning
+
+---
+
+# 📖 ส่วน แผนการสอน
+
+## 1. วัตถุประสงค์
+
+1. เพื่อให้ผู้เรียนสามารถเขียนโปรแกรมภาษา Python ได้อย่างถูกต้องตามหลักการของภาษา (PEP 8)
+2. เพื่อให้ผู้เรียนพัฒนา Web Application ได้ทั้ง FastAPI (API-first) และ Django (Full-stack)
+3. เพื่อให้ผู้เรียนเชื่อมต่อฐานข้อมูล (PostgreSQL, MongoDB) และใช้ Cache (Redis) รวมถึง Message Queue (Celery)
+4. เพื่อให้ผู้เรียนสร้างระบบ Machine Learning และ Deploy เป็น API ได้
+5. เพื่อให้ผู้เรียนสามารถวิเคราะห์ปัญหาด้วย Root Cause Analysis (RCA) และใช้ Workflow Diagram ในการออกแบบระบบ
+
+## 2. กลุ่มเป้าหมาย
+
+| กลุ่ม | รายละเอียด |
+|------|-------------|
+| **ผู้เริ่มต้นเขียนโปรแกรม** | ไม่มีพื้นฐานมาก่อน ต้องการเริ่มต้นด้วย Python |
+| **นักศึกษาสายคอมพิวเตอร์** | ต้องการเรียนรู้ Full-stack + AI/ML |
+| **Developer เปลี่ยนสาย** | จากภาษาอื่น (Java, PHP, JavaScript) มา Python |
+| **Data Analyst / Data Scientist** | ต้องการพัฒนา API และ Deploy โมเดล |
+| **DevOps / System Engineer** | ต้องการเข้าใจระบบ Backend + MLOps |
+
+## 3. ความรู้พื้นฐาน
+
+| ความรู้ | ระดับที่ต้องการ | หมายเหตุ |
+|--------|----------------|----------|
+| การใช้คอมพิวเตอร์พื้นฐาน | ✅ จำเป็น | รู้จักไฟล์-โฟลเดอร์, ติดตั้งโปรแกรม |
+| พื้นฐานการเขียนโปรแกรม | ⚠️ มีก็ดี | if, loop, function (ถ้าไม่มีเรียนได้) |
+| พื้นฐานฐานข้อมูล | ⚠️ มีก็ดี | SELECT, INSERT, UPDATE, DELETE |
+| พื้นฐานเว็บ (HTML/HTTP) | ⚠️ มีก็ดี | GET, POST, status code |
+| พื้นฐานคณิตศาสตร์และสถิติ | ⚠️ มีก็ดี | สำหรับภาค ML/AI |
+
+> 💡 **คำแนะนำ:** หากไม่มีพื้นฐานเลย ให้เริ่มจากภาค 1 (บทที่ 7-40) ตามลำดับ
+
+## 4. เนื้อหาโดยย่อ กระชับ เน้นวัตถุประสงค์และประโยชน์
+
+### ภาพรวม 6 ภาค 120 บท
+
+| ภาค | หัวข้อ | จำนวนบท | วัตถุประสงค์หลัก | ประโยชน์ |
+|-----|-------|---------|-----------------|----------|
+| 0 | เครื่องมือและแนวทาง | 6 | ตั้งค่าแวดล้อม, เรียนรู้เครื่องมือ | พร้อมพัฒนาจริง |
+| 1 | พื้นฐาน Python | 34 | เขียน Python ได้คล่อง | รากฐานแข็งแรง |
+| 2 | FastAPI | 20 | สร้าง REST API ความเร็วสูง | Backend สมัยใหม่ |
+| 3 | Django | 15 | สร้าง Full-stack Web | เว็บครบวงจร |
+| 4 | DB, Cache, Queue | 15 | จัดการข้อมูลและระบบ async | ระบบ scale ได้ |
+| 5 | Machine Learning/AI | 20 | สร้างและ deploy โมเดล AI | Data Scientist + MLOps |
+| 6 | ขั้นสูงและภาคผนวก | 10 | Clean Code, Testing, CI/CD, Templates | พัฒนามืออาชีพ |
+
+### ประโยชน์หลักของการเรียนเนื้อหานี้
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     BENEFITS PYTHON 2026                        │
+├─────────────────────────────────────────────────────────────────┤
+│  🚀 Productivity   → เขียนน้อย ได้มาก (Python syntax)          │
+│  🔗 Full-stack     → FastAPI + Django + Database + Cache       │
+│  🤖 AI/ML Ready    → สร้างและ deploy โมเดลเป็น API              │
+│  📈 Scalability    → Async, Celery, Redis, Kubernetes          │
+│  🛡️ Battle-tested  → Netflix, Instagram, Dropbox ใช้ Python    │
+│  💼 High Salary    → Python Developer เงินเดือนสูง (THB 50-150k)│
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+# 📑 ส่วน เอกสาร
+
+## 1. บทนำ
+
+**"Python Basic: Mastering Python 2026"** เป็นหนังสือเรียนภาษาไทยที่ครอบคลุมทุกด้านของการพัฒนา ด้วย Python ตั้งแต่พื้นฐานจนถึงระดับมืออาชีพ เหมาะสำหรับผู้ที่ต้องการเป็น **Full-stack Developer, Backend Engineer, Data Scientist, หรือ ML Engineer**
+
+ในปี 2026 Python ยังคงเป็นภาษาที่ได้รับความนิยมสูงสุดจาก TIOBE และ Stack Overflow เนื่องจาก:
+- เรียนรู้ง่าย ไวยากรณ์คล้ายภาษาอังกฤษ
+- มีไลบรารีครบครันทั้ง Web, Data, AI
+- ชุมชนขนาดใหญ่ทั่วโลก
+- บริษัทชั้นนำใช้ Python: Google, Meta, Netflix, OpenAI, LINE, Agoda
+
+หนังสือเล่มนี้ถูกออกแบบให้:
+- **เน้นปฏิบัติจริง** → โค้ดทุกตัวอย่าง run ได้จริง
+- **มี Template พร้อมใช้** → Task List, Checklist, Workflow Diagram
+- **สอนการวิเคราะห์ปัญหา** → RCA (Root Cause Analysis)
+- **ครอบคลุม AI/ML** → TensorFlow, PyTorch, LangChain, RAG
+
+---
+
+## 2. บทนิยาม (ศัพท์ทุกส่วน)
+
+### 📌 Queue Processor
+
+| หัวข้อ | รายละเอียด |
+|-------|-------------|
+| **คืออะไร** | Queue Processor คือระบบที่ประมวลผลงานแบบ Asynchronous โดยนำงานเข้า Queue (คิว) แล้วมี Worker คอยดึงงานไปประมวลผลทีละรายการ ป้องกันการ overload ระบบหลัก |
+| **มีกี่แบบ** | 1. **In-memory Queue** (Redis List, Python queue.Queue) - เร็วแต่ข้อมูลหายถ้า restart <br> 2. **Persistent Queue** (RabbitMQ, Apache Kafka, AWS SQS) - ข้อมูลคงทน <br> 3. **Priority Queue** - จัดลำดับความสำคัญ <br> 4. **Delay Queue** - หน่วงเวลาการทำงาน |
+| **ใช้อย่างไร / กรณีไหน** | ✅ **ใช้เมื่อ:** ส่งอีเมลเป็นพันฉบับ, ประมวลผลรูปภาพ/video, สร้างรายงานใช้เวลานาน, สั่งซื้อสินค้าที่ต้องตรวจสอบสต็อก <br> ❌ **ไม่ใช้เมื่อ:** งานที่ต้องตอบกลับทันที (< 1 วินาที), งานที่มีข้อมูลเล็กน้อย |
+| **ทำไมต้องใช้** | - ป้องกัน Timeout <br> - ลดภาระ Server หลัก <br> - รองรับปริมาณงานที่พุ่งสูง (Spike) <br> - กระจายงานหลายเครื่อง |
+| **ประโยชน์ที่ได้รับ** | 📈 Scalability, 💪 Resilience (ถ้า Worker ตาย งานไม่หาย), 🔄 Retry อัตโนมัติ, 📊 Monitor คิวคงค้าง |
+
+### 📌 ORM (Object-Relational Mapping)
+
+| หัวข้อ | รายละเอียด |
+|-------|-------------|
+| **คืออะไร** | ORM คือเทคนิคที่แปลงตารางในฐานข้อมูลเป็น Class ใน Python และแถวข้อมูลเป็น Object ทำให้เขียน SQL ไม่เป็นก็ใช้ database ได้ |
+| **มีกี่แบบ** | 1. **Full-featured ORM** (SQLAlchemy, Django ORM) - รองรับความสัมพันธ์ complex <br> 2. **Micro ORM** (Peewee, SQLModel) - เบา ใช้ง่าย |
+| **ใช้อย่างไร** | `User.query.filter_by(name="สมชาย").first()` แทน `SELECT * FROM users WHERE name='สมชาย' LIMIT 1` |
+| **ประโยชน์** | ✅ ป้องกัน SQL Injection อัตโนมัติ, ✅ เปลี่ยนฐานข้อมูลง่าย (SQLite → PostgreSQL), ✅ ทำงานกับ relation ง่าย (user.posts) |
+
+### 📌 DTO / Pydantic
+
+| หัวข้อ | รายละเอียด |
+|-------|-------------|
+| **คืออะไร** | Data Transfer Object - โครงสร้างข้อมูลสำหรับรับ/ส่งระหว่าง layers, Pydantic เป็นไลบรารียอดนิยมใน FastAPI สำหรับ validation |
+| **ประโยชน์** | Validation อัตโนมัติ, Type hints, Serialization/Deserialization |
+
+### 📌 Celery
+
+| หัวข้อ | รายละเอียด |
+|-------|-------------|
+| **คืออะไร** | Celery คือ Distributed Task Queue สำหรับ Python ใช้กับ Broker (RabbitMQ/Redis) เพื่อกระจายงาน |
+| **ส่วนประกอบ** | Producer (สร้าง task) → Broker (Redis/RabbitMQ) → Worker (ประมวลผล) → Result Backend (เก็บผลลัพธ์) |
+
+### 📌 RCA (Root Cause Analysis)
+
+| หัวข้อ | รายละเอียด |
+|-------|-------------|
+| **คืออะไร** | กระบวนการวิเคราะห์หาสาเหตุที่แท้จริงของปัญหา ไม่ใช่แค่แก้อาการ |
+| **เครื่องมือ** | 5 Whys (ถามทำไม 5 ครั้ง), Fishbone Diagram (ก้างปลา) |
+| **ขั้นตอน** | 1. Define problem → 2. Gather data → 3. Analyze causes → 4. Implement solution → 5. Monitor |
+| **ประโยชน์** | ป้องกันปัญหาไม่ให้เกิดซ้ำ, ลดต้นทุนการแก้ไขซ้ำซาก |
+
+---
+
+## 3. บทหัวข้อ (สารบัญ 120 บท)
+
+> ✅ ดูสารบัญเต็มได้ที่หน้าแรกของเอกสารนี้ (แสดงไว้แล้ว)
+
+---
+
+## 5. ออกแบบคู่มือ (User Manual Design)
+
+### รูปแบบหนังสือ
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  📘 แต่ละบทประกอบด้วย                                       │
+├────────────────────────────────────────────────────────────┤
+│  1. 🎯 วัตถุประสงค์ของบท                                     │
+│  2. 📖 เนื้อหา (ทฤษฎี + ตัวอย่าง)                           │
+│  3. 💻 โค้ดตัวอย่าง (run ได้จริง) พร้อม comment ไทย/อังกฤษ   │
+│  4. 🧪 แบบฝึกหัด                                             │
+│  5. ✅ Checklist ทบทวน                                       │
+│  6. 📝 Task List สำหรับฝึกปฏิบัติ                             │
+└────────────────────────────────────────────────────────────┘
+```
+
+### สัญลักษณ์ที่ใช้
+
+| สัญลักษณ์ | ความหมาย |
+|-----------|----------|
+| 💡 | Tip / คำแนะนำ |
+| ⚠️ | คำเตือน / ข้อควรระวัง |
+| 🐛 | Bug ที่พบบ่อย |
+| 🔧 | ขั้นตอนปฏิบัติ |
+| 📝 | แบบฝึกหัด |
+| ✅ | Checklist |
+| 📎 | ไฟล์ตัวอย่างเพิ่มเติม |
+| 🎯 | วัตถุประสงค์ |
+
+### มาตรฐานการเขียนโค้ด (PEP 8)
+
+```python
+# ✅ Good
+def calculate_total_price(items: list[dict]) -> float:
+    """คำนวณราคารวมพร้อม VAT 7%"""
+    subtotal = sum(item['price'] * item['quantity'] for item in items)
+    return subtotal * 1.07
+
+# ❌ Bad
+def calc(x): return x*1.07  # ไม่มี type hint, ชื่อไม่สื่อ
+```
+
+---
+
+## 6. ออกแบบ Workflow + Dataflow Diagram (Draw.io)
+
+### ตัวอย่าง: Dataflow ของ FastAPI + Celery + Redis + PostgreSQL
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         WORKFLOW: FastAPI + Celery                          │
+│                         (วาดด้วย Draw.io รูปแบบ Flowchart TB)               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                    ┌──────────────┐
+                    │   Client     │
+                    │  (Browser/   │
+                    │   Mobile)    │
+                    └──────┬───────┘
+                           │ HTTP POST /orders
+                           ▼
+                    ┌──────────────┐
+                    │   FastAPI    │  ←─┐
+                    │  (Main App)  │    │
+                    └──────┬───────┘    │
+                           │            │
+            ┌──────────────┼────────────┼──────────────────────┐
+            │              │            │                      │
+            ▼              ▼            ▼                      │
+    ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
+    │ Validate    │ │ Save to     │ │ Send Task   │           │
+    │ Request     │ │ PostgreSQL  │ │ to Redis    │           │
+    │ (Pydantic)  │ │ (SQLAlchemy)│ │ (Celery)    │           │
+    └─────────────┘ └─────────────┘ └──────┬──────┘           │
+                                            │                   │
+                                            ▼                   │
+                                    ┌─────────────┐           │
+                                    │ Redis Broker│           │
+                                    │  (Queue)    │           │
+                                    └──────┬──────┘           │
+                                           │                   │
+                                           ▼                   │
+                                    ┌─────────────┐           │
+                                    │ Celery      │           │
+                                    │ Worker      │           │
+                                    └──────┬──────┘           │
+                                           │                   │
+                            ┌──────────────┼──────────────┐   │
+                            ▼              ▼              ▼   │
+                    ┌─────────────┐ ┌─────────────┐ ┌─────────┐│
+                    │Send Email   │ │Update Stock │ │Create   ││
+                    │ (SMTP)      │ │ (PostgreSQL)│ │Invoice  ││
+                    └─────────────┘ └─────────────┘ └────┬────┘│
+                                                          │     │
+                                                          ▼     │
+                                                    ┌─────────┐ │
+                                                    │ Result  │ │
+                                                    │ Backend │ │
+                                                    │ (Redis) │ │
+                                                    └────┬────┘ │
+                                                         │      │
+                                                         ▼      │
+┌────────────────────────────────────────────────────────────────┐
+│  Response 202 Accepted → { "task_id": "xxx", "status": "pending" } │
+│  Client can poll GET /tasks/{task_id} ◄────────────────────────────┘
+└────────────────────────────────────────────────────────────────┘
+```
+
+### คำอธิบายแบบละเอียด
+
+| ขั้นตอน | ชื่อโหนด | รายละเอียด | เทคโนโลยี |
+|---------|----------|------------|-----------|
+| 1 | Client | ผู้ใช้ส่ง POST /orders พร้อมข้อมูล订单 | HTTP, JSON |
+| 2 | FastAPI | รับ request, validate ด้วย Pydantic | Uvicorn, FastAPI |
+| 3 | PostgreSQL | บันทึก order status = 'pending' | SQLAlchemy, asyncpg |
+| 4 | Redis Broker | ส่ง task `process_order.delay(order_id)` | Celery, redis-py |
+| 5 | Celery Worker | ดึง task จาก queue แบบ FIFO | Celery, multiprocessing |
+| 6 | Sub-tasks | ส่งอีเมล, อัปเดตสต็อก, สร้าง invoice | SMTP, SQLAlchemy |
+| 7 | Result Backend | เก็บผลลัพธ์ status = 'completed' | Redis |
+| 8 | Client Polling | GET /tasks/{task_id} ตรวจสอบสถานะ | HTTP |
+
+### กรณีศึกษา: ระบบสั่งอาหารออนไลน์ (Food Delivery)
+
+```
+场景: User กดสั่งอาหาร 100 รายการพร้อมกันช่วงเที่ยง
+
+ปัญหาเดิม (ไม่มี Queue):
+- API timeout (30 วินาที) เพราะส่งอีเมล+พิมพ์ใบสั่งช้า
+- Database connection pool หมด
+- Server CPU 100%
+
+วิธีแก้ด้วย Queue Processor:
+1. API รับ order → บันทึก DB → ส่ง task ไป Redis (ใช้เวลา < 100ms)
+2. Response กลับทันที {"order_id": 123, "status": "processing"}
+3. Worker 5 เครื่อง ค่อยๆ ดึงทีละ 10 task ต่อเครื่อง
+4. ส่งอีเมล + พิมพ์ใบสั่งทีละรายการ
+
+ผลลัพธ์:
+- API response time: 30 วินาที → 100ms
+- ไม่มี timeout
+- รองรับ order ได้ 10,000+ รายการ/ชั่วโมง
+```
+
+### เทมเพลตและตัวอย่างโค้ด (Run ได้ทันที)
+
+```python
+# ============================================================
+# FILE: celery_app.py
+# DESCRIPTION: ตัวอย่าง Celery + Redis สำหรับประมวลผลงาน Async
+# ============================================================
+
+from celery import Celery
+import time
+import logging
+
+# ตั้งค่า logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# สร้าง Celery app - เชื่อมต่อ Redis (เปลี่ยน URL ตาม环境)
+# วิธีรัน: celery -A celery_app worker --loglevel=info
+app = Celery(
+    'tasks',
+    broker='redis://localhost:6379/0',      # Broker (Queue)
+    backend='redis://localhost:6379/1'      # Result backend
+)
+
+# ตั้งค่าเพิ่มเติม
+app.conf.update(
+    task_serializer='json',
+    accept_content=['json'],
+    result_serializer='json',
+    timezone='Asia/Bangkok',
+    enable_utc=True,
+    task_track_started=True,      # ติดตามสถานะ started
+    task_time_limit=30 * 60,      # timeout 30 นาที
+    task_soft_time_limit=25 * 60, # soft timeout 25 นาที
+)
+
+
+@app.task(bind=True, name='send_email_task')
+def send_email_task(self, to_email: str, subject: str, body: str) -> dict:
+    """
+    ส่งอีเมลแบบ Async พร้อม retry อัตโนมัติ
+    
+    Args:
+        to_email (str): อีเมลผู้รับ
+        subject (str): หัวข้ออีเมล
+        body (str): เนื้อหาอีเมล
+    
+    Returns:
+        dict: ผลลัพธ์ {status, message_id}
+    
+    การใช้งาน:
+        result = send_email_task.delay("user@example.com", "Hello", "Content")
+        print(result.id)  # task_id สำหรับติดตาม
+    """
+    logger.info(f"🟡 Task {self.request.id} เริ่มส่งอีเมลไป {to_email}")
+    
+    try:
+        # อัปเดตสถานะ (client เห็นผ่าน task.status)
+        self.update_state(state='PROGRESS', meta={'progress': 30})
+        
+        # จำลองการส่งอีเมล (ใช้ time.sleep แทน SMTP จริง)
+        time.sleep(2)
+        
+        self.update_state(state='PROGRESS', meta={'progress': 80})
+        time.sleep(1)
+        
+        # สมมติว่าสำเร็จ
+        result = {
+            'status': 'sent',
+            'message_id': f'msg_{self.request.id[:8]}',
+            'to': to_email
+        }
+        
+        logger.info(f"✅ Task {self.request.id} สำเร็จ")
+        return result
+        
+    except Exception as e:
+        logger.error(f"❌ Task {self.request.id} ล้มเหลว: {str(e)}")
+        # Retry อัตโนมัติ 3 ครั้ง ทุก 60 วินาที
+        raise self.retry(exc=e, countdown=60, max_retries=3)
+
+
+@app.task(name='process_order_task')
+def process_order_task(order_id: int, items: list) -> dict:
+    """
+    ประมวลผลคำสั่งซื้อ (process order)
+    
+    การใช้งาน:
+        process_order_task.delay(order_id=123, items=[{"name": "ข้าวผัด", "qty": 2}])
+    """
+    logger.info(f"📦 กำลังประมวลผล order #{order_id}")
+    
+    # คำนวณราคารวม
+    total = sum(item.get('price', 0) * item.get('qty', 1) for item in items)
+    
+    # อัปเดตฐานข้อมูล (จำลอง)
+    time.sleep(1)
+    
+    return {
+        'order_id': order_id,
+        'total': total,
+        'status': 'completed'
+    }
+
+
+# ============================================================
+# วิธีเรียกใช้งานจาก FastAPI
+# ============================================================
+"""
+from fastapi import FastAPI, BackgroundTasks
+from celery_app import send_email_task, process_order_task
+
+app = FastAPI()
+
+@app.post("/send-email")
+async def send_email(email: str, subject: str, body: str):
+    # วิธีที่ 1: ส่ง task แบบ async
+    task = send_email_task.delay(email, subject, body)
+    return {"task_id": task.id, "status": "pending"}
+
+@app.get("/task/{task_id}")
+async def get_task_status(task_id: str):
+    from celery.result import AsyncResult
+    task = AsyncResult(task_id, app=send_email_task)
+    return {
+        "task_id": task_id,
+        "status": task.status,
+        "result": task.result if task.ready() else None
+    }
+
+@app.post("/order")
+async def create_order(order_data: dict, background_tasks: BackgroundTasks):
+    # วิธีที่ 2: ใช้ BackgroundTasks (ง่ายแต่ไม่ persistent)
+    background_tasks.add_task(process_order_task, order_data['id'], order_data['items'])
+    return {"message": "order received"}
+"""
+```
+
+---
+
+## 4. บทสรุปท้ายบท (ตัวอย่าง)
+
+### บทที่ 83-85: Redis Pub/Sub + Celery + Flower
+
+| หัวข้อ | รายละเอียด |
+|-------|-------------|
+| **ประโยชน์ที่ได้รับ** | ✅ ระบบรองรับงานหนักแบบ async, ✅ ติดตาม task ด้วย Flower, ✅ Retry อัตโนมัติ, ✅ กระจายงานหลายเครื่อง |
+| **ข้อควรระวัง** | ⚠️ Celery worker ต้องมี memory เพียงพอ, ⚠️ Redis เป็น RAM-based (ข้อมูลหายถ้า restart), ⚠️ ระวัง task explosion (สร้าง task เยอะเกิน) |
+| **ข้อดี** | เร็วกว่า BackgroundTasks ของ FastAPI, มี Dashboard, รองรับ periodic tasks (cron) |
+| **ข้อเสีย** | ตั้งค่าซับซ้อนกว่า, ต้องการ broker เพิ่ม (Redis/RabbitMQ), debug ยากกว่า sync code |
+| **ข้อห้าม** | ❌ ห้ามใช้กับงานที่ต้องตอบกลับทันที (< 1 วินาที), ❌ ห้ามเก็บข้อมูลใหญ่ใน task result, ❌ ห้าม loop สร้าง task infinite |
+| **แหล่งอ้างอิง** | [Celery Official Docs](https://docs.celeryq.dev/), [Flower GitHub](https://github.com/mher/flower), [Redis Pub/Sub](https://redis.io/docs/interact/pubsub/) |
+
+---
+
+## 7. TASK LIST Template
+
+### 📝 Task List: การสร้างระบบ FastAPI + Celery + Redis
+
+| Task ID | ชื่อ Task | รายละเอียด | เวลาโดยประมาณ | Status | ผู้รับผิดชอบ | หมายเหตุ |
+|---------|-----------|------------|----------------|--------|--------------|----------|
+| T001 | ติดตั้ง dependencies | `pip install fastapi uvicorn celery redis sqlalchemy psycopg2-binary` | 5 นาที | ⬜ TODO | - | ใช้ Poetry จะดีกว่า |
+| T002 | ตั้งค่า Redis | `docker run -d -p 6379:6379 redis` หรือติดตั้ง local | 10 นาที | ⬜ TODO | - | ตรวจสอบ `redis-cli ping` |
+| T003 | สร้าง Celery app | สร้าง `celery_app.py` ตามตัวอย่าง | 15 นาที | ⬜ TODO | - | ตั้ง broker และ backend |
+| T004 | สร้าง task function | `send_email_task`, `process_order_task` | 20 นาที | ⬜ TODO | - | มี logging และ retry |
+| T005 | รัน Celery worker | `celery -A celery_app worker --loglevel=info` | 5 นาที | ⬜ TODO | - | รันอีก terminal |
+| T006 | สร้าง FastAPI endpoints | POST /send-email, GET /task/{id}, POST /order | 30 นาที | ⬜ TODO | - | ใช้ BackgroundTasks หรือ .delay() |
+| T007 | ทดสอบด้วย curl/Postman | ส่ง request และตรวจสอบ task status | 15 นาที | ⬜ TODO | - | ดู logs ทั้ง API และ worker |
+| T008 | ติดตั้ง Flower | `pip install flower` และรัน `celery -A celery_app flower` | 10 นาที | ⬜ TODO | - | เข้า http://localhost:5555 |
+| T009 | เพิ่ม periodic task | ใช้ `celery beat` สำหรับงาน定时 | 20 นาที | ⬜ TODO | - | เช่น ส่งรายงานทุกวัน |
+| T010 | Deploy ด้วย Docker | สร้าง Dockerfile + docker-compose.yml | 45 นาที | ⬜ TODO | - | รวม Redis, Worker, API, Flower |
+
+### กระบวนการทำงานแต่ละขั้นตอน
+
+```mermaid
+flowchart LR
+    A[T001 ติดตั้ง] --> B[T002 Redis]
+    B --> C[T003 Celery App]
+    C --> D[T004 สร้าง Task]
+    D --> E[T005 รัน Worker]
+    E --> F[T006 FastAPI]
+    F --> G[T007 ทดสอบ]
+    G --> H[T008 Flower]
+    H --> I[T009 Periodic]
+    I --> J[T010 Deploy]
+```
+
+### กระบวนการตรวจสอบการทำงานแต่ละขั้นตอน
+
+| ขั้นตอน | วิธีตรวจสอบ | Expected Result | ปัญหาที่พบบ่อย |
+|---------|-------------|-----------------|----------------|
+| T001 | `pip list | grep -E "fastapi\|celery\|redis"` | แสดง version | ลืม activate venv |
+| T002 | `redis-cli ping` | `PONG` | Redis ไม่รัน หรือ port ถูกใช้ |
+| T003 | `python -c "from celery_app import app; print(app)"` | Celery object | ImportError: path ไม่ถูก |
+| T004 | ดู log worker | "Ready to process tasks" | Syntax error |
+| T005 | `ps aux | grep celery` | มี process celery | Worker crash |
+| T006 | `curl http://localhost:8000/docs` | Swagger UI | FastAPI ไม่รัน |
+| T007 | ดู Flower dashboard | มี task history | Task ไม่เข้า queue |
+
+---
+
+## 8. CHECKLIST Template
+
+### ✅ Checklist: การตรวจสอบระบบ Production พร้อมใช้งาน
+
+| หมวดหมู่ | รายการตรวจสอบ | Pass/Fail | หมายเหตุ |
+|----------|---------------|-----------|----------|
+| **Environment** | ใช้ Environment Variables (.env) ไม่ hardcode | ☐ | `python-dotenv` หรือ `pydantic-settings` |
+| | แยก Dev/Staging/Production config | ☐ | |
+| | ปิด DEBUG mode ใน production | ☐ | `DEBUG=False` |
+| **Security** | ใช้ HTTPS (SSL/TLS) | ☐ | Let's Encrypt หรือ cloud provider |
+| | มี Rate Limiting ป้องกัน DoS | ☐ | `slowapi` หรือ `django-ratelimit` |
+| | JWT มี expiration time | ☐ | `access_token` 15-30 นาที |
+| | ไม่เก็บ secret ใน code | ☐ | ใช้ Vault หรือ env |
+| **Database** | มี connection pooling | ☐ | SQLAlchemy `pool_size=20` |
+| | มี migration plan (Alembic) | ☐ | `alembic upgrade head` |
+| | Backup อัตโนมัติ | ☐ | pg_dump หรือ cloud backup |
+| **Queue (Celery)** | Broker (Redis) มี persistence | ☐ | `appendonly yes` |
+| | Worker มี max tasks per child | ☐ | `--max-tasks-per-child 100` |
+| | มี monitoring (Flower) | ☐ | |
+| | Dead Letter Queue สำหรับ task ล้มเหลว | ☐ | `task_acks_late=True` |
+| **Monitoring** | Logging ระดับ INFO/WARNING/ERROR | ☐ | |
+| | Health check endpoint | ☐ | `/health` |
+| | Alerting (Prometheus + Grafana) | ☐ | |
+| **Testing** | Unit test coverage > 80% | ☐ | `pytest --cov` |
+| | Integration test (API → DB) | ☐ | |
+| | Load test (Locust / k6) | ☐ | |
+| **Deployment** | Docker container | ☐ | |
+| | CI/CD (GitHub Actions) | ☐ | Auto test + deploy |
+| | Rollback plan | ☐ | |
+
+### กระบวนการตรวจสอบการทำงานแต่ละขั้นตอน (Checklist รายวัน)
+
+```
+Daily Production Checklist:
+
+[ ] 08:00 - ตรวจสอบว่า API response time < 500ms (Grafana)
+[ ] 08:00 - ตรวจสอบ Celery queue length < 1000 (Flower)
+[ ] 08:00 - ตรวจสอบ Database connection < 80%
+[ ] 08:00 - ตรวจสอบ Redis memory usage < 70%
+[ ] 12:00 - ดู error logs (Sentry หรือ ELK)
+[ ] 16:00 - ตรวจสอบ backup ล่าสุดสำเร็จ
+[ ] 17:00 - สรุปรายงานจำนวน request/error
+```
+
+---
+
+## 9. สรุป
+
+### 📌 สรุปเนื้อหาหนังทั้งเล่ม
+
+หนังสือ **"Python Basic: Mastering Python 2026"** ครอบคลุม:
+
+| หมวด | สรุป |
+|------|------|
+| **ภาค 0-1 (พื้นฐาน)** | ติดตั้ง Python, ไวยากรณ์, OOP, Exception, File I/O, Testing |
+| **ภาค 2 (FastAPI)** | สร้าง REST API, Dependency Injection, JWT, WebSocket, Deployment |
+| **ภาค 3 (Django)** | MVT, ORM, Admin, DRF, Channels, e-Commerce project |
+| **ภาค 4 (DB + Cache + Queue)** | PostgreSQL, MongoDB, Redis, Celery, Dataflow Diagram |
+| **ภาค 5 (AI/ML)** | NumPy, pandas, scikit-learn, TensorFlow, PyTorch, LLM, LangChain, MLOps |
+| **ภาค 6 (ขั้นสูง)** | Clean Code, SOLID, Design Patterns, AsyncIO, CI/CD, Monitoring |
+
+### 🎯 สิ่งที่คุณจะทำได้หลังจากอ่านจบ
+
+```python
+# คุณจะสามารถสร้างระบบแบบนี้ได้:
+from fastapi import FastAPI, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from celery import Celery
+from transformers import pipeline
+
+app = FastAPI()
+celery = Celery(broker='redis://localhost:6379')
+
+@app.post("/predict")
+async def predict(image_url: str, db: AsyncSession = Depends(get_db)):
+    # 1. Validate input
+    # 2. Save to PostgreSQL
+    # 3. Send task to Celery (ประมวลผล AI)
+    # 4. Return task_id
+    # 5. Worker uses PyTorch model
+    # 6. Result cached in Redis
+    pass
+```
+
+### 📚 แหล่งอ้างอิงที่สำคัญ
+
+| แหล่ง | URL | ใช้สำหรับ |
+|-------|-----|----------|
+| Python Official | https://python.org | Docs, downloads |
+| FastAPI | https://fastapi.tiangolo.com | Web framework |
+| Django | https://djangoproject.com | Full-stack |
+| Celery | https://docs.celeryq.dev | Task queue |
+| SQLAlchemy | https://sqlalchemy.org | ORM |
+| TensorFlow | https://tensorflow.org | Deep Learning |
+| PyTorch | https://pytorch.org | Deep Learning |
+| Hugging Face | https://huggingface.co | Pre-trained models |
+
+### 💬 คำส่งท้าย
+
+> "Python is the second-best language for everything, but the best language for glueing everything together." — ความจริง: Python กลายเป็น language อันดับ 1 สำหรับ Data Science + Backend + Automation ในปี 2026
+
+**ขอให้สนุกกับการเขียนโค้ดและสร้างสิ่งใหม่ๆ ด้วย Python ครับ!** 🐍✨
+
+---
+
+*📅 อัปเดตล่าสุด: 2026*  
+*✍️ โดย: ทีมผู้เขียน Python Basic*  
+*📧 ติดต่อ: python.basic@example.com*  
+*🌐 GitHub: github.com/python-basic-2026*
+
+
+
+
+**ชื่อหนังสือ: Python Basic**  
+**Mastering Python 2026: จากพื้นฐานสู่ Web Development (FastAPI + Django) และ AI/Machine Learning**
+
+ส่วน แผนการสอน 
+	1.วัตุประสงค์
+	2.กลุ่มเป้าหมาย
+	3.ความรู้พื้นฐาน
+	4.เนื้อหา โดยย่อ กระชับ เน้น วัตถุประสงค์  ประโยชน์ของการใช้
+ส่วน เอกสาร
+	1.สร้างบทนำ
+	2.สร้างบทนิยาม
+	3.สร้างบทหัวข้อ
+	5.ออกแบบคู่มือ
+	6.ออกแบบ workflow
+	7.TASK LIST Template
+	8.CHECKLIST Template
+	9.สรุป
+1.บทนำ
+2.บทนิยาม ศัพท์ ทุกส่วน
+ เช่น 
+	Queue Processor คืออะไร
+	Queue Processor มีกี่แบบ
+	Queue Processor ใช้อย่างไร นำในกรณีไหน ทำไม่ต้องใช้ ประโยชน์ที่ได้รับ
+3.ออกแบบ workflow
+  - วาดรูป dataflow สร้างรูปแบบ draw.io เหมือนจริง ลักษณะ flowchart TB   เพื่ออธิบายกระบวนการ ทำความเข้าใจ
+  - พร้อมอธิบาย แบบ ละเอียด 
+  - ยกตัวอย่างการใช้งานจริง หรือ กรณีศึกษา 
+  - เทมเพลตและตัวอย่างโค้ด พร้อมนำไป run ได้ทันที  มีคำอธิบายการใช้งานแต่ละจุด การคอมเม้น ภาษาไทย และ ภาษาอังกถษ
+4.ทำบทสรุปท้ายบท
+   -ประโยชน์ที่ได้รับ
+   -ข้อควรระวัง
+   -ข้อดี
+   -ข้อเสีย
+   -ข้อห้าม ถ้ามี
+   -แหล่ง อ้างอิ่ง ที่มา 
+5.คู่มือ
+   -TASK LIST Template
+    -กระบวนการทำงานแต่ละขั้นตอน
+	-กระบวนการตรวจสอบ การทำงานแต่ละขั้นตอน
+	-กระบวนการ อธิบายปัญหา สรุป 
+	   - Root Cause Analysis (RCA) คือแนวทางหรือกระบวนการวิเคราะห์ปัญหาอย่างเป็นระบบ เพื่อค้นหา "สาเหตุที่แท้จริง" (Root Cause) ของปัญหาที่เกิดขึ้น 
+			แทนที่จะแก้ไขเพียงอาการ (Symptoms) ที่ปรากฏ ช่วยป้องกันปัญหาไม่ให้เกิดซ้ำอย่างยั่งยืน 
+			โดยนิยมใช้เครื่องมืออย่างเทคนิค 5 Why หรือแผนภูมิก้างปลามาช่วยในการวิเคราะห์ 
+			แนวทางและขั้นตอนการวิเคราะห์ Root Cause
+			กำหนดปัญหาให้ชัดเจน (Define the Problem): ระบุสิ่งที่เกิดขึ้นจริง ผลกระทบ และขอบเขตของปัญหาอย่างชัดเจนและวัดผลได้
+			รวบรวมข้อมูล (Gather Data): หาหลักฐาน บันทึกข้อมูล หรือสัมภาษณ์ผู้เกี่ยวข้อง เพื่อทำความเข้าใจสถานการณ์
+			วิเคราะห์สาเหตุ (Analyze the Root Cause): ใช้เทคนิค เช่น "5 Why" (ถาม "ทำไม" เพื่อเจาะลึก 5 ครั้ง) หรือ แผนภูมิก้างปลา (Fishbone Diagram) 
+			เพื่อแยกแยะสาเหตุที่เป็นไปได้จนถึงสาเหตุรากฐาน
+			หาวิธีแก้ไข (Implement Solutions): กำหนดแนวทางแก้ไขที่ตรงจุดเพื่อกำจัดต้นตอของปัญหา
+			ติดตามผล (Monitor): ติดตามและประเมินผลลัพธ์เพื่อยืนยันว่าการแก้ไขได้ผลและปัญหาไม่กลับมาเกิดขึ้นซ้ำ 
+		- ประโยชน์ของการใช้ RCA
+			แก้ไขปัญหาได้อย่างยั่งยืน: ป้องกันไม่ให้ปัญหาเดิมเกิดขึ้นซ้ำอีก
+			ลดต้นทุนและความสูญเสีย: ไม่ต้องเสียเวลาและค่าใช้จ่ายในการแก้ไขปัญหาเดิมๆ ซ้ำซาก
+			ปรับปรุงกระบวนการ: ช่วยให้เห็นจุดอ่อนในกระบวนการทำงานและแก้ไขให้ดี
+   -CHECKLIST Template เช่่น
+        -กระบวนการทำงานแต่ละขั้นตอน
+		-กระบวนการตรวจสอบ การทำงานแต่ละขั้นตอน
+
+
+
+
+## 📑 สารบัญ 120 บท (Python + FastAPI + Django + ML/AI)
+
+### ภาค 0: เครื่องมือและแนวทางการเรียนรู้ (บทที่ 1–6)
+```bash  ``` 
+**บทที่ 1:** บทนำ – หนังสือเล่มนี้เหมาะกับใคร  ภาพรวม Python ในปี 2026, วิธีอ่านหนังสือ, แหล่งอ้างอิง (Python.org, FastAPI docs, Django docs, PyTorch/TensorFlow)
+
+**บทที่ 2:** นิยามพื้นฐาน – Python (interpreter, dynamic typing), FastAPI (async, OpenAPI), Django (MVT, ORM), ORM (SQLAlchemy, Django ORM), DTO (Pydantic), CRUD, Cache (Redis), Message Queue (Celery + RabbitMQ/Redis), Machine Learning (Scikit-learn, TensorFlow, PyTorch), MLOps
+
+**บทที่ 3:** หัวข้อสำคัญของหนังสือ (Roadmap) – สายงาน Developer (Backend, Full-stack, Data Scientist, ML Engineer), สถาปัตยกรรม (Layered, Hexagonal, Microservices), ฐานข้อมูล (PostgreSQL, MySQL, MongoDB, SQLite), Redis, Celery, Testing (pytest), Deployment (Docker, Kubernetes), AI/ML (Supervised/Unsupervised, Deep Learning, LLM)
+
+**บทที่ 4:** การออกแบบคู่มือ – รูปแบบหนังสือ, สัญลักษณ์, มาตรฐานการเขียนโค้ด Python (PEP 8, Black, type hints)
+
+**บทที่ 5:** การออกแบบ Workflow สำหรับนักพัฒนา – Git + GitHub, CI/CD (GitHub Actions, GitLab CI), Testing Workflow (Unit → Integration → E2E), การใช้ Poetry/pipenv สำหรับ dependency management
+
+**บทที่ 6:** แผนภาพการทำงาน (Workflow Diagram) + Dataflow Diagram ด้วย Draw.io – รู้จัก Draw.io, การวาด Flowchart แบบ TB, ตัวอย่าง Dataflow (HTTP Request → FastAPI → Service → Repository → Database → Response), อธิบายแต่ละโหนด, เทมเพลต Workflow สำหรับโปรเจกต์ Python
+
+
+---
+
+### ภาค 1: พื้นฐานภาษา Python (บทที่ 7–40)
+
+**บทที่ 7:** การติดตั้ง Python (3.12/3.13), Virtual Environment (venv, conda), VS Code / PyCharm  
+**บทที่ 8:** โปรเจกต์แรก Hello World และการรัน Python (REPL, script)  
+**บทที่ 9:** ตัวแปรและชนิดข้อมูล (int, float, str, bool, None)  
+**บทที่ 10:** การรับข้อมูลผู้ใช้ (input()) และการแปลงชนิด  
+**บทที่ 11:** ตัวดำเนินการ (arithmetic, comparison, logical, assignment)  
+**บทที่ 12:** Control Flow: if-elif-else, match-case (Python 3.10+)  
+**บทที่ 13:** Loops: for, while, break, continue, else ในลูป  
+**บทที่ 14:** Data Structures: list, tuple, set, dictionary (พื้นฐาน)  
+**บทที่ 15:** List comprehensions และ generator expressions  
+**บทที่ 16:** slicing และการจัดการ sequence  
+**บทที่ 17:** Functions – def, return, parameters (positional, keyword, default, *args, **kwargs)  
+**บทที่ 18:** Lambda functions และ higher-order functions (map, filter, reduce)  
+**บทที่ 19:** Scope และ LEGB rule, global/nonlocal  
+**บทที่ 20:** Exception Handling (try-except-else-finally, raise, custom exception)  
+**บทที่ 21:** การทำงานกับไฟล์ (open, with context manager, read/write text/CSV/JSON)  
+**บทที่ 22:** Modules และ packages, import system, `__name__ == "__main__"`  
+**บทที่ 23:** OOP: class, object, constructor (`__init__`), instance/class/static methods  
+**บทที่ 24:** Inheritance, polymorphism, method overriding, super()  
+**บทที่ 25:** Encapsulation (private attributes `_`, `__`), properties (`@property`)  
+**บทที่ 26:** Abstract classes (ABC, abstractmethod) และ interfaces (Protocol)  
+**บทที่ 27:** Magic methods (`__str__`, `__repr__`, `__len__`, `__call__`, etc.)  
+**บทที่ 28:** Type hints (PEP 484) และการใช้ mypy  
+**บทที่ 29:** Decorators (function decorator, class decorator, @staticmethod, @classmethod)  
+**บทที่ 30:** Iterators และ generators (`yield`)  
+**บทที่ 31:** Context managers (`__enter__`, `__exit__`, `contextlib`)  
+**บทที่ 32:** การทดสอบพื้นฐานด้วย unittest และ doctest  
+**บทที่ 33:** การใช้ pytest เบื้องต้น (assert, fixtures)  
+**บทที่ 34:** โปรเจกต์เล็ก: CLI calculator + unit test  
+**บทที่ 35:** Cheatsheet: Python essentials  
+**บทที่ 36:** การจัดการ dependencies ด้วย pip, requirements.txt, Poetry  
+**บทที่ 37:** การใช้ Jupyter Notebook สำหรับ prototyping  
+**บทที่ 38:** การ Debug ด้วย pdb และ breakpoint()  
+**บทที่ 39:** การทำงานกับ datetime, random, math, itertools  
+**บทที่ 40:** แบบฝึกหัดรวมภาค 1
+
+---
+
+### ภาค 2: Web Development ด้วย FastAPI (บทที่ 41–60)
+
+**บทที่ 41:** ทำความรู้จัก FastAPI – จุดเด่น (async, auto-docs, performance)  
+**บทที่ 42:** สร้าง FastAPI project แรก, uvicorn, path operation decorators  
+**บทที่ 43:** Path parameters, query parameters, request body (Pydantic)  
+**บทที่ 44:** Response models และ status codes  
+**บทที่ 45:** Dependency Injection ใน FastAPI (Depends)  
+**บทที่ 46:** การจัดการ Validation (Field, validator, model_validator)  
+**บทที่ 47:** Exception handling (HTTPException, custom exception handlers)  
+**บทที่ 48:** Middleware (CORS, logging, authentication)  
+**บทที่ 49:** การทำงานกับ Database (SQLAlchemy ORM) – models, session  
+**บทที่ 50:** CRUD operations ด้วย SQLAlchemy + async  
+**บทที่ 51:** การใช้ Alembic สำหรับ migration  
+**บทที่ 52:** การเชื่อมต่อ PostgreSQL และ MongoDB (motor)  
+**บทที่ 53:** Authentication – OAuth2, JWT, passlib, python-jose  
+**บทที่ 54:** การทดสอบ FastAPI ด้วย TestClient (pytest)  
+**บทที่ 55:** การทำ BackgroundTasks (Celery, asyncio.create_task)  
+**บทที่ 56:** WebSocket support (real-time chat example)  
+**บทที่ 57:** การสร้าง API documentation อัตโนมัติ (Swagger, ReDoc)  
+**บทที่ 58:** โปรเจกต์: Blog API (FastAPI + PostgreSQL + SQLAlchemy + JWT)  
+**บทที่ 59:** Deployment FastAPI ด้วย Docker, Gunicorn + Uvicorn  
+**บทที่ 60:** Cheatsheet และแบบฝึกหัด FastAPI
+
+---
+
+### ภาค 3: Web Development ด้วย Django (บทที่ 61–75)
+
+**บทที่ 61:** ทำความรู้จัก Django – MVT pattern, batteries-included  
+**บทที่ 62:** การติดตั้งและสร้างโปรเจกต์ Django, runserver  
+**บทที่ 63:** Django apps, URL dispatcher, views (function-based, class-based)  
+**บทที่ 64:** Django ORM (models, migrations, QuerySet)  
+**บทที่ 65:** Admin interface – การปรับแต่ง  
+**บทที่ 66:** Templates (Django Template Language), static files  
+**บทที่ 67:** Forms และ ModelForms, validation  
+**บทที่ 68:** Authentication system (User model, login, logout, permissions)  
+**บทที่ 69:** Django REST Framework (DRF) – Serializers, ViewSets, Routers  
+**บทที่ 70:** การทำ JWT authentication ด้วย DRF (djangorestframework-simplejwt)  
+**บทที่ 71:** การใช้ Celery + Redis สำหรับ background tasks ใน Django  
+**บทที่ 72:** Django Channels สำหรับ WebSocket (real-time)  
+**บทที่ 73:** การทดสอบ Django (unittest, pytest-django)  
+**บทที่ 74:** โปรเจกต์: e-Commerce site (Django + DRF + PostgreSQL + Celery)  
+**บทที่ 75:** เปรียบเทียบ FastAPI vs Django – ควรเลือกใช้เมื่อใด
+
+---
+
+### ภาค 4: ฐานข้อมูล, ORM, Cache, Message Queue (บทที่ 76–90)
+
+**บทที่ 76:** ภาพรวมฐานข้อมูลที่ใช้กับ Python (PostgreSQL, MySQL, MongoDB, SQLite)  
+**บทที่ 77:** SQLAlchemy Core และ ORM (declarative, relationship)  
+**บทที่ 78:** การทำ CRUD, eager loading (joinedload, selectinload)  
+**บทที่ 79:** การใช้ Pydantic ร่วมกับ SQLAlchemy (Schema ↔ Model)  
+**บทที่ 80:** การเชื่อมต่อ MongoDB ด้วย motor (async) และ pymongo  
+**บทที่ 81:** การใช้ Redis ใน Python (redis-py) – cache session, rate limiting  
+**บทที่ 82:** Redis สำหรับ caching ใน FastAPI/Django (`@cache_page`, django-redis)  
+**บทที่ 83:** Redis Pub/Sub – lightweight message queue  
+**บทที่ 84:** RabbitMQ + Celery – สร้าง task queue, periodic tasks  
+**บทที่ 85:** การ monitor Celery ด้วย Flower  
+**บทที่ 86:** การจัดการ configuration (environment variables, python-dotenv, pydantic-settings)  
+**บทที่ 87:** Task List Template สำหรับโปรเจกต์ฐานข้อมูล/Redis/RabbitMQ  
+**บทที่ 88:** Checklist Template สำหรับการตรวจสอบระบบ  
+**บทที่ 89:** Dataflow Diagram สำหรับระบบ Full-stack (Draw.io) – Client → API → Cache → DB → Queue → Worker  
+**บทที่ 90:** แหล่งอ้างอิงเกี่ยวกับ database, cache, queue สำหรับ Python
+
+---
+
+### ภาค 5: Machine Learning และ AI (บทที่ 91–110)
+
+**บทที่ 91:** พื้นฐาน Data Science ด้วย Python – NumPy (arrays, broadcasting)  
+**บทที่ 92:** pandas – Series, DataFrame, data cleaning, groupby, merge  
+**บทที่ 93:** Matplotlib และ Seaborn – การ visualize ข้อมูล  
+**บทที่ 94:** Scikit-learn – การแบ่ง train/test, preprocessing (StandardScaler, OneHotEncoder)  
+**บทที่ 95:** การทำ supervised learning: linear regression, logistic regression, decision tree  
+**บทที่ 96:** การประเมินโมเดล (accuracy, precision, recall, F1, confusion matrix, ROC)  
+**บทที่ 97:** Unsupervised learning: clustering (KMeans), PCA  
+**บทที่ 98:** Ensemble methods (Random Forest, XGBoost)  
+**บทที่ 99:** การทำ Hyperparameter tuning (GridSearchCV, RandomizedSearchCV)  
+**บทที่ 100:** Deep Learning ด้วย TensorFlow/Keras – สร้าง Sequential model, Dense layers, training  
+**บทที่ 101:** Convolutional Neural Networks (CNN) สำหรับภาพ (CIFAR-10)  
+**บทที่ 102:** Recurrent Neural Networks (RNN, LSTM) สำหรับอนุกรมเวลา  
+**บทที่ 103:** การใช้ PyTorch (tensors, autograd, nn.Module)  
+**บทที่ 104:** Transfer learning (fine-tuning pretrained models เช่น ResNet, BERT)  
+**บทที่ 105:** การ deploy ML model เป็น API ด้วย FastAPI (pickle, ONNX, TensorFlow Serving)  
+**บทที่ 106:** LLM (Large Language Models) พื้นฐาน – การใช้ Hugging Face transformers (text generation, sentiment analysis)  
+**บทที่ 107:** การใช้ LangChain สำหรับสร้าง RAG (Retrieval-Augmented Generation)  
+**บทที่ 108:** MLOps ขั้นต้น – MLflow สำหรับ tracking experiment, model registry  
+**บทที่ 109:** การทำ batch inference กับ Celery และ Redis  
+**บทที่ 110:** โปรเจกต์: ระบบทำนายราคาบ้าน + API + caching + logging
+
+---
+
+### ภาค 6: หัวข้อขั้นสูง, Clean Code, Deployment, ภาคผนวก (บทที่ 111–120)
+
+**บทที่ 111:** Clean Code ใน Python – naming, functions (PEP 8), comments, type hints  
+**บทที่ 112:** SOLID Principles – ตัวอย่างปรับใช้ใน Python  
+**บทที่ 113:** Design Patterns ที่พบบ่อย (Singleton, Factory, Observer, Dependency Injection)  
+**บทที่ 114:** Asynchronous Programming (asyncio, await, gather, aiohttp)  
+**บทที่ 115:** การเขียน Unit Test และ Integration Test ระดับสูง (pytest fixtures, mocking with unittest.mock)  
+**บทที่ 116:** การทำ CI/CD สำหรับ Python (GitHub Actions, Docker, Deploy to Heroku/Railway/AWS)  
+**บทที่ 117:** การทำ monitoring ด้วย Prometheus + Grafana (expose metrics จาก FastAPI/Django)  
+**บทที่ 118:** ภาคผนวก ก: เทมเพลต Task List และ Checklist (Excel, PDF, Markdown)  
+**บทที่ 119:** ภาคผนวก ข: ไฟล์ Draw.io ตัวอย่าง (Workflow, Dataflow, Architecture) และลิงก์ GitHub โค้ดตัวอย่าง  
+**บทที่ 120:** ภาคผนวก ค: อภิธานศัพท์สองภาษา (ไทย-อังกฤษ) และเฉลยแบบฝึกหัด
+

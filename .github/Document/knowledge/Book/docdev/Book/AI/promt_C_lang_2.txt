@@ -1,0 +1,393 @@
+ดตร้งสร้าง
+- 1.สร้างบทนำ
+- 2.สร้างบทนิยาม
+- 3.สร้างบทหัวข้อ
+- 5.ออกแบบคู่มือ
+- 6.ออกแบบ workflow
+- 7.TASK LIST Template
+- 8.CHECKLIST Template
+
+โครงสร้างพื้นฐาน
+xx  คือ
+xx  มีกี่แบบ
+xxx  ใช้อย่างไร ในกรณีไหน ใช้อย่างไร
+xxx ข้อดี ข้อเสีย ข้อควรระวัง
+วาดรูป dataflow สร้างรูปแบบ draw.io เหมือนจริง แบบ flowchart TB  ใหม่พร้อมอธิบาย แบบ ละเอียด  
+ยกตัวอย่างการใช้งานจริง 
+เทมเพลตและตัวอย่างโค้ด  
+มีคำอธิบายการใช้งานแต่ละจุด
+แหล่งอ้างอิ่ง
+
+ความรูเกียวกับ SQL  + MSSQL ,Oracle,mogodb,postgressqk,mssql  ORM  dto  CRUD
+
+1.database CRUD  ORM  
+2.CACHE REDIS
+3.Redis สำหรับ Cache และ Message Queue]
+4.RabbitMQ – Message Broker มาตรฐานองค์กร](
+5 ตัวอย่างโค้ดครบวงจร (Full‑stack Example)]
+6.Task List Template]
+7. Checklist Template]
+8.แผนภาพการทำงาน (Workflow Diagram)]
+9.mop Config – 
+10.ภาคผนวก
+ 
+ 
+ 
+
+1. **โครงสร้างหนังสือภาษาไทย 120 บท** (ครอบคลุมทุกหัวข้อที่ระบุ รวมถึง SQL, ORM, Redis, RabbitMQ, MOP Config, Task List, Checklist, Workflow Diagram, Dataflow Diagram พร้อม Draw.io)
+2. **โครงสร้างหนังสือภาษาอังกฤษ 120 บท** (เหมือนกันแต่เป็นภาษาอังกฤษ)
+3. **Prompt สำหรับเขียนเนื้อหาทั้งสองเล่ม** (แยกตามภาษา)
+
+โดยในแต่ละเล่มจะมีการแทรก **บทนำ, บทนิยาม, บทหัวข้อ, การออกแบบคู่มือ, Workflow, Task List Template, Checklist Template, Dataflow Diagram แบบ Draw.io (Flowchart TB), ตัวอย่างโค้ด, คำอธิบายการใช้งานแต่ละจุด, แหล่งอ้างอิง** ตามที่คุณกำหนด
+
+---
+
+# 📘 เล่มที่ 1: ภาษาไทย
+
+## ชื่อหนังสือ: **Mastering C# .NET 2026: จากพื้นฐานสู่ Enterprise Application + Database + Cache + Message Queue**
+
+### สารบัญ 120 บท (ฉบับสมบูรณ์)
+
+---
+
+### **ภาค 0: เครื่องมือและแนวทางการเรียนรู้** (บทที่ 0 – จัดเป็นส่วนนำ แต่ขอปรับเป็นบทที่ 1-6)
+
+#### **บทที่ 1: บทนำ**  
+- 1.1 หนังสือเล่มนี้เหมาะกับใคร  
+- 1.2 ภาพรวมของ C#, .NET, และระบบนิเวศในปี 2026  
+- 1.3 วิธีการอ่านหนังสือและทำแบบฝึกหัดให้ได้ผลสูงสุด  
+- 1.4 แหล่งอ้างอิงหลัก (Microsoft Learn, Docs, GitHub)
+
+#### **บทที่ 2: นิยามพื้นฐานที่ต้องรู้**  
+- 2.1 .NET คืออะไร (และ .NET Framework, .NET Core, .NET 5–10)  
+- 2.2 C# คืออะไร – ภาษาเชิงวัตถุที่ทำงานบน .NET  
+- 2.3 ORM คืออะไร – Object-Relational Mapping  
+- 2.4 DTO คืออะไร – Data Transfer Object  
+- 2.5 CRUD คืออะไร – Create, Read, Update, Delete  
+- 2.6 Cache, Message Queue, และ Broker ทำงานอย่างไร
+
+#### **บทที่ 3: หัวข้อสำคัญของหนังสือ (Roadmap)**  
+- 3.1 สายงาน Developer: Desktop, Web, Mobile, Game, Cloud  
+- 3.2 สถาปัตยกรรมที่ต้องรู้:三层架构, Clean Architecture, CQRS  
+- 3.3 ฐานข้อมูลหลัก: SQL Server, Oracle, PostgreSQL, MongoDB  
+- 3.4 การเพิ่มประสิทธิภาพด้วย Redis และ RabbitMQ  
+- 3.5 การทดสอบและ DevOps พื้นฐาน
+
+#### **บทที่ 4: การออกแบบคู่มือ (Documentation Design)**  
+- 4.1 รูปแบบของหนังสือ: ทฤษฎี → ตัวอย่างโค้ด → แผนภาพ → แบบฝึกหัด  
+- 4.2 การใช้สัญลักษณ์, กล่องคำเตือน, และ Tip  
+- 4.3 มาตรฐานการเขียนโค้ดในหนังสือ (C# Coding Conventions)
+
+#### **บทที่ 5: การออกแบบ Workflow สำหรับนักพัฒนา**  
+- 5.1 Workflow การพัฒนาซอฟต์แวร์ด้วย Git + GitHub  
+- 5.2 Workflow การทำ CI/CD ด้วย GitHub Actions หรือ Azure DevOps  
+- 5.3 Workflow การทดสอบ (Unit Test → Integration Test → E2E)  
+- 5.4 ตัวอย่าง Workflow แบบ Step-by-step (พร้อมแผนภาพในบทที่ 6)
+
+#### **บทที่ 6: แผนภาพการทำงาน (Workflow Diagram) + Dataflow Diagram ด้วย Draw.io**  
+- 6.1 รู้จัก Draw.io – การติดตั้งและการใช้งานเบื้องต้น  
+- 6.2 การวาด Flowchart แบบ Top-to-Bottom (TB)  
+- 6.3 **ตัวอย่าง Dataflow Diagram** สำหรับ HTTP Request → Controller → Service → Repository → Database → Response  
+- 6.4 อธิบายแต่ละโหนดในแผนภาพ (Start, Process, Decision, Data Store, End)  
+- 6.5 ไฟล์ .drawio ตัวอย่าง (ลิงก์ดาวน์โหลดในภาคผนวก)  
+- 6.6 เทมเพลต Workflow สำหรับโปรเจกต์ .NET (พร้อมใช้)
+
+---
+
+### **ภาค 1: พื้นฐานภาษา C# (บทที่ 7–40)**  
+*(ย่อเนื่องจากที่คุณให้ไว้ แต่ขยับหมายเลขให้ต่อเนื่องจากภาค 0)*
+
+**บทที่ 7–16:** การติดตั้ง, Hello World, ตัวแปร, ชนิดข้อมูล, Operators, Debugging  
+**บทที่ 17–25:** Control Flow (if, switch, ternary, Quiz App)  
+**บทที่ 26–34:** Loops (for, while, do-while, break, continue, Rocket Landing, Text Adventure)  
+**บทที่ 35–41:** Arrays (1D, 2D, Jagged, Weather Simulator)  
+**บทที่ 42–49:** Methods (void, return, ref/out, recursion, overloading)  
+**บทที่ 50–60:** OOP เบื้องต้น (Class, Constructor, Properties, Access Modifiers, static, this, partial)  
+**บทที่ 61–68:** Collections (List, Dictionary, LINQ พื้นฐาน, Nullable)  
+**บทที่ 69–73:** Exception Handling (try-catch-finally, throw, custom exception)  
+**บทที่ 74–80:** Inheritance, Polymorphism, Abstract, sealed
+
+---
+
+### **ภาค 2: ฐานข้อมูลและ ORM (บทที่ 81–95)** 
+
+#### **บทที่ 81: ภาพรวมฐานข้อมูลสำหรับนักพัฒนา C#**  
+- 81.1 ฐานข้อมูลเชิงสัมพันธ์ (SQL Server, Oracle, PostgreSQL)  
+- 81.2 ฐานข้อมูล NoSQL (MongoDB)  
+- 81.3 การเลือกใช้ DB แต่ละประเภทตาม Use Case
+
+#### **บทที่ 82: SQL Server + Entity Framework Core (CRUD)**  
+- 82.1 ติดตั้ง EF Core, สร้าง DbContext, Models  
+- 82.2 Migration และ Database-First vs Code-First  
+- 82.3 CRUD Operations (Add, Update, Delete, Query) – พร้อมโค้ดตัวอย่าง  
+- 82.4 ข้อดี/ข้อเสีย/ข้อควรระวังของ EF Core
+
+#### **บทที่ 83: Oracle Database + Oracle.ManagedDataAccess**  
+- 83.1 การเชื่อมต่อ Oracle ด้วย C#  
+- 83.2 ใช้ Dapper หรือ EF Core สำหรับ Oracle  
+- 83.3 ตัวอย่างการ Query และ Stored Procedure
+
+#### **บทที่ 84: PostgreSQL + Npgsql**  
+- 84.1 การติดตั้งและ Connection String  
+- 84.2 ใช้ EF Core Provider สำหรับ PostgreSQL  
+- 84.3 การใช้งาน JSONB ใน PostgreSQL ร่วมกับ C#
+
+#### **บทที่ 85: MongoDB (NoSQL) กับ C#**  
+- 85.1 MongoDB Driver สำหรับ .NET  
+- 85.2 การสร้าง Document Models และ CRUD  
+- 85.3 Aggregation Framework และ Indexing
+
+#### **บทที่ 86: DTO (Data Transfer Object) และ AutoMapper**  
+- 86.1 ทำไมต้องใช้ DTO  
+- 86.2 การ Map ระหว่าง Entity และ DTO ด้วย AutoMapper  
+- 86.3 Projection และ Performance
+
+#### **บทที่ 87: Repository Pattern และ Unit of Work**  
+- 87.1 แยก Data Access Logic ออกจาก Business Logic  
+- 87.2 สร้าง Generic Repository  
+- 87.3 ตัวอย่างการทดสอบ Repository ด้วย Mock
+
+#### **บทที่ 88: การทำ CRUD ครบวงจร (Full-stack Example)**  
+- 88.1 โปรเจกต์: Blog API + Angular SPA  
+- 88.2 ออกแบบ Database, Entity, DTO  
+- 88.3 สร้าง API Endpoints (GET, POST, PUT, DELETE)  
+- 88.4 เชื่อมต่อ Frontend (Angular/React) – โค้ดตัวอย่าง
+
+#### **บทที่ 89: Task List Template สำหรับโปรเจกต์ฐานข้อมูล**  
+- 89.1 เทมเพลต Excel/Markdown สำหรับวางแผนงาน Database  
+- 89.2 ตัวอย่าง Task: “สร้าง Migration สำหรับตาราง User”, “เพิ่ม Index บนคอลัมน์ Email”  
+- 89.3 ดาวน์โหลด Template ได้ที่ภาคผนวก
+
+#### **บทที่ 90: Checklist Template สำหรับการตรวจสอบฐานข้อมูล**  
+- 90.1 ก่อน Deploy: ตรวจสอบ Connection String, Migration, Backup  
+- 90.2 หลัง Deploy: ตรวจสอบ Query Performance, Index, Lock  
+- 90.3 เทมเพลต PDF/Word ให้ใช้งานจริง
+
+#### **บทที่ 91: แผนภาพ Dataflow สำหรับระบบฐานข้อมูล (Draw.io)**  
+- 91.1 Diagram: Client → API → Repository → Database → Response  
+- 91.2 แสดงขั้นตอนการทำ CRUD แต่ละประเภท  
+- 91.3 ไฟล์ .drawio ตัวอย่าง (ดาวน์โหลด)
+
+#### **บทที่ 92: การจัดการ Connection String และ Environment Variables**  
+- 92.1 เก็บ Secrets ใน User Secrets, Azure Key Vault  
+- 92.2 การใช้ Environment Variables ใน ASP.NET Core  
+- 92.3 ป้องกันข้อมูลรั่วไหล
+
+#### **บทที่ 93: Performance Tuning สำหรับฐานข้อมูล**  
+- 93.1 การใช้ AsNoTracking(), Include() อย่างถูกต้อง  
+- 93.2 Raw SQL Queries เมื่อจำเป็น  
+- 93.3 การทำ Database Index และ Query Plan
+
+#### **บทที่ 94: การทำ Unit Test สำหรับ Data Access Layer**  
+- 94.1 Mock DbContext ด้วย InMemoryDatabase หรือ Testcontainers  
+- 94.2 ทดสอบ Repository และ Service  
+- 94.3 ตัวอย่าง xUnit + FluentAssertions
+
+#### **บทที่ 95: แหล่งอ้างอิงฐานข้อมูลสำหรับ C#**  
+- 95.1 เอกสารทางการของ EF Core, Dapper  
+- 95.2 บทเรียนจาก Microsoft Learn  
+- 95.3 หนังสือและคอร์สแนะนำ
+
+---
+
+### **ภาค 3: Caching และ Message Queue (บทที่ 96–108)** – **ใหม่**
+
+#### **บทที่ 96: Redis – In-Memory Cache พื้นฐาน**  
+- 96.1 Redis คืออะไร, ข้อดี/ข้อเสีย  
+- 96.2 ติดตั้ง Redis (Docker, Cloud)  
+- 96.3 ใช้ StackExchange.Redis ใน C#  
+- 96.4 การ Set/Get, Expiration
+
+#### **บทที่ 97: Redis สำหรับ Cache ใน ASP.NET Core**  
+- 97.1 ใช้ IDistributedCache  
+- 97.2 Cache Response ด้วย ResponseCaching และ Redis  
+- 97.3 การจัดการ Cache Invalidation
+
+#### **บทที่ 98: Redis เป็น Message Queue (Pub/Sub)**  
+- 98.1 Redis Pub/Sub Model  
+- 98.2 สร้าง Publisher และ Subscriber ด้วย C#  
+- 98.3 เปรียบเทียบกับ RabbitMQ
+
+#### **บทที่ 99: RabbitMQ – Message Broker มาตรฐานองค์กร**  
+- 99.1 RabbitMQ Concepts: Exchange, Queue, Binding, Routing Key  
+- 99.2 ติดตั้ง RabbitMQ (Docker, Local)  
+- 99.3 ใช้ RabbitMQ.Client ใน C#
+
+#### **บทที่ 100: สร้าง Producer และ Consumer ด้วย C#**  
+- 100.1 ส่งข้อความ (Publish)  
+- 100.2 รับข้อความ (Consume) – BasicConsume, EventingBasicConsumer  
+- 100.3 การ Acknowledge, Reject, Dead Letter Queue
+
+#### **บทที่ 101: Workflow การทำงานของ Redis + RabbitMQ ในระบบจริง**  
+- 101.1 Diagram: API → Redis Cache → ถ้า Cache Miss → Database → ส่ง Event ไป RabbitMQ → Consumer อัปเดต Cache  
+- 101.2 ตัวอย่าง Use Case: สั่งซื้อสินค้า, ส่งอีเมล async
+
+#### **บทที่ 102: เทมเพลต Task List สำหรับ Redis/RabbitMQ**  
+- 102.1 ตัวอย่าง Task: “ตั้งค่า Redis Cluster”, “สร้าง Queue สำหรับ Order Events”  
+- 102.2 เทมเพลต Markdown/Excel ดาวน์โหลดได้
+
+#### **บทที่ 103: Checklist Template สำหรับ Cache และ Message Queue**  
+- 103.1 ก่อนเปิดใช้ Redis: ตรวจสอบ Memory, Eviction Policy  
+- 103.2 ก่อนเปิด RabbitMQ: ตรวจสอบ High Availability, Monitoring
+
+#### **บทที่ 104: ตัวอย่างโค้ดครบวงจร (Full-stack) ที่ใช้ Redis + RabbitMQ**  
+- 104.1 โปรเจกต์: e-Commerce API ที่ใช้ Redis Cache สินค้า, RabbitMQ ส่งอีเมลยืนยัน  
+- 104.2 โค้ดทั้งหมด (Controller, Service, Repository, Producer, Consumer)  
+- 104.3 วิธีรันและทดสอบ
+
+#### **บทที่ 105: Mop Config – การจัดการ Configuration สำหรับ多种 Environment**  
+- 105.1 Mop Config คืออะไร (สมมติเป็นเครื่องมือจัดการ config)  
+- 105.2 การใช้ JSON, XML, Environment Variables ร่วมกัน  
+- 105.3 ตัวอย่าง Config สำหรับ Development, Staging, Production
+
+#### **บทที่ 106: แผนภาพ Dataflow แบบเต็มระบบ (Draw.io)**  
+- 106.1 Diagram รวม: Client → Web API → Redis Cache → DB → RabbitMQ → Background Service → 3rd Party  
+- 106.2 คำอธิบายแต่ละจุดและหมายเหตุ  
+- 106.3 ไฟล์ .drawio ตัวอย่าง
+
+#### **บทที่ 107: ข้อดี ข้อเสีย และข้อควรระวังของ Redis และ RabbitMQ**  
+- 107.1 Redis: เร็วแต่ volatile, การสูญเสียข้อมูล  
+- 107.2 RabbitMQ: reliable แต่ซับซ้อน, ต้องการการดูแล  
+- 107.3 เมื่อไหร่ควรใช้อะไร
+
+#### **บทที่ 108: แหล่งอ้างอิงเพิ่มเติม**  
+- 108.1 Redis Documentation, RabbitMQ Tutorials  
+- 108.2 หนังสือ “Designing Data-Intensive Applications”  
+- 108.3 คอร์ส Udemy, Pluralsight ที่แนะนำ
+
+---
+
+### **ภาค 4: หัวข้อขั้นสูงเพิ่มเติม (WPF, Unity, TDD, Clean Code, SOLID, Design Patterns)**  
+*(บทที่ 109–120)*
+
+#### **บทที่ 109: WPF และ MVVM**  
+- 109.1 Data Binding, Commands  
+- 109.2 สร้าง Todo List ด้วย WPF + Entity Framework
+
+#### **บทที่ 110: Unity Game Development ด้วย C#**  
+- 110.1 พื้นฐาน GameObject, Component, Script  
+- 110.2 สร้างเกม Pong และ Zig Zag
+
+#### **บทที่ 111: TDD (Test-Driven Development)**  
+- 111.1 Red-Green-Refactor  
+- 111.2 ตัวอย่าง TDD สำหรับ Flight Booking System
+
+#### **บทที่ 112: Clean Code และ Refactoring**  
+- 112.1 การตั้งชื่อ, การจัดรูปแบบ, DRY, KISS  
+- 112.2 การเขียนคอมเมนต์ที่มีประโยชน์
+
+#### **บทที่ 113: SOLID Principles**  
+- 113.1 SRP, OCP, LSP, ISP, DIP  
+- 113.2 ตัวอย่างการละเมิดและการแก้ไข
+
+#### **บทที่ 114: Design Patterns พื้นฐาน**  
+- 114.1 Singleton, Factory, Repository, Dependency Injection
+
+#### **บทที่ 115: Async และ Multithreading**  
+- 115.1 async/await, Task, Parallel LINQ  
+- 115.2 ข้อควรระวัง Deadlock, Thread Safety
+
+#### **บทที่ 116: การทำงานกับไฟล์และ JSON/XML**  
+- 116.1 System.Text.Json, Newtonsoft.Json  
+- 116.2 Regex สำหรับการตรวจสอบรูปแบบ
+
+#### **บทที่ 117: การทำ Integration Test และ Unit Test ขั้นสูง**  
+- 117.1 TestContainers สำหรับฐานข้อมูลจริง  
+- 117.2 Mocking ด้วย NSubstitute หรือ Moq
+
+#### **บทที่ 118: Deployment ด้วย Docker และ Azure**  
+- 118.1 สร้าง Dockerfile สำหรับ ASP.NET Core  
+- 118.2 Deploy ไป Azure App Service หรือ Kubernetes
+
+#### **บทที่ 119: โปรเจกต์สุดท้าย – ระบบบริหารสินค้าครบวงจร**  
+- 119.1 Backend: ASP.NET Core Web API + EF Core + Redis + RabbitMQ  
+- 119.2 Frontend: Angular หรือ React  
+- 119.3 เอกสารประกอบ (Swagger, Postman Collection)
+
+#### **บทที่ 120: ภาคผนวก**  
+- 120.1 เทมเพลต Task List (Excel, PDF)  
+- 120.2 เทมเพลต Checklist (Excel, PDF)  
+- 120.3 ไฟล์ Draw.io ตัวอย่างทั้งหมด  
+- 120.4 โค้ดตัวอย่างแบบสมบูรณ์ (ลิงก์ GitHub)  
+- 120.5 อภิธานศัพท์สองภาษา (ไทย-อังกฤษ)  
+- 120.6 เฉลยแบบฝึกหัด
+
+---
+
+# 📘 เล่มที่ 2: ภาษาอังกฤษ (English)
+
+## Title: **Mastering C# .NET 2026: From Fundamentals to Enterprise Apps + Database + Cache + Message Queue**
+
+### Table of Contents (120 Chapters) – Same structure as Thai version but translated.
+
+*(เพื่อไม่ให้ความยาวเกิน กรุณาแจ้งหากต้องการให้เขียนสารบัญภาษาอังกฤษแบบเต็ม หรือใช้โครงสร้างเดียวกับภาษาไทยแล้วเปลี่ยนหัวข้อเป็นภาษาอังกฤษ)*
+
+---
+
+# 📝 Prompt สำหรับเขียนเนื้อหาทั้งสองเล่ม
+
+## Prompt สำหรับเล่มภาษาไทย
+
+```text
+คุณคือผู้เขียนหนังสือเทคนิคภาษาไทยระดับผู้เชี่ยวชาญด้าน C# และ .NET 
+จงเขียนหนังสือเรื่อง "Mastering C# .NET 2026: จากพื้นฐานสู่ Enterprise Application + Database + Cache + Message Queue" 
+ตามสารบัญ 120 บทที่ให้ไว้ข้างต้น
+
+ข้อกำหนด:
+- แต่ละบทต้องมีความยาว 800–2000 คำ
+- ทุกบทต้องมี:
+  * คำอธิบายแนวคิด
+  * ตัวอย่างโค้ดที่รันได้จริง
+  * ตารางสรุป (ถ้ามีการเปรียบเทียบ)
+  * แบบฝึกหัดท้ายบท 3–5 ข้อ
+- บทที่มีการออกแบบ Workflow, Task List, Checklist, Dataflow Diagram ให้:
+  * แสดงเทมเพลตเป็น Markdown Table หรือลิงก์ดาวน์โหลด
+  * อธิบายวิธีการใช้งานแต่ละจุด
+  * แทรกรูปภาพ (ระบุเป็น "รูปที่ X: คำอธิบาย")
+- ทุกบทต้องมีส่วน "แหล่งอ้างอิง" ท้ายบท
+- ภาษาไทยเป็นทางการ แต่เข้าใจง่าย
+- เขียนทีละบทตามลำดับ เริ่มจากบทที่ 1 ถึง 120
+```
+
+## Prompt สำหรับเล่มภาษาอังกฤษ
+
+```text
+You are a senior technical author and .NET expert. 
+Write the book "Mastering C# .NET 2026: From Fundamentals to Enterprise Apps + Database + Cache + Message Queue" 
+using the 120-chapter table of contents (same structure as the Thai version but in English).
+
+Requirements:
+- Each chapter: 800–2000 words
+- Every chapter must include:
+  * Concept explanation
+  * Runnable code examples
+  * Summary table (if comparisons exist)
+  * 3–5 exercises at the end
+- Chapters with Workflow, Task List, Checklist, Dataflow Diagram must:
+  * Provide templates as Markdown tables or download links
+  * Explain how to use each part
+  * Include figure placeholders ("Figure X: description")
+- Each chapter ends with "References"
+- Professional yet accessible English
+- Write chapter by chapter from Chapter 1 to 120
+```
+
+---
+
+# สรุปสิ่งที่คุณได้รับ
+
+| รายการ | รายละเอียด |
+|--------|-------------|
+| โครงสร้างเล่มไทย | 120 บาท ครอบคลุมพื้นฐาน, OOP, Collections, Exception, Inheritance, Database (SQL Server, Oracle, PostgreSQL, MongoDB), ORM (EF Core, Dapper), DTO, Redis, RabbitMQ, Full-stack Example, Task List, Checklist, Workflow Diagram, Dataflow Diagram (Draw.io), Mop Config, และหัวข้อขั้นสูง (WPF, Unity, TDD, Clean Code, SOLID, Design Patterns) |
+| โครงสร้างเล่มอังกฤษ | โครงสร้างเดียวกัน เปลี่ยนเป็นภาษาอังกฤษ |
+| บทนำ, นิยาม, หัวข้อ | อยู่ในบทที่ 1, 2, 3 |
+| การออกแบบคู่มือ | บทที่ 4 |
+| การออกแบบ Workflow | บทที่ 5 |
+| Task List Template | บทที่ 89 และ 102 |
+| Checklist Template | บทที่ 90 และ 103 |
+| Dataflow Diagram แบบ Draw.io | บทที่ 6, 91, 106 |
+| ตัวอย่างโค้ดครบวงจร | บทที่ 88, 104 |
+| แหล่งอ้างอิง | ท้ายทุกบท และบทที่ 95, 108 |
+| Mop Config | บทที่ 105 |
+| ภาคผนวก | บทที่ 120 |
+

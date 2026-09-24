@@ -1,0 +1,2350 @@
+# ระบบ Mini Smart Farm สำหรับโรงอบสมุนไพรและผลไม้ (พร้อม QR Code Traceability)
+
+## สารบัญ
+
+1. [ภาพรวมระบบ](#1-ภาพรวมระบบ)
+2. [ระบบย่อยและโซนการทำงาน](#2-ระบบย่อยและโซนการทำงาน)
+3. [QR Code Traceability System](#3-qr-code-traceability-system)
+4. [Hardware Components](#4-hardware-components)
+5. [Software Architecture](#5-software-architecture)
+6. [Domain Layer](#6-domain-layer)
+7. [Application Layer](#7-application-layer)
+8. [API Endpoints](#8-api-endpoints)
+9. [Dashboard UI](#9-dashboard-ui)
+10. [Mobile App](#10-mobile-app)
+11. [การติดตั้งและใช้งาน](#11-การติดตั้งและใช้งาน)
+12. [Business Model](#12-business-model)
+
+---
+
+## 1. ภาพรวมระบบ
+
+### 1.1 ระบบ Smart Drying Factory
+
+ระบบนี้เป็นโซลูชันสำหรับโรงอบสมุนไพรและผลไม้แบบอัจฉริยะ ประกอบด้วย:
+
+- **การแบ่งโซนการอบ** - แยกตามประเภทพืชและระยะเวลา
+- **การควบคุมอุณหภูมิ/ความชื้นแบบอัตโนมัติ** - ปรับตามชนิดพืช
+- **ระบบ QR Code Traceability** - ตรวจสอบย้อนกลับได้ทุกขั้นตอน
+- **AI ช่วยแนะนำรอบการอบ** - ปรับปรุงคุณภาพอย่างต่อเนื่อง
+- **Dashboard แบบ Real-time** - ดูสถานะทุกโซน
+
+### 1.2 โซนการอบ (Drying Zones)
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                         Smart Drying Factory                                    │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │                         Zone A - สมุนไพรทั่วไป                         │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                    │   │
+│  │  │  A1 - ใบมะพร้าว│  │  A2 - ใบเตย │  │  A3 - ใบหม่อน │                    │   │
+│  │  │  40-45°C     │  │  45-50°C   │  │  40-45°C   │                    │   │
+│  │  │  8-10 ชม.    │  │  6-8 ชม.   │  │  10-12 ชม. │                    │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘                    │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │                      Zone B - สมุนไพรพิเศษ                             │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                    │   │
+│  │  │  B1 - ขมิ้น   │  │  B2 - กระวาน │  │  B3 - พริก   │                    │   │
+│  │  │  50-55°C     │  │  45-50°C   │  │  55-60°C   │                    │   │
+│  │  │  6-8 ชม.     │  │  8-10 ชม.  │  │  8-10 ชม.  │                    │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘                    │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │                      Zone C - ผลไม้                                    │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                    │   │
+│  │  │  C1 - กล้วย   │  │  C2 - มะม่วง │  │  C3 - สับปะรด│                    │   │
+│  │  │  55-60°C     │  │  60-65°C   │  │  55-60°C   │                    │   │
+│  │  │  10-12 ชม.   │  │  8-10 ชม.  │  │  12-14 ชม. │                    │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘                    │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │                      Zone D - อบแห้งเร็ว                              │   │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                    │   │
+│  │  │  D1 - เห็ด    │  │  D2 - ปลา   │  │  D3 - เนื้อ   │                    │   │
+│  │  │  60-65°C     │  │  65-70°C   │  │  70-75°C   │                    │   │
+│  │  │  4-6 ชม.     │  │  6-8 ชม.   │  │  8-10 ชม.  │                    │   │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘                    │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐   │
+│  │                     Zone E - ห้องควบคุม (Control Room)                  │   │
+│  │  ┌──────────────────────────────────────────────────────────────────┐   │   │
+│  │  │  • จอแสดงสถานะทุกโซน                                            │   │   │
+│  │  │  • ระบบควบคุมกลาง                                                │   │   │
+│  │  │  • เครื่องพิมพ์ QR Code                                          │   │   │
+│  │  │  • ระบบแจ้งเตือน                                                │   │   │
+│  │  └──────────────────────────────────────────────────────────────────┘   │   │
+│  └──────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                  │
+└──────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 1.3 กระบวนการทำงาน
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              Workflow                                            │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                  │
+│  1. รับวัตถุดิบ                                                                   │
+│     └──► บันทึกข้อมูล (ชนิด, น้ำหนัก, แหล่งที่มา)                                  │
+│         └──► สร้าง QR Code วัตถุดิบ                                              │
+│                                                                                  │
+│  2. จัดเข้าโซนอบ                                                                 │
+│     └──► เลือกโซนตามประเภท                                                      │
+│     └──► ตั้งโปรแกรมอบ (อุณหภูมิ, เวลา, ความชื้น)                                │
+│     └──► สร้าง QR Code Batch                                                    │
+│                                                                                  │
+│  3. กระบวนการอบ                                                                 │
+│     └──► ตรวจสอบสภาพแวดล้อมแบบ Real-time                                        │
+│     └──► ปรับอุณหภูมิ/ความชื้นอัตโนมัติ                                            │
+│     └──► บันทึกข้อมูลทุก 5 นาที                                                  │
+│     └──► แจ้งเตือนเมื่อผิดปกติ                                                   │
+│                                                                                  │
+│  4. สิ้นสุดการอบ                                                                 │
+│     └──► ตรวจสอบคุณภาพ                                                          │
+│     └──► บันทึกผลการอบ                                                          │
+│     └──► สร้าง QR Code สินค้าสำเร็จรูป                                           │
+│                                                                                  │
+│  5. บรรจุภัณฑ์และจัดเก็บ                                                         │
+│     └──► พิมพ์ QR Code ติดบรรจุภัณฑ์                                             │
+│     └──► บันทึกตำแหน่งจัดเก็บ                                                   │
+│     └──► สร้างเอกสาร Traceability                                               │
+│                                                                                  │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. ระบบย่อยและโซนการทำงาน
+
+### 2.1 Zone Management
+
+```go
+// domain/entity/zone.go
+package entity
+
+import "time"
+
+type Zone struct {
+    ID          int64     `json:"id"`
+    Code        string    `json:"code"` // A1, A2, B1, etc.
+    Name        string    `json:"name"`
+    Category    string    `json:"category"` // herb, fruit, special, rapid
+    Status      string    `json:"status"` // idle, preparing, drying, cooling, completed
+    Capacity    float64   `json:"capacity"` // kg
+    Temperature float64   `json:"temperature"` // current °C
+    Humidity    float64   `json:"humidity"` // current %
+    AirFlow     float64   `json:"air_flow"` // m/s
+    Pressure    float64   `json:"pressure"` // Pa
+    CreatedAt   time.Time `json:"created_at"`
+    UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type ZoneConfig struct {
+    ID              int64     `json:"id"`
+    ZoneID          int64     `json:"zone_id"`
+    CropType        string    `json:"crop_type"`
+    TargetTemp      float64   `json:"target_temp"`
+    TargetHumidity  float64   `json:"target_humidity"`
+    DryingDuration  int       `json:"drying_duration"` // hours
+    CoolingDuration int       `json:"cooling_duration"` // hours
+    MaxTemp         float64   `json:"max_temp"`
+    MinTemp         float64   `json:"min_temp"`
+    MaxHumidity     float64   `json:"max_humidity"`
+    MinHumidity     float64   `json:"min_humidity"`
+    FanSpeed        int       `json:"fan_speed"` // 0-100
+    HeaterPower     int       `json:"heater_power"` // 0-100
+    CreatedAt       time.Time `json:"created_at"`
+    UpdatedAt       time.Time `json:"updated_at"`
+}
+
+type ZoneStatus struct {
+    ZoneID          int64     `json:"zone_id"`
+    CurrentTemp     float64   `json:"current_temp"`
+    CurrentHumidity float64   `json:"current_humidity"`
+    CurrentAirFlow  float64   `json:"current_air_flow"`
+    CurrentPressure float64   `json:"current_pressure"`
+    HeaterStatus    string    `json:"heater_status"` // on, off, error
+    FanStatus       string    `json:"fan_status"`
+    DoorStatus      string    `json:"door_status"` // open, closed
+    IsRunning       bool      `json:"is_running"`
+    ElapsedTime     int       `json:"elapsed_time"` // minutes
+    RemainingTime   int       `json:"remaining_time"` // minutes
+    UpdatedAt       time.Time `json:"updated_at"`
+}
+```
+
+### 2.2 ข้อมูลพืชและโปรแกรมอบ
+
+```go
+// domain/entity/crop.go
+package entity
+
+import "time"
+
+type Crop struct {
+    ID              int64     `json:"id"`
+    Code            string    `json:"code"`
+    Name            string    `json:"name"`
+    ScientificName  string    `json:"scientific_name"`
+    Category        string    `json:"category"` // herb, fruit, vegetable, meat, mushroom
+    SubCategory     string    `json:"sub_category"`
+    Origin          string    `json:"origin"`
+    Season          string    `json:"season"`
+    ShelfLife       int       `json:"shelf_life"` // months
+    StorageTemp     float64   `json:"storage_temp"`
+    StorageHumidity float64   `json:"storage_humidity"`
+    CreatedAt       time.Time `json:"created_at"`
+    UpdatedAt       time.Time `json:"updated_at"`
+}
+
+type DryingProgram struct {
+    ID              int64     `json:"id"`
+    CropID          int64     `json:"crop_id"`
+    ZoneID          int64     `json:"zone_id"`
+    Name            string    `json:"name"`
+    Phase           int       `json:"phase"` // 1-5
+    TargetTemp      float64   `json:"target_temp"`
+    TargetHumidity  float64   `json:"target_humidity"`
+    Duration        int       `json:"duration"` // minutes
+    FanSpeed        int       `json:"fan_speed"`
+    HeaterPower     int       `json:"heater_power"`
+    Ventilation     bool      `json:"ventilation"`
+    IsDefault       bool      `json:"is_default"`
+    CreatedAt       time.Time `json:"created_at"`
+    UpdatedAt       time.Time `json:"updated_at"`
+}
+
+type DryingProfile struct {
+    ID              int64     `json:"id"`
+    CropID          int64     `json:"crop_id"`
+    Name            string    `json:"name"`
+    Description     string    `json:"description"`
+    Phases          []DryingProgram `json:"phases"`
+    TotalDuration   int       `json:"total_duration"` // minutes
+    CreatedAt       time.Time `json:"created_at"`
+    UpdatedAt       time.Time `json:"updated_at"`
+}
+```
+
+---
+
+## 3. QR Code Traceability System
+
+### 3.1 QR Code Structure
+
+```go
+// domain/entity/traceability.go
+package entity
+
+import "time"
+
+type QRCode struct {
+    ID              int64     `json:"id"`
+    Code            string    `json:"code"`
+    Type            string    `json:"type"` // raw_material, batch, product, packaging
+    BatchID         int64     `json:"batch_id"`
+    CropID          int64     `json:"crop_id"`
+    ZoneID          int64     `json:"zone_id"`
+    Data            QRData    `json:"data"`
+    CreatedAt       time.Time `json:"created_at"`
+    ExpiredAt       *time.Time `json:"expired_at"`
+}
+
+type QRData struct {
+    // Raw Material
+    RawMaterialID   string    `json:"raw_material_id"`
+    SupplierID      string    `json:"supplier_id"`
+    HarvestDate     time.Time `json:"harvest_date"`
+    Origin          string    `json:"origin"`
+    Weight          float64   `json:"weight"`
+    Quality         string    `json:"quality"` // A, B, C
+    
+    // Batch
+    BatchNo         string    `json:"batch_no"`
+    BatchDate       time.Time `json:"batch_date"`
+    ZoneCode        string    `json:"zone_code"`
+    
+    // Drying Process
+    StartTime       time.Time `json:"start_time"`
+    EndTime         time.Time `json:"end_time"`
+    Duration        int       `json:"duration"` // minutes
+    Temperature     []TempLog `json:"temperature"`
+    Humidity        []HumLog  `json:"humidity"`
+    
+    // Product
+    ProductID       string    `json:"product_id"`
+    ProductName     string    `json:"product_name"`
+    NetWeight       float64   `json:"net_weight"`
+    MoistureContent float64   `json:"moisture_content"`
+    WaterActivity   float64   `json:"water_activity"`
+    ColorScore      float64   `json:"color_score"`
+    AromaScore      float64   `json:"aroma_score"`
+    
+    // Packaging
+    PackDate        time.Time `json:"pack_date"`
+    ExpiryDate      time.Time `json:"expiry_date"`
+    StorageLocation string    `json:"storage_location"`
+}
+
+type TempLog struct {
+    Time    time.Time `json:"time"`
+    Temp    float64   `json:"temp"`
+    Zone    string    `json:"zone"`
+}
+
+type HumLog struct {
+    Time    time.Time `json:"time"`
+    Hum     float64   `json:"hum"`
+    Zone    string    `json:"zone"`
+}
+```
+
+### 3.2 QR Code Generation
+
+```go
+// application/qrcode_generator.go
+package application
+
+import (
+    "context"
+    "crypto/sha256"
+    "encoding/base64"
+    "encoding/json"
+    "fmt"
+    "time"
+
+    "github.com/skip2/go-qrcode"
+    "github.com/yourproject/internal/modules/drying/domain/entity"
+    "github.com/yourproject/internal/modules/drying/domain/repository"
+)
+
+type QRCodeGenerator struct {
+    qrRepo repository.QRCodeRepository
+}
+
+func NewQRCodeGenerator(qrRepo repository.QRCodeRepository) *QRCodeGenerator {
+    return &QRCodeGenerator{qrRepo: qrRepo}
+}
+
+func (g *QRCodeGenerator) GenerateRawMaterialQR(ctx context.Context, rawMaterial *RawMaterial) (string, error) {
+    data := entity.QRData{
+        RawMaterialID: rawMaterial.ID,
+        SupplierID:    rawMaterial.SupplierID,
+        HarvestDate:   rawMaterial.HarvestDate,
+        Origin:        rawMaterial.Origin,
+        Weight:        rawMaterial.Weight,
+        Quality:       rawMaterial.Quality,
+    }
+
+    return g.generateQR(ctx, "raw_material", 0, 0, data)
+}
+
+func (g *QRCodeGenerator) GenerateBatchQR(ctx context.Context, batch *Batch, cropID int64, zoneID int64) (string, error) {
+    data := entity.QRData{
+        BatchNo:   batch.BatchNo,
+        BatchDate: batch.CreatedAt,
+        ZoneCode:  batch.ZoneCode,
+        Weight:    batch.Weight,
+    }
+
+    return g.generateQR(ctx, "batch", cropID, zoneID, data)
+}
+
+func (g *QRCodeGenerator) GenerateProductQR(ctx context.Context, product *Product, batch *Batch, cropID int64) (string, error) {
+    // Get drying data
+    dryingData, _ := g.getDryingData(ctx, batch.ID)
+
+    data := entity.QRData{
+        ProductID:       product.ID,
+        ProductName:     product.Name,
+        BatchNo:         batch.BatchNo,
+        ZoneCode:        batch.ZoneCode,
+        StartTime:       dryingData.StartTime,
+        EndTime:         dryingData.EndTime,
+        Duration:        dryingData.Duration,
+        Temperature:     dryingData.Temperature,
+        Humidity:        dryingData.Humidity,
+        NetWeight:       product.NetWeight,
+        MoistureContent: product.MoistureContent,
+        WaterActivity:   product.WaterActivity,
+        ColorScore:      product.ColorScore,
+        AromaScore:      product.AromaScore,
+        PackDate:        product.PackDate,
+        ExpiryDate:      product.ExpiryDate,
+        StorageLocation: product.StorageLocation,
+    }
+
+    return g.generateQR(ctx, "product", cropID, batch.ZoneID, data)
+}
+
+func (g *QRCodeGenerator) generateQR(ctx context.Context, qrType string, cropID int64, zoneID int64, data entity.QRData) (string, error) {
+    // Create QR code entity
+    qr := &entity.QRCode{
+        Type:      qrType,
+        CropID:    cropID,
+        ZoneID:    zoneID,
+        Data:      data,
+        CreatedAt: time.Now(),
+    }
+
+    // Generate unique code
+    jsonData, _ := json.Marshal(data)
+    hash := sha256.Sum256(jsonData)
+    code := base64.URLEncoding.EncodeToString(hash[:8])
+    qr.Code = code
+
+    // Save to database
+    if err := g.qrRepo.Create(ctx, qr); err != nil {
+        return "", err
+    }
+
+    // Generate QR image
+    url := fmt.Sprintf("https://trace.yourdomain.com/qr/%s", code)
+    qrBytes, err := qrcode.Encode(url, qrcode.Medium, 256)
+    if err != nil {
+        return "", err
+    }
+
+    // Save QR image
+    if err := g.qrRepo.SaveImage(ctx, code, qrBytes); err != nil {
+        return "", err
+    }
+
+    return code, nil
+}
+
+func (g *QRCodeGenerator) getDryingData(ctx context.Context, batchID int64) (*DryingData, error) {
+    // Implement logic to get drying data
+    return &DryingData{
+        StartTime:   time.Now().Add(-3 * time.Hour),
+        EndTime:     time.Now(),
+        Duration:    180,
+        Temperature: []entity.TempLog{
+            {Time: time.Now().Add(-3 * time.Hour), Temp: 45, Zone: "A1"},
+            {Time: time.Now().Add(-2 * time.Hour), Temp: 48, Zone: "A1"},
+            {Time: time.Now().Add(-1 * time.Hour), Temp: 50, Zone: "A1"},
+        },
+        Humidity: []entity.HumLog{
+            {Time: time.Now().Add(-3 * time.Hour), Hum: 65, Zone: "A1"},
+            {Time: time.Now().Add(-2 * time.Hour), Hum: 55, Zone: "A1"},
+            {Time: time.Now().Add(-1 * time.Hour), Hum: 45, Zone: "A1"},
+        },
+    }, nil
+}
+
+type DryingData struct {
+    StartTime   time.Time
+    EndTime     time.Time
+    Duration    int
+    Temperature []entity.TempLog
+    Humidity    []entity.HumLog
+}
+
+type RawMaterial struct {
+    ID          string
+    SupplierID  string
+    HarvestDate time.Time
+    Origin      string
+    Weight      float64
+    Quality     string
+}
+
+type Batch struct {
+    ID          int64
+    BatchNo     string
+    CreatedAt   time.Time
+    ZoneCode    string
+    ZoneID      int64
+    Weight      float64
+}
+
+type Product struct {
+    ID              string
+    Name            string
+    NetWeight       float64
+    MoistureContent float64
+    WaterActivity   float64
+    ColorScore      float64
+    AromaScore      float64
+    PackDate        time.Time
+    ExpiryDate      time.Time
+    StorageLocation string
+}
+```
+
+### 3.3 QR Code Scan Handler
+
+```go
+// interfaces/http/qr_handler.go
+package http
+
+import (
+    "net/http"
+    "encoding/json"
+
+    "github.com/gin-gonic/gin"
+    "github.com/yourproject/internal/modules/drying/domain/repository"
+)
+
+type QRHandler struct {
+    qrRepo repository.QRCodeRepository
+    batchRepo repository.BatchRepository
+    productRepo repository.ProductRepository
+}
+
+func NewQRHandler(
+    qrRepo repository.QRCodeRepository,
+    batchRepo repository.BatchRepository,
+    productRepo repository.ProductRepository,
+) *QRHandler {
+    return &QRHandler{
+        qrRepo:     qrRepo,
+        batchRepo:  batchRepo,
+        productRepo: productRepo,
+    }
+}
+
+func (h *QRHandler) ScanQR(c *gin.Context) {
+    code := c.Param("code")
+    
+    // Get QR data
+    qr, err := h.qrRepo.GetByCode(c.Request.Context(), code)
+    if err != nil {
+        c.JSON(404, gin.H{"error": "QR code not found"})
+        return
+    }
+
+    // Prepare response based on type
+    var response map[string]interface{}
+    
+    switch qr.Type {
+    case "raw_material":
+        response = h.getRawMaterialData(qr)
+    case "batch":
+        response = h.getBatchData(qr)
+    case "product":
+        response = h.getProductData(qr)
+    case "packaging":
+        response = h.getPackagingData(qr)
+    }
+
+    c.JSON(200, response)
+}
+
+func (h *QRHandler) getRawMaterialData(qr *entity.QRCode) map[string]interface{} {
+    return map[string]interface{}{
+        "type":          "raw_material",
+        "raw_material_id": qr.Data.RawMaterialID,
+        "supplier_id":   qr.Data.SupplierID,
+        "harvest_date":  qr.Data.HarvestDate,
+        "origin":        qr.Data.Origin,
+        "weight":        qr.Data.Weight,
+        "quality":       qr.Data.Quality,
+        "qr_code":       qr.Code,
+        "scanned_at":    time.Now(),
+        "scan_count":    qr.Data.ScanCount + 1,
+    }
+}
+
+func (h *QRHandler) getBatchData(qr *entity.QRCode) map[string]interface{} {
+    return map[string]interface{}{
+        "type":          "batch",
+        "batch_no":      qr.Data.BatchNo,
+        "batch_date":    qr.Data.BatchDate,
+        "zone_code":     qr.Data.ZoneCode,
+        "weight":        qr.Data.Weight,
+        "crop":          h.getCropInfo(qr.CropID),
+        "drying_status": h.getDryingStatus(qr),
+        "qr_code":       qr.Code,
+        "scanned_at":    time.Now(),
+        "scan_count":    qr.Data.ScanCount + 1,
+    }
+}
+
+func (h *QRHandler) getProductData(qr *entity.QRCode) map[string]interface{} {
+    // Get product data
+    product, _ := h.productRepo.GetByID(c.Request.Context(), qr.Data.ProductID)
+    
+    return map[string]interface{}{
+        "type":              "product",
+        "product_id":        qr.Data.ProductID,
+        "product_name":      qr.Data.ProductName,
+        "batch_no":          qr.Data.BatchNo,
+        "zone_code":         qr.Data.ZoneCode,
+        "net_weight":        qr.Data.NetWeight,
+        "moisture_content":  qr.Data.MoistureContent,
+        "water_activity":    qr.Data.WaterActivity,
+        "color_score":       qr.Data.ColorScore,
+        "aroma_score":       qr.Data.AromaScore,
+        "pack_date":         qr.Data.PackDate,
+        "expiry_date":       qr.Data.ExpiryDate,
+        "storage_location":  qr.Data.StorageLocation,
+        "drying_data":       h.getDryingData(qr),
+        "temperature_chart": h.getTemperatureChart(qr),
+        "humidity_chart":    h.getHumidityChart(qr),
+        "qr_code":           qr.Code,
+        "scanned_at":        time.Now(),
+        "scan_count":        qr.Data.ScanCount + 1,
+        "certification":     product.Certification,
+    }
+}
+
+func (h *QRHandler) getDryingData(qr *entity.QRCode) map[string]interface{} {
+    return map[string]interface{}{
+        "start_time":    qr.Data.StartTime,
+        "end_time":      qr.Data.EndTime,
+        "duration":      qr.Data.Duration,
+        "temperature":   qr.Data.Temperature,
+        "humidity":      qr.Data.Humidity,
+    }
+}
+
+func (h *QRHandler) getTemperatureChart(qr *entity.QRCode) map[string]interface{} {
+    var labels []string
+    var data []float64
+    
+    for _, t := range qr.Data.Temperature {
+        labels = append(labels, t.Time.Format("15:04"))
+        data = append(data, t.Temp)
+    }
+    
+    return map[string]interface{}{
+        "labels": labels,
+        "data":   data,
+        "unit":   "°C",
+    }
+}
+
+func (h *QRHandler) getHumidityChart(qr *entity.QRCode) map[string]interface{} {
+    var labels []string
+    var data []float64
+    
+    for _, h := range qr.Data.Humidity {
+        labels = append(labels, h.Time.Format("15:04"))
+        data = append(data, h.Hum)
+    }
+    
+    return map[string]interface{}{
+        "labels": labels,
+        "data":   data,
+        "unit":   "%",
+    }
+}
+
+func (h *QRHandler) getCropInfo(cropID int64) map[string]interface{} {
+    // Get crop data from repository
+    return map[string]interface{}{
+        "id":   cropID,
+        "name": "สมุนไพรตัวอย่าง",
+        "type": "herb",
+    }
+}
+
+func (h *QRHandler) getDryingStatus(qr *entity.QRCode) string {
+    // Determine drying status
+    return "completed" // in_progress, completed, error
+}
+```
+
+### 3.4 QR Code Data Structure (JSON)
+
+```json
+{
+  "qr_code": "abc123def456",
+  "type": "product",
+  "product": {
+    "id": "P-2024-001",
+    "name": "ขมิ้นชันอบแห้ง",
+    "batch_no": "B-2024-001",
+    "zone_code": "B1"
+  },
+  "traceability": {
+    "raw_material": {
+      "id": "RM-2024-001",
+      "supplier": "ฟาร์มสมุนไพรสุขใจ",
+      "harvest_date": "2024-01-15",
+      "origin": "เชียงใหม่",
+      "weight": 50.0,
+      "quality": "A"
+    },
+    "drying": {
+      "start_time": "2024-01-16 08:00:00",
+      "end_time": "2024-01-16 16:00:00",
+      "duration": 480,
+      "temperature": [
+        {"time": "08:00", "temp": 25},
+        {"time": "09:00", "temp": 35},
+        {"time": "10:00", "temp": 45},
+        {"time": "11:00", "temp": 50},
+        {"time": "12:00", "temp": 52},
+        {"time": "13:00", "temp": 52},
+        {"time": "14:00", "temp": 50},
+        {"time": "15:00", "temp": 45},
+        {"time": "16:00", "temp": 35}
+      ],
+      "humidity": [
+        {"time": "08:00", "hum": 80},
+        {"time": "09:00", "hum": 70},
+        {"time": "10:00", "hum": 60},
+        {"time": "11:00", "hum": 50},
+        {"time": "12:00", "hum": 45},
+        {"time": "13:00", "hum": 40},
+        {"time": "14:00", "hum": 38},
+        {"time": "15:00", "hum": 40},
+        {"time": "16:00", "hum": 45}
+      ]
+    },
+    "quality": {
+      "moisture_content": 8.5,
+      "water_activity": 0.45,
+      "color_score": 95,
+      "aroma_score": 90
+    }
+  },
+  "product_info": {
+    "net_weight": 5.0,
+    "pack_date": "2024-01-17",
+    "expiry_date": "2025-01-17",
+    "storage_location": "คลังสินค้า A-01",
+    "certification": "มาตรฐานเกษตรอินทรีย์"
+  }
+}
+```
+
+---
+
+## 4. Hardware Components
+
+### 4.1 รายการอุปกรณ์ต่อโซน
+
+| Component | Model | จำนวนต่อโซน | ราคา (บาท) |
+|-----------|-------|-------------|------------|
+| **ESP32** | ESP32-WROOM | 1 | 350 |
+| **Temperature Sensor** | DS18B20 | 3 | 150 |
+| **Humidity Sensor** | DHT22 | 2 | 300 |
+| **Thermocouple** | K-Type + MAX6675 | 2 | 500 |
+| **Humidity Controller** | PID Controller | 1 | 800 |
+| **Heater** | 2000W Electric | 1 | 1,200 |
+| **Fan** | 12V DC Axial | 2 | 400 |
+| **Exhaust Fan** | 220V AC | 1 | 600 |
+| **Air Pump** | 12V DC | 1 | 300 |
+| **Pressure Sensor** | BMP280 | 1 | 200 |
+| **Door Sensor** | Magnetic Reed | 1 | 100 |
+| **Relay Module** | 8-Channel | 1 | 250 |
+| **Power Supply** | 12V 10A | 1 | 500 |
+| **LCD Display** | 20x4 I2C | 1 | 200 |
+| **QR Scanner** | USB Barcode Scanner | 1 | 800 |
+| **รวมต่อโซน** | | | **~6,650** |
+
+### 4.2 ESP32 Firmware
+
+```cpp
+// drying_zone_firmware.ino
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <DHT.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <Adafruit_BMP280.h>
+#include <SPI.h>
+#include <MAX6675.h>
+
+// Configuration
+#define ZONE_ID "A1"
+#define ZONE_NAME "Zone A1 - ใบมะพร้าว"
+
+// WiFi
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+const char* mqtt_server = "mqtt.yourserver.com";
+const char* mqtt_topic_prefix = "drying";
+
+// Pin Definitions
+#define DHT_PIN 4
+#define ONE_WIRE_PIN 5
+#define DOOR_SENSOR_PIN 6
+#define RELAY_HEATER_PIN 26
+#define RELAY_FAN1_PIN 27
+#define RELAY_FAN2_PIN 14
+#define RELAY_EXHAUST_PIN 12
+#define RELAY_AIR_PUMP_PIN 13
+#define RELAY_ALARM_PIN 25
+
+// Sensor Objects
+DHT dht(DHT_PIN, DHT22);
+OneWire oneWire(ONE_WIRE_PIN);
+DallasTemperature tempSensors(&oneWire);
+LiquidCrystal_I2C lcd(0x27, 20, 4);
+Adafruit_BMP280 bmp;
+MAX6675 thermocouple1(10, 11, 12);
+MAX6675 thermocouple2(10, 13, 14);
+
+// WiFi and MQTT
+WiFiClient espClient;
+PubSubClient mqttClient(espClient);
+
+// Variables
+float temp = 0.0;
+float humidity = 0.0;
+float temp1 = 0.0; // DS18B20
+float temp2 = 0.0; // Thermocouple 1
+float temp3 = 0.0; // Thermocouple 2
+float pressure = 0.0;
+float targetTemp = 50.0;
+float targetHumidity = 40.0;
+bool isRunning = false;
+bool doorOpen = false;
+int elapsedTime = 0;
+int remainingTime = 0;
+
+// Timing
+unsigned long lastSensorRead = 0;
+unsigned long lastLCDUpdate = 0;
+const unsigned long sensorInterval = 5000;
+const unsigned long lcdInterval = 1000;
+
+// Function prototypes
+void setup_wifi();
+void reconnect_mqtt();
+void read_sensors();
+void control_actuators();
+void update_lcd();
+void publish_data();
+void mqtt_callback(char* topic, byte* payload, unsigned int length);
+
+void setup() {
+    Serial.begin(115200);
+    
+    // Init sensors
+    dht.begin();
+    tempSensors.begin();
+    bmp.begin(0x76);
+    
+    // Init pins
+    pinMode(DOOR_SENSOR_PIN, INPUT_PULLUP);
+    pinMode(RELAY_HEATER_PIN, OUTPUT);
+    pinMode(RELAY_FAN1_PIN, OUTPUT);
+    pinMode(RELAY_FAN2_PIN, OUTPUT);
+    pinMode(RELAY_EXHAUST_PIN, OUTPUT);
+    pinMode(RELAY_AIR_PUMP_PIN, OUTPUT);
+    pinMode(RELAY_ALARM_PIN, OUTPUT);
+    
+    // Turn off all
+    digitalWrite(RELAY_HEATER_PIN, LOW);
+    digitalWrite(RELAY_FAN1_PIN, LOW);
+    digitalWrite(RELAY_FAN2_PIN, LOW);
+    digitalWrite(RELAY_EXHAUST_PIN, LOW);
+    digitalWrite(RELAY_AIR_PUMP_PIN, LOW);
+    digitalWrite(RELAY_ALARM_PIN, LOW);
+    
+    // Init LCD
+    lcd.init();
+    lcd.backlight();
+    
+    setup_wifi();
+    mqttClient.setServer(mqtt_server, 1883);
+    mqttClient.setCallback(mqtt_callback);
+    
+    lcd.setCursor(0, 0);
+    lcd.print("Smart Drying");
+    lcd.setCursor(0, 1);
+    lcd.print("Zone: " ZONE_ID);
+    lcd.setCursor(0, 2);
+    lcd.print("Initializing...");
+    
+    delay(2000);
+}
+
+void setup_wifi() {
+    delay(10);
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+    
+    WiFi.begin(ssid, password);
+    
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    
+    Serial.println();
+    Serial.println("WiFi connected");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+}
+
+void reconnect_mqtt() {
+    while (!mqttClient.connected()) {
+        Serial.print("Attempting MQTT connection...");
+        String clientId = "DryingZone_" + String(ZONE_ID);
+        if (mqttClient.connect(clientId.c_str())) {
+            Serial.println("connected");
+            // Subscribe to control topics
+            String controlTopic = String(mqtt_topic_prefix) + "/" + String(ZONE_ID) + "/control";
+            mqttClient.subscribe(controlTopic.c_str());
+        } else {
+            Serial.print("failed, rc=");
+            Serial.print(mqttClient.state());
+            Serial.println(" try again in 5 seconds");
+            delay(5000);
+        }
+    }
+}
+
+void read_sensors() {
+    // Read DHT22
+    temp = dht.readTemperature();
+    humidity = dht.readHumidity();
+    
+    // Read DS18B20
+    tempSensors.requestTemperatures();
+    temp1 = tempSensors.getTempCByIndex(0);
+    
+    // Read Thermocouples
+    temp2 = thermocouple1.readCelsius();
+    temp3 = thermocouple2.readCelsius();
+    
+    // Read Pressure
+    pressure = bmp.readPressure() / 100.0; // hPa
+    
+    // Read door
+    doorOpen = digitalRead(DOOR_SENSOR_PIN) == LOW;
+}
+
+void control_actuators() {
+    if (!isRunning) {
+        // Turn off everything
+        digitalWrite(RELAY_HEATER_PIN, LOW);
+        digitalWrite(RELAY_FAN1_PIN, LOW);
+        digitalWrite(RELAY_FAN2_PIN, LOW);
+        digitalWrite(RELAY_EXHAUST_PIN, LOW);
+        digitalWrite(RELAY_AIR_PUMP_PIN, LOW);
+        return;
+    }
+    
+    // Check if door is open
+    if (doorOpen) {
+        digitalWrite(RELAY_ALARM_PIN, HIGH);
+        // Turn off heater for safety
+        digitalWrite(RELAY_HEATER_PIN, LOW);
+        return;
+    } else {
+        digitalWrite(RELAY_ALARM_PIN, LOW);
+    }
+    
+    // PID-like control
+    // Heater control
+    if (temp < targetTemp - 1.0) {
+        digitalWrite(RELAY_HEATER_PIN, HIGH);
+    } else if (temp > targetTemp + 0.5) {
+        digitalWrite(RELAY_HEATER_PIN, LOW);
+    }
+    
+    // Fan control (always on when running)
+    digitalWrite(RELAY_FAN1_PIN, HIGH);
+    digitalWrite(RELAY_FAN2_PIN, HIGH);
+    
+    // Exhaust fan for humidity
+    if (humidity > targetHumidity + 5.0) {
+        digitalWrite(RELAY_EXHAUST_PIN, HIGH);
+    } else {
+        digitalWrite(RELAY_EXHAUST_PIN, LOW);
+    }
+    
+    // Air pump (intermittent)
+    if (elapsedTime % 5 < 1) { // Every 5 minutes
+        digitalWrite(RELAY_AIR_PUMP_PIN, HIGH);
+    } else {
+        digitalWrite(RELAY_AIR_PUMP_PIN, LOW);
+    }
+}
+
+void update_lcd() {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(ZONE_NAME);
+    
+    lcd.setCursor(0, 1);
+    lcd.printf("T:%.1fC H:%.0f%%", temp, humidity);
+    
+    lcd.setCursor(0, 2);
+    lcd.printf("Target: %.0fC/%.0f%%", targetTemp, targetHumidity);
+    
+    lcd.setCursor(0, 3);
+    if (isRunning) {
+        lcd.printf("Time: %02d:%02d/%02d:%02d", 
+            elapsedTime / 60, elapsedTime % 60,
+            remainingTime / 60, remainingTime % 60);
+    } else {
+        lcd.print("Status: IDLE");
+    }
+}
+
+void publish_data() {
+    char buffer[512];
+    
+    snprintf(buffer, sizeof(buffer),
+        "{\"zone_id\":\"%s\","
+        "\"zone_name\":\"%s\","
+        "\"data\":{"
+        "\"temperature\":%.2f,"
+        "\"humidity\":%.2f,"
+        "\"temp1\":%.2f,"
+        "\"temp2\":%.2f,"
+        "\"temp3\":%.2f,"
+        "\"pressure\":%.2f,"
+        "\"door_open\":%d,"
+        "\"is_running\":%d,"
+        "\"elapsed_time\":%d,"
+        "\"remaining_time\":%d,"
+        "\"target_temp\":%.2f,"
+        "\"target_humidity\":%.2f"
+        "},\"timestamp\":%lu}",
+        ZONE_ID, ZONE_NAME,
+        temp, humidity, temp1, temp2, temp3, pressure,
+        doorOpen ? 1 : 0,
+        isRunning ? 1 : 0,
+        elapsedTime, remainingTime,
+        targetTemp, targetHumidity,
+        millis() / 1000
+    );
+    
+    String publishTopic = String(mqtt_topic_prefix) + "/" + String(ZONE_ID) + "/data";
+    mqttClient.publish(publishTopic.c_str(), buffer);
+}
+
+void mqtt_callback(char* topic, byte* payload, unsigned int length) {
+    String message;
+    for (int i = 0; i < length; i++) {
+        message += (char)payload[i];
+    }
+    
+    // Parse control commands
+    StaticJsonDocument<512> doc;
+    deserializeJson(doc, message);
+    
+    String command = doc["command"];
+    
+    if (command == "start") {
+        isRunning = true;
+        elapsedTime = 0;
+        remainingTime = doc["duration"]; // minutes
+        targetTemp = doc["target_temp"];
+        targetHumidity = doc["target_humidity"];
+        Serial.println("Drying started");
+    } else if (command == "stop") {
+        isRunning = false;
+        Serial.println("Drying stopped");
+    } else if (command == "pause") {
+        isRunning = false;
+        Serial.println("Drying paused");
+    } else if (command == "resume") {
+        isRunning = true;
+        Serial.println("Drying resumed");
+    } else if (command == "set_temp") {
+        targetTemp = doc["value"];
+        Serial.printf("Temperature set to %.1f\n", targetTemp);
+    } else if (command == "set_humidity") {
+        targetHumidity = doc["value"];
+        Serial.printf("Humidity set to %.1f\n", targetHumidity);
+    }
+}
+
+void loop() {
+    if (!mqttClient.connected()) {
+        reconnect_mqtt();
+    }
+    mqttClient.loop();
+    
+    unsigned long currentMillis = millis();
+    
+    // Read sensors every 5 seconds
+    if (currentMillis - lastSensorRead >= sensorInterval) {
+        lastSensorRead = currentMillis;
+        read_sensors();
+        control_actuators();
+        publish_data();
+        
+        // Update elapsed time
+        if (isRunning) {
+            elapsedTime += sensorInterval / 1000 / 60; // minutes
+            remainingTime = max(0, remainingTime - sensorInterval / 1000 / 60);
+            
+            // Stop if time is up
+            if (remainingTime <= 0) {
+                isRunning = false;
+                digitalWrite(RELAY_HEATER_PIN, LOW);
+                digitalWrite(RELAY_FAN1_PIN, LOW);
+                digitalWrite(RELAY_FAN2_PIN, LOW);
+                digitalWrite(RELAY_EXHAUST_PIN, LOW);
+                digitalWrite(RELAY_AIR_PUMP_PIN, LOW);
+            }
+        }
+    }
+    
+    // Update LCD every second
+    if (currentMillis - lastLCDUpdate >= lcdInterval) {
+        lastLCDUpdate = currentMillis;
+        update_lcd();
+    }
+}
+```
+
+---
+
+## 5. Software Architecture
+
+### 5.1 Module Structure
+
+```
+internal/modules/drying/
+├── domain/
+│   ├── entity/
+│   │   ├── zone.go
+│   │   ├── crop.go
+│   │   ├── batch.go
+│   │   ├── product.go
+│   │   ├── traceability.go
+│   │   ├── qrcode.go
+│   │   └── program.go
+│   ├── repository/
+│   │   ├── zone_repository.go
+│   │   ├── batch_repository.go
+│   │   ├── product_repository.go
+│   │   ├── qrcode_repository.go
+│   │   └── program_repository.go
+│   └── service/
+│       ├── drying_service.go
+│       ├── qrcode_service.go
+│       └── recommendation_service.go
+├── application/
+│   ├── start_drying.go
+│   ├── stop_drying.go
+│   ├── get_zone_status.go
+│   ├── create_batch.go
+│   ├── generate_qr.go
+│   ├── scan_qr.go
+│   └── get_recommendation.go
+├── infrastructure/
+│   ├── mqtt/
+│   │   └── mqtt_handler.go
+│   ├── persistence/
+│   │   ├── postgres/
+│   │   └── influxdb/
+│   ├── qrcode/
+│   │   └── generator.go
+│   └── notification/
+│       ├── line.go
+│       └── email.go
+└── interfaces/
+    ├── http/
+    │   ├── zone_handler.go
+    │   ├── batch_handler.go
+    │   ├── qr_handler.go
+    │   └── routes.go
+    ├── websocket/
+    │   └── realtime_handler.go
+    └── mqtt/
+        └── mqtt_handler.go
+```
+
+---
+
+## 6. Domain Layer
+
+### 6.1 Batch Entity
+
+```go
+// domain/entity/batch.go
+package entity
+
+import "time"
+
+type Batch struct {
+    ID              int64     `json:"id"`
+    BatchNo         string    `json:"batch_no"`
+    ZoneID          int64     `json:"zone_id"`
+    CropID          int64     `json:"crop_id"`
+    ProgramID       int64     `json:"program_id"`
+    RawMaterialID   string    `json:"raw_material_id"`
+    StartTime       time.Time `json:"start_time"`
+    EndTime         time.Time `json:"end_time"`
+    Status          string    `json:"status"` // preparing, drying, cooling, completed, failed
+    InputWeight     float64   `json:"input_weight"` // kg
+    OutputWeight    float64   `json:"output_weight"` // kg
+    MoistureContent float64   `json:"moisture_content"` // %
+    WaterActivity   float64   `json:"water_activity"`
+    QualityScore    float64   `json:"quality_score"` // 0-100
+    Notes           string    `json:"notes"`
+    QRCode          string    `json:"qr_code"`
+    CreatedAt       time.Time `json:"created_at"`
+    UpdatedAt       time.Time `json:"updated_at"`
+}
+
+type BatchLog struct {
+    ID          int64     `json:"id"`
+    BatchID     int64     `json:"batch_id"`
+    ZoneID      int64     `json:"zone_id"`
+    Temperature float64   `json:"temperature"`
+    Humidity    float64   `json:"humidity"`
+    Pressure    float64   `json:"pressure"`
+    FanSpeed    int       `json:"fan_speed"`
+    HeaterPower int       `json:"heater_power"`
+    DoorStatus  bool      `json:"door_status"`
+    Timestamp   time.Time `json:"timestamp"`
+}
+
+type BatchQuality struct {
+    ID              int64     `json:"id"`
+    BatchID         int64     `json:"batch_id"`
+    ColorScore      float64   `json:"color_score"` // 0-100
+    AromaScore      float64   `json:"aroma_score"` // 0-100
+    TextureScore    float64   `json:"texture_score"` // 0-100
+    MoistureContent float64   `json:"moisture_content"` // %
+    WaterActivity   float64   `json:"water_activity"`
+    MicrobialTest   string    `json:"microbial_test"` // passed, failed
+    OverallGrade    string    `json:"overall_grade"` // A, B, C, D
+    Notes           string    `json:"notes"`
+    InspectedBy     string    `json:"inspected_by"`
+    InspectedAt     time.Time `json:"inspected_at"`
+    CreatedAt       time.Time `json:"created_at"`
+}
+```
+
+---
+
+## 7. Application Layer
+
+### 7.1 Start Drying Use Case
+
+```go
+// application/start_drying.go
+package application
+
+import (
+    "context"
+    "fmt"
+    "time"
+
+    "github.com/yourproject/internal/modules/drying/domain/entity"
+    "github.com/yourproject/internal/modules/drying/domain/repository"
+)
+
+type StartDryingUseCase struct {
+    batchRepo    repository.BatchRepository
+    zoneRepo     repository.ZoneRepository
+    programRepo  repository.ProgramRepository
+    qrRepo       repository.QRCodeRepository
+    mqttClient   MQTTClient
+}
+
+func NewStartDryingUseCase(
+    batchRepo repository.BatchRepository,
+    zoneRepo repository.ZoneRepository,
+    programRepo repository.ProgramRepository,
+    qrRepo repository.QRCodeRepository,
+    mqttClient MQTTClient,
+) *StartDryingUseCase {
+    return &StartDryingUseCase{
+        batchRepo:   batchRepo,
+        zoneRepo:    zoneRepo,
+        programRepo: programRepo,
+        qrRepo:      qrRepo,
+        mqttClient:  mqttClient,
+    }
+}
+
+type StartDryingRequest struct {
+    ZoneID        int64   `json:"zone_id"`
+    CropID        int64   `json:"crop_id"`
+    ProgramID     int64   `json:"program_id"`
+    RawMaterialID string  `json:"raw_material_id"`
+    InputWeight   float64 `json:"input_weight"`
+    Notes         string  `json:"notes"`
+}
+
+type StartDryingResponse struct {
+    BatchID     int64     `json:"batch_id"`
+    BatchNo     string    `json:"batch_no"`
+    ZoneID      int64     `json:"zone_id"`
+    Status      string    `json:"status"`
+    StartTime   time.Time `json:"start_time"`
+    QRCode      string    `json:"qr_code"`
+    Message     string    `json:"message"`
+}
+
+func (uc *StartDryingUseCase) Execute(ctx context.Context, req StartDryingRequest) (*StartDryingResponse, error) {
+    // 1. Validate zone
+    zone, err := uc.zoneRepo.GetByID(ctx, req.ZoneID)
+    if err != nil {
+        return nil, fmt.Errorf("zone not found: %w", err)
+    }
+    
+    if zone.Status != "idle" {
+        return nil, fmt.Errorf("zone is not idle, current status: %s", zone.Status)
+    }
+    
+    // 2. Get drying program
+    program, err := uc.programRepo.GetByID(ctx, req.ProgramID)
+    if err != nil {
+        return nil, fmt.Errorf("program not found: %w", err)
+    }
+    
+    // 3. Create batch
+    batchNo := generateBatchNo()
+    batch := &entity.Batch{
+        BatchNo:       batchNo,
+        ZoneID:        req.ZoneID,
+        CropID:        req.CropID,
+        ProgramID:     req.ProgramID,
+        RawMaterialID: req.RawMaterialID,
+        StartTime:     time.Now(),
+        Status:        "preparing",
+        InputWeight:   req.InputWeight,
+        Notes:         req.Notes,
+        CreatedAt:     time.Now(),
+        UpdatedAt:     time.Now(),
+    }
+    
+    if err := uc.batchRepo.Create(ctx, batch); err != nil {
+        return nil, err
+    }
+    
+    // 4. Generate QR code for batch
+    qrData := entity.QRData{
+        BatchNo:   batchNo,
+        BatchDate: time.Now(),
+        ZoneCode:  zone.Code,
+        Weight:    req.InputWeight,
+    }
+    
+    qr := &entity.QRCode{
+        Type:      "batch",
+        CropID:    req.CropID,
+        ZoneID:    req.ZoneID,
+        BatchID:   batch.ID,
+        Data:      qrData,
+        CreatedAt: time.Now(),
+    }
+    
+    if err := uc.qrRepo.Create(ctx, qr); err != nil {
+        return nil, err
+    }
+    
+    batch.QRCode = qr.Code
+    uc.batchRepo.Update(ctx, batch)
+    
+    // 5. Send command to zone via MQTT
+    command := map[string]interface{}{
+        "command":      "start",
+        "duration":     program.TotalDuration / 60,
+        "target_temp":  getTargetTemp(program),
+        "target_humidity": getTargetHumidity(program),
+    }
+    
+    if err := uc.mqttClient.Publish(ctx, fmt.Sprintf("drying/%s/control", zone.Code), command); err != nil {
+        return nil, err
+    }
+    
+    // 6. Update zone status
+    zone.Status = "drying"
+    if err := uc.zoneRepo.Update(ctx, zone); err != nil {
+        return nil, err
+    }
+    
+    return &StartDryingResponse{
+        BatchID:   batch.ID,
+        BatchNo:   batch.BatchNo,
+        ZoneID:    req.ZoneID,
+        Status:    "drying",
+        StartTime: batch.StartTime,
+        QRCode:    qr.Code,
+        Message:   "Drying started successfully",
+    }, nil
+}
+
+func generateBatchNo() string {
+    return fmt.Sprintf("B-%s-%04d", time.Now().Format("20060102"), rand.Intn(10000))
+}
+
+func getTargetTemp(program *entity.DryingProfile) float64 {
+    if len(program.Phases) > 0 {
+        return program.Phases[0].TargetTemp
+    }
+    return 50.0
+}
+
+func getTargetHumidity(program *entity.DryingProfile) float64 {
+    if len(program.Phases) > 0 {
+        return program.Phases[0].TargetHumidity
+    }
+    return 40.0
+}
+
+type MQTTClient interface {
+    Publish(ctx context.Context, topic string, data interface{}) error
+}
+```
+
+---
+
+## 8. API Endpoints
+
+### 8.1 Routes
+
+```go
+// interfaces/http/routes.go
+package http
+
+import (
+    "github.com/gin-gonic/gin"
+)
+
+func SetupRoutes(
+    r *gin.Engine,
+    zoneHandler *ZoneHandler,
+    batchHandler *BatchHandler,
+    qrHandler *QRHandler,
+    programHandler *ProgramHandler,
+) {
+    api := r.Group("/api/v1/drying")
+    
+    // Zone routes
+    zones := api.Group("/zones")
+    {
+        zones.GET("/", zoneHandler.GetZones)
+        zones.GET("/:id", zoneHandler.GetZone)
+        zones.PUT("/:id/config", zoneHandler.UpdateConfig)
+        zones.GET("/:id/status", zoneHandler.GetStatus)
+        zones.POST("/:id/control", zoneHandler.ControlZone)
+    }
+    
+    // Batch routes
+    batches := api.Group("/batches")
+    {
+        batches.POST("/", batchHandler.StartBatch)
+        batches.POST("/:id/stop", batchHandler.StopBatch)
+        batches.GET("/", batchHandler.GetBatches)
+        batches.GET("/:id", batchHandler.GetBatch)
+        batches.GET("/:id/logs", batchHandler.GetLogs)
+        batches.POST("/:id/quality", batchHandler.AddQuality)
+        batches.GET("/:id/quality", batchHandler.GetQuality)
+    }
+    
+    // Program routes
+    programs := api.Group("/programs")
+    {
+        programs.GET("/", programHandler.GetPrograms)
+        programs.GET("/:id", programHandler.GetProgram)
+        programs.POST("/", programHandler.CreateProgram)
+        programs.PUT("/:id", programHandler.UpdateProgram)
+        programs.DELETE("/:id", programHandler.DeleteProgram)
+        programs.GET("/crop/:crop_id", programHandler.GetByCrop)
+    }
+    
+    // QR Code routes
+    qr := api.Group("/qr")
+    {
+        qr.GET("/:code", qrHandler.ScanQR)
+        qr.GET("/:code/image", qrHandler.GetQRImage)
+        qr.POST("/batch/:batch_id", qrHandler.GenerateBatchQR)
+        qr.POST("/product/:product_id", qrHandler.GenerateProductQR)
+    }
+}
+```
+
+### 8.2 API Documentation
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| **Zone** | | |
+| GET | `/api/v1/drying/zones` | ดูรายการโซนทั้งหมด |
+| GET | `/api/v1/drying/zones/:id` | ดูข้อมูลโซน |
+| PUT | `/api/v1/drying/zones/:id/config` | ตั้งค่าโซน |
+| GET | `/api/v1/drying/zones/:id/status` | ดูสถานะโซนแบบ Real-time |
+| POST | `/api/v1/drying/zones/:id/control` | ควบคุมโซน (start/stop/pause) |
+| **Batch** | | |
+| POST | `/api/v1/drying/batches` | เริ่มการอบใหม่ |
+| POST | `/api/v1/drying/batches/:id/stop` | หยุดการอบ |
+| GET | `/api/v1/drying/batches` | ดูประวัติการอบ |
+| GET | `/api/v1/drying/batches/:id` | ดูรายละเอียดการอบ |
+| GET | `/api/v1/drying/batches/:id/logs` | ดู Log การอบ |
+| POST | `/api/v1/drying/batches/:id/quality` | บันทึกผลตรวจคุณภาพ |
+| **Program** | | |
+| GET | `/api/v1/drying/programs` | ดูโปรแกรมอบทั้งหมด |
+| POST | `/api/v1/drying/programs` | สร้างโปรแกรมอบใหม่ |
+| GET | `/api/v1/drying/programs/crop/:crop_id` | ดูโปรแกรมตามพืช |
+| **QR Code** | | |
+| GET | `/api/v1/drying/qr/:code` | สแกน QR Code (แสดงข้อมูล) |
+| GET | `/api/v1/drying/qr/:code/image` | ดาวน์โหลด QR Code |
+| POST | `/api/v1/drying/qr/batch/:batch_id` | สร้าง QR Code สำหรับ Batch |
+| POST | `/api/v1/drying/qr/product/:product_id` | สร้าง QR Code สำหรับสินค้า |
+
+---
+
+## 9. Dashboard UI
+
+### 9.1 React Dashboard
+
+```tsx
+// src/pages/Dashboard.tsx
+import React, { useEffect, useState } from 'react';
+import {
+    Grid,
+    Paper,
+    Typography,
+    Box,
+    Card,
+    CardContent,
+    IconButton,
+    Chip,
+    LinearProgress,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Select,
+    MenuItem,
+} from '@mui/material';
+import {
+    Thermostat,
+    Opacity,
+    Speed,
+    DoorFront,
+    PlayArrow,
+    Stop,
+    Pause,
+    QrCode,
+    History,
+    Assessment,
+    Settings,
+} from '@mui/icons-material';
+import { Line } from 'react-chartjs-2';
+import { useWebSocket } from '../hooks/useWebSocket';
+
+interface Zone {
+    id: number;
+    code: string;
+    name: string;
+    category: string;
+    status: string;
+    temperature: number;
+    humidity: number;
+    airFlow: number;
+    isRunning: boolean;
+    elapsedTime: number;
+    remainingTime: number;
+}
+
+interface Batch {
+    id: number;
+    batchNo: string;
+    zoneId: number;
+    cropId: number;
+    status: string;
+    startTime: string;
+    qrCode: string;
+}
+
+const Dashboard: React.FC = () => {
+    const [zones, setZones] = useState<Zone[]>([]);
+    const [batches, setBatches] = useState<Batch[]>([]);
+    const [selectedZone, setSelectedZone] = useState<number | null>(null);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedProgram, setSelectedProgram] = useState<string>('');
+    const [crops, setCrops] = useState<any[]>([]);
+    const [programs, setPrograms] = useState<any[]>([]);
+
+    const { lastMessage, sendMessage } = useWebSocket('/ws/drying');
+
+    useEffect(() => {
+        fetchZones();
+        fetchBatches();
+        fetchCrops();
+        fetchPrograms();
+
+        // Subscribe to real-time updates
+        sendMessage(JSON.stringify({
+            type: 'subscribe',
+            channel: 'drying_updates',
+        }));
+    }, []);
+
+    useEffect(() => {
+        if (lastMessage) {
+            const data = JSON.parse(lastMessage);
+            if (data.type === 'zone_update') {
+                updateZone(data.payload);
+            } else if (data.type === 'batch_update') {
+                updateBatch(data.payload);
+            } else if (data.type === 'alert') {
+                showAlert(data.payload);
+            }
+        }
+    }, [lastMessage]);
+
+    const fetchZones = async () => {
+        const response = await fetch('/api/v1/drying/zones');
+        const data = await response.json();
+        setZones(data);
+    };
+
+    const fetchBatches = async () => {
+        const response = await fetch('/api/v1/drying/batches?status=running');
+        const data = await response.json();
+        setBatches(data);
+    };
+
+    const fetchCrops = async () => {
+        const response = await fetch('/api/v1/drying/crops');
+        const data = await response.json();
+        setCrops(data);
+    };
+
+    const fetchPrograms = async () => {
+        const response = await fetch('/api/v1/drying/programs');
+        const data = await response.json();
+        setPrograms(data);
+    };
+
+    const updateZone = (data: Zone) => {
+        setZones(prev => prev.map(z => z.id === data.id ? data : z));
+    };
+
+    const updateBatch = (data: Batch) => {
+        setBatches(prev => prev.map(b => b.id === data.id ? data : b));
+    };
+
+    const showAlert = (alert: any) => {
+        // Show toast notification
+        console.log('Alert:', alert);
+    };
+
+    const startDrying = async () => {
+        if (!selectedZone || !selectedProgram) return;
+
+        const response = await fetch('/api/v1/drying/batches', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                zone_id: selectedZone,
+                program_id: selectedProgram,
+                crop_id: crops[0]?.id || 1,
+                input_weight: 10,
+                notes: 'Auto started from dashboard',
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            setBatches(prev => [...prev, data]);
+            setOpenDialog(false);
+            fetchZones();
+        }
+    };
+
+    return (
+        <Box sx={{ flexGrow: 1, p: 3 }}>
+            {/* Header */}
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                <Typography variant="h4">
+                    🏭 Smart Drying Factory
+                </Typography>
+                <Box>
+                    <Button
+                        variant="contained"
+                        startIcon={<PlayArrow />}
+                        onClick={() => setOpenDialog(true)}
+                    >
+                        เริ่มการอบ
+                    </Button>
+                </Box>
+            </Box>
+
+            {/* Zone Grid */}
+            <Grid container spacing={3}>
+                {zones.map((zone) => (
+                    <Grid item xs={12} md={6} lg={4} key={zone.id}>
+                        <ZoneCard
+                            zone={zone}
+                            onControl={(command) => controlZone(zone.id, command)}
+                            onViewDetails={() => setSelectedZone(zone.id)}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+
+            {/* Running Batches */}
+            {batches.length > 0 && (
+                <Box mt={4}>
+                    <Typography variant="h5" mb={2}>
+                        📦 การอบที่กำลังดำเนินการ
+                    </Typography>
+                    <Grid container spacing={2}>
+                        {batches.map((batch) => (
+                            <Grid item xs={12} md={6} lg={4} key={batch.id}>
+                                <BatchCard batch={batch} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+            )}
+
+            {/* Start Drying Dialog */}
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>เริ่มการอบ</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ mt: 2 }}>
+                        <TextField
+                            select
+                            fullWidth
+                            label="เลือกโซน"
+                            value={selectedZone || ''}
+                            onChange={(e) => setSelectedZone(Number(e.target.value))}
+                            margin="normal"
+                        >
+                            {zones.filter(z => z.status === 'idle').map((zone) => (
+                                <MenuItem key={zone.id} value={zone.id}>
+                                    {zone.code} - {zone.name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+                        <TextField
+                            select
+                            fullWidth
+                            label="เลือกโปรแกรมอบ"
+                            value={selectedProgram}
+                            onChange={(e) => setSelectedProgram(e.target.value)}
+                            margin="normal"
+                        >
+                            {programs.map((program) => (
+                                <MenuItem key={program.id} value={program.id}>
+                                    {program.name} ({program.totalDuration} นาที)
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+                        <TextField
+                            fullWidth
+                            label="น้ำหนักวัตถุดิบ (kg)"
+                            type="number"
+                            defaultValue={10}
+                            margin="normal"
+                        />
+
+                        <TextField
+                            fullWidth
+                            label="หมายเหตุ"
+                            multiline
+                            rows={2}
+                            margin="normal"
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)}>ยกเลิก</Button>
+                    <Button
+                        variant="contained"
+                        onClick={startDrying}
+                        disabled={!selectedZone || !selectedProgram}
+                    >
+                        เริ่มอบ
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
+};
+
+// Zone Card Component
+const ZoneCard: React.FC<{
+    zone: Zone;
+    onControl: (command: string) => void;
+    onViewDetails: () => void;
+}> = ({ zone, onControl, onViewDetails }) => {
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'drying': return '#4CAF50';
+            case 'cooling': return '#FF9800';
+            case 'idle': return '#9E9E9E';
+            case 'error': return '#F44336';
+            default: return '#9E9E9E';
+        }
+    };
+
+    return (
+        <Card sx={{ height: '100%' }}>
+            <CardContent>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6">
+                        {zone.code} - {zone.name}
+                    </Typography>
+                    <Chip
+                        label={zone.status}
+                        size="small"
+                        sx={{ bgcolor: getStatusColor(zone.status), color: 'white' }}
+                    />
+                </Box>
+
+                <Grid container spacing={2} sx={{ mt: 1 }}>
+                    <Grid item xs={6}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Thermostat color="primary" />
+                            <Typography variant="body2">
+                                อุณหภูมิ: {zone.temperature.toFixed(1)}°C
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Opacity color="info" />
+                            <Typography variant="body2">
+                                ความชื้น: {zone.humidity.toFixed(1)}%
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Speed color="secondary" />
+                            <Typography variant="body2">
+                                แรงลม: {zone.airFlow.toFixed(1)} m/s
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <DoorFront />
+                            <Typography variant="body2">
+                                {zone.isRunning ? 'กำลังทำงาน' : 'หยุด'}
+                            </Typography>
+                        </Box>
+                    </Grid>
+                </Grid>
+
+                {zone.isRunning && (
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="body2" color="textSecondary">
+                            เวลาที่เหลือ: {formatTime(zone.remainingTime)}
+                        </Typography>
+                        <LinearProgress
+                            variant="determinate"
+                            value={(zone.elapsedTime / (zone.elapsedTime + zone.remainingTime)) * 100}
+                            sx={{ mt: 1 }}
+                        />
+                    </Box>
+                )}
+
+                <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
+                    <Box>
+                        <IconButton
+                            size="small"
+                            color="success"
+                            onClick={() => onControl('start')}
+                            disabled={zone.isRunning}
+                        >
+                            <PlayArrow />
+                        </IconButton>
+                        <IconButton
+                            size="small"
+                            color="warning"
+                            onClick={() => onControl('pause')}
+                            disabled={!zone.isRunning}
+                        >
+                            <Pause />
+                        </IconButton>
+                        <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => onControl('stop')}
+                            disabled={!zone.isRunning}
+                        >
+                            <Stop />
+                        </IconButton>
+                    </Box>
+                    <Box>
+                        <IconButton size="small" onClick={onViewDetails}>
+                            <Assessment />
+                        </IconButton>
+                        <IconButton size="small">
+                            <QrCode />
+                        </IconButton>
+                        <IconButton size="small">
+                            <Settings />
+                        </IconButton>
+                    </Box>
+                </Box>
+            </CardContent>
+        </Card>
+    );
+};
+
+// Batch Card Component
+const BatchCard: React.FC<{ batch: Batch }> = ({ batch }) => {
+    return (
+        <Card>
+            <CardContent>
+                <Box display="flex" justifyContent="space-between">
+                    <Typography variant="subtitle1">
+                        {batch.batchNo}
+                    </Typography>
+                    <Chip
+                        label={batch.status}
+                        size="small"
+                        color={batch.status === 'drying' ? 'success' : 'default'}
+                    />
+                </Box>
+                <Typography variant="body2" color="textSecondary">
+                    โซน: {batch.zoneId}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                    เริ่ม: {new Date(batch.startTime).toLocaleString()}
+                </Typography>
+                <Box display="flex" justifyContent="flex-end" mt={1}>
+                    <IconButton size="small">
+                        <QrCode />
+                    </IconButton>
+                    <IconButton size="small">
+                        <History />
+                    </IconButton>
+                </Box>
+            </CardContent>
+        </Card>
+    );
+};
+
+const formatTime = (minutes: number) => {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h ${m}m`;
+};
+
+export default Dashboard;
+```
+
+---
+
+## 10. Mobile App
+
+### 10.1 Flutter App - QR Scanner
+
+```dart
+// lib/screens/qr_scanner_screen.dart
+import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class QRScannerScreen extends StatefulWidget {
+  @override
+  _QRScannerScreenState createState() => _QRScannerScreenState();
+}
+
+class _QRScannerScreenState extends State<QRScannerScreen> {
+  final MobileScannerController controller = MobileScannerController();
+  bool isScanning = true;
+  Map<String, dynamic>? scannedData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('สแกน QR Code'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.flash_on),
+            onPressed: () => controller.toggleFlash(),
+          ),
+          IconButton(
+            icon: Icon(Icons.switch_camera),
+            onPressed: () => controller.switchCamera(),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          MobileScanner(
+            controller: controller,
+            onDetect: (capture) {
+              if (!isScanning) return;
+              
+              final List<Barcode> barcodes = capture.barcodes;
+              for (final barcode in barcodes) {
+                if (barcode.rawValue != null) {
+                  isScanning = false;
+                  _handleQRCode(barcode.rawValue!);
+                  break;
+                }
+              }
+            },
+          ),
+          if (scannedData != null)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildResultCard(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleQRCode(String code) async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://api.yourserver.com/api/v1/drying/qr/$code'),
+      );
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          scannedData = data;
+        });
+      } else {
+        _showError('ไม่พบข้อมูล QR Code นี้');
+      }
+    } catch (e) {
+      _showError('เกิดข้อผิดพลาด: $e');
+    }
+  }
+
+  Widget _buildResultCard() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '📦 ข้อมูลผลิตภัณฑ์',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    scannedData = null;
+                    isScanning = true;
+                  });
+                },
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          if (scannedData?['type'] == 'product') ...[
+            _buildInfoRow('สินค้า', scannedData?['product_name']),
+            _buildInfoRow('Batch', scannedData?['batch_no']),
+            _buildInfoRow('โซน', scannedData?['zone_code']),
+            _buildInfoRow('น้ำหนักสุทธิ', '${scannedData?['net_weight']} kg'),
+            _buildInfoRow('ความชื้น', '${scannedData?['moisture_content']}%'),
+            _buildInfoRow('วันผลิต', scannedData?['pack_date']),
+            _buildInfoRow('วันหมดอายุ', scannedData?['expiry_date']),
+            _buildInfoRow('สถานที่เก็บ', scannedData?['storage_location']),
+            
+            SizedBox(height: 12),
+            Text(
+              '📊 ประวัติการอบ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 4),
+            Container(
+              height: 100,
+              child: _buildChart(),
+            ),
+          ] else if (scannedData?['type'] == 'batch') ...[
+            _buildInfoRow('Batch', scannedData?['batch_no']),
+            _buildInfoRow('โซน', scannedData?['zone_code']),
+            _buildInfoRow('น้ำหนัก', '${scannedData?['weight']} kg'),
+            _buildInfoRow('สถานะ', scannedData?['drying_status']),
+          ],
+          
+          SizedBox(height: 12),
+          if (scannedData?['type'] == 'product')
+            ElevatedButton.icon(
+              onPressed: () {
+                // Navigate to product detail
+              },
+              icon: Icon(Icons.open_in_new),
+              label: Text('ดูรายละเอียดเพิ่มเติม'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 45),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String? value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value ?? '-',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChart() {
+    // Implement chart using fl_chart or similar
+    return Center(
+      child: Text('กราฟแสดงอุณหภูมิและความชื้น'),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+    setState(() {
+      isScanning = true;
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+}
+```
+
+---
+
+## 11. การติดตั้งและใช้งาน
+
+### 11.1 Docker Compose
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: drying
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: drying
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  influxdb:
+    image: influxdb:2.7-alpine
+    environment:
+      INFLUXDB_INIT_MODE: setup
+      INFLUXDB_INIT_USERNAME: admin
+      INFLUXDB_INIT_PASSWORD: password
+      INFLUXDB_INIT_ORG: drying
+      INFLUXDB_INIT_BUCKET: drying_data
+      INFLUXDB_INIT_RETENTION: 30d
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: drying
+      DB_PASSWORD: password
+      DB_NAME: drying
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_TOKEN: admin:password
+      INFLUX_ORG: drying
+      INFLUX_BUCKET: drying_data
+      MQTT_BROKER: mosquitto:1883
+      REDIS_HOST: redis:6379
+    depends_on:
+      - postgres
+      - influxdb
+      - redis
+      - mosquitto
+    volumes:
+      - ./uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  influxdb_data:
+```
+
+### 11.2 Initial Data Setup
+
+```sql
+-- Insert zones
+INSERT INTO zones (code, name, category, status, capacity) VALUES
+('A1', 'Zone A1 - ใบมะพร้าว', 'herb', 'idle', 20),
+('A2', 'Zone A2 - ใบเตย', 'herb', 'idle', 20),
+('A3', 'Zone A3 - ใบหม่อน', 'herb', 'idle', 20),
+('B1', 'Zone B1 - ขมิ้น', 'herb_special', 'idle', 15),
+('B2', 'Zone B2 - กระวาน', 'herb_special', 'idle', 15),
+('B3', 'Zone B3 - พริก', 'herb_special', 'idle', 15),
+('C1', 'Zone C1 - กล้วย', 'fruit', 'idle', 25),
+('C2', 'Zone C2 - มะม่วง', 'fruit', 'idle', 25),
+('C3', 'Zone C3 - สับปะรด', 'fruit', 'idle', 25),
+('D1', 'Zone D1 - เห็ด', 'rapid', 'idle', 10),
+('D2', 'Zone D2 - ปลา', 'rapid', 'idle', 10),
+('D3', 'Zone D3 - เนื้อ', 'rapid', 'idle', 10);
+
+-- Insert crops
+INSERT INTO crops (code, name, category, sub_category) VALUES
+('C001', 'ขมิ้นชัน', 'herb_special', 'turmeric'),
+('C002', 'กระวาน', 'herb_special', 'cardamom'),
+('C003', 'พริกแห้ง', 'herb_special', 'chili'),
+('C004', 'กล้วยน้ำว้า', 'fruit', 'banana'),
+('C005', 'มะม่วงน้ำดอกไม้', 'fruit', 'mango'),
+('C006', 'สับปะรด', 'fruit', 'pineapple'),
+('C007', 'เห็ดหอม', 'rapid', 'mushroom');
+
+-- Insert drying programs
+INSERT INTO drying_programs (crop_id, name, phases, total_duration) VALUES
+(1, 'โปรแกรมอบขมิ้น', '[{"phase":1,"target_temp":50,"target_humidity":40,"duration":120,"fan_speed":80,"heater_power":100},{"phase":2,"target_temp":55,"target_humidity":35,"duration":180,"fan_speed":70,"heater_power":90}]', 300),
+(4, 'โปรแกรมอบกล้วย', '[{"phase":1,"target_temp":55,"target_humidity":45,"duration":180,"fan_speed":70,"heater_power":100},{"phase":2,"target_temp":60,"target_humidity":35,"duration":240,"fan_speed":60,"heater_power":85}]', 420);
+```
+
+---
+
+## 12. Business Model
+
+### 12.1 Packaging & Pricing
+
+| Package | Price | Zones | Features |
+|---------|-------|-------|----------|
+| **Starter** | ฿29,900 | 2 | ควบคุมอัตโนมัติ, QR Code พื้นฐาน |
+| **Professional** | ฿89,900 | 6 | Starter + AI แนะนำ, Multi-zone, Report |
+| **Enterprise** | ฿299,900 | 12 | Professional + Cloud, API, Support |
+| **Custom** | ตามขนาด | 12+ | Customization, On-premise, Training |
+
+### 12.2 Revenue Model
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Revenue Model                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Hardware Sales (One-time)                                     │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Per Zone: ~฿6,650                                      │ │
+│  │  6 Zones: ~฿40,000                                      │ │
+│  │  12 Zones: ~฿80,000                                     │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  Subscription (Annual)                                         │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Starter: ฿9,900/ปี                                     │ │
+│  │  Professional: ฿29,900/ปี                               │ │
+│  │  Enterprise: ฿99,900/ปี                                 │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  QR Code Service                                                │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Per QR Code: ฿5-50                                     │ │
+│  │  Bulk Discount Available                                 │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 12.3 Target Market
+
+| กลุ่ม | จำนวน | ราคาที่เหมาะสม |
+|------|-------|---------------|
+| **โรงงานอบสมุนไพร** | 500+ | 100,000-500,000 บาท |
+| **ผู้ประกอบการอาหารแห้ง** | 1,000+ | 50,000-200,000 บาท |
+| **สหกรณ์การเกษตร** | 2,000+ | 100,000-300,000 บาท |
+| **ศูนย์เรียนรู้เกษตร** | 500+ | 30,000-100,000 บาท |
+| **โรงงานผลิตยาแผนโบราณ** | 200+ | 200,000-1,000,000 บาท |
+
+---
+
+## สรุป
+
+ระบบ Smart Drying Factory เป็นโซลูชันที่ครบวงจรสำหรับโรงอบสมุนไพรและผลไม้ โดยมี:
+
+1. **Multi-Zone Architecture** - รองรับการอบหลายประเภทพร้อมกัน
+2. **Smart Control** - ควบคุมอุณหภูมิ/ความชื้นอัตโนมัติ
+3. **QR Code Traceability** - ตรวจสอบย้อนกลับได้ทุกขั้นตอน
+4. **AI Recommendation** - แนะนำโปรแกรมอบที่เหมาะสม
+5. **Real-time Dashboard** - ดูสถานะทุกโซนแบบเรียลไทม์
+6. **Mobile App** - ควบคุมและสแกน QR Code จากมือถือ
+
+เหมาะสำหรับการขายให้กับ:
+- โรงงานแปรรูปสมุนไพร
+- ผู้ประกอบการอาหารแห้ง
+- สหกรณ์การเกษตร
+- ศูนย์เรียนรู้เกษตรสมัยใหม่

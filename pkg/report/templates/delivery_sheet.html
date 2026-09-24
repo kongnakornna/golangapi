@@ -1,0 +1,67 @@
+{{define "content"}}
+<div class="header">
+  <div class="company-info">
+    <h1>{{.Company.Name}}</h1>
+    <p>{{.Company.Address}}</p>
+    <p>Tel: {{.Company.Phone}}</p>
+  </div>
+  <div class="doc-title">
+    <h2>ใบส่งของ / DELIVERY SHEET</h2>
+    <p class="doc-no">เลขที่: {{.DeliveryNo}}</p>
+    <p style="font-size:11px;color:#666;">วันที่: {{.Date | formatDate}}</p>
+  </div>
+</div>
+
+<div class="info-section">
+  <div class="info-box">
+    <h3>ลูกค้า</h3>
+    <p><strong>{{.CustomerName}}</strong></p>
+    <p>{{.CustomerAddr}}</p>
+  </div>
+  <div class="info-box">
+    <h3>อ้างอิง</h3>
+    <p>ใบงาน: {{.JobNo}}</p>
+    <p>ทะเบียนรถ: {{.LicensePlate}}</p>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:40px;">#</th>
+      <th>รายการ</th>
+      <th style="width:60px;" class="text-center">จำนวน</th>
+      <th style="width:60px;">หน่วย</th>
+      <th>หมายเหตุ</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Items}}
+    <tr>
+      <td>{{.LineNo}}</td>
+      <td>{{.Description}}</td>
+      <td class="text-center">{{.Quantity}}</td>
+      <td>{{.Unit}}</td>
+      <td>{{.Note}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+
+{{if .Remark}}
+<div style="margin-bottom:15px;padding:10px;background:#f8f9fa;border-radius:4px;">
+  <p style="font-size:12px;color:#666;"><strong>หมายเหตุ:</strong> {{.Remark}}</p>
+</div>
+{{end}}
+
+<div class="footer">
+  <div class="sign-box">
+    <p class="sign-line">ผู้ส่งของ</p>
+    <p>( {{.DeliveredBy}} )</p>
+  </div>
+  <div class="sign-box">
+    <p class="sign-line">ผู้รับของ</p>
+    <p>( {{.ReceivedBy}} )</p>
+  </div>
+</div>
+{{end}}

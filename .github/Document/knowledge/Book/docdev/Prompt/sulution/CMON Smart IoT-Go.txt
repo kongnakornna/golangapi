@@ -1,0 +1,18 @@
+CMON  Smart IoT
+1.	Monitoring or auto control and management and notification system 
+(ระบบติดตามเฝ้าระวังภัย และ ควบคุม บริการ จัดการอุปกรณ์ อัตโนมัติและการแจ้งเตือน ภัย)
+2.	Smart building management (การจัดการอาคารอัจฉริยะ)
+3.	Mini Smart Farm (ฟาร์มขนาดเล็กอัจฉริยะ)
+4.	Smart transportation & tracking (การขนส่งและการติดตามอัจฉริยะ)
+5.	Smart Healthcare patient alert (การแจ้งเตือนผู้ป่วยและดูแลสุขภาพอัจฉริยะ)
+6.	Smart Industry management (การจัดการอุตสาหกรรมอัจฉริยะ)
+7.	Smart civic care (การดูแลพลเมืองอัจฉริยะ)
+8.	 Mini Smart Farm (ฟาร์มอัจฉริยะ)
+9.	Smart Intelligent Environment management(การจัดการสิ่งแวดล้อมอัจฉริยะ)
+10.	Mini smart city zoning management (การจัดการเมืองอัจฉริยะขนาดเล็ก)
+11.	Smart healthcare and tracking (การดูแลสุขภาพและการติดตามอัจฉริยะ)
+
+
+CMON IoT Solution
+1.	Monitoring or auto control and management and notification system 
+(ระบบติดตามเฝ้าระวังภัย และ ควบคุม บริการ จัดการอุปกรณ์ อัตโนมัติและการแจ้งเตือน ภัย)

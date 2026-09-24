@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Sarabun', 'TH Sarabun New', sans-serif;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+  padding: 20px;
+}
+
+.page { width: 190mm; margin: 0 auto; background: #fff; position: relative; }
+
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #333; }
+.header .logo { width: 80px; height: 80px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
+.header .company-info { flex: 1; padding-left: 15px; }
+.header .company-info h1 { font-size: 18px; font-weight: 700; color: #222; }
+.header .company-info p { font-size: 12px; color: #666; }
+.header .doc-title { text-align: right; }
+.header .doc-title h2 { font-size: 20px; font-weight: 700; color: #1a56db; margin-bottom: 5px; }
+.header .doc-title .doc-no { font-size: 14px; font-weight: 600; color: #444; }
+
+.info-section { display: flex; gap: 20px; margin-bottom: 15px; }
+.info-section .info-box { flex: 1; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 10px; }
+.info-section .info-box h3 { font-size: 12px; font-weight: 700; color: #1a56db; margin-bottom: 5px; text-transform: uppercase; }
+.info-section .info-box p { font-size: 12px; color: #333; line-height: 1.6; }
+
+table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+table thead th { background: #1a56db; color: #fff; padding: 8px 6px; font-size: 12px; font-weight: 600; text-align: left; }
+table tbody td { padding: 6px; font-size: 12px; border-bottom: 1px solid #e0e0e0; }
+table tbody tr:nth-child(even) { background: #f8f9fa; }
+table tbody tr:hover { background: #eef2ff; }
+table .text-right { text-align: right; }
+table .text-center { text-align: center; }
+table .text-left { text-align: left; }
+
+.summary { margin-left: auto; width: 300px; margin-bottom: 20px; }
+.summary table { margin-bottom: 0; }
+.summary table td { padding: 4px 8px; font-size: 12px; border: none; }
+.summary table td.label { font-weight: 600; color: #555; text-align: right; width: 50%; }
+.summary table td.value { text-align: right; font-weight: 600; }
+.summary .grand-total td { font-size: 16px; font-weight: 700; color: #1a56db; border-top: 2px solid #333; padding-top: 8px; }
+
+.amount-words { margin-bottom: 15px; padding: 10px; background: #fffbea; border: 1px solid #fde68a; border-radius: 4px; }
+.amount-words p { font-size: 13px; color: #92400e; }
+.amount-words p strong { font-weight: 700; }
+
+.footer { margin-top: 30px; display: flex; justify-content: space-between; padding-top: 15px; border-top: 1px solid #e0e0e0; }
+.footer .sign-box { text-align: center; width: 200px; }
+.footer .sign-box .sign-line { margin-top: 30px; margin-bottom: 5px; border-top: 1px solid #333; padding-top: 5px; }
+.footer .sign-box p { font-size: 11px; color: #666; }
+.footer .remark { flex: 1; padding-right: 20px; }
+.footer .remark h4 { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+.footer .remark p { font-size: 11px; color: #666; }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-warning { background: #fef3c7; color: #92400e; }
+.badge-danger { background: #fee2e2; color: #991b1b; }
+.badge-info { background: #dbeafe; color: #1e40af; }
+
+@media print {
+  body { padding: 0; }
+  .page { width: 100%; }
+  .no-print { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+{{block "content" .}}{{end}}
+</div>
+</body>
+</html>

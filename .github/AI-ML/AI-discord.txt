@@ -1,0 +1,70 @@
+
+ws://127.0.0.1:18789  P: Pumipat@0955
+
+Gateway Token
+
+41d02c2f898de12ec1f327ad1edd4fe850d93ecd82bcd127
+
+Session Key เริ่มต้น
+
+agent:main:main
+
+
+
+
+user: cmonai
+
+MTUxNzM3MDU3OTczOTYxMTI1Ng.GhCJTM.v0gcaNUVyvpB3OhtkWqz0CSkLVaKlAKX8189qs
+
+
+http://127.0.0.1:18789/#token=41d02c2f898de12ec1f327ad1edd4fe850d93ecd82bcd127
+
+ollama launch openclaw
+
+
+ollama list
+
+NAME              ID              SIZE      MODIFIED    
+qwen3.6:latest    07d35212591f    23 GB     4 hours ago    
+deepseek-r1:7b    755ced02ce7b    4.7 GB    5 hours ago    
+ 
+ollama run deepseek-r1:7b
+ollama run qwen3.6:latest
+
+
+ใน Ollama คำสั่งที่ใช้ **"เรียกใช้งาน" (launch/run)** โมเดลคือ `ollama run` ตามด้วยชื่อโมเดลครับ
+
+คุณสามารถรันโมเดลที่มีอยู่ได้ดังนี้:
+
+1. **รัน DeepSeek-R1 (ขนาด 4.7 GB – แนะนำให้ลองก่อนเพราะใช้ทรัพยากรน้อยกว่า):**
+   ```bash
+   ollama run deepseek-r1:7b
+   ```
+
+2. **รัน Qwen3.6 (ขนาด 23 GB – ใหญ่กว่ามาก):**
+   ```bash
+   ollama run qwen3.6:latest
+   ```
+
+---
+
+**หลังจากรันคำสั่งนี้แล้วจะเกิดอะไรขึ้น?**
+- มันจะโหลดโมเดลเข้าสู่หน่วยความจำ (RAM/VRAM)
+- หน้าจอเทอร์มินัลจะเปลี่ยนเป็น **โหมดแชทโต้ตอบ (Interactive mode)** 
+- คุณสามารถพิมพ์ข้อความถามมันได้เลย พิมพ์ `/bye` หรือกด `Ctrl+D` เพื่อออก
+
+---
+
+**ข้อควรระวังสำคัญ:**
+- โมเดล `qwen3.6` ไซส์ 23 GB ใหญ่มาก **ต้องแน่ใจว่าคอมคุณมี RAM ว่างพอสมควร (อย่างน้อย 24-32 GB)** และถ้าใช้ GPU ควรมี VRAM เพียงพอ มิฉะนั้นอาจจะรันไม่ขึ้นหรือช้ามาก
+- ถ้าอยากรันแบบมีข้อความแจ้งเตือนหรือกำหนดพารามิเตอร์เพิ่มเติม (เช่น temperature) ก็ต่อท้ายได้ เช่น:
+  ```bash
+  ollama run deepseek-r1:7b --verbose
+  ```
+
+---
+ 
+```bash
+ollama serve
+```
+ 

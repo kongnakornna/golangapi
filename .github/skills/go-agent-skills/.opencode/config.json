@@ -1,0 +1,6 @@
+{
+  "name": "go-agent-skills",
+  "description": "curated AI agent skills for Go development grounded in real-world patterns",
+  "skills_dir": "skills",
+  "install": "npx skills add eduardo-sl/go-agent-skills -a opencode"
+}

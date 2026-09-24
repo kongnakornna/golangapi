@@ -1,0 +1,14 @@
+root = "."
+tmp_dir = "tmp"
+env_files = [".env"]
+
+[build]
+  entrypoint = ["./tmp/main", "serve"]
+  cmd = "go build -o ./tmp/main ./"
+  clean_on_exit = true
+
+[log]
+  time = true
+
+[misc]
+  clean_on_exit = true

@@ -1,0 +1,228 @@
+
+Go-Chi Comprehensive Guide / คู่มือ Go-Chi 
+
+# Architecture
+
+In this project use 3 layer architecture
+
+- Models
+- Repository
+- Usecase
+- Delivery
+
+## 🌟 Features
+
+
+
+### 🚀 Core Features
+- **🏭 Clean Architecture** - Three-layer architecture (Repository/Service/Handler) with comprehensive dependency injection
+- **🔒 JWT Authentication** - Complete authentication system with access/refresh tokens and token blacklisting
+- **👥 User Management** - Full CRUD operations with basic role-based protection (admin-only create)
+- **📝 Structured Logging** - Unified logging via `pkg/logger` (built on Go's slog) with trace/request context
+- **🚫 Rate Limiting** - IP-based request throttling with automatic cleanup
+- **📊 Health Monitoring** - Comprehensive health checks with dependency monitoring
+- **🌐 Redis Cache** - Production-ready caching layer with TTL management and object serialization
+- **📦 Message Queue** - Redis-based pub/sub messaging with worker pools and dead letter queue support
+- ** mqtt 
+- ** socket io
+- ** snmp
+- **💼 Transaction Management** - GORM transaction manager with nested transaction support
+- **🛡️ Security** - Multiple security layers including CORS, security headers, and input validation
+
+### 🚀 Core database  PostgreSQL,postgresql,influxdb,TimescaleDB (TigerData) 
+
+### 🛠️ Middleware Stack
+- **Request Context** - Trace IDs, request IDs, and user context propagation
+- **Security Headers** - CSP, HSTS, X-Frame-Options, XSS Protection
+- **CORS Handling** - Configurable cross-origin resource sharing
+- **Panic Recovery** - Application-level panic handling with graceful error responses
+- **Request Logging** - Structured request/response logging with performance metrics
+- **Authentication** - JWT middleware with role-based route protection
+- **Input Validation** - Comprehensive request validation using go-playground/validator
+
+### 📈 Health & Monitoring
+- **Health Endpoints** - Basic, detailed, readiness, and liveness probes
+- **Dependency Checks** - Database and Redis connection status via `/health/detailed`
+- **System Metrics (Optional)** - Runtime/memory snapshot handler available for wiring
+- **Performance Tracking (Optional)** - Monitoring middleware + metrics handler available
+- **Kubernetes Ready** - `/ready` and `/live` probes
+
+- CRUD
+- Jwt, refresh token saved in redis
+- Cached user in redis
+- Email verification
+- Forget/reset password, send email
+
+## Technical
+
+- `chi`: router and middleware
+- `viper`: configuration
+- `cobra`: CLI features
+- `gorm`: orm
+- `validator`: data validation
+- `jwt`: jwt authentication
+- `zap`: logger
+- `gomail`: email
+- `hermes`: generate email body
+- `air`: hot-reload
+
+## Start Application
+
+### Generate the Private and Public Keys
+
+- Generate the private and public keys: [travistidwell.com/jsencrypt/demo/](https://travistidwell.com/jsencrypt/demo/)
+- Copy the generated private key and visit this Base64 encoding website to convert it to base64
+- Copy the base64 encoded key and add it to the `config/config-local.yml` file as `jwt`
+- Similar for public key
+
+### Stmp mail config
+
+- Create [mailtrap](https://mailtrap.io/) account
+- Create new inboxes
+- Update smtp config `config/config-local.yml` file as `smtpEmail`
+
+
+
+### โฟลเดอร์หลัก  gobackend
+```
+gobackend/
+├── .vscode/
+│   ├── launch.json
+│   └── settings.json
+├── cmd/
+│   ├── api/
+│   │   └── main.go
+│   ├── initdata.go
+│   ├── migrate.go
+│   ├── root.go
+│   ├── serve.go
+│   └── worker.go
+├── config/
+│   ├── config-local.yml
+│   ├── config-prod.yml
+│   └── config.go
+├── docdev/
+├── docs/
+├── internal/
+│   ├── models/
+│   │   ├── base.go
+│   │   ├── session.go
+│   │   ├── user.go
+│   │   └── verification.go
+│   ├── repository/
+│   │   ├── pg_repository.go
+│   │   ├── redis_repo.go
+│   │   ├── session_repo.go
+│   │   └── user_repo.go
+│   ├── usecase/
+│   │   ├── auth_usecase.go
+│   │   ├── cache_usecase.go
+│   │   └── user_usecase.go
+│   ├── delivery/
+│   │   ├── rest/
+│   │   │   ├── handler/
+│   │   │   │   ├── auth_handler.go
+│   │   │   │   ├── health_handler.go
+│   │   │   │   └── user_handler.go
+│   │   │   ├── middleware/
+│   │   │   │   ├── auth.go
+│   │   │   │   ├── cors.go
+│   │   │   │   ├── logger.go
+│   │   │   │   ├── monitoring.go
+│   │   │   │   ├── rate_limit.go
+│   │   │   │   └── security.go
+│   │   │   ├── dto/
+│   │   │   │   ├── auth_dto.go
+│   │   │   │   ├── error_dto.go
+│   │   │   │   └── user_dto.go
+│   │   │   └── router.go
+│   │   └── worker/
+│   │       └── email_worker.go
+│   └── pkg/
+│       ├── email/
+│       │   ├── gomail_sender.go
+│       │   ├── sender.go
+│       │   └── templates/
+│       │       ├── reset_password.html
+│       │       └── verification.html
+│       ├── hash/
+│       │   └── bcrypt.go
+│       ├── jwt/
+│       │   ├── maker.go
+│       │   ├── payload.go
+│       │   └── rsa_maker.go
+│       ├── logger/
+│       │   └── zap_logger.go
+│       ├── redis/
+│       │   ├── cache.go
+│       │   ├── client.go
+│       │   └── refresh_store.go
+│       ├── utils/
+│       │   ├── random.go
+│       │   └── time.go
+│       └── validator/
+│           └── custom_validator.go
+├── migrations/
+│   ├── 000001_create_users_table.down.sql
+│   └── 000001_create_users_table.up.sql
+├── pkg/
+│   └── utils/
+├── scripts/
+│   ├── build.sh
+│   └── deploy.sh
+├── vendor/
+├── .air.toml
+├── .dockerignore
+├── .env.dev
+├── .env.prod
+├── .gitignore
+├── docker-compose.dev.yml
+├── docker-compose.prod.yml
+├── Dockerfile.dev
+├── Dockerfile.prod
+├── go.mod
+├── go.sum
+├── LICENSE
+├── README.md
+└── BookGolang.md
+```
+
+เริ่มเขียนได้ทันที โดยเริ่มจากบทที่ ล่าสุด ไปจนครบ
+ข้อกำหนด:
+1. แต่ละบทไม่จำกัดความยาว เน้นความสมบูนณ์ของเนื้อหา
+- โครงสร้างการทำงาน
+- ออกแบบ workflow
+  - วาดรูป dataflow สร้าง รูปแบบ dataflow เหมือนจริง ลักษณะ flowchart   เพื่ออธิบายกระบวนการ ทำความเข้าใจ
+  - พร้อมอธิบาย แบบ ละเอียด 
+  - คอมเม้น code ภาษาไทย และ ภาษาอังถถษ อธิบาย การทำงาน แต่ละจุด
+  - ยกตัวอย่างการใช้งานจริง หรือ กรณีศึกษา แนวทางแก้ไขปัญหา ที่อาจจะเกิดขึ้น
+  - เทมเพลต และ ตัวอย่างโค้ด พร้อมนำไป run ได้ทันที  มีคำอธิบายการใช้งานแต่ละจุด การคอมเม้น  
+- สรุป
+   -ประโยชน์ที่ได้รับ
+   -ข้อควรระวัง
+   -ข้อดี
+   -ข้อเสีย
+   -ข้อห้าม ถ้ามี
+2. ทุกบทต้องประกอบด้วย:
+   - คำอธิบายแนวคิด (Concept Explanation)
+   - ตัวอย่างโค้ดที่รันได้จริง (Runnable Code Example)
+   - ตารางสรุป (ถ้ามีการเปรียบเทียบ)
+   - แบบฝึกหัดท้ายบท 3–5 ข้อ
+   - ส่วน "แหล่งอ้างอิง" ท้ายบท (References)
+3. บทที่มีการออกแบบ การออกแบบ workflow หรือการสร้าง diagram), Task List, Checklist,  จนครบทุกบท ให้:
+   - แสดงเทมเพลตเป็น Markdown Table หรือลิงก์ดาวน์โหลด
+   - อธิบายวิธีการใช้งานแต่ละจุด (step-by-step)
+   - แทรกรูปภาพโดยระบุเป็น "รูปที่ X: คำอธิบาย"
+4. สำหรับบทที่เกี่ยวข้องกับ Draw.io: ให้อธิบายวิธีการวาด Flowchart แบบ Top-to-Bottom (TB) พร้อมแสดงตัวอย่างโค้ด Mermaid หรือ ASCII flowchart
+5. ใช้ภาษาไทยที่เป็นทางการ แต่เข้าใจง่ายและมีภาษอังถถษจุดสำคัญเสริม ไม่ใช้ศัพท์เทคนิคที่ซับซ้อนเกินไปโดยไม่มีการอธิบาย
+5.หากใช้ศัพท์เทคนิค ต้องอธิบายความหมาย หลัการทำงาน วิธีการสำไปประยุตใช้   
+ไม่จำกัดความยาว เน้นความสมบูนณ์ของเนื้อหา  มี สรุปสั้น ก่อน เนื้อหา แต่ละส่วน  มีหัวหนหัวข้อสำคัญ
+คืออะไร
+มีกี่แบบ
+ใช้อย่างไร นำในกรณีไหน ทำไม่ต้องใช้ ประโยชน์ที่ได้รับ 
+   -ประโยชน์ที่ได้รับ
+   -ข้อควรระวัง
+   -ข้อดี
+   -ข้อเสีย
+   -ข้อห้าม ถ้ามี
+ 

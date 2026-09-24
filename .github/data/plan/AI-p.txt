@@ -1,0 +1,8 @@
+
+
+แปลง Nustjs  modules settings
+อ่าน C:\github\gistdaapi\src\modules\settings
+นำข้อมูล โครงสร้าทั้งทั่งหมดมา
+แปลงเป็น Golang  modules settings
+
+C:\github\icmongolang\internal\modules\settings

@@ -1,0 +1,106 @@
+.deploy-kube-uat:
+  stage: deploy-uat
+  #image: registryii.thaibevapp.com/tbdev/baseimage/alpine:latest
+  image: ${HARBOR_REGISTRY}/docker_hub_proxy_cache/alpine:latest
+  when: manual
+  script:
+    # Set environment variables
+    - export STAGE=uat
+    - export API_DOMAIN=${API_DOMAIN_UAT}
+    - export VER_TAG=${CI_COMMIT_TAG/-uat/}
+
+    # Kubenetes
+    - export KUBE_API_TOKEN=${KUBE_API_TOKEN_UAT}
+
+    # Set kubectl
+    - |
+      apk add curl
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl \
+          -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+      chmod +x ./kubectl
+      cp kubectl /usr/local/bin/
+    - |
+      kubectl version --client;
+      echo $KUBE_API_CERT | base64 -d > deploy.crt;
+      kubectl config set-cluster k8s --server=https://$KUBE_API_EP --certificate-authority=deploy.crt --embed-certs=true;
+      kubectl config set-credentials k8s_deployer --token=$KUBE_API_TOKEN;
+    - |
+      kubectl config set-context k8s --cluster k8s --user k8s_deployer --namespace=rtr-uat;
+
+    - kubectl config use-context k8s
+
+    # Install envsubst
+    - apk add gettext
+
+    # Clean up
+    - kubectl get deploy --no-headers=true | grep "rtr-pms-${APP_NAME}-api-deployment-${STAGE}" | awk '{print $1}' | xargs kubectl delete deploy --ignore-not-found || true
+
+    # Apply deployment
+    - cat deployments/deployment.yml | envsubst | kubectl apply -f -
+
+  only:
+    - /^uat-\d+\.\d+\.\d+$/
+    #- /^\d+.\d+.\d+-uat/
+
+.cronjob-kube-uat:
+  stage: deploy-uat
+  #image: registryii.thaibevapp.com/tbdev/baseimage/alpine:latest
+  image: ${HARBOR_REGISTRY}/docker_hub_proxy_cache/alpine:latest
+  when: manual
+  script:
+    # Set environment variables
+    - export STAGE=uat
+    - export API_DOMAIN=${API_DOMAIN_UAT}
+    - export VER_TAG=${CI_COMMIT_TAG/-uat/}
+
+    # Kubenetes
+    - export KUBE_API_TOKEN=${KUBE_API_TOKEN_UAT}
+
+    # Set kubectl
+    - |
+      apk add curl
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl \
+          -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+      chmod +x ./kubectl
+      cp kubectl /usr/local/bin/
+    - |
+      kubectl version --client;
+      echo $KUBE_API_CERT | base64 -d > deploy.crt;
+      kubectl config set-cluster k8s --server=https://$KUBE_API_EP --certificate-authority=deploy.crt --embed-certs=true;
+      kubectl config set-credentials k8s_deployer --token=$KUBE_API_TOKEN;
+    - |
+      kubectl config set-context k8s --cluster k8s --user k8s_deployer --namespace=rtr-uat;
+
+    - kubectl config use-context k8s
+
+    # Install envsubst
+    - apk add gettext
+
+    # Clean up
+    - kubectl get cronjobs --no-headers=true | grep "rtr-pms-${APP_NAME}-cron-deployment-${STAGE}" | awk '{print $1}' | xargs kubectl delete cronjobs --ignore-not-found || true
+
+    # Apply deployment
+    - cat deployments/cronjob.yml | envsubst | kubectl apply -f -
+
+  only:
+    - /^uat-\d+\.\d+\.\d+$/
+    #- /^\d+.\d+.\d+-uat/
+
+include:
+  - local: /.gitlab-ci/deploy-uat/jobrecalculate.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/jobscheduledreport.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/jobsendemaillaunchform.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/jobrouteforms.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/jobsyncemployee.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/pms.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportassessmentstatustracking.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportpmscore.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportpmscoredetail.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportglobalvaluescoredetail.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportemployee.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportemployeekpi.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportgoalstatustracking.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportpmscoredetailall.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportfinalscore.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportdashboard.deploy.yml
+  - local: /.gitlab-ci/deploy-uat/reportarchived.deploy.yml

@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Superpowers — คู่มือภาษาไทย</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--border:#30363d;
+  --blue:#2563eb;--blue-lt:#58a6ff;--blue-dim:#1e3a5f;
+  --green:#22c55e;--green-dim:#052e16;
+  --red:#ef4444;--red-dim:#4c0519;
+  --yellow:#f59e0b;--yellow-dim:#451a03;
+  --purple:#a78bfa;--purple-dim:#2e1065;
+  --teal:#2dd4bf;--teal-dim:#042f2e;
+  --orange:#f97316;--orange-dim:#431407;
+  --text:#e6edf3;--muted:#8b949e;
+  --term-bg:#0a0e14;--term-green:#39d353;--term-cyan:#58a6ff;
+  --term-yellow:#e3b341;--term-red:#f85149;--term-purple:#bc8cff;
+  --term-dim:#555f6e;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI','Noto Sans Thai',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap}
+nav a{color:var(--muted);text-decoration:none;padding:13px 14px;font-size:.83rem;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+nav a:hover{color:var(--blue-lt);border-color:var(--blue)}
+.nav-logo{color:var(--blue-lt);font-weight:700;font-size:1rem;margin-right:8px;flex-shrink:0}
+
+/* HEADER */
+header{background:linear-gradient(160deg,#1e3a5f28 0%,var(--bg) 100%);border-bottom:1px solid var(--border);padding:52px 32px 38px}
+header h1{font-size:2.4rem;color:var(--blue-lt);margin-bottom:8px}
+header p{color:var(--muted);font-size:1rem;max-width:600px}
+.badge{display:inline-block;background:var(--surface2);color:var(--blue-lt);border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:.76rem;margin:6px 3px 0 0}
+
+/* LAYOUT */
+.page{display:flex}
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:44px;height:calc(100vh - 44px);overflow-y:auto;padding:20px 14px;border-right:1px solid var(--border)}
+.sidebar h4{color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px}
+.sidebar h4:first-child{margin-top:0}
+.sidebar a{display:block;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:6px;font-size:.81rem;margin-bottom:1px;transition:background .15s,color .15s}
+.sidebar a:hover{background:var(--surface2);color:var(--blue-lt)}
+.main{flex:1;min-width:0;padding:28px 28px 100px;max-width:920px}
+@media(max-width:700px){.sidebar{display:none}.main{padding:20px 16px 80px}}
+
+/* HEADINGS */
+h2{font-size:1.45rem;color:var(--blue-lt);border-left:3px solid var(--blue);padding-left:14px;margin:52px 0 16px;scroll-margin-top:58px}
+h3{font-size:1rem;color:var(--purple);margin:22px 0 10px}
+p{color:#cdd9e5;margin-bottom:10px}
+
+/* BOXES */
+.box{border-radius:10px;padding:16px 20px;margin:14px 0;border:1px solid var(--border);background:var(--surface)}
+.box.info{border-color:var(--blue);background:#1e3a5f18}
+.box.warn{border-color:var(--yellow);background:#451a0318}
+.box.danger{border-color:var(--red);background:#4c051918}
+.box.success{border-color:var(--green);background:#052e1618}
+.box strong{color:var(--text)}
+
+/* SKILL GRID */
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:16px 0}
+
+/* SKILL CARD (clickable) */
+.skill-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;
+  user-select:none;position:relative;overflow:hidden;
+}
+.skill-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 70%,#ffffff06);pointer-events:none}
+.skill-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 24px #00000040}
+.skill-card:active{transform:translateY(0)}
+.sc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.sc-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.sc-name{font-weight:700;font-size:.95rem;color:var(--text)}
+.sc-trigger{font-size:.78rem;color:var(--muted);line-height:1.45;margin-top:4px}
+.sc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.sc-tag{font-size:.7rem;padding:2px 8px;border-radius:12px;border:1px solid;opacity:.8}
+.click-hint{position:absolute;top:12px;right:14px;font-size:.68rem;color:var(--muted);opacity:.6}
+
+/* color helpers */
+.ic-blue{background:var(--blue-dim)}
+.ic-green{background:var(--green-dim)}
+.ic-red{background:var(--red-dim)}
+.ic-yellow{background:var(--yellow-dim)}
+.ic-purple{background:var(--purple-dim)}
+.ic-teal{background:var(--teal-dim)}
+.ic-orange{background:var(--orange-dim)}
+.tc-blue{color:#93c5fd;border-color:var(--blue)}
+.tc-green{color:#86efac;border-color:var(--green)}
+.tc-red{color:#fca5a5;border-color:var(--red)}
+.tc-yellow{color:#fcd34d;border-color:var(--yellow)}
+.tc-purple{color:#c4b5fd;border-color:var(--purple)}
+.tc-teal{color:#99f6e4;border-color:var(--teal)}
+.tc-orange{color:#fdba74;border-color:var(--orange)}
+
+/* MODAL OVERLAY */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.open{display:flex}
+
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  width:100%;max-width:980px;max-height:90vh;display:flex;flex-direction:column;
+  overflow:hidden;box-shadow:0 32px 80px #000000a0;
+  animation:modalIn .2s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(12px)}to{opacity:1;transform:none}}
+
+.modal-header{
+  display:flex;align-items:center;gap:14px;padding:18px 22px;
+  border-bottom:1px solid var(--border);background:var(--surface2);flex-shrink:0;
+}
+.mh-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.mh-title{font-size:1.2rem;font-weight:700;color:var(--text)}
+.mh-sub{font-size:.82rem;color:var(--muted);margin-top:2px}
+.modal-close{margin-left:auto;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background .15s,color .15s;flex-shrink:0}
+.modal-close:hover{background:var(--border);color:var(--text)}
+
+.modal-body{display:flex;flex:1;overflow:hidden}
+.modal-left{flex:1;min-width:0;padding:22px 24px;overflow-y:auto;border-right:1px solid var(--border)}
+.modal-right{width:420px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden}
+@media(max-width:760px){.modal-body{flex-direction:column}.modal-right{width:100%;border-right:none;border-top:1px solid var(--border)}}
+
+/* modal left content */
+.ml-section{margin-bottom:20px}
+.ml-section h4{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;font-weight:700}
+.ml-desc{color:#cdd9e5;font-size:.9rem;line-height:1.65;margin-bottom:12px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;margin-bottom:8px;font-size:.88rem;color:#cdd9e5;align-items:flex-start}
+.checklist li::before{content:'☐';color:var(--blue-lt);flex-shrink:0;font-size:1rem;line-height:1.2}
+.ironlaw{background:var(--red-dim);border:1px solid var(--red);border-radius:8px;padding:12px 16px;margin:10px 0;font-size:.85rem;color:#fca5a5}
+.ironlaw strong{color:var(--red)}
+.tip-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tip{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.78rem;color:var(--muted)}
+.danger-list{list-style:none;padding:0}
+.danger-list li{padding:4px 0;font-size:.85rem;color:#fca5a5;display:flex;gap:8px}
+.danger-list li::before{content:'✗';color:var(--red);flex-shrink:0}
+.phase-table{width:100%;border-collapse:collapse;font-size:.83rem;margin:8px 0}
+.phase-table th{background:var(--blue-dim);color:#93c5fd;padding:7px 10px;text-align:left}
+.phase-table td{padding:7px 10px;border-top:1px solid var(--surface2);color:#cdd9e5}
+.phase-table tr:hover td{background:var(--surface2)}
+.flow-mini{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:8px 0}
+.fn{background:var(--blue-dim);border:1px solid var(--blue);border-radius:16px;padding:3px 10px;font-size:.76rem;color:#93c5fd}
+.fa{color:var(--muted);font-size:.9rem}
+code{font-family:'Cascadia Code','Fira Mono',monospace;background:#ffffff10;padding:2px 6px;border-radius:4px;font-size:.84em;color:var(--term-yellow)}
+
+/* TERMINAL PANEL (modal right) */
+.term-panel{display:flex;flex-direction:column;height:100%}
+.term-bar{background:#21262d;padding:9px 14px;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.tdot{width:11px;height:11px;border-radius:50%}
+.tdot.r{background:#ff5f56}.tdot.y{background:#ffbd2e}.tdot.g{background:#27c93f}
+.term-tab-bar{display:flex;gap:0;background:#161b22;border-bottom:1px solid var(--border);flex-shrink:0}
+.term-tab{padding:7px 14px;font-size:.76rem;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:'Cascadia Code','Fira Mono',monospace}
+.term-tab.active{color:var(--term-cyan);border-color:var(--blue)}
+.term-tab:hover{color:var(--text)}
+.term-screens{flex:1;overflow:hidden;position:relative}
+.term-screen{position:absolute;inset:0;overflow-y:auto;padding:14px 16px;font-family:'Cascadia Code','Fira Mono',monospace;font-size:.8rem;line-height:1.7;display:none}
+.term-screen.active{display:block}
+.tp{color:var(--term-green)}   /* prompt */
+.tc{color:var(--text)}         /* command */
+.to{color:var(--term-dim)}     /* output */
+.tok{color:var(--term-green)}  /* ok */
+.ter{color:var(--term-red)}    /* error */
+.tin{color:var(--term-cyan)}   /* info */
+.thi{color:var(--term-yellow)} /* highlight */
+.ts{color:var(--term-purple)}  /* step/annotation */
+.te{display:block;margin-top:2px} /* empty line */
+
+/* WORKFLOW SECTION */
+.wf-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin:14px 0}
+.wf-label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:14px}
+.wf-row{display:flex;align-items:center;gap:0;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.wf-lane{width:100px;flex-shrink:0;font-size:.74rem;color:var(--muted);text-align:right;padding-right:12px}
+.wf-nodes{display:flex;align-items:center;flex-wrap:wrap;gap:6px;border-left:2px solid var(--border);padding-left:12px}
+.wn{border-radius:8px;border:1px solid;padding:5px 12px;font-size:.78rem;font-weight:600;white-space:nowrap;position:relative;cursor:default}
+.wn:hover::after{content:attr(data-tip);position:absolute;top:calc(100%+6px);left:0;background:#21262d;border:1px solid var(--border);color:var(--text);font-size:.74rem;font-weight:400;padding:6px 10px;border-radius:6px;white-space:normal;max-width:240px;line-height:1.4;z-index:300;pointer-events:none}
+.wn.bl{background:var(--blue-dim);border-color:var(--blue);color:#93c5fd}
+.wn.gr{background:var(--green-dim);border-color:var(--green);color:#86efac}
+.wn.re{background:var(--red-dim);border-color:var(--red);color:#fca5a5}
+.wn.ye{background:var(--yellow-dim);border-color:var(--yellow);color:#fcd34d}
+.wn.pu{background:var(--purple-dim);border-color:var(--purple);color:#c4b5fd}
+.wn.te{background:var(--teal-dim);border-color:var(--teal);color:#99f6e4}
+.wn.gy{background:var(--surface2);border-color:var(--border);color:var(--muted)}
+.warr{color:var(--muted);font-size:.85rem}
+.wf-divider{border:none;border-top:1px dashed var(--border);margin:10px 0 10px 112px}
+
+/* INSTALL SECTION */
+.install-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:14px 0}
+.inst-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.inst-head{padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--border);font-size:.85rem;font-weight:700;color:var(--text)}
+.inst-term{padding:12px 14px;font-family:'Cascadia Code','Fira Mono',monospace;font-size:.78rem;line-height:1.7}
+
+/* STEPS */
+.steps{list-style:none;counter-reset:s;padding:0}
+.steps li{counter-increment:s;display:flex;gap:11px;margin-bottom:8px;align-items:flex-start}
+.steps li::before{content:counter(s);background:var(--blue);color:#fff;border-radius:50%;min-width:21px;height:21px;display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:700;flex-shrink:0;margin-top:3px}
+.steps li span{color:#cdd9e5;font-size:.88rem}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">⚡ Superpowers</span>
+  <a href="#overview">ภาพรวม</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#workflow">Workflow</a>
+  <a href="#skills">Skills</a>
+  <a href="#instructions">Instructions</a>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <h1>⚡ Superpowers</h1>
+  <p>Agentic Skills Framework สำหรับ AI coding agent — ออกแบบก่อน → วางแผน → TDD → Review → Deploy</p>
+  <div style="margin-top:12px">
+    <span class="badge">Claude Code</span><span class="badge">Cursor</span>
+    <span class="badge">Codex CLI/App</span><span class="badge">Gemini CLI</span>
+    <span class="badge">GitHub Copilot CLI</span>
+    <span class="badge" style="border-color:#22c55e;color:#86efac">v6.0.3 Latest</span>
+    <span class="badge" style="border-color:#f59e0b;color:#fcd34d">⭐ 238k Stars</span>
+  </div>
+</header>
+
+<div class="page">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <h4>เนื้อหา</h4>
+  <a href="#overview">ภาพรวม</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#workflow">Workflow</a>
+  <h4>Skills (คลิกเพื่อดูรายละเอียด)</h4>
+  <a href="#skills">⚡ using-superpowers</a>
+  <a href="#skills">💡 brainstorming</a>
+  <a href="#skills">📝 writing-plans</a>
+  <a href="#skills">🧪 test-driven-dev</a>
+  <a href="#skills">🔍 systematic-debug</a>
+  <a href="#skills">🌿 git-worktrees</a>
+  <a href="#skills">🤖 subagent-driven</a>
+  <a href="#skills">⚙️ executing-plans</a>
+  <a href="#skills">⚡ parallel-agents</a>
+  <a href="#skills">🔎 requesting-review</a>
+  <a href="#skills">📬 receiving-review</a>
+  <a href="#skills">🏁 finishing-branch</a>
+  <a href="#skills">✅ verification</a>
+  <a href="#skills">✍️ writing-skills</a>
+  <h4>อื่นๆ</h4>
+  <a href="#instructions">Instructions</a>
+</aside>
+
+<main class="main">
+
+<!-- ══ OVERVIEW ══ -->
+<h2 id="overview">🤖 Superpowers คืออะไร?</h2>
+<div class="box info">
+  <strong>Superpowers</strong> คือชุด <em>skills</em> ที่ inject เข้า AI coding agent ทำให้ทำงานอย่างมีระบบตั้งแต่ต้น — ไม่กระโดดเขียนโค้ดทันที แต่จะออกแบบ วางแผน เทสต์ก่อนเขียน review และ deploy ตามลำดับ
+</div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0">
+  <span class="fn">💡 Brainstorm</span><span class="fa">→</span>
+  <span class="fn">📝 Plan</span><span class="fa">→</span>
+  <span class="fn">🌿 Worktree</span><span class="fa">→</span>
+  <span class="fn">🧪 TDD per task</span><span class="fa">→</span>
+  <span class="fn">🔍 Review</span><span class="fa">→</span>
+  <span class="fn">🏁 Finish</span>
+</div>
+
+<!-- ══ INSTALL ══ -->
+<h2 id="install">🚀 การติดตั้ง</h2>
+<div class="install-grid">
+
+  <div class="inst-card">
+    <div class="inst-head">🤖 Claude Code</div>
+    <div class="inst-term">
+      <span class="to"># Official Marketplace</span><br>
+      <span class="tp">$ </span><span class="tc">/plugin install superpowers@claude-plugins-official</span><br>
+      <span class="tok">✓ superpowers v6.0.3 installed</span><br><br>
+      <span class="to"># Superpowers Marketplace</span><br>
+      <span class="tp">$ </span><span class="tc">/plugin marketplace add obra/superpowers-marketplace</span><br>
+      <span class="tp">$ </span><span class="tc">/plugin install superpowers@superpowers-marketplace</span><br>
+      <span class="tok">✓ installed</span>
+    </div>
+  </div>
+
+  <div class="inst-card">
+    <div class="inst-head">✏️ Cursor</div>
+    <div class="inst-term">
+      <span class="to"># ใน Agent Chat พิมพ์:</span><br>
+      <span class="tp">&gt; </span><span class="tc">/add-plugin superpowers</span><br>
+      <span class="tok">✓ Plugin added</span><br><br>
+      <span class="to"># หรือ Plugin Marketplace UI</span><br>
+      <span class="to">  Ctrl+Shift+P → Plugin Marketplace</span><br>
+      <span class="to">  ค้นหา "superpowers" → Install</span>
+    </div>
+  </div>
+
+  <div class="inst-card">
+    <div class="inst-head">💻 Codex CLI / Codex App</div>
+    <div class="inst-term">
+      <span class="tp">$ </span><span class="tc">/plugins</span><br>
+      <span class="tin">Plugin search &gt; </span><span class="tc">superpowers</span><br>
+      <span class="to">Found: Superpowers v6.0.3</span><br>
+      <span class="to">→ Select "Install Plugin"</span><br>
+      <span class="tok">✓ Installed successfully</span>
+    </div>
+  </div>
+
+  <div class="inst-card">
+    <div class="inst-head">🌟 Gemini CLI</div>
+    <div class="inst-term">
+      <span class="tp">$ </span><span class="tc">gemini extensions install \</span><br>
+      <span class="tc">&nbsp;&nbsp;https://github.com/obra/superpowers</span><br>
+      <span class="tok">✓ Extension installed</span><br><br>
+      <span class="to"># อัปเดตภายหลัง:</span><br>
+      <span class="tp">$ </span><span class="tc">gemini extensions update superpowers</span>
+    </div>
+  </div>
+
+  <div class="inst-card">
+    <div class="inst-head">🐙 GitHub Copilot CLI</div>
+    <div class="inst-term">
+      <span class="tp">$ </span><span class="tc">copilot plugin marketplace add \</span><br>
+      <span class="tc">&nbsp;&nbsp;obra/superpowers-marketplace</span><br>
+      <span class="tp">$ </span><span class="tc">copilot plugin install superpowers@superpowers-marketplace</span><br>
+      <span class="tok">✓ Plugin installed</span>
+    </div>
+  </div>
+
+  <div class="inst-card">
+    <div class="inst-head">🔧 Factory Droid / Antigravity / Pi</div>
+    <div class="inst-term">
+      <span class="to"># Antigravity</span><br>
+      <span class="tp">$ </span><span class="tc">agy plugin install https://github.com/obra/superpowers</span><br><br>
+      <span class="to"># Factory Droid</span><br>
+      <span class="tp">$ </span><span class="tc">droid plugin marketplace add https://github.com/obra/superpowers</span><br>
+      <span class="tp">$ </span><span class="tc">droid plugin install superpowers@superpowers</span><br><br>
+      <span class="to"># Pi</span><br>
+      <span class="tp">$ </span><span class="tc">pi install git:github.com/obra/superpowers</span>
+    </div>
+  </div>
+
+</div>
+<div class="box warn"><strong>⚠️</strong> ใช้หลาย tool ต้องติดตั้งแยกกันในแต่ละ harness — plugin ไม่แชร์ข้ามกัน</div>
+
+<!-- ══ WORKFLOW ══ -->
+<h2 id="workflow">🗺 Workflow — เรียก Skill ไหน ก่อน-หลัง?</h2>
+
+<div class="wf-wrap">
+  <div class="wf-label">📦 Scenario 1 — Feature ใหม่ (ตั้งแต่ต้น)</div>
+  <div class="wf-row"><div class="wf-lane">Session start</div><div class="wf-nodes"><div class="wn bl" data-tip="auto-inject ตอนเริ่ม session สอน agent ให้ตรวจสอบ skill ก่อนทำอะไร">⚡ using-superpowers</div></div></div>
+  <div class="wf-row"><div class="wf-lane">ออกแบบ</div><div class="wf-nodes"><div class="wn pu" data-tip="ถามทีละคำถาม → 2-3 แนวทาง → เขียน spec → รอ approve">💡 brainstorming</div><div class="warr">→</div><div class="wn gy" data-tip="บันทึก docs/superpowers/specs/YYYY-MM-DD-topic.md">📄 spec saved</div></div></div>
+  <div class="wf-row"><div class="wf-lane">วางแผน</div><div class="wf-nodes"><div class="wn bl" data-tip="แตก spec เป็น tasks 2-5 นาที มีโค้ดจริงทุก step ไม่มี TBD">📝 writing-plans</div><div class="warr">→</div><div class="wn gy" data-tip="บันทึก docs/superpowers/plans/YYYY-MM-DD-feature.md">📋 plan saved</div></div></div>
+  <div class="wf-row"><div class="wf-lane">Workspace</div><div class="wf-nodes"><div class="wn te" data-tip="สร้าง git worktree บน branch ใหม่ ติดตั้ง deps รัน baseline tests">🌿 using-git-worktrees</div><div class="warr">→</div><div class="wn gy">✅ baseline green</div></div></div>
+  <div class="wf-row"><div class="wf-lane">Implement</div><div class="wf-nodes"><div class="wn gr" data-tip="(แนะนำ) subagent ต่อ task → review (spec+quality) อัตโนมัติ">🤖 subagent-driven-dev</div><div class="warr" style="color:#555">หรือ</div><div class="wn ye" data-tip="รัน task ใน session เดียว กับ checkpoint">⚙️ executing-plans</div></div></div>
+  <div class="wf-row"><div class="wf-lane">ต่อ task</div><div class="wf-nodes"><div class="wn re" data-tip="fail test → ดูมัน fail → เขียนโค้ดน้อยสุด → ดูมัน pass → refactor">🧪 TDD (ต่อ task)</div><div class="warr">+</div><div class="wn bl" data-tip="ส่ง code reviewer subagent หลังแต่ละ task">🔍 requesting-review</div></div></div>
+  <div class="wf-row"><div class="wf-lane">เสร็จแล้ว</div><div class="wf-nodes"><div class="wn gr" data-tip="verify tests → เลือก merge/PR/keep/discard → cleanup worktree">🏁 finishing-branch</div></div></div>
+</div>
+
+<div class="wf-wrap">
+  <div class="wf-label">🐛 Scenario 2 — แก้ Bug</div>
+  <div class="wf-row"><div class="wf-lane">พบ Bug</div><div class="wf-nodes"><div class="wn re" data-tip="4 phases: root cause → pattern → hypothesis → fix ห้าม fix ก่อนผ่าน phase 1">🔍 systematic-debugging</div><div class="warr">→</div><div class="wn gy">📌 root cause found</div></div></div>
+  <div class="wf-row"><div class="wf-lane">Fix</div><div class="wf-nodes"><div class="wn re" data-tip="สร้าง failing test ก่อนเสมอ → fix → verify pass">🧪 test-driven-dev</div><div class="warr">→</div><div class="wn te" data-tip="รันคำสั่ง verify จริง ดู output ก่อน claim ว่าแก้ได้">✅ verification</div></div></div>
+  <div class="wf-row"><div class="wf-lane">Merge</div><div class="wf-nodes"><div class="wn bl">🔍 requesting-review</div><div class="warr">→</div><div class="wn bl" data-tip="ตรวจสอบก่อน implement ห้าม agree แบบ performative">📬 receiving-review</div><div class="warr">→</div><div class="wn gr">🏁 finishing-branch</div></div></div>
+</div>
+
+<div class="wf-wrap">
+  <div class="wf-label">⚡ Scenario 3 — หลาย task อิสระ / 3+ test files fail</div>
+  <div class="wf-row"><div class="wf-lane">วิเคราะห์</div><div class="wf-nodes"><div class="wn re" data-tip="ตรวจว่า failures เป็นอิสระจริงไหม ก่อน dispatch parallel">🔍 systematic-debugging</div><div class="warr">→</div><div class="wn gy">📊 แบ่ง domain</div></div></div>
+  <div class="wf-row"><div class="wf-lane">Dispatch</div><div class="wf-nodes"><div class="wn ye" data-tip="dispatch 3 subagents พร้อมกันในคำตอบเดียว = parallel execution">⚡ dispatching-parallel-agents</div><div class="warr">→</div><div class="wn gy">3 agents run concurrently</div></div></div>
+  <div class="wf-row"><div class="wf-lane">Integrate</div><div class="wf-nodes"><div class="wn te" data-tip="รัน full test suite หลัง agents return ตรวจว่าไม่มี conflict">✅ verify + integrate</div><div class="warr">→</div><div class="wn gr">🏁 finishing-branch</div></div></div>
+</div>
+
+<!-- ══ SKILLS ══ -->
+<h2 id="skills">🎯 Skills — คลิกเพื่อดูรายละเอียด</h2>
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">คลิกที่ skill card เพื่อดูคำอธิบายละเอียด checklist และ terminal example</p>
+
+<div class="skill-grid">
+
+  <!-- 1 using-superpowers -->
+  <div class="skill-card" onclick="openModal('using-superpowers')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-blue">⚡</div><div><div class="sc-name">using-superpowers</div></div></div>
+    <div class="sc-trigger">Bootstrap — เริ่มต้นทุก session อัตโนมัติ สอน agent ให้ตรวจสอบ skill ก่อนทำอะไรทุกอย่าง</div>
+    <div class="sc-tags"><span class="sc-tag tc-blue">auto-inject</span><span class="sc-tag tc-blue">session start</span></div>
+  </div>
+
+  <!-- 2 brainstorming -->
+  <div class="skill-card" onclick="openModal('brainstorming')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-purple">💡</div><div><div class="sc-name">brainstorming</div></div></div>
+    <div class="sc-trigger">ก่อนสร้าง feature / component ทุกครั้ง — ออกแบบและอนุมัติ spec ก่อนเขียนโค้ด</div>
+    <div class="sc-tags"><span class="sc-tag tc-purple">design first</span><span class="sc-tag tc-purple">hard gate</span></div>
+  </div>
+
+  <!-- 3 writing-plans -->
+  <div class="skill-card" onclick="openModal('writing-plans')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-blue">📝</div><div><div class="sc-name">writing-plans</div></div></div>
+    <div class="sc-trigger">หลัง spec อนุมัติ — แตก spec เป็น tasks ย่อย 2-5 นาที มีโค้ดจริงทุก step</div>
+    <div class="sc-tags"><span class="sc-tag tc-blue">planning</span><span class="sc-tag tc-blue">no TBD</span></div>
+  </div>
+
+  <!-- 4 test-driven-development -->
+  <div class="skill-card" onclick="openModal('test-driven-development')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-red">🧪</div><div><div class="sc-name">test-driven-development</div></div></div>
+    <div class="sc-trigger">ระหว่าง implement ทุก task — RED → GREEN → REFACTOR ทุกครั้ง ไม่มีข้อยกเว้น</div>
+    <div class="sc-tags"><span class="sc-tag tc-red">TDD</span><span class="sc-tag tc-red">mandatory</span></div>
+  </div>
+
+  <!-- 5 systematic-debugging -->
+  <div class="skill-card" onclick="openModal('systematic-debugging')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-orange">🔍</div><div><div class="sc-name">systematic-debugging</div></div></div>
+    <div class="sc-trigger">เมื่อพบ bug — 4-phase root cause process ห้าม fix ก่อนเข้าใจต้นเหตุ</div>
+    <div class="sc-tags"><span class="sc-tag tc-orange">debugging</span><span class="sc-tag tc-orange">root cause</span></div>
+  </div>
+
+  <!-- 6 using-git-worktrees -->
+  <div class="skill-card" onclick="openModal('using-git-worktrees')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-teal">🌿</div><div><div class="sc-name">using-git-worktrees</div></div></div>
+    <div class="sc-trigger">หลัง plan อนุมัติ — สร้าง workspace แยกบน branch ใหม่ รัน baseline tests</div>
+    <div class="sc-tags"><span class="sc-tag tc-teal">git</span><span class="sc-tag tc-teal">isolation</span></div>
+  </div>
+
+  <!-- 7 subagent-driven-development -->
+  <div class="skill-card" onclick="openModal('subagent-driven-development')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-green">🤖</div><div><div class="sc-name">subagent-driven-development</div></div></div>
+    <div class="sc-trigger">ระหว่าง implement — ส่ง subagent ต่อ task ตรวจ 2 ชั้น (spec + quality) อัตโนมัติ</div>
+    <div class="sc-tags"><span class="sc-tag tc-green">automation</span><span class="sc-tag tc-green">recommended</span></div>
+  </div>
+
+  <!-- 8 executing-plans -->
+  <div class="skill-card" onclick="openModal('executing-plans')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-yellow">⚙️</div><div><div class="sc-name">executing-plans</div></div></div>
+    <div class="sc-trigger">ทางเลือกแทน subagent-driven — รัน task ใน session เดียว มี human checkpoint</div>
+    <div class="sc-tags"><span class="sc-tag tc-yellow">execution</span><span class="sc-tag tc-yellow">checkpoint</span></div>
+  </div>
+
+  <!-- 9 dispatching-parallel-agents -->
+  <div class="skill-card" onclick="openModal('dispatching-parallel-agents')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-yellow">⚡</div><div><div class="sc-name">dispatching-parallel-agents</div></div></div>
+    <div class="sc-trigger">เมื่อมี 3+ tasks/failures อิสระ — ส่ง subagents พร้อมกันในคำตอบเดียว</div>
+    <div class="sc-tags"><span class="sc-tag tc-yellow">parallel</span><span class="sc-tag tc-yellow">speed</span></div>
+  </div>
+
+  <!-- 10 requesting-code-review -->
+  <div class="skill-card" onclick="openModal('requesting-code-review')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-blue">🔎</div><div><div class="sc-name">requesting-code-review</div></div></div>
+    <div class="sc-trigger">หลังแต่ละ task — ส่ง reviewer subagent ตรวจ spec compliance + code quality</div>
+    <div class="sc-tags"><span class="sc-tag tc-blue">review</span><span class="sc-tag tc-blue">quality gate</span></div>
+  </div>
+
+  <!-- 11 receiving-code-review -->
+  <div class="skill-card" onclick="openModal('receiving-code-review')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-blue">📬</div><div><div class="sc-name">receiving-code-review</div></div></div>
+    <div class="sc-trigger">เมื่อได้รับ review — ตรวจสอบก่อน implement ห้าม agree แบบ performative</div>
+    <div class="sc-tags"><span class="sc-tag tc-blue">review</span><span class="sc-tag tc-blue">critical thinking</span></div>
+  </div>
+
+  <!-- 12 finishing-a-development-branch -->
+  <div class="skill-card" onclick="openModal('finishing-a-development-branch')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-green">🏁</div><div><div class="sc-name">finishing-a-development-branch</div></div></div>
+    <div class="sc-trigger">เมื่อ tasks เสร็จทั้งหมด — verify tests → เลือก merge/PR/keep/discard → cleanup</div>
+    <div class="sc-tags"><span class="sc-tag tc-green">git</span><span class="sc-tag tc-green">cleanup</span></div>
+  </div>
+
+  <!-- 13 verification-before-completion -->
+  <div class="skill-card" onclick="openModal('verification-before-completion')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-teal">✅</div><div><div class="sc-name">verification-before-completion</div></div></div>
+    <div class="sc-trigger">ก่อนบอกว่าเสร็จ — รัน verify commands จริง ดู output ก่อน claim success</div>
+    <div class="sc-tags"><span class="sc-tag tc-teal">verify</span><span class="sc-tag tc-teal">evidence</span></div>
+  </div>
+
+  <!-- 14 writing-skills -->
+  <div class="skill-card" onclick="openModal('writing-skills')">
+    <span class="click-hint">คลิกเพื่อดูรายละเอียด →</span>
+    <div class="sc-top"><div class="sc-icon ic-purple">✍️</div><div><div class="sc-name">writing-skills</div></div></div>
+    <div class="sc-trigger">เมื่อต้องการสร้าง skill ใหม่ — scaffold, เขียน SKILL.md ตามมาตรฐาน, ทดสอบ</div>
+    <div class="sc-tags"><span class="sc-tag tc-purple">meta</span><span class="sc-tag tc-purple">extend</span></div>
+  </div>
+
+</div><!-- end skill-grid -->
+
+<!-- ══ INSTRUCTIONS ══ -->
+<h2 id="instructions">📋 Instructions สำหรับ Agent</h2>
+<div class="box info">
+  <strong>หมายเหตุ:</strong> เมื่อติดตั้ง Plugin แล้ว Skills จะ inject อัตโนมัติ — ไม่ต้องทำอะไรเพิ่มเติม
+  แต่ถ้าต้องการ manual setup ให้ดูไฟล์ <code>skills/using-superpowers/SKILL.md</code> ใน repo
+</div>
+<ol class="steps">
+  <li><span>ติดตั้ง Plugin ตาม Platform ที่ใช้ (ดูหัวข้อ ติดตั้ง)</span></li>
+  <li><span>เปิด coding session ใหม่ — Skills จะ inject อัตโนมัติ</span></li>
+  <li><span>บอก Agent ว่าต้องการสร้างอะไร — Agent จะเริ่ม brainstorming เองโดยอัตโนมัติ</span></li>
+  <li><span>อนุมัติ Design → อนุมัติ Plan → บอก "go" — Agent ทำงานต่อเองหลายชั่วโมง</span></li>
+</ol>
+
+</main>
+</div><!-- end page -->
+
+<!-- ══════════════════════════════════════════
+     MODAL OVERLAY
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnBg(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="mh-icon" id="mh-icon"></div>
+      <div>
+        <div class="mh-title" id="mh-title"></div>
+        <div class="mh-sub" id="mh-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-left" id="modal-left"></div>
+      <div class="modal-right">
+        <div class="term-panel">
+          <div class="term-bar">
+            <div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div>
+            <span style="color:var(--muted);font-size:.75rem;margin-left:8px">Terminal</span>
+          </div>
+          <div class="term-tab-bar" id="term-tab-bar"></div>
+          <div class="term-screens" id="term-screens"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Skill Data ────────────────────────────────────────────────────────────────
+const SKILLS = {
+
+  'using-superpowers': {
+    icon: '⚡', iconClass: 'ic-blue', title: 'using-superpowers',
+    sub: 'Bootstrap / Meta • Auto-inject ทุก session',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">Skill แรกที่ถูก inject ทุก session สอน Agent ให้รู้จักระบบ Skills ทั้งหมด และตรวจสอบ skill ที่เหมาะสมก่อนทำอะไรทุกอย่าง</p>
+      </div>
+      <div class="ml-section">
+        <h4>สิ่งที่ Agent จะทำ</h4>
+        <ul class="checklist">
+          <li>อ่าน skill list ทั้งหมดก่อนทำทุก task</li>
+          <li>เลือก skill ที่เหมาะสมกับสถานการณ์</li>
+          <li>ไม่กระโดดเขียนโค้ดโดยไม่ผ่าน brainstorming</li>
+          <li>รัน mandatory workflows ตามลำดับ</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>🔒 Iron Law:</strong> Agent ต้องตรวจสอบ skills ก่อนทำทุก task — ไม่ว่างานจะดูง่ายแค่ไหน</div>
+    `,
+    tabs: [
+      { label: 'session start', content: `<span class="ts"># Session เริ่มต้น — Agent inject using-superpowers</span>
+<span class="te"></span>
+<span class="tin">Loading skills...</span>
+<span class="tok">✓ using-superpowers (meta)</span>
+<span class="tok">✓ brainstorming (design)</span>
+<span class="tok">✓ writing-plans (planning)</span>
+<span class="tok">✓ test-driven-development (testing)</span>
+<span class="tok">✓ systematic-debugging (debug)</span>
+<span class="tok">✓ ... 9 more skills loaded</span>
+<span class="te"></span>
+<span class="tin">Agent จะตรวจสอบ skill ก่อนทำทุก task ✓</span>` }
+    ]
+  },
+
+  'brainstorming': {
+    icon: '💡', iconClass: 'ic-purple', title: 'brainstorming',
+    sub: 'Design First • ก่อน implement ทุกครั้ง',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">ก่อนเขียนโค้ดบรรทัดแรก Agent จะถามทีละคำถามเพื่อเข้าใจสิ่งที่คุณต้องการจริงๆ เสนอ 2-3 แนวทาง และเขียน Design Document ให้คุณอนุมัติ</p>
+      </div>
+      <div class="ml-section">
+        <h4>Checklist (ทำตามลำดับ)</h4>
+        <ul class="checklist">
+          <li>สำรวจ project context (files, docs, recent commits)</li>
+          <li>ถามคำถาม clarifying ทีละข้อ (multiple choice ถ้าเป็นไปได้)</li>
+          <li>เสนอ 2-3 แนวทาง พร้อม trade-off และ recommendation</li>
+          <li>Present design เป็น sections ให้อนุมัติทีละส่วน</li>
+          <li>เขียน spec ไปที่ <code>docs/superpowers/specs/YYYY-MM-DD-topic.md</code></li>
+          <li>Self-review spec (ไม่มี TBD, ไม่ขัดแย้งกัน)</li>
+          <li>รอ user อนุมัติ spec ก่อนเรียก writing-plans</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>🔒 Hard Gate:</strong> ห้าม implement หรือเขียนโค้ดใดๆ จนกว่า user จะอนุมัติ design — แม้งานจะดูง่ายมาก</div>
+      <div class="ml-section" style="margin-top:14px">
+        <h4>Tips</h4>
+        <div class="tip-row">
+          <span class="tip">ถามทีละคำถาม</span>
+          <span class="tip">YAGNI ruthlessly</span>
+          <span class="tip">สำรวจ codebase ก่อน</span>
+          <span class="tip">ถ้าใหญ่เกินไป แบ่ง sub-project</span>
+        </div>
+      </div>
+    `,
+    tabs: [
+      { label: 'ตัวอย่าง session', content: `<span class="ts"># คุณพิมพ์:</span>
+<span class="thi">ฉันอยากทำ Dark Mode</span>
+<span class="te"></span>
+<span class="ts"># Agent ถาม (ทีละข้อ):</span>
+<span class="tin">Dark Mode จะครอบคลุม:</span>
+<span class="to">  A) ทั้งหน้าแอป</span>
+<span class="to">  B) บาง component</span>
+<span class="te"></span>
+<span class="tc">A</span>
+<span class="te"></span>
+<span class="tin">ต้องการ save preference ไหม?</span>
+<span class="to">  A) localStorage</span>
+<span class="to">  B) User settings ใน DB</span>
+<span class="to">  C) ไม่ save (reset ทุก session)</span>
+<span class="te"></span>
+<span class="tc">A</span>
+<span class="te"></span>
+<span class="ts"># หลังถามครบ → เสนอแนวทาง:</span>
+<span class="tin">แนะนำ: CSS Variables + ThemeContext</span>
+<span class="to">เหตุผล: เปลี่ยน theme ได้โดยไม่ re-render</span>` },
+      { label: 'spec output', content: `<span class="ts"># เขียน spec ที่:</span>
+<span class="thi">docs/superpowers/specs/2025-11-01-dark-mode-design.md</span>
+<span class="te"></span>
+<span class="to">## Overview</span>
+<span class="to">Dark Mode สำหรับทั้งแอป โดยใช้ CSS Variables</span>
+<span class="to">บันทึก preference ใน localStorage</span>
+<span class="te"></span>
+<span class="to">## Architecture</span>
+<span class="to">- ThemeContext: จัดการ state + toggle</span>
+<span class="to">- useTheme(): hook สำหรับ components</span>
+<span class="to">- CSS Variables: --bg, --text, --border</span>
+<span class="te"></span>
+<span class="tok">✓ Spec committed to git</span>
+<span class="tin">กรุณา review spec ก่อนเริ่ม implement...</span>` }
+    ]
+  },
+
+  'writing-plans': {
+    icon: '📝', iconClass: 'ic-blue', title: 'writing-plans',
+    sub: 'Planning • หลัง spec อนุมัติ',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">แปลง spec เป็น implementation plan ที่ละเอียดพอให้ junior developer ทำตามได้ แต่ละ task ขนาด 2-5 นาที มีโค้ดจริง, file path, และ verification step</p>
+      </div>
+      <div class="ml-section">
+        <h4>คุณสมบัติของ Task ที่ดี</h4>
+        <ul class="checklist">
+          <li>ขนาด 2-5 นาที (ไม่ใหญ่กว่านี้)</li>
+          <li>ระบุ file path แบบ absolute เสมอ</li>
+          <li>มีโค้ดจริง (ไม่มี "implement as appropriate")</li>
+          <li>มี verification step ที่ runnable</li>
+          <li>ไม่มี TBD, ไม่มี vague requirements</li>
+          <li>เรียงลำดับ dependency อย่างถูกต้อง</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>🔒 Iron Law:</strong> ถ้า plan มี TBD หรือ "you'll figure it out" → เขียนใหม่ให้ชัดเจนก่อน</div>
+    `,
+    tabs: [
+      { label: 'plan output', content: `<span class="ts"># บันทึก plan ที่:</span>
+<span class="thi">docs/superpowers/plans/2025-11-01-dark-mode.md</span>
+<span class="te"></span>
+<span class="tin">## Task 1: สร้าง ThemeContext</span>
+<span class="to">File: src/context/ThemeContext.tsx</span>
+<span class="to">- import createContext, useState, useEffect</span>
+<span class="to">- state: 'light' | 'dark'</span>
+<span class="to">- load จาก localStorage('theme') ตอน init</span>
+<span class="to">- save ลง localStorage เมื่อ toggle</span>
+<span class="to">Verify: import ใน App.tsx ไม่มี TS error</span>
+<span class="te"></span>
+<span class="tin">## Task 2: เพิ่ม CSS Variables</span>
+<span class="to">File: src/styles/global.css</span>
+<span class="to">- เพิ่ม :root { --bg: #fff; --text: #000 }</span>
+<span class="to">- เพิ่ม .dark { --bg: #0d1117; --text: #e6edf3 }</span>
+<span class="to">Verify: toggle class บน body → สีเปลี่ยน</span>
+<span class="te"></span>
+<span class="to">... (tasks ต่อไป)</span>` }
+    ]
+  },
+
+  'test-driven-development': {
+    icon: '🧪', iconClass: 'ic-red', title: 'test-driven-development',
+    sub: 'Testing • RED → GREEN → REFACTOR ทุก task',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">บังคับ cycle RED-GREEN-REFACTOR ทุกครั้ง ห้ามเขียนโค้ดก่อนมี failing test โค้ดที่เขียนก่อน test จะถูก delete ทิ้ง</p>
+      </div>
+      <div class="ml-section">
+        <h4>The Cycle</h4>
+        <table class="phase-table">
+          <tr><th>Phase</th><th>Action</th><th>ผล</th></tr>
+          <tr><td>🔴 RED</td><td>เขียน test</td><td>ต้อง FAIL</td></tr>
+          <tr><td>👀 WATCH</td><td>รัน test</td><td>ดูมัน fail จริง</td></tr>
+          <tr><td>🟢 GREEN</td><td>เขียนโค้ดน้อยสุด</td><td>ทำให้ test ผ่าน</td></tr>
+          <tr><td>🔵 REFACTOR</td><td>ปรับปรุงโค้ด</td><td>test ยังผ่าน</td></tr>
+          <tr><td>💾 COMMIT</td><td>commit</td><td>บันทึก checkpoint</td></tr>
+        </table>
+      </div>
+      <div class="ml-section">
+        <h4>Anti-patterns ที่ห้ามทำ</h4>
+        <ul class="danger-list">
+          <li>เขียนโค้ดก่อนแล้วค่อยเขียน test</li>
+          <li>ข้าม "ดูมัน fail" (อาจ test ผิดอยู่)</li>
+          <li>เขียนโค้ดมากกว่าที่ test ต้องการ (YAGNI)</li>
+          <li>mock ทุกอย่างจน test ไม่ test อะไรจริง</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>🔒 Iron Law:</strong> โค้ดที่เขียนก่อน failing test → DELETE ทิ้ง ไม่มีข้อยกเว้น</div>
+    `,
+    tabs: [
+      { label: 'RED phase', content: `<span class="ts"># 1. เขียน test ก่อน (RED)</span>
+<span class="to">// src/context/ThemeContext.test.ts</span>
+<span class="thi">it('saves theme to localStorage', () => {</span>
+<span class="thi">  const { toggle } = renderThemeContext()</span>
+<span class="thi">  toggle()</span>
+<span class="thi">  expect(localStorage.getItem('theme')).toBe('dark')</span>
+<span class="thi">})</span>
+<span class="te"></span>
+<span class="ts"># 2. รัน → ต้อง FAIL</span>
+<span class="tp">$ </span><span class="tc">npm test ThemeContext</span>
+<span class="ter">✗ FAIL: Cannot find module 'ThemeContext'</span>
+<span class="te"></span>
+<span class="tok">✓ RED phase สำเร็จ — เดินหน้า GREEN</span>` },
+      { label: 'GREEN phase', content: `<span class="ts"># 3. เขียนโค้ดน้อยสุดให้ test ผ่าน</span>
+<span class="to">// src/context/ThemeContext.tsx</span>
+<span class="thi">export const useTheme = () => {</span>
+<span class="thi">  const [theme, setTheme] = useState(</span>
+<span class="thi">    localStorage.getItem('theme') || 'light'</span>
+<span class="thi">  )</span>
+<span class="thi">  const toggle = () => {</span>
+<span class="thi">    const next = theme === 'light' ? 'dark' : 'light'</span>
+<span class="thi">    localStorage.setItem('theme', next)</span>
+<span class="thi">    setTheme(next)</span>
+<span class="thi">  }</span>
+<span class="thi">  return { theme, toggle }</span>
+<span class="thi">}</span>
+<span class="te"></span>
+<span class="tp">$ </span><span class="tc">npm test ThemeContext</span>
+<span class="tok">✓ PASS — commit checkpoint</span>` }
+    ]
+  },
+
+  'systematic-debugging': {
+    icon: '🔍', iconClass: 'ic-orange', title: 'systematic-debugging',
+    sub: 'Debugging • 4-phase root cause process',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">กระบวนการหา Root Cause แบบ systematic ห้ามเดาและลอง fix โดยไม่ผ่านทุก phase ก่อน</p>
+      </div>
+      <div class="ml-section">
+        <h4>4 Phases</h4>
+        <table class="phase-table">
+          <tr><th>Phase</th><th>ทำอะไร</th></tr>
+          <tr><td>1. Observe</td><td>สังเกต error message, stack trace, conditions</td></tr>
+          <tr><td>2. Hypothesize</td><td>ตั้งสมมติฐาน 1-3 ข้อ เรียงตาม likelihood</td></tr>
+          <tr><td>3. Test</td><td>ทดสอบสมมติฐานด้วย evidence (ไม่ใช่ fix)</td></tr>
+          <tr><td>4. Fix</td><td>แก้เมื่อรู้ root cause แน่ใจแล้ว</td></tr>
+        </table>
+      </div>
+      <div class="ml-section">
+        <h4>Anti-patterns</h4>
+        <ul class="danger-list">
+          <li>shotgun debugging (ลองแก้หลายอย่างพร้อมกัน)</li>
+          <li>fix โดยไม่รู้ว่าทำไมมันถึง work</li>
+          <li>ข้าม observation phase เพราะ "ดูเหมือนรู้แล้ว"</li>
+        </ul>
+      </div>
+    `,
+    tabs: [
+      { label: 'ตัวอย่าง', content: `<span class="ts"># Bug: toggle dark mode แล้ว reload หาย</span>
+<span class="te"></span>
+<span class="tin">Phase 1 — Observe:</span>
+<span class="to">  error: ไม่มี error ใน console</span>
+<span class="to">  condition: เกิดเฉพาะหลัง hard refresh</span>
+<span class="to">  scope: theme กลับเป็น 'light' เสมอ</span>
+<span class="te"></span>
+<span class="tin">Phase 2 — Hypothesize:</span>
+<span class="to">  H1: ไม่ได้ save ลง localStorage (80%)</span>
+<span class="to">  H2: ไม่ได้ read จาก localStorage ตอน init (15%)</span>
+<span class="to">  H3: localStorage disabled (5%)</span>
+<span class="te"></span>
+<span class="tin">Phase 3 — Test H1:</span>
+<span class="tp">$ </span><span class="tc">localStorage.getItem('theme')</span>
+<span class="ter">null  ← ยืนยัน H1 ถูก</span>
+<span class="te"></span>
+<span class="tin">Phase 4 — Fix:</span>
+<span class="thi">setItem('theme', next)  // เพิ่มบรรทัดนี้</span>
+<span class="tok">✓ Fixed and verified</span>` }
+    ]
+  },
+
+  'using-git-worktrees': {
+    icon: '🌿', iconClass: 'ic-teal', title: 'using-git-worktrees',
+    sub: 'Git • สร้าง workspace แยก หลัง plan อนุมัติ',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">สร้าง Git Worktree แยกสำหรับแต่ละ feature ทำให้ทำงานหลาย branch พร้อมกันโดยไม่กระทบกัน และ baseline tests ต้องผ่านก่อนเริ่มงาน</p>
+      </div>
+      <div class="ml-section">
+        <h4>Checklist</h4>
+        <ul class="checklist">
+          <li>สร้าง branch ใหม่จาก main/master</li>
+          <li>สร้าง worktree ใน directory แยก</li>
+          <li>รัน npm install / deps setup</li>
+          <li>รัน full test suite → ต้อง green ก่อนเริ่ม</li>
+          <li>บันทึก worktree path สำหรับ subagents</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>🔒 Iron Law:</strong> ถ้า baseline tests fail → แก้ก่อน ห้ามเริ่ม implement</div>
+    `,
+    tabs: [
+      { label: 'setup', content: `<span class="ts"># สร้าง worktree สำหรับ feature</span>
+<span class="tp">$ </span><span class="tc">git worktree add ../dark-mode feature/dark-mode</span>
+<span class="tok">Preparing worktree (new branch 'feature/dark-mode')</span>
+<span class="te"></span>
+<span class="tp">$ </span><span class="tc">cd ../dark-mode</span>
+<span class="tp">$ </span><span class="tc">npm install</span>
+<span class="tok">added 847 packages in 12s</span>
+<span class="te"></span>
+<span class="ts"># Verify baseline green</span>
+<span class="tp">$ </span><span class="tc">npm test</span>
+<span class="tok">✓ 47 tests passed</span>
+<span class="tok">✓ Baseline green — ready to implement</span>` },
+      { label: 'cleanup', content: `<span class="ts"># หลัง merge เสร็จ — cleanup</span>
+<span class="tp">$ </span><span class="tc">cd ../my-project</span>
+<span class="tp">$ </span><span class="tc">git worktree remove ../dark-mode</span>
+<span class="tok">✓ Worktree removed</span>
+<span class="te"></span>
+<span class="ts"># ดู worktrees ทั้งหมด</span>
+<span class="tp">$ </span><span class="tc">git worktree list</span>
+<span class="to">../my-project   abc1234 [main]</span>` }
+    ]
+  },
+
+  'subagent-driven-development': {
+    icon: '🤖', iconClass: 'ic-green', title: 'subagent-driven-development',
+    sub: 'Execution • ส่ง subagent ต่อ task + 2-stage review',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">วิธี implement ที่แนะนำ — ส่ง subagent ใหม่ต่อ task พร้อม context ครบ ตรวจสอบ 2 ชั้น (spec compliance แล้ว code quality) ก่อนเดินหน้า task ถัดไป</p>
+      </div>
+      <div class="ml-section">
+        <h4>2-Stage Review ต่อ Task</h4>
+        <table class="phase-table">
+          <tr><th>Stage</th><th>ตรวจอะไร</th><th>ถ้า fail</th></tr>
+          <tr><td>1. Spec compliance</td><td>ตรงกับ plan ไหม</td><td>ส่ง subagent แก้</td></tr>
+          <tr><td>2. Code quality</td><td>clean, DRY, tested</td><td>ส่ง subagent refactor</td></tr>
+        </table>
+      </div>
+      <div class="ml-section">
+        <h4>ข้อดีเทียบกับ executing-plans</h4>
+        <div class="tip-row">
+          <span class="tip">แต่ละ task มี fresh context</span>
+          <span class="tip">ตรวจสอบอัตโนมัติ</span>
+          <span class="tip">ทำงานได้หลายชั่วโมงไม่ต้องดู</span>
+        </div>
+      </div>
+    `,
+    tabs: [
+      { label: 'flow', content: `<span class="ts"># Main Agent — dispatch subagents</span>
+<span class="te"></span>
+<span class="tin">Task 1: ThemeContext</span>
+<span class="to">  → Subagent A รับ task + full context</span>
+<span class="to">  → เขียนโค้ด + tests</span>
+<span class="to">  → Stage 1: spec compliance ✓</span>
+<span class="to">  → Stage 2: code quality ✗</span>
+<span class="to">     (missing error handling)</span>
+<span class="to">  → Subagent A แก้ไข</span>
+<span class="to">  → Stage 2: code quality ✓</span>
+<span class="tok">  ✓ Task 1 complete</span>
+<span class="te"></span>
+<span class="tin">Task 2: CSS Variables</span>
+<span class="to">  → Subagent B รับ task...</span>` }
+    ]
+  },
+
+  'executing-plans': {
+    icon: '⚙️', iconClass: 'ic-yellow', title: 'executing-plans',
+    sub: 'Execution • Batch execution + human checkpoint',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">ทางเลือกแทน subagent-driven-development ทำ tasks ใน session เดียว แบ่งเป็น batch มี human checkpoint ระหว่างทาง เหมาะสำหรับงานที่ต้องการ oversight มากกว่า</p>
+      </div>
+      <div class="ml-section">
+        <h4>เมื่อไหร่ใช้ executing-plans แทน subagent-driven</h4>
+        <div class="tip-row">
+          <span class="tip">งานที่ต้องการ human input บ่อยๆ</span>
+          <span class="tip">plan ที่ยังไม่ clear 100%</span>
+          <span class="tip">ต้องการ review ทุก batch</span>
+        </div>
+      </div>
+      <div class="ml-section">
+        <h4>Checkpoint structure</h4>
+        <ul class="checklist">
+          <li>ทำ tasks batch ละ 2-3 ข้อ</li>
+          <li>หยุด checkpoint แสดง progress</li>
+          <li>รอ human approve ก่อน batch ถัดไป</li>
+          <li>รัน tests หลังแต่ละ batch</li>
+        </ul>
+      </div>
+    `,
+    tabs: [
+      { label: 'batch flow', content: `<span class="ts"># Batch 1 (Tasks 1-2)</span>
+<span class="to">  → Task 1: ThemeContext ✓</span>
+<span class="to">  → Task 2: CSS Variables ✓</span>
+<span class="tp">$ </span><span class="tc">npm test</span>
+<span class="tok">✓ 52 tests passed</span>
+<span class="te"></span>
+<span class="tin">── Checkpoint ──</span>
+<span class="thi">Batch 1 เสร็จ ดำเนินการต่อ? (y/n)</span>
+<span class="tc">y</span>
+<span class="te"></span>
+<span class="ts"># Batch 2 (Tasks 3-4)</span>
+<span class="to">  → Task 3: Toggle button ✓</span>
+<span class="to">  → Task 4: Persist preference ✓</span>
+<span class="tok">✓ All tasks complete</span>` }
+    ]
+  },
+
+  'dispatching-parallel-agents': {
+    icon: '⚡', iconClass: 'ic-yellow', title: 'dispatching-parallel-agents',
+    sub: 'Parallel • ส่ง subagents พร้อมกันใน 1 response',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">เมื่อมี tasks หรือ failures ที่ไม่ขึ้นกัน ส่ง subagents ทำงานพร้อมกันในคำตอบเดียว ลดเวลาทำงานอย่างมาก</p>
+      </div>
+      <div class="ml-section">
+        <h4>เมื่อไหร่ใช้</h4>
+        <ul class="checklist">
+          <li>3+ test files fail โดยอิสระ</li>
+          <li>tasks ที่ไม่มี dependency ต่อกัน</li>
+          <li>งาน parallelizable (docs, tests, assets)</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>⚠️ ต้องตรวจก่อน:</strong> ยืนยันว่า tasks เป็นอิสระจริง ก่อน dispatch — ถ้า task มี dependency จะเกิด conflict</div>
+    `,
+    tabs: [
+      { label: 'parallel dispatch', content: `<span class="ts"># 3 test domains fail อิสระ</span>
+<span class="ter">✗ src/auth/login.test.ts</span>
+<span class="ter">✗ src/theme/dark.test.ts</span>
+<span class="ter">✗ src/ui/button.test.ts</span>
+<span class="te"></span>
+<span class="ts"># Verify independence → dispatch</span>
+<span class="tin">Dispatching 3 agents concurrently...</span>
+<span class="te"></span>
+<span class="to">  Agent A → fix auth/login</span>
+<span class="to">  Agent B → fix theme/dark</span>
+<span class="to">  Agent C → fix ui/button</span>
+<span class="te"></span>
+<span class="ts"># (ทั้ง 3 ทำงานพร้อมกัน)</span>
+<span class="te"></span>
+<span class="tok">✓ Agent A done</span>
+<span class="tok">✓ Agent B done</span>
+<span class="tok">✓ Agent C done</span>
+<span class="te"></span>
+<span class="tp">$ </span><span class="tc">npm test</span>
+<span class="tok">✓ All 47 tests passing</span>` }
+    ]
+  },
+
+  'requesting-code-review': {
+    icon: '🔎', iconClass: 'ic-blue', title: 'requesting-code-review',
+    sub: 'Review • ส่ง reviewer subagent หลังแต่ละ task',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">ส่ง subagent เพื่อ review code ตาม checklist ก่อนส่ง รายงานปัญหาตาม Severity — Critical บล็อกการเดินหน้า</p>
+      </div>
+      <div class="ml-section">
+        <h4>Severity Levels</h4>
+        <table class="phase-table">
+          <tr><th>Level</th><th>ความหมาย</th><th>Action</th></tr>
+          <tr><td>🚨 Critical</td><td>ผิด spec / security / breaking</td><td>ต้องแก้ก่อน</td></tr>
+          <tr><td>⚠️ Warning</td><td>code quality / style</td><td>แนะนำแก้</td></tr>
+          <tr><td>💡 Suggestion</td><td>improvement ideas</td><td>optional</td></tr>
+        </table>
+      </div>
+      <div class="ml-section">
+        <h4>Review Checklist</h4>
+        <ul class="checklist">
+          <li>ตรงกับ spec ทุก requirement</li>
+          <li>Tests ครอบคลุม happy + edge cases</li>
+          <li>ไม่มี TODO, dead code, console.log</li>
+          <li>Error handling ครบถ้วน</li>
+        </ul>
+      </div>
+    `,
+    tabs: [
+      { label: 'review report', content: `<span class="ts"># Code Review Report — Task 1</span>
+<span class="te"></span>
+<span class="tok">✓ ตรงกับ spec ทุก requirement</span>
+<span class="tok">✓ Test coverage 87%</span>
+<span class="te"></span>
+<span class="ter">🚨 Critical:</span>
+<span class="ter">  ThemeContext ไม่มี error boundary</span>
+<span class="ter">  ถ้า localStorage ถูก disable จะ throw</span>
+<span class="ter">  → ต้องแก้ก่อนเดินหน้า</span>
+<span class="te"></span>
+<span class="thi">⚠️ Warning:</span>
+<span class="thi">  ชื่อตัวแปรไม่สม่ำเสมอ</span>
+<span class="thi">  (theme vs darkMode vs isDark)</span>
+<span class="thi">  → แนะนำให้ standardize เป็น 'theme'</span>
+<span class="te"></span>
+<span class="tin">💡 Suggestion:</span>
+<span class="to">  เพิ่ม useSystemPreference() hook</span>` }
+    ]
+  },
+
+  'receiving-code-review': {
+    icon: '📬', iconClass: 'ic-blue', title: 'receiving-code-review',
+    sub: 'Review • ประมวล feedback อย่าง agree แบบ performative',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">วิธีรับและตอบสนอง Code Review อย่างถูกต้อง — ตรวจสอบ feedback ก่อน implement ห้าม agree แบบ automatic</p>
+      </div>
+      <div class="ml-section">
+        <h4>กระบวนการ</h4>
+        <ul class="checklist">
+          <li>อ่าน feedback ทั้งหมดก่อน</li>
+          <li>แยก Critical vs Warning vs Suggestion</li>
+          <li>สำหรับ Critical: ตรวจสอบว่า valid จริง แล้วแก้</li>
+          <li>สำหรับ Warning: ประเมิน trade-off ก่อนตัดสินใจ</li>
+          <li>ถ้าไม่เห็นด้วย — อธิบายเหตุผล ไม่ใช่แค่ยอม</li>
+          <li>Verify ว่าแก้ครบก่อน mark complete</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>🔒 Iron Law:</strong> ห้าม agree กับ feedback โดยไม่ตรวจสอบ — "ใช่ครับ จะแก้เลย" โดยไม่อ่าน = performative agreement</div>
+    `,
+    tabs: [
+      { label: 'ตัวอย่าง', content: `<span class="ts"># รับ Critical feedback:</span>
+<span class="ter">"ThemeContext ไม่มี error boundary"</span>
+<span class="te"></span>
+<span class="ts"># ตรวจสอบก่อน:</span>
+<span class="tin">→ เปิด ThemeContext.tsx</span>
+<span class="tin">→ ดูว่า localStorage call ถูก try/catch ไหม</span>
+<span class="ter">→ ยืนยัน: ไม่มี error handling จริง</span>
+<span class="te"></span>
+<span class="ts"># แก้ไข:</span>
+<span class="thi">const getTheme = () => {</span>
+<span class="thi">  try {</span>
+<span class="thi">    return localStorage.getItem('theme') || 'light'</span>
+<span class="thi">  } catch {</span>
+<span class="thi">    return 'light'  // fallback</span>
+<span class="thi">  }</span>
+<span class="thi">}</span>
+<span class="te"></span>
+<span class="tok">✓ Critical แก้แล้ว + test added</span>` }
+    ]
+  },
+
+  'finishing-a-development-branch': {
+    icon: '🏁', iconClass: 'ic-green', title: 'finishing-a-development-branch',
+    sub: 'Git • Verify → เลือก merge/PR/keep/discard → cleanup',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">เมื่อ tasks ทั้งหมดเสร็จ ตรวจสอบ tests, lint, coverage แล้วเสนอตัวเลือกการปิดงาน พร้อม cleanup worktree</p>
+      </div>
+      <div class="ml-section">
+        <h4>Verification ก่อนปิด</h4>
+        <ul class="checklist">
+          <li>npm test — ทุก test ผ่าน</li>
+          <li>npm run lint — ไม่มี error</li>
+          <li>npm run build — build สำเร็จ</li>
+          <li>git diff main — review changes</li>
+        </ul>
+      </div>
+      <div class="ml-section">
+        <h4>ตัวเลือก</h4>
+        <table class="phase-table">
+          <tr><th>Option</th><th>ทำอะไร</th></tr>
+          <tr><td>1. Merge</td><td>squash merge เข้า main + cleanup</td></tr>
+          <tr><td>2. PR</td><td>gh pr create + cleanup</td></tr>
+          <tr><td>3. Keep</td><td>เก็บ worktree ไว้ก่อน</td></tr>
+          <tr><td>4. Discard</td><td>ลบ branch + worktree</td></tr>
+        </table>
+      </div>
+    `,
+    tabs: [
+      { label: 'verification', content: `<span class="ts"># Verify ก่อนปิด</span>
+<span class="tp">$ </span><span class="tc">npm test</span>
+<span class="tok">✓ 58 tests passed (11 new)</span>
+<span class="te"></span>
+<span class="tp">$ </span><span class="tc">npm run lint</span>
+<span class="tok">✓ No errors</span>
+<span class="te"></span>
+<span class="tp">$ </span><span class="tc">npm run build</span>
+<span class="tok">✓ Build successful</span>` },
+      { label: 'close options', content: `<span class="ts"># Agent เสนอตัวเลือก:</span>
+<span class="tin">── Branch: feature/dark-mode ──</span>
+<span class="thi">เลือกการดำเนินการ:</span>
+<span class="to">  [1] git merge --squash + cleanup</span>
+<span class="to">  [2] gh pr create "feat: dark mode"</span>
+<span class="to">  [3] เก็บ worktree ไว้ก่อน</span>
+<span class="to">  [4] ยกเลิกและลบทิ้ง</span>
+<span class="tc">2</span>
+<span class="te"></span>
+<span class="tok">✓ PR created: #42</span>
+<span class="tok">✓ Worktree cleaned up</span>` }
+    ]
+  },
+
+  'verification-before-completion': {
+    icon: '✅', iconClass: 'ic-teal', title: 'verification-before-completion',
+    sub: 'Quality • รัน verify commands จริงก่อน claim success',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">ก่อนบอกว่า "เสร็จแล้ว" หรือ "แก้ได้แล้ว" ต้องรัน verification commands จริงๆ และดู output ก่อนทุกครั้ง ห้าม claim success โดยไม่มี evidence</h4>
+      </div>
+      <div class="ml-section">
+        <h4>Verification Commands</h4>
+        <ul class="checklist">
+          <li><code>npm test</code> — tests ทั้งหมดผ่าน</li>
+          <li><code>npm run build</code> — build ไม่ error</li>
+          <li><code>npm run lint</code> — ไม่มี lint error</li>
+          <li><code>curl / http request</code> — API ตอบสนองถูกต้อง</li>
+          <li>Screenshot / visual check ถ้าเป็น UI</li>
+        </ul>
+      </div>
+      <div class="ironlaw"><strong>🔒 Iron Law:</strong> ห้ามพูดว่า "น่าจะทำงานได้" หรือ "ควรจะแก้แล้ว" — ต้อง RUN และ SEE จริงเท่านั้น</div>
+    `,
+    tabs: [
+      { label: 'ถูก vs ผิด', content: `<span class="ter">✗ WRONG — claim โดยไม่ verify:</span>
+<span class="ter">"แก้ bug localStorage แล้ว</span>
+<span class="ter"> น่าจะทำงานได้แล้วครับ"</span>
+<span class="te"></span>
+<span class="tok">✓ CORRECT — verify ก่อน claim:</span>
+<span class="tp">$ </span><span class="tc">npm test ThemeContext</span>
+<span class="tok">✓ ThemeContext persists theme (3ms)</span>
+<span class="tp">$ </span><span class="tc">node -e "localStorage.setItem('t','dark')"</span>
+<span class="tok">✓ No error thrown</span>
+<span class="te"></span>
+<span class="tin">"ยืนยันแล้วว่า bug แก้ได้</span>
+<span class="tin"> tests 3/3 ผ่าน output ดูด้านบน"</span>` }
+    ]
+  },
+
+  'writing-skills': {
+    icon: '✍️', iconClass: 'ic-purple', title: 'writing-skills',
+    sub: 'Meta • สร้าง Skill ใหม่ตามมาตรฐาน Superpowers',
+    left: `
+      <div class="ml-section">
+        <h4>คำอธิบาย</h4>
+        <p class="ml-desc">สร้าง skill ใหม่สำหรับ workflow ที่กำหนดเอง ตามมาตรฐาน Superpowers ที่ทำงานได้ทุก platform</p>
+      </div>
+      <div class="ml-section">
+        <h4>โครงสร้าง Skill</h4>
+        <ul class="checklist">
+          <li>สร้าง directory ใต้ <code>skills/</code></li>
+          <li>เขียน <code>SKILL.md</code> — trigger + checklist + examples</li>
+          <li>ระบุ trigger condition ที่ชัดเจน</li>
+          <li>มี hard gate ถ้าจำเป็น</li>
+          <li>ทดสอบกับ agent จริงก่อน submit PR</li>
+        </ul>
+      </div>
+      <div class="ml-section">
+        <h4>Skill ที่ดีต้องมี</h4>
+        <div class="tip-row">
+          <span class="tip">Trigger ที่ชัดเจน</span>
+          <span class="tip">Checklist ทำตามลำดับ</span>
+          <span class="tip">Hard gate ถ้าเหมาะสม</span>
+          <span class="tip">ทำงานข้าม platforms</span>
+        </div>
+      </div>
+    `,
+    tabs: [
+      { label: 'โครงสร้าง', content: `<span class="ts"># สร้าง skill ใหม่:</span>
+<span class="thi">skills/my-deployment/</span>
+<span class="thi">├── SKILL.md</span>
+<span class="thi">└── README.md</span>
+<span class="te"></span>
+<span class="ts"># SKILL.md structure:</span>
+<span class="to">---</span>
+<span class="to">name: my-deployment</span>
+<span class="to">description: "Use when deploying to production"</span>
+<span class="to">---</span>
+<span class="te"></span>
+<span class="to"># My Deployment Skill</span>
+<span class="te"></span>
+<span class="thi">&lt;HARD-GATE&gt;</span>
+<span class="thi">Never deploy without running all tests</span>
+<span class="thi">&lt;/HARD-GATE&gt;</span>
+<span class="te"></span>
+<span class="to">## Checklist</span>
+<span class="to">1. Run full test suite</span>
+<span class="to">2. Check environment variables</span>
+<span class="to">3. Deploy to staging first</span>
+<span class="to">4. Verify staging works</span>
+<span class="to">5. Deploy to production</span>` }
+    ]
+  }
+}
+
+// ── Modal functions ───────────────────────────────────────────────────────────
+function openModal(id) {
+  const s = SKILLS[id]
+  if (!s) return
+  document.getElementById('mh-icon').className = 'mh-icon ' + s.iconClass
+  document.getElementById('mh-icon').textContent = s.icon
+  document.getElementById('mh-title').textContent = s.title
+  document.getElementById('mh-sub').textContent = s.sub
+  document.getElementById('modal-left').innerHTML = s.left
+
+  // Build tabs
+  const tabBar = document.getElementById('term-tab-bar')
+  const screens = document.getElementById('term-screens')
+  tabBar.innerHTML = ''
+  screens.innerHTML = ''
+  s.tabs.forEach((tab, i) => {
+    const t = document.createElement('div')
+    t.className = 'term-tab' + (i === 0 ? ' active' : '')
+    t.textContent = tab.label
+    t.onclick = () => switchTab(i)
+    tabBar.appendChild(t)
+    const sc = document.createElement('div')
+    sc.className = 'term-screen' + (i === 0 ? ' active' : '')
+    sc.innerHTML = tab.content
+    screens.appendChild(sc)
+  })
+
+  document.getElementById('modal-overlay').classList.add('open')
+  document.body.style.overflow = 'hidden'
+}
+
+function switchTab(idx) {
+  document.querySelectorAll('.term-tab').forEach((t,i) => t.classList.toggle('active', i===idx))
+  document.querySelectorAll('.term-screen').forEach((s,i) => s.classList.toggle('active', i===idx))
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open')
+  document.body.style.overflow = ''
+}
+
+function closeModalOnBg(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal()
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
+</script>
+
+<footer>
+  <p style="text-align: center;">คู่มือ Superpowers ฉบับภาษาไทย · ข้อมูลจาก <a href="https://github.com/obra/superpowers" target="_blank">github.com/obra/superpowers</a> · MIT License</p>
+</footer>
+
+</body>
+
+</html>

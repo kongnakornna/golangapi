@@ -1,0 +1,10 @@
+apply-host-uat:
+  extends: .apply-kong
+  before_script:
+    # Setup env
+    - export KONG_HOST_DOMAIN=${WEB_DOMAIN_UAT}
+    - export KONG_EP=${KONG_ENDPOINT_UAT}
+    - export KONG_HOST_PROXY=${KONG_HOST_UAT}
+  only:
+    refs:
+      - /^\d+.\d+.\d+-uat/

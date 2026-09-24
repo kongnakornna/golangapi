@@ -1,5 +1,10 @@
+# File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
+# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,go
+# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,linux,go
+
+### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
-# https://$GOPATH/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 # Binaries for programs and plugins
 *.exe
@@ -19,25 +24,49 @@
 
 # Go workspace file
 go.work
-go.work.sum
 
-# env file
- .env
-*.local
+### Linux ###
+*~
 
-.cursorrules
-.cursor
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
 
-# configs/config.yaml
+# KDE directory preferences
+.directory
 
-logs/*
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
 
-logs
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
 
-swag-docs
-api/app
-tmp
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
 
-.DS_Store
+# Local History for Visual Studio Code
+.history/
 
-build
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
+# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,go
+
+# Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
+tmp/
+
+# Environment variables
+app-postgres-data
+.aider*
+.env
+.env
+.env

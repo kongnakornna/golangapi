@@ -1,0 +1,70 @@
+{{define "content"}}
+<div class="header">
+  <div class="company-info">
+    <h1>{{.Company.Name}}</h1>
+    <p>{{.Company.Address}}</p>
+    <p>Tel: {{.Company.Phone}} | Tax ID: {{.Company.TaxID}}</p>
+  </div>
+  <div class="doc-title">
+    <h2>รายงานยอดขายรายวัน</h2>
+    <p class="doc-no">ประจำวันที่ {{.Date | formatDate}}</p>
+  </div>
+</div>
+
+<h3 style="font-size:14px;font-weight:700;margin-bottom:10px;">รายการขาย</h3>
+<table>
+  <thead>
+    <tr>
+      <th style="width:120px;">เลขที่ใบแจ้งหนี้</th>
+      <th>ลูกค้า</th>
+      <th style="width:60px;" class="text-center">เวลา</th>
+      <th style="width:80px;" class="text-center">ชำระ</th>
+      <th style="width:90px;" class="text-right">ยอดขาย</th>
+      <th style="width:90px;" class="text-right">ต้นทุน</th>
+      <th style="width:90px;" class="text-right">กำไร</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Sales}}
+    <tr>
+      <td>{{.InvoiceNo}}</td>
+      <td>{{.Customer}}</td>
+      <td class="text-center">{{.Time}}</td>
+      <td class="text-center">{{.PaymentMethod}}</td>
+      <td class="text-right">{{.Amount | formatMoney}}</td>
+      <td class="text-right">{{.Cost | formatMoney}}</td>
+      <td class="text-right">{{.Profit | formatMoney}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+
+<div style="display:flex;gap:20px;margin-bottom:15px;">
+  <div class="summary">
+    <table>
+      <tr><td class="label">รวมยอดขาย</td><td class="value">{{.TotalRev | formatMoney}}</td></tr>
+      <tr><td class="label">รวมต้นทุน</td><td class="value">{{.TotalCost | formatMoney}}</td></tr>
+      <tr class="grand-total"><td class="label">กำไรสุทธิ</td><td class="value">{{.TotalProfit | formatMoney}}</td></tr>
+    </table>
+  </div>
+  <div class="summary">
+    <table>
+      <tr><td class="label">จำนวนใบแจ้งหนี้</td><td class="value">{{.Summary.InvoiceCount}}</td></tr>
+      <tr><td class="label">เงินสด ({{.Summary.CashCount}} รายการ)</td><td class="value">{{.Summary.CashAmount | formatMoney}}</td></tr>
+      <tr><td class="label">โอน ({{.Summary.TransferCount}} รายการ)</td><td class="value">{{.Summary.TransferAmount | formatMoney}}</td></tr>
+      <tr><td class="label">บัตรเครดิต ({{.Summary.CardCount}} รายการ)</td><td class="value">{{.Summary.CardAmount | formatMoney}}</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="sign-box">
+    <p class="sign-line">ผู้จัดทำ</p>
+    <p>&nbsp;</p>
+  </div>
+  <div class="sign-box">
+    <p class="sign-line">ผู้ตรวจสอบ</p>
+    <p>&nbsp;</p>
+  </div>
+</div>
+{{end}}

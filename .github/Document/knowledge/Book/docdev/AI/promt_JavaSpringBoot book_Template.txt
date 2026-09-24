@@ -1,0 +1,253 @@
+## ✅ ปรับโครงสร้างจาก C# .NET เป็น **Java + Spring Boot** สำหรับหนังสือ 2 เล่ม (ไทย/อังกฤษ)
+
+### 📘 เล่มภาษาไทย
+**ชื่อหนังสือ:**  
+**Mastering Java Spring Boot 2026: จากพื้นฐานสู่ Enterprise Application + Database + Cache + Message Queue**
+
+### 📙 เล่มภาษาอังกฤษ
+**Title:**  
+**Mastering Java Spring Boot 2026: From Fundamentals to Enterprise Apps + Database + Cache + Message Queue**
+
+---
+
+## 📑 สารบัญ 120 บท (ฉบับ Java Spring Boot)
+
+### ภาค 0: เครื่องมือและแนวทางการเรียนรู้ (บทที่ 1–6)
+
+**บทที่ 1:** บทนำ – หนังสือเล่มนี้เหมาะกับใคร, ภาพรวม Java + Spring Boot ในปี 2026, วิธีอ่านหนังสือ, แหล่งอ้างอิง (Spring.io, Baeldung, Oracle Docs)
+
+**บทที่ 2:** นิยามพื้นฐานที่ต้องรู้ – Java (JVM, JDK, JRE), Spring Framework, Spring Boot, ORM (JPA/Hibernate), DTO, CRUD, Cache (Redis), Message Queue (RabbitMQ), Microservices
+
+**บทที่ 3:** หัวข้อสำคัญของหนังสือ (Roadmap) – สายงาน Developer (Backend, Full-stack, Cloud), สถาปัตยกรรม (Layered Architecture, Hexagonal, Microservices), ฐานข้อมูล (SQL Server, Oracle, PostgreSQL, MongoDB), Redis, RabbitMQ, Testing (JUnit, Mockito), DevOps
+
+**บทที่ 4:** การออกแบบคู่มือ – รูปแบบหนังสือ, สัญลักษณ์, มาตรฐานการเขียนโค้ด Java (Google Java Style Guide, Spring Convention)
+
+**บทที่ 5:** การออกแบบ Workflow สำหรับนักพัฒนา – Git + GitHub, CI/CD (GitHub Actions, Jenkins), Testing Workflow (Unit → Integration → E2E), Spring Boot DevTools
+
+**บทที่ 6:** แผนภาพการทำงาน (Workflow Diagram) + Dataflow Diagram ด้วย Draw.io – รู้จัก Draw.io, การวาด Flowchart แบบ TB, ตัวอย่าง Dataflow (HTTP Request → Controller → Service → Repository → Database → Response), อธิบายแต่ละโหนด, เทมเพลต Workflow สำหรับโปรเจกต์ Spring Boot
+
+---
+
+### ภาค 1: พื้นฐาน Java และ Spring Boot (บทที่ 7–40)
+
+**บทที่ 7:** การติดตั้ง JDK (OpenJDK 21/23), IntelliJ IDEA / VS Code, Maven/Gradle  
+**บทที่ 8:** โปรเจกต์แรก Hello World และโครงสร้างโปรเจกต์ Maven  
+**บทที่ 9:** ตัวแปรและชนิดข้อมูลใน Java (primitive, reference)  
+**บทที่ 10:** การรับข้อมูลผู้ใช้ (Scanner, BufferedReader) และการแปลงชนิด  
+**บทที่ 11:** ตัวดำเนินการ (operators) และลำดับการประเมิน  
+**บทที่ 12:** Control Flow: if-else, switch, ternary  
+**บทที่ 13:** Loops: for, while, do-while, enhanced for  
+**บทที่ 14:** อาร์เรย์ (Array) และการใช้งาน  
+**บทที่ 15:** ArrayList และ Collections Framework เบื้องต้น  
+**บทที่ 16:** HashMap และการวนลูป  
+**บทที่ 17:** OOP: Class, Object, Constructor, Encapsulation  
+**บทที่ 18:** Inheritance, Polymorphism, Method Overriding  
+**บทที่ 19:** Abstract Class และ Interface  
+**บทที่ 20:** Exception Handling (try-catch-finally, throw, custom exception)  
+**บทที่ 21:** Lambda Expressions และ Functional Interface  
+**บทที่ 22:** Stream API (filter, map, collect)  
+**บทที่ 23:** Date & Time API (LocalDate, LocalDateTime, DateTimeFormatter)  
+**บทที่ 24:** Optional – การป้องกัน NullPointerException  
+**บทที่ 25:** สร้าง Spring Boot Project ด้วย Spring Initializr  
+**บทที่ 26:** โครงสร้างโปรเจกต์ Spring Boot (main class, application.properties)  
+**บทที่ 27:** Spring Boot Starters (web, data-jpa, test)  
+**บทที่ 28:** Spring Boot DevTools และ Auto-restart  
+**บทที่ 29:** Spring Boot Actuator – health check, metrics  
+**บทที่ 30:** REST Controller พื้นฐาน (@RestController, @GetMapping)  
+**บทที่ 31:** การรับ Request Parameters (@RequestParam, @PathVariable)  
+**บทที่ 32:** การส่ง Response (ResponseEntity, HttpStatus)  
+**บทที่ 33:** Dependency Injection ใน Spring (@Autowired, constructor injection)  
+**บทที่ 34:** Configuration Properties (@Value, @ConfigurationProperties)  
+**บทที่ 35:** Profiles (application-dev.yml, application-prod.yml)  
+**บทที่ 36:** Logging ด้วย SLF4J + Logback  
+**บทที่ 37:** การทดสอบ Controller ด้วย MockMvc  
+**บทที่ 38:** โปรเจกต์เล็ก: REST API สำหรับคำนวณเลข  
+**บทที่ 39:** Cheatsheet: Spring Boot แรกเริ่ม  
+**บทที่ 40:** แบบฝึกหัดรวมภาค 1
+
+---
+
+### ภาค 2: ฐานข้อมูลและ ORM (JPA/Hibernate) (บทที่ 41–60)
+
+**บทที่ 41:** ภาพรวมฐานข้อมูลที่ใช้กับ Java (SQL Server, Oracle, PostgreSQL, MongoDB)  
+**บทที่ 42:** JPA และ Hibernate คืออะไร, Entity, @Entity, @Id  
+**บทที่ 43:** Spring Data JPA – Repository interface (CrudRepository, JpaRepository)  
+**บทที่ 44:** CRUD ปกติ (save, findById, findAll, deleteById)  
+**บทที่ 45:** การสร้าง Query Method (findBy... , @Query)  
+**บทที่ 46:** การทำ Pagination และ Sorting (Pageable, Sort)  
+**บทที่ 47:** ความสัมพันธ์ระหว่าง Entity (@OneToMany, @ManyToOne, @JoinColumn)  
+**บทที่ 48:** DTO และการใช้ Projection (interface-based, class-based)  
+**บทที่ 49:** ModelMapper / MapStruct – การ Map Entity ↔ DTO  
+**บทที่ 50:** การเชื่อมต่อ SQL Server ด้วย JDBC และ Hibernate Dialect  
+**บทที่ 51:** การเชื่อมต่อ Oracle Database (ojdbc8, application.properties)  
+**บทที่ 52:** การเชื่อมต่อ PostgreSQL (PostgreSQL Driver)  
+**บทที่ 53:** การเชื่อมต่อ MongoDB (Spring Data MongoDB)  
+**บทที่ 54:** Repository Pattern แบบแยก Layer (Service + Repository)  
+**บทที่ 55:** โปรเจกต์ Full-stack: Blog API (Spring Boot) + React/Angular (CRUD ครบวงจร)  
+**บทที่ 56:** Task List Template สำหรับโปรเจกต์ฐานข้อมูล (Markdown/Excel)  
+**บทที่ 57:** Checklist Template สำหรับการตรวจสอบฐานข้อมูลก่อน Deploy  
+**บทที่ 58:** Dataflow Diagram สำหรับระบบฐานข้อมูล (Draw.io) – พร้อมไฟล์ตัวอย่าง  
+**บทที่ 59:** Performance Tuning: N+1 query, @EntityGraph, @Transactional  
+**บทที่ 60:** Unit Test สำหรับ Repository (@DataJpaTest, Testcontainers)
+
+---
+
+### ภาค 3: Caching (Redis) และ Message Queue (RabbitMQ) (บทที่ 61–75)
+
+**บทที่ 61:** Redis คืออะไร, การติดตั้ง Redis (Docker, local)  
+**บทที่ 62:** ใช้ Redis ใน Spring Boot (spring-boot-starter-data-redis)  
+**บทที่ 63:** การ Cache ด้วย @Cacheable, @CacheEvict, @CachePut  
+**บทที่ 64:** RedisTemplate และการจัดการ Hash/Value  
+**บทที่ 65:** Redis Pub/Sub – สร้าง Publisher และ Subscriber ด้วย Spring  
+**บทที่ 66:** RabbitMQ Concepts (Exchange, Queue, Routing Key)  
+**บทที่ 67:** การติดตั้ง RabbitMQ และ spring-boot-starter-amqp  
+**บทที่ 68:** สร้าง Producer (RabbitTemplate) และ Consumer (@RabbitListener)  
+**บทที่ 69:** การจัดการ Dead Letter Queue และ Acknowledge  
+**บทที่ 70:** Workflow การทำงาน Redis + RabbitMQ ในระบบจริง (พร้อม Diagram)  
+**บทที่ 71:** Task List Template สำหรับ Redis/RabbitMQ  
+**บทที่ 72:** Checklist Template สำหรับ Cache และ Message Queue  
+**บทที่ 73:** Full-stack Example: e-Commerce API + Redis Cache สินค้า + RabbitMQ ส่งอีเมล  
+**บทที่ 74:** ข้อดี ข้อเสีย และข้อควรระวังของ Redis และ RabbitMQ  
+**บทที่ 75:** แหล่งอ้างอิง Redis และ RabbitMQ สำหรับ Java
+
+---
+
+### ภาค 4: Spring Security, JWT, Testing, REST APIs (บทที่ 76–95)
+
+**บทที่ 76:** Spring Security Basics – Authentication vs Authorization  
+**บทที่ 77:** การเข้ารหัสรหัสผ่าน (BCryptPasswordEncoder)  
+**บทที่ 78:** สร้าง UserDetailsService และ UserDetails  
+**บทที่ 79:** JWT (JSON Web Token) – โครงสร้าง, การสร้าง token  
+**บทที่ 80:** ใช้ JJWT (Java JWT) สร้างและ validate token  
+**บทที่ 81:** Spring Security + JWT – Filter, AuthenticationEntryPoint  
+**บทที่ 82:** Role-based Authorization (@PreAuthorize, hasRole)  
+**บทที่ 83:** การทดสอบ Unit Test ด้วย JUnit 5 และ AssertJ  
+**บทที่ 84:** การ Mock ด้วย Mockito (when, verify, @MockBean)  
+**บทที่ 85:** Integration Test (@SpringBootTest, @TestRestTemplate)  
+**บทที่ 86:** การทำ REST API Documentation ด้วย SpringDoc OpenAPI (Swagger)  
+**บทที่ 87:** Exception Handling ระดับ Global (@ControllerAdvice, @ExceptionHandler)  
+**บทที่ 88:** Validation ด้วย Bean Validation (@Valid, @NotNull, @Size)  
+**บทที่ 89:** File Upload/Download ด้วย MultipartFile  
+**บทที่ 90:** การเรียก REST API อื่นด้วย RestClient (หรือ WebClient)  
+**บทที่ 91:** Asynchronous Processing (@Async, CompletableFuture)  
+**บทที่ 92:** Scheduling (@Scheduled, cron)  
+**บทที่ 93:** CORS Configuration และการเชื่อมต่อ Frontend  
+**บทที่ 94:** โปรเจกต์: Authentication API + CRUD (Spring Security + JWT)  
+**บทที่ 95:** แบบฝึกหัดรวมภาค 4
+
+---
+
+### ภาค 5: หัวข้อขั้นสูง (Microservices, Cloud, Design Patterns) (บทที่ 96–110)
+
+**บทที่ 96:** รู้จัก Microservices – ข้อดี ข้อเสีย  
+**บทที่ 97:** Spring Cloud Gateway – API Gateway  
+**บทที่ 98:** Service Discovery ด้วย Netflix Eureka  
+**บทที่ 99:** Distributed Tracing ด้วย Micrometer + Zipkin  
+**บทที่ 100:** Resilience4J – Circuit Breaker, Retry  
+**บทที่ 101:** Spring Cloud Config Server – centralized configuration  
+**บทที่ 102:** Dockerize Spring Boot Application (Dockerfile, docker-compose)  
+**บทที่ 103:** Deploy ไป Kubernetes (minikube, deployment.yaml, service.yaml)  
+**บทที่ 104:** Design Patterns ใน Spring (Singleton, Factory, Proxy, Dependency Injection)  
+**บทที่ 105:** Clean Architecture สำหรับ Spring Boot (Domain, Application, Infrastructure)  
+**บทที่ 106:** SOLID Principles – พร้อมตัวอย่างใน Spring  
+**บทที่ 107:** การทำ Event-Driven Architecture ด้วย Spring ApplicationEvent  
+**บทที่ 108:** Monitoring ด้วย Prometheus + Grafana + Actuator  
+**บทที่ 109:** การทำ Logging แบบ Structured (JSON) และ ELK Stack  
+**บทที่ 110:** แหล่งอ้างอิงเพิ่มเติม (หนังสือ, คอร์ส, บทความ)
+
+---
+
+### ภาค 6: ภาคผนวกและโปรเจกต์สุดท้าย (บทที่ 111–120)
+
+**บทที่ 111:** โปรเจกต์สุดท้าย – ระบบจัดการออเดอร์ (Order Management)  
+- Backend: Spring Boot + Spring Data JPA + Redis + RabbitMQ + Security + JWT  
+- Frontend: React หรือ Angular  
+- สิ่งที่ได้: REST API, Cache, Async Email, Authentication, Documentation  
+
+**บทที่ 112:** การจัดโครงสร้าง Multi-module Maven Project  
+**บทที่ 113:** การทำ Performance Test ด้วย JMeter  
+**บทที่ 114:** การทำ Security Audit ด้วย OWASP Dependency Check  
+**บทที่ 115:** การทำ CI/CD ด้วย GitHub Actions (build, test, docker push, deploy)  
+**บทที่ 116:** ภาคผนวก ก: เทมเพลต Task List (Excel, PDF, Markdown)  
+**บทที่ 117:** ภาคผนวก ข: เทมเพลต Checklist (Deployment, Security, Database)  
+**บทที่ 118:** ภาคผนวก ค: ไฟล์ Draw.io ตัวอย่าง (Workflow, Dataflow, Architecture)  
+**บทที่ 119:** ภาคผนวก ง: โค้ดตัวอย่างสมบูรณ์จากทุกบท (ลิงก์ GitHub)  
+**บทที่ 120:** ภาคผนวก จ: อภิธานศัพท์สองภาษา (ไทย-อังกฤษ) และเฉลยแบบฝึกหัด
+
+---
+
+## 📌 Prompt สำหรับ AI (ภาษาไทย) – เขียนหนังสือ Java Spring Boot
+
+```text
+คุณคือผู้เขียนหนังสือเทคนิคภาษาไทยระดับผู้เชี่ยวชาญด้าน Java และ Spring Boot 
+จงเขียนหนังสือเรื่อง "Mastering Java Spring Boot 2026: จากพื้นฐานสู่ Enterprise Application + Database + Cache + Message Queue" 
+ตามสารบัญ 120 บาทที่ให้ไว้ข้างต้นนี้อย่างละเอียด
+
+ข้อกำหนด:
+1. แต่ละบทมีความยาว 800–2000 คำ
+2. ทุกบทต้องมี:
+   - คำอธิบายแนวคิด (Concept Explanation)
+   - ตัวอย่างโค้ด Java/Spring Boot ที่รันได้จริง (ใช้ Maven/Gradle)
+   - ตารางสรุป (ถ้ามีการเปรียบเทียบ)
+   - แบบฝึกหัดท้ายบท 3–5 ข้อ
+   - ส่วน "แหล่งอ้างอิง" ท้ายบท (เช่น Baeldung, Spring.io, Oracle Docs)
+3. บทที่มีการออกแบบ Workflow, Task List, Checklist, Dataflow Diagram (Draw.io):
+   - แสดงเทมเพลตเป็น Markdown Table หรือลิงก์ดาวน์โหลด
+   - อธิบายวิธีการใช้งานแต่ละจุด (step-by-step)
+   - แทรกรูปภาพโดยระบุ "รูปที่ X: คำอธิบาย"
+4. สำหรับบทที่เกี่ยวกับ Draw.io: อธิบายการวาด Flowchart แบบ Top-to-Bottom (TB) พร้อมแสดงตัวอย่าง Mermaid หรือ ASCII flowchart
+5. ใช้ภาษาไทยที่เป็นทางการ แต่เข้าใจง่าย อธิบายศัพท์เทคนิคเมื่อจำเป็น
+6. เขียนทีละบทตามลำดับ เริ่มจากบทที่ 1
+
+โครงสร้าง 120 บาท: (วางสารบัญด้านบนนี้ไว้ตรงนี้)
+
+เริ่มเขียนได้ทันที โดยเริ่มจากบทที่ 1
+```
+
+---
+
+## 📌 Prompt สำหรับ AI (English) – Write Java Spring Boot book
+
+```text
+You are a senior technical author and Java/Spring Boot expert.
+Write the book "Mastering Java Spring Boot 2026: From Fundamentals to Enterprise Apps + Database + Cache + Message Queue" 
+in English, following the 120-chapter table of contents provided below.
+
+Requirements:
+1. Each chapter: 800–2000 words
+2. Every chapter must include:
+   - Concept explanation
+   - Runnable Java/Spring Boot code examples (Maven/Gradle)
+   - Summary table (if comparisons exist)
+   - 3–5 exercises at the end
+   - "References" section (e.g., Baeldung, Spring.io, Oracle Docs)
+3. For chapters covering Workflow, Task List, Checklist, Dataflow Diagram (Draw.io):
+   - Provide templates as Markdown tables or download links
+   - Explain step-by-step usage
+   - Include figure placeholders: "Figure X: description"
+4. For Draw.io chapters: explain how to draw Top-to-Bottom (TB) flowcharts, provide Mermaid or ASCII flowchart examples.
+5. Use professional yet accessible English.
+6. Write chapter by chapter from Chapter 1 to Chapter 120.
+
+Table of Contents (120 chapters): (place the English TOC here – same as above but translated)
+
+Start writing immediately, beginning with Chapter 1.
+```
+
+---
+
+## สรุปสิ่งที่ส่งให้
+
+| รายการ | รายละเอียด |
+|--------|-------------|
+| ✅ โครงสร้างหนังสือ | 120 บาท แบ่งเป็น 6 ภาค ครอบคลุม Java พื้นฐาน, Spring Boot, JPA, Redis, RabbitMQ, Security, Testing, Microservices, Cloud, Design Patterns, Clean Code, SOLID |
+| ✅ Task List Template | มีในบทที่ 56 และ 71 (พร้อมเทมเพลต Markdown) |
+| ✅ Checklist Template | มีในบทที่ 57 และ 72 |
+| ✅ Workflow Diagram | บทที่ 5 และ 6 (อธิบาย Draw.io) |
+| ✅ Dataflow Diagram | บทที่ 6, 58, 110 (พร้อมไฟล์ตัวอย่าง) |
+| ✅ ตัวอย่างโค้ด Full-stack | บทที่ 55 (Blog API), บทที่ 73 (e-Commerce), บทที่ 111 (Order Management) |
+| ✅ การจัดการ Configuration | บทที่ 34, 35, 101 (Spring Cloud Config) – เทียบเท่า Mop Config |
+| ✅ แหล่งอ้างอิง | ท้ายทุกบท และบทที่ 110, 120 |
+| ✅ ภาคผนวก | บทที่ 116–120 รวมเทมเพลต, Draw.io, โค้ด GitHub, อภิธานศัพท์ |
+
+คุณสามารถคัดลอก **สารบัญด้านบน** ไปวางใน prompt ของ AI (ChatGPT, Claude, Gemini) แล้วให้ AI เขียนเนื้อหาทั้ง 120 บาทได้ทันที หากต้องการให้เพิ่ม/ลดส่วนใด แจ้งได้เลยครับ

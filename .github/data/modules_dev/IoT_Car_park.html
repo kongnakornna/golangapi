@@ -1,0 +1,3367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IoT_Car_park</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+<style>
+
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #24292e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #24292e;
+}
+
+h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h2 {
+  font-size: 1.5em;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+
+h6 {
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #656d76;
+}
+
+/* Paragraphs */
+p {
+  margin: 16px 0;
+}
+
+/* Inline */
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+del {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  background-color: #eff1f3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #24292e;
+}
+
+a {
+  color: #0969da;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 3px;
+}
+
+a:hover { opacity: 0.8; }
+
+/* Blockquotes */
+blockquote {
+  margin: 16px 0;
+  padding: 0 1em;
+  border-left: 3px solid #d0d7de;
+  color: #656d76;
+}
+
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
+
+/* Lists */
+ul, ol {
+  padding-left: 2em;
+  margin: 16px 0;
+}
+
+li { margin: 4px 0; }
+ul ul, ul ol, ol ul, ol ol { margin: 0; }
+li > p { margin: 0; }
+
+input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: #0969da;
+}
+
+/* Code Blocks */
+pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  line-height: 1.45;
+  margin: 16px 0;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: auto;
+  max-width: 100%;
+  overflow: auto;
+  display: block;
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) td {
+  background-color: #f6f8fa;
+}
+
+/* Horizontal Rule */
+hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 24px 0;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Math (KaTeX MathML) */
+.math-block {
+  display: block;
+  text-align: center;
+  margin: 16px 0;
+  padding: 8px 0;
+  overflow-x: auto;
+}
+
+.math-inline {
+  display: inline;
+}
+
+.math-error {
+  color: #cf222e;
+  background-color: rgba(207, 34, 46, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Mermaid */
+pre.mermaid {
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  padding: 16px 0;
+}
+
+/* Footnotes */
+.footnotes-section {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #d0d7de;
+  font-size: 0.9em;
+  color: #656d76;
+}
+
+.footnotes-section ol {
+  padding-left: 1.5em;
+}
+
+.footnotes-section li {
+  margin: 8px 0;
+}
+
+sup.footnote-ref a {
+  color: #0969da;
+  text-decoration: none;
+  font-size: 0.85em;
+  padding: 0 2px;
+}
+
+sup.footnote-ref a:hover {
+  text-decoration: underline;
+}
+
+a.footnote-backref {
+  color: #0969da;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+/* Details/Summary */
+details {
+  margin: 8px 0;
+  border-left: 2px solid rgba(128, 128, 128, 0.3);
+  padding-left: 12px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 0;
+  color: #24292e;
+}
+
+summary:hover {
+  color: #0969da;
+}
+
+/* Print */
+@media print {
+  body { background: white; }
+  .markdown-body { max-width: none; padding: 0; }
+  pre { white-space: pre-wrap; word-wrap: break-word; }
+  a { color: #24292e; text-decoration: underline; }
+  pre.mermaid { page-break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<div class="markdown-body">
+<h1>ระบบบริหารจัดการอาคารจอดรถอัจฉริยะ (Smart Parking Management System) - ฉบับสมบูรณ์</h1>
+<h2>สารบัญ</h2>
+<ol>
+<li><a href="#1-%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%A7%E0%B8%A1%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%9A">ภาพรวมระบบ</a></li>
+<li><a href="#2-%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%9A%E0%B8%A2%E0%B9%88%E0%B8%AD%E0%B8%A2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B9%82%E0%B8%8B%E0%B8%99%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%97%E0%B8%B3%E0%B8%87%E0%B8%B2%E0%B8%99">ระบบย่อยและโซนการทำงาน</a></li>
+<li><a href="#3-hardware-components">Hardware Components</a></li>
+<li><a href="#4-software-architecture">Software Architecture</a></li>
+<li><a href="#5-domain-layer">Domain Layer</a></li>
+<li><a href="#6-application-layer">Application Layer</a></li>
+<li><a href="#7-api-endpoints">API Endpoints</a></li>
+<li><a href="#8-dashboard-ui">Dashboard UI</a></li>
+<li><a href="#9-mobile-app">Mobile App</a></li>
+<li><a href="#10-qr-code--payment-system">QR Code &amp; Payment System</a></li>
+<li><a href="#11-%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%9A%E0%B8%9E%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B9%8C%E0%B9%83%E0%B8%9A%E0%B9%80%E0%B8%AA%E0%B8%A3%E0%B9%87%E0%B8%88%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%9A%E0%B8%B1%E0%B8%95%E0%B8%A3%E0%B8%88%E0%B8%AD%E0%B8%94%E0%B8%A3%E0%B8%96">ระบบพิมพ์ใบเสร็จและบัตรจอดรถ</a></li>
+<li><a href="#12-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B8%94%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%87%E0%B8%B2%E0%B8%99">การติดตั้งและใช้งาน</a></li>
+<li><a href="#13-business-model">Business Model</a></li>
+<li><a href="#14-prompt-%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%82%E0%B8%A2%E0%B8%B2%E0%B8%A2%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%9A">Prompt สำหรับการขยายระบบ</a></li>
+</ol>
+<hr>
+<h2>1. ภาพรวมระบบ</h2>
+<h3>1.1 ระบบ Smart Parking Management</h3>
+<p>ระบบบริหารจัดการอาคารจอดรถอัจฉริยะ ครบวงจร รองรับ:</p>
+<ul>
+<li><strong>อาคารจอดรถหลายชั้น</strong> - รองรับหลายอาคาร หลายชั้น หลายโซน</li>
+<li><strong>ระบบลิฟต์จอดรถ</strong> - ควบคุมลิฟต์ขนย้ายรถอัตโนมัติ</li>
+<li><strong>ระบบชาร์จรถไฟฟ้า (EV Charging)</strong> - รองรับการชาร์จ EV</li>
+<li><strong>RFID &amp; กล้อง CCTV AI</strong> - ตรวจจับและจดจำป้ายทะเบียน</li>
+<li><strong>ระบบสแกนป้ายทะเบียน (LPR)</strong> - อ่านป้ายทะเบียนอัตโนมัติ</li>
+<li><strong>QR Code Scan &amp; Payment</strong> - ชำระเงินผ่าน QR Code</li>
+<li><strong>ระบบนำทาง (Parking Guidance)</strong> - แสดงที่จอดว่าง/ไม่ว่าง</li>
+<li><strong>ระบบไฟแสดงสถานะ</strong> - สีเขียว (ว่าง) / สีแดง (ไม่ว่าง)</li>
+<li><strong>ระบบวิเคราะห์สถิติ</strong> - รายชั่วโมง/วัน/สัปดาห์/เดือน/ปี/ไตรมาส</li>
+<li><strong>ระบบพิมพ์ใบเสร็จ/บัตรจอดรถ/ใบแจ้งหนี้</strong> - รองรับหลายรูปแบบ</li>
+<li><strong>ระบบจัดการส่วนลด</strong> - สแกนส่วนลดผ่าน QR Code</li>
+<li><strong>ระบบแจ้งเตือนเหตุฉุกเฉิน</strong> - ไฟแสดงสถานะและแจ้งเตือน</li>
+<li><strong>ระบบบำรุงรักษาอุปกรณ์</strong> - ตารางบำรุงรักษาและแจ้งเตือน</li>
+<li><strong>ระบบป้องกันการกระแทก</strong> - ระบบกันกระแทกอัตโนมัติ</li>
+<li><strong>ระบบสลับโหมด</strong> - Auto / Manual Mode</li>
+</ul>
+<h3>1.2 โครงสร้างระบบ</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                         Smart Parking Management System                              │
+├──────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                      │
+│  ┌──────────────────────────────────────────────────────────────────────────────────┐ │
+│  │                           Building A (5 Floors)                                  │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 1 - Zone A1 (ลานจอดทั่วไป)                                       │ │ │
+│  │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │ │ │
+│  │  │  │ 🟢 A1-01│ │ 🔴 A1-02│ │ 🟢 A1-03│ │ 🔴 A1-04│ │ 🟢 A1-05│ │ 🔴 A1-06│ │ 🟢 A1-07│ │ │ │
+│  │  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘      │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                                 │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 2 - Zone A2 (EV Charging + EV Parking)                           │ │ │
+│  │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │ │ │
+│  │  │  │ ⚡🔴  │ │ ⚡🟢  │ │ ⚡🟢  │ │ ⚡🔴  │ │ ⚡🟢  │ │ 🔴    │ │ 🟢    │      │ │ │
+│  │  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘      │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                                 │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 3 - Zone A3 (VIP / Monthly Rental)                               │ │ │
+│  │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │ │ │
+│  │  │  │ 🔴    │ │ 🟢    │ │ 🟢    │ │ 🔴    │ │ 🟢    │ │ 🟢    │ │ 🔴    │      │ │ │
+│  │  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘      │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                                 │ │
+│  │  ┌───────────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Floor 4-5 - Zone A4 (Automated Parking Lift System)                    │ │ │
+│  │  │                    ┌────────────┐                                       │ │ │
+│  │  │                    │  Elevator  │                                       │ │ │
+│  │  │                    │  Control   │                                       │ │ │
+│  │  │                    │  System    │                                       │ │ │
+│  │  │                    └────────────┘                                       │ │ │
+│  │  └───────────────────────────────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                      │
+│  ┌──────────────────────────────────────────────────────────────────────────────────┐ │
+│  │                        Control Center / Lobby                                      │ │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐              │ │
+│  │  │  CCTV      │  │  LPR       │  │  RFID      │  │  BOOM      │              │ │
+│  │  │  Monitor   │  │  System    │  │  Reader    │  │  Barrier   │              │ │
+│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘              │ │
+│  │                                                                                 │ │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐              │ │
+│  │  │  Payment   │  │  QR Code   │  │  Ticket    │  │  EV       │              │ │
+│  │  │  Kiosk     │  │  Scanner   │  │  Printer   │  │  Charger  │              │ │
+│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘              │ │
+│  │                                                                                 │ │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐              │ │
+│  │  │  Invoice   │  │  Receipt   │  │  Parking   │  │  Emergency │              │ │
+│  │  │  Printer   │  │  Printer   │  │  Ticket    │  │  Light     │              │ │
+│  │  │  (ใบแจ้งหนี้)│  │  (ใบเสร็จ)  │  │  Printer   │  │  System    │              │ │
+│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘              │ │
+│  └──────────────────────────────────────────────────────────────────────────────────┘ │
+│                                                                                      │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>2. ระบบย่อยและโซนการทำงาน</h2>
+<h3>2.1 Zone &amp; Parking Space Management</h3>
+<pre><code class="language-go">// domain/entity/parking.go
+package entity
+
+import &quot;time&quot;
+
+type Building struct {
+    ID          int64     `json:&quot;id&quot;`
+    Code        string    `json:&quot;code&quot;`
+    Name        string    `json:&quot;name&quot;`
+    Address     string    `json:&quot;address&quot;`
+    TotalFloors int       `json:&quot;total_floors&quot;`
+    TotalSpaces int       `json:&quot;total_spaces&quot;`
+    HasEVCharger bool    `json:&quot;has_ev_charger&quot;`
+    HasLift     bool      `json:&quot;has_lift&quot;`
+    Status      string    `json:&quot;status&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type Floor struct {
+    ID          int64     `json:&quot;id&quot;`
+    BuildingID  int64     `json:&quot;building_id&quot;`
+    FloorNo     int       `json:&quot;floor_no&quot;`
+    Name        string    `json:&quot;name&quot;`
+    ZoneCode    string    `json:&quot;zone_code&quot;`
+    ZoneType    string    `json:&quot;zone_type&quot;`
+    TotalSpaces int       `json:&quot;total_spaces&quot;`
+    HasEVCharger bool    `json:&quot;has_ev_charger&quot;`
+    HasLift     bool      `json:&quot;has_lift&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type ParkingSpace struct {
+    ID          int64     `json:&quot;id&quot;`
+    FloorID     int64     `json:&quot;floor_id&quot;`
+    SpaceNo     string    `json:&quot;space_no&quot;`
+    SpaceType   string    `json:&quot;space_type&quot;`
+    Status      string    `json:&quot;status&quot;`
+    IsEVCharger bool      `json:&quot;is_ev_charger&quot;`
+    IsHandicap  bool      `json:&quot;is_handicap&quot;`
+    Width       float64   `json:&quot;width&quot;`
+    Length      float64   `json:&quot;length&quot;`
+    Height      float64   `json:&quot;height&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type SpaceStatus struct {
+    SpaceID     int64     `json:&quot;space_id&quot;`
+    Status      string    `json:&quot;status&quot;`
+    OccupiedBy  string    `json:&quot;occupied_by&quot;`
+    EntryTime   time.Time `json:&quot;entry_time&quot;`
+    ExitTime    *time.Time `json:&quot;exit_time&quot;`
+    LEDColor    string    `json:&quot;led_color&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+</code></pre>
+<h3>2.2 Vehicle &amp; Ticket System</h3>
+<pre><code class="language-go">// domain/entity/vehicle.go
+package entity
+
+import &quot;time&quot;
+
+type VehicleType string
+
+const (
+    VehicleTypeCar        VehicleType = &quot;car&quot;
+    VehicleTypeSUV        VehicleType = &quot;suv&quot;
+    VehicleTypeTruck      VehicleType = &quot;truck&quot;
+    VehicleTypeVan        VehicleType = &quot;van&quot;
+    VehicleTypeMotorcycle VehicleType = &quot;motorcycle&quot;
+    VehicleTypeEV         VehicleType = &quot;ev&quot;
+)
+
+type Vehicle struct {
+    ID          int64       `json:&quot;id&quot;`
+    PlateNo     string      `json:&quot;plate_no&quot;`
+    VehicleType VehicleType `json:&quot;vehicle_type&quot;`
+    Brand       string      `json:&quot;brand&quot;`
+    Model       string      `json:&quot;model&quot;`
+    Color       string      `json:&quot;color&quot;`
+    IsEV        bool        `json:&quot;is_ev&quot;`
+    OwnerName   string      `json:&quot;owner_name&quot;`
+    OwnerPhone  string      `json:&quot;owner_phone&quot;`
+    OwnerEmail  string      `json:&quot;owner_email&quot;`
+    RFIDTag     string      `json:&quot;rfid_tag&quot;`
+    CreatedAt   time.Time   `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time   `json:&quot;updated_at&quot;`
+}
+
+type ParkingTicket struct {
+    ID            int64      `json:&quot;id&quot;`
+    TicketNo      string     `json:&quot;ticket_no&quot;`
+    BuildingID    int64      `json:&quot;building_id&quot;`
+    FloorID       int64      `json:&quot;floor_id&quot;`
+    SpaceID       int64      `json:&quot;space_id&quot;`
+    VehicleID     int64      `json:&quot;vehicle_id&quot;`
+    PlateNo       string     `json:&quot;plate_no&quot;`
+    VehicleType   string     `json:&quot;vehicle_type&quot;`
+    EntryTime     time.Time  `json:&quot;entry_time&quot;`
+    ExitTime      *time.Time `json:&quot;exit_time&quot;`
+    Duration      int        `json:&quot;duration&quot;`
+    RateType      string     `json:&quot;rate_type&quot;`
+    RateAmount    float64    `json:&quot;rate_amount&quot;`
+    TotalAmount   float64    `json:&quot;total_amount&quot;`
+    Discount      float64    `json:&quot;discount&quot;`
+    NetAmount     float64    `json:&quot;net_amount&quot;`
+    PaymentStatus string     `json:&quot;payment_status&quot;`
+    PaymentMethod string     `json:&quot;payment_method&quot;`
+    QRCode        string     `json:&quot;qr_code&quot;`
+    Status        string     `json:&quot;status&quot;`
+    CreatedAt     time.Time  `json:&quot;created_at&quot;`
+    UpdatedAt     time.Time  `json:&quot;updated_at&quot;`
+}
+
+type ParkingRate struct {
+    ID             int64     `json:&quot;id&quot;`
+    BuildingID     int64     `json:&quot;building_id&quot;`
+    VehicleType    string    `json:&quot;vehicle_type&quot;`
+    RateType       string    `json:&quot;rate_type&quot;`
+    FirstHour      float64   `json:&quot;first_hour&quot;`
+    SubsequentHour float64   `json:&quot;subsequent_hour&quot;`
+    DailyRate      float64   `json:&quot;daily_rate&quot;`
+    MonthlyRate    float64   `json:&quot;monthly_rate&quot;`
+    EventRate      float64   `json:&quot;event_rate&quot;`
+    OverstayFee    float64   `json:&quot;overstay_fee&quot;`
+    MaxCharge      float64   `json:&quot;max_charge&quot;`
+    CreatedAt      time.Time `json:&quot;created_at&quot;`
+    UpdatedAt      time.Time `json:&quot;updated_at&quot;`
+}
+</code></pre>
+<h3>2.3 EV Charging System</h3>
+<pre><code class="language-go">// domain/entity/ev_charging.go
+package entity
+
+import &quot;time&quot;
+
+type EVCharger struct {
+    ID            int64     `json:&quot;id&quot;`
+    SpaceID       int64     `json:&quot;space_id&quot;`
+    ChargerNo     string    `json:&quot;charger_no&quot;`
+    Type          string    `json:&quot;type&quot;`
+    Power         float64   `json:&quot;power&quot;`
+    Status        string    `json:&quot;status&quot;`
+    ConnectorType string    `json:&quot;connector_type&quot;`
+    CreatedAt     time.Time `json:&quot;created_at&quot;`
+    UpdatedAt     time.Time `json:&quot;updated_at&quot;`
+}
+
+type EVChargingSession struct {
+    ID          int64      `json:&quot;id&quot;`
+    TicketID    int64      `json:&quot;ticket_id&quot;`
+    ChargerID   int64      `json:&quot;charger_id&quot;`
+    StartTime   time.Time  `json:&quot;start_time&quot;`
+    EndTime     *time.Time `json:&quot;end_time&quot;`
+    Duration    int        `json:&quot;duration&quot;`
+    EnergyUsed  float64    `json:&quot;energy_used&quot;`
+    RatePerKWh  float64    `json:&quot;rate_per_kwh&quot;`
+    TotalAmount float64    `json:&quot;total_amount&quot;`
+    Status      string     `json:&quot;status&quot;`
+    CreatedAt   time.Time  `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time  `json:&quot;updated_at&quot;`
+}
+</code></pre>
+<h3>2.4 Lift/Automated Parking System</h3>
+<pre><code class="language-go">// domain/entity/lift.go
+package entity
+
+import &quot;time&quot;
+
+type Lift struct {
+    ID           int64     `json:&quot;id&quot;`
+    BuildingID   int64     `json:&quot;building_id&quot;`
+    LiftNo       string    `json:&quot;lift_no&quot;`
+    Type         string    `json:&quot;type&quot;`
+    Capacity     int       `json:&quot;capacity&quot;`
+    Status       string    `json:&quot;status&quot;`
+    CurrentFloor int       `json:&quot;current_floor&quot;`
+    TargetFloor  int       `json:&quot;target_floor&quot;`
+    DoorStatus   string    `json:&quot;door_status&quot;`
+    CreatedAt    time.Time `json:&quot;created_at&quot;`
+    UpdatedAt    time.Time `json:&quot;updated_at&quot;`
+}
+
+type LiftOperation struct {
+    ID         int64      `json:&quot;id&quot;`
+    LiftID     int64      `json:&quot;lift_id&quot;`
+    TicketID   int64      `json:&quot;ticket_id&quot;`
+    Operation  string     `json:&quot;operation&quot;`
+    FromFloor  int        `json:&quot;from_floor&quot;`
+    ToFloor    int        `json:&quot;to_floor&quot;`
+    StartTime  time.Time  `json:&quot;start_time&quot;`
+    EndTime    *time.Time `json:&quot;end_time&quot;`
+    Status     string     `json:&quot;status&quot;`
+    CreatedAt  time.Time  `json:&quot;created_at&quot;`
+    UpdatedAt  time.Time  `json:&quot;updated_at&quot;`
+}
+</code></pre>
+<h3>2.5 LPR &amp; CCTV System</h3>
+<pre><code class="language-go">// domain/entity/surveillance.go
+package entity
+
+import &quot;time&quot;
+
+type Camera struct {
+    ID         int64     `json:&quot;id&quot;`
+    BuildingID int64     `json:&quot;building_id&quot;`
+    FloorID    int64     `json:&quot;floor_id&quot;`
+    CameraNo   string    `json:&quot;camera_no&quot;`
+    Type       string    `json:&quot;type&quot;`
+    IPAddress  string    `json:&quot;ip_address&quot;`
+    Port       int       `json:&quot;port&quot;`
+    Status     string    `json:&quot;status&quot;`
+    CreatedAt  time.Time `json:&quot;created_at&quot;`
+    UpdatedAt  time.Time `json:&quot;updated_at&quot;`
+}
+
+type LPREvent struct {
+    ID         int64     `json:&quot;id&quot;`
+    CameraID   int64     `json:&quot;camera_id&quot;`
+    PlateNo    string    `json:&quot;plate_no&quot;`
+    Confidence float64   `json:&quot;confidence&quot;`
+    ImageURL   string    `json:&quot;image_url&quot;`
+    EventType  string    `json:&quot;event_type&quot;`
+    Timestamp  time.Time `json:&quot;timestamp&quot;`
+    CreatedAt  time.Time `json:&quot;created_at&quot;`
+}
+</code></pre>
+<h3>2.6 Payment &amp; Discount System</h3>
+<pre><code class="language-go">// domain/entity/payment.go
+package entity
+
+import &quot;time&quot;
+
+type Payment struct {
+    ID          int64      `json:&quot;id&quot;`
+    TicketID    int64      `json:&quot;ticket_id&quot;`
+    Amount      float64    `json:&quot;amount&quot;`
+    Discount    float64    `json:&quot;discount&quot;`
+    NetAmount   float64    `json:&quot;net_amount&quot;`
+    Method      string     `json:&quot;method&quot;`
+    Status      string     `json:&quot;status&quot;`
+    QRCode      string     `json:&quot;qr_code&quot;`
+    PaymentDate time.Time  `json:&quot;payment_date&quot;`
+    CreatedAt   time.Time  `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time  `json:&quot;updated_at&quot;`
+}
+
+type Discount struct {
+    ID          int64     `json:&quot;id&quot;`
+    Code        string    `json:&quot;code&quot;`
+    Type        string    `json:&quot;type&quot;`
+    Value       float64   `json:&quot;value&quot;`
+    Description string    `json:&quot;description&quot;`
+    StartDate   time.Time `json:&quot;start_date&quot;`
+    EndDate     time.Time `json:&quot;end_date&quot;`
+    MaxUses     int       `json:&quot;max_uses&quot;`
+    UsedCount   int       `json:&quot;used_count&quot;`
+    IsActive    bool      `json:&quot;is_active&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type DiscountUsage struct {
+    ID         int64     `json:&quot;id&quot;`
+    DiscountID int64     `json:&quot;discount_id&quot;`
+    TicketID   int64     `json:&quot;ticket_id&quot;`
+    UsedAt     time.Time `json:&quot;used_at&quot;`
+}
+</code></pre>
+<h3>2.7 ระบบพิมพ์ใบเสร็จและบัตรจอดรถ</h3>
+<pre><code class="language-go">// domain/entity/printing.go
+package entity
+
+import &quot;time&quot;
+
+type PrintDocument struct {
+    ID          int64     `json:&quot;id&quot;`
+    TicketID    int64     `json:&quot;ticket_id&quot;`
+    DocumentType string   `json:&quot;document_type&quot;` // ticket, receipt, invoice
+    DocumentNo  string    `json:&quot;document_no&quot;`
+    Content     string    `json:&quot;content&quot;`      // HTML or text content
+    QRCodeData  string    `json:&quot;qr_code_data&quot;`
+    PrinterName string    `json:&quot;printer_name&quot;`
+    Status      string    `json:&quot;status&quot;`       // pending, printing, printed, error
+    PrintedAt   *time.Time `json:&quot;printed_at&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type ParkingTicketPrint struct {
+    TicketNo    string    `json:&quot;ticket_no&quot;`
+    EntryTime   time.Time `json:&quot;entry_time&quot;`
+    PlateNo     string    `json:&quot;plate_no&quot;`
+    VehicleType string    `json:&quot;vehicle_type&quot;`
+    ZoneCode    string    `json:&quot;zone_code&quot;`
+    SpaceNo     string    `json:&quot;space_no&quot;`
+    QRCode      string    `json:&quot;qr_code&quot;`
+    Barcode     string    `json:&quot;barcode&quot;`
+}
+
+type ReceiptPrint struct {
+    ReceiptNo   string    `json:&quot;receipt_no&quot;`
+    TicketNo    string    `json:&quot;ticket_no&quot;`
+    PlateNo     string    `json:&quot;plate_no&quot;`
+    EntryTime   time.Time `json:&quot;entry_time&quot;`
+    ExitTime    time.Time `json:&quot;exit_time&quot;`
+    Duration    string    `json:&quot;duration&quot;`    // &quot;2 ชั่วโมง 30 นาที&quot;
+    RateType    string    `json:&quot;rate_type&quot;`
+    RateAmount  float64   `json:&quot;rate_amount&quot;`
+    TotalAmount float64   `json:&quot;total_amount&quot;`
+    Discount    float64   `json:&quot;discount&quot;`
+    NetAmount   float64   `json:&quot;net_amount&quot;`
+    PaymentMethod string  `json:&quot;payment_method&quot;`
+    PaymentDate time.Time `json:&quot;payment_date&quot;`
+    QRCode      string    `json:&quot;qr_code&quot;`
+}
+
+type InvoicePrint struct {
+    InvoiceNo   string       `json:&quot;invoice_no&quot;`
+    CompanyName string       `json:&quot;company_name&quot;`
+    TaxID       string       `json:&quot;tax_id&quot;`
+    Address     string       `json:&quot;address&quot;`
+    TicketNo    string       `json:&quot;ticket_no&quot;`
+    PlateNo     string       `json:&quot;plate_no&quot;`
+    EntryTime   time.Time    `json:&quot;entry_time&quot;`
+    ExitTime    time.Time    `json:&quot;exit_time&quot;`
+    Duration    string       `json:&quot;duration&quot;`
+    Items       []InvoiceItem `json:&quot;items&quot;`
+    SubTotal    float64      `json:&quot;sub_total&quot;`
+    TaxRate     float64      `json:&quot;tax_rate&quot;`
+    TaxAmount   float64      `json:&quot;tax_amount&quot;`
+    TotalAmount float64      `json:&quot;total_amount&quot;`
+    PaymentDate time.Time    `json:&quot;payment_date&quot;`
+    QRCode      string       `json:&quot;qr_code&quot;`
+}
+
+type InvoiceItem struct {
+    ID          int64     `json:&quot;id&quot;`
+    InvoiceID   int64     `json:&quot;invoice_id&quot;`
+    Description string    `json:&quot;description&quot;`
+    Quantity    int       `json:&quot;quantity&quot;`
+    UnitPrice   float64   `json:&quot;unit_price&quot;`
+    Total       float64   `json:&quot;total&quot;`
+}
+</code></pre>
+<h3>2.8 Maintenance &amp; Equipment System</h3>
+<pre><code class="language-go">// domain/entity/maintenance.go
+package entity
+
+import &quot;time&quot;
+
+type Equipment struct {
+    ID          int64     `json:&quot;id&quot;`
+    BuildingID  int64     `json:&quot;building_id&quot;`
+    Code        string    `json:&quot;code&quot;`
+    Name        string    `json:&quot;name&quot;`
+    Type        string    `json:&quot;type&quot;`
+    Model       string    `json:&quot;model&quot;`
+    SerialNo    string    `json:&quot;serial_no&quot;`
+    InstallDate time.Time `json:&quot;install_date&quot;`
+    WarrantyEnd time.Time `json:&quot;warranty_end&quot;`
+    Status      string    `json:&quot;status&quot;`
+    LastMaintenance *time.Time `json:&quot;last_maintenance&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type MaintenanceSchedule struct {
+    ID          int64     `json:&quot;id&quot;`
+    EquipmentID int64     `json:&quot;equipment_id&quot;`
+    ScheduleType string   `json:&quot;schedule_type&quot;`
+    Task        string    `json:&quot;task&quot;`
+    LastRun     time.Time `json:&quot;last_run&quot;`
+    NextRun     time.Time `json:&quot;next_run&quot;`
+    Status      string    `json:&quot;status&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type MaintenanceLog struct {
+    ID          int64     `json:&quot;id&quot;`
+    EquipmentID int64     `json:&quot;equipment_id&quot;`
+    Type        string    `json:&quot;type&quot;`
+    Description string    `json:&quot;description&quot;`
+    PerformedBy string    `json:&quot;performed_by&quot;`
+    Duration    int       `json:&quot;duration&quot;`
+    Cost        float64   `json:&quot;cost&quot;`
+    Status      string    `json:&quot;status&quot;`
+    Notes       string    `json:&quot;notes&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type SparePart struct {
+    ID          int64     `json:&quot;id&quot;`
+    Code        string    `json:&quot;code&quot;`
+    Name        string    `json:&quot;name&quot;`
+    Quantity    int       `json:&quot;quantity&quot;`
+    MinQuantity int       `json:&quot;min_quantity&quot;`
+    UnitPrice   float64   `json:&quot;unit_price&quot;`
+    Supplier    string    `json:&quot;supplier&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+</code></pre>
+<h3>2.9 Emergency &amp; Mode System</h3>
+<pre><code class="language-go">// domain/entity/emergency.go
+package entity
+
+import &quot;time&quot;
+
+type EmergencyEvent struct {
+    ID          int64      `json:&quot;id&quot;`
+    BuildingID  int64      `json:&quot;building_id&quot;`
+    Type        string     `json:&quot;type&quot;`
+    Severity    string     `json:&quot;severity&quot;`
+    Description string     `json:&quot;description&quot;`
+    Location    string     `json:&quot;location&quot;`
+    Status      string     `json:&quot;status&quot;`
+    ReportedBy  string     `json:&quot;reported_by&quot;`
+    ResolvedBy  string     `json:&quot;resolved_by&quot;`
+    CreatedAt   time.Time  `json:&quot;created_at&quot;`
+    ResolvedAt  *time.Time `json:&quot;resolved_at&quot;`
+}
+
+type SystemMode struct {
+    ID          int64     `json:&quot;id&quot;`
+    BuildingID  int64     `json:&quot;building_id&quot;`
+    Mode        string    `json:&quot;mode&quot;` // auto, manual, emergency, maintenance
+    ChangedBy   string    `json:&quot;changed_by&quot;`
+    Reason      string    `json:&quot;reason&quot;`
+    StartedAt   time.Time `json:&quot;started_at&quot;`
+    EndedAt     *time.Time `json:&quot;ended_at&quot;`
+    IsActive    bool      `json:&quot;is_active&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type EmergencyLight struct {
+    ID          int64     `json:&quot;id&quot;`
+    BuildingID  int64     `json:&quot;building_id&quot;`
+    FloorID     int64     `json:&quot;floor_id&quot;`
+    Location    string    `json:&quot;location&quot;`
+    Status      string    `json:&quot;status&quot;` // on, off, flashing
+    Color       string    `json:&quot;color&quot;` // red, yellow, green, blue
+    BatteryLevel float64  `json:&quot;battery_level&quot;`
+    LastTest    time.Time `json:&quot;last_test&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+</code></pre>
+<h3>2.10 Statistics &amp; Reports</h3>
+<pre><code class="language-go">// domain/entity/statistics.go
+package entity
+
+import &quot;time&quot;
+
+type ParkingStatistics struct {
+    ID          int64     `json:&quot;id&quot;`
+    BuildingID  int64     `json:&quot;building_id&quot;`
+    Period      string    `json:&quot;period&quot;`
+    Date        time.Time `json:&quot;date&quot;`
+    TotalEntries int      `json:&quot;total_entries&quot;`
+    TotalExits  int       `json:&quot;total_exits&quot;`
+    TotalSpaces int       `json:&quot;total_spaces&quot;`
+    AvgOccupancy float64  `json:&quot;avg_occupancy&quot;`
+    MaxOccupancy float64  `json:&quot;max_occupancy&quot;`
+    MinOccupancy float64  `json:&quot;min_occupancy&quot;`
+    TotalRevenue float64  `json:&quot;total_revenue&quot;`
+    AvgRevenue   float64  `json:&quot;avg_revenue&quot;`
+    EVChargingRevenue float64 `json:&quot;ev_charging_revenue&quot;`
+    CreatedAt   time.Time `json:&quot;created_at&quot;`
+    UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+}
+
+type HourlyStatistics struct {
+    ID         int64     `json:&quot;id&quot;`
+    BuildingID int64     `json:&quot;building_id&quot;`
+    Date       time.Time `json:&quot;date&quot;`
+    Hour       int       `json:&quot;hour&quot;`
+    Entries    int       `json:&quot;entries&quot;`
+    Exits      int       `json:&quot;exits&quot;`
+    Occupancy  float64   `json:&quot;occupancy&quot;`
+    Revenue    float64   `json:&quot;revenue&quot;`
+}
+
+type DailyStatistics struct {
+    ID         int64     `json:&quot;id&quot;`
+    BuildingID int64     `json:&quot;building_id&quot;`
+    Date       time.Time `json:&quot;date&quot;`
+    Entries    int       `json:&quot;entries&quot;`
+    Exits      int       `json:&quot;exits&quot;`
+    AvgOccupancy float64 `json:&quot;avg_occupancy&quot;`
+    PeakHour   int       `json:&quot;peak_hour&quot;`
+    Revenue    float64   `json:&quot;revenue&quot;`
+}
+
+type PeakHour struct {
+    BuildingID int64     `json:&quot;building_id&quot;`
+    Hour       int       `json:&quot;hour&quot;`
+    Count      int       `json:&quot;count&quot;`
+}
+</code></pre>
+<hr>
+<h2>3. Hardware Components</h2>
+<h3>3.1 รายการอุปกรณ์ต่ออาคาร</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Model</th>
+<th>จำนวน</th>
+<th>ราคา (บาท)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>LPR Camera</strong></td>
+<td>Hikvision DS-2CD7A26G0</td>
+<td>4</td>
+<td>35,000</td>
+</tr>
+<tr>
+<td><strong>CCTV Camera</strong></td>
+<td>Hikvision DS-2CD2347G2-LU</td>
+<td>20</td>
+<td>15,000</td>
+</tr>
+<tr>
+<td><strong>RFID Reader</strong></td>
+<td>Zebra FX9600</td>
+<td>2</td>
+<td>25,000</td>
+</tr>
+<tr>
+<td><strong>RFID Tag</strong></td>
+<td>UHF Passive</td>
+<td>1,000</td>
+<td>5,000</td>
+</tr>
+<tr>
+<td><strong>Boom Barrier</strong></td>
+<td>Nice PLATINUM</td>
+<td>2</td>
+<td>45,000</td>
+</tr>
+<tr>
+<td><strong>LED Indicator</strong></td>
+<td>Green/Red LED</td>
+<td>200</td>
+<td>2,000</td>
+</tr>
+<tr>
+<td><strong>Ultrasonic Sensor</strong></td>
+<td>HC-SR04</td>
+<td>200</td>
+<td>100</td>
+</tr>
+<tr>
+<td><strong>EV Charger</strong></td>
+<td>EVBox Troniq</td>
+<td>10</td>
+<td>80,000</td>
+</tr>
+<tr>
+<td><strong>LCD Display</strong></td>
+<td>32&quot; Digital Signage</td>
+<td>4</td>
+<td>15,000</td>
+</tr>
+<tr>
+<td><strong>Payment Kiosk</strong></td>
+<td>Self-service Kiosk</td>
+<td>2</td>
+<td>50,000</td>
+</tr>
+<tr>
+<td><strong>Ticket Printer</strong></td>
+<td>Zebra ZD420</td>
+<td>2</td>
+<td>20,000</td>
+</tr>
+<tr>
+<td><strong>QR Scanner</strong></td>
+<td>Zebra DS4608</td>
+<td>4</td>
+<td>8,000</td>
+</tr>
+<tr>
+<td><strong>Receipt Printer</strong></td>
+<td>Epson TM-T88VII</td>
+<td>2</td>
+<td>12,000</td>
+</tr>
+<tr>
+<td><strong>Invoice Printer</strong></td>
+<td>Epson LQ-590II</td>
+<td>1</td>
+<td>8,000</td>
+</tr>
+<tr>
+<td><strong>Industrial PC</strong></td>
+<td>Advantech IPC</td>
+<td>4</td>
+<td>25,000</td>
+</tr>
+<tr>
+<td><strong>Network Switch</strong></td>
+<td>PoE Switch 24-port</td>
+<td>6</td>
+<td>12,000</td>
+</tr>
+<tr>
+<td><strong>UPS</strong></td>
+<td>APC SMT1500</td>
+<td>4</td>
+<td>15,000</td>
+</tr>
+<tr>
+<td><strong>Lift Control</strong></td>
+<td>PLC Controller</td>
+<td>1</td>
+<td>100,000</td>
+</tr>
+<tr>
+<td><strong>Emergency Light</strong></td>
+<td>LED Emergency</td>
+<td>20</td>
+<td>2,500</td>
+</tr>
+<tr>
+<td><strong>รวม</strong></td>
+<td></td>
+<td></td>
+<td><strong>~1,000,000</strong></td>
+</tr>
+</tbody></table>
+<h3>3.2 ระบบไฟแสดงสถานะ (LED Controller)</h3>
+<pre><code class="language-go">// infrastructure/hardware/led_controller.go
+package hardware
+
+import (
+    &quot;fmt&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+)
+
+type LEDController struct {
+    spaces map[int64]LEDStatus
+    mu     sync.RWMutex
+}
+
+type LEDStatus struct {
+    SpaceID int64
+    Color   string // green, red, blue, yellow, flashing_red
+    Blink   bool
+    Pattern string // solid, blink, flash
+}
+
+func NewLEDController() *LEDController {
+    return &amp;LEDController{
+        spaces: make(map[int64]LEDStatus),
+    }
+}
+
+func (c *LEDController) UpdateLED(spaceID int64, color string, pattern string) error {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+
+    c.spaces[spaceID] = LEDStatus{
+        SpaceID: spaceID,
+        Color:   color,
+        Pattern: pattern,
+        Blink:   pattern == &quot;blink&quot; || pattern == &quot;flash&quot;,
+    }
+
+    return c.sendCommand(spaceID, color, pattern)
+}
+
+func (c *LEDController) sendCommand(spaceID int64, color string, pattern string) error {
+    command := fmt.Sprintf(&quot;LED:%d:%s:%s&quot;, spaceID, color, pattern)
+    // ส่งผ่าน Serial, Modbus, หรือ TCP/IP
+    return nil
+}
+
+// ฟังก์ชันตั้งค่าไฟตามสถานะ
+func (c *LEDController) SetAvailable(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;green&quot;, &quot;solid&quot;)
+}
+
+func (c *LEDController) SetOccupied(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;red&quot;, &quot;solid&quot;)
+}
+
+func (c *LEDController) SetReserved(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;blue&quot;, &quot;solid&quot;)
+}
+
+func (c *LEDController) SetMaintenance(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;yellow&quot;, &quot;blink&quot;)
+}
+
+func (c *LEDController) SetEVCharging(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;blue&quot;, &quot;blink&quot;)
+}
+
+func (c *LEDController) SetEmergency(spaceID int64) error {
+    return c.UpdateLED(spaceID, &quot;red&quot;, &quot;flash&quot;)
+}
+</code></pre>
+<h3>3.3 ระบบป้องกันการกระแทก (Anti-Crash System)</h3>
+<pre><code class="language-go">// infrastructure/hardware/anti_crash.go
+package hardware
+
+import (
+    &quot;fmt&quot;
+    &quot;sync&quot;
+    &quot;time&quot;
+)
+
+type AntiCrashSystem struct {
+    barriers map[int64]*BarrierStatus
+    sensors  map[int64]*SensorStatus
+    mu       sync.RWMutex
+}
+
+type BarrierStatus struct {
+    BarrierID int64
+    Position  string // up, down, opening, closing
+    Status    string // normal, error, blocked
+    LastUpdate time.Time
+}
+
+type SensorStatus struct {
+    SensorID  int64
+    Type      string // ultrasonic, infrared, pressure
+    Value     float64
+    Status    string // normal, warning, triggered
+    LastUpdate time.Time
+}
+
+func NewAntiCrashSystem() *AntiCrashSystem {
+    return &amp;AntiCrashSystem{
+        barriers: make(map[int64]*BarrierStatus),
+        sensors:  make(map[int64]*SensorStatus),
+    }
+}
+
+func (a *AntiCrashSystem) CheckBarrier(barrierID int64) error {
+    a.mu.RLock()
+    defer a.mu.RUnlock()
+
+    if status, ok := a.barriers[barrierID]; ok {
+        if status.Status == &quot;blocked&quot; {
+            return fmt.Errorf(&quot;barrier %d is blocked&quot;, barrierID)
+        }
+        if status.Status == &quot;error&quot; {
+            return fmt.Errorf(&quot;barrier %d has error&quot;, barrierID)
+        }
+    }
+    return nil
+}
+
+func (a *AntiCrashSystem) EmergencyStop(barrierID int64) error {
+    a.mu.Lock()
+    defer a.mu.Unlock()
+
+    if status, ok := a.barriers[barrierID]; ok {
+        status.Status = &quot;error&quot;
+        status.Position = &quot;down&quot;
+        return nil
+    }
+    return fmt.Errorf(&quot;barrier %d not found&quot;, barrierID)
+}
+
+func (a *AntiCrashSystem) AutoMode() {
+    // ทำงานแบบอัตโนมัติ
+    go func() {
+        for {
+            // ตรวจสอบเซ็นเซอร์ทุก 100ms
+            time.Sleep(100 * time.Millisecond)
+            for id, sensor := range a.sensors {
+                if sensor.Value &gt; 100 { // ตรวจจับสิ่งกีดขวาง
+                    sensor.Status = &quot;triggered&quot;
+                    // หยุดการทำงานของ barrier ที่เกี่ยวข้อง
+                    for _, barrier := range a.barriers {
+                        if barrier.Status == &quot;normal&quot; {
+                            barrier.Status = &quot;blocked&quot;
+                            barrier.Position = &quot;down&quot;
+                        }
+                    }
+                }
+            }
+        }
+    }()
+}
+</code></pre>
+<h3>3.4 ระบบสลับโหมด (Auto/Manual Mode)</h3>
+<pre><code class="language-go">// infrastructure/hardware/mode_switch.go
+package hardware
+
+import (
+    &quot;sync&quot;
+)
+
+type ModeSwitch struct {
+    currentMode string // auto, manual, emergency, maintenance
+    mu          sync.RWMutex
+}
+
+func NewModeSwitch() *ModeSwitch {
+    return &amp;ModeSwitch{
+        currentMode: &quot;auto&quot;,
+    }
+}
+
+func (m *ModeSwitch) GetMode() string {
+    m.mu.RLock()
+    defer m.mu.RUnlock()
+    return m.currentMode
+}
+
+func (m *ModeSwitch) SetMode(mode string) error {
+    m.mu.Lock()
+    defer m.mu.Unlock()
+
+    validModes := map[string]bool{
+        &quot;auto&quot;: true, &quot;manual&quot;: true, &quot;emergency&quot;: true, &quot;maintenance&quot;: true,
+    }
+
+    if !validModes[mode] {
+        return fmt.Errorf(&quot;invalid mode: %s&quot;, mode)
+    }
+
+    m.currentMode = mode
+    return nil
+}
+
+func (m *ModeSwitch) IsAuto() bool {
+    return m.GetMode() == &quot;auto&quot;
+}
+
+func (m *ModeSwitch) IsManual() bool {
+    return m.GetMode() == &quot;manual&quot;
+}
+
+func (m *ModeSwitch) IsEmergency() bool {
+    return m.GetMode() == &quot;emergency&quot;
+}
+
+func (m *ModeSwitch) IsMaintenance() bool {
+    return m.GetMode() == &quot;maintenance&quot;
+}
+</code></pre>
+<hr>
+<h2>4. Software Architecture</h2>
+<h3>4.1 Module Structure</h3>
+<pre><code>internal/modules/parking/
+├── domain/
+│   ├── entity/
+│   │   ├── building.go
+│   │   ├── floor.go
+│   │   ├── space.go
+│   │   ├── vehicle.go
+│   │   ├── ticket.go
+│   │   ├── rate.go
+│   │   ├── ev_charging.go
+│   │   ├── lift.go
+│   │   ├── surveillance.go
+│   │   ├── payment.go
+│   │   ├── discount.go
+│   │   ├── printing.go
+│   │   ├── maintenance.go
+│   │   ├── emergency.go
+│   │   └── statistics.go
+│   ├── repository/
+│   │   ├── building_repository.go
+│   │   ├── ticket_repository.go
+│   │   ├── space_repository.go
+│   │   ├── vehicle_repository.go
+│   │   ├── rate_repository.go
+│   │   ├── printing_repository.go
+│   │   └── statistics_repository.go
+│   └── service/
+│       ├── parking_service.go
+│       ├── payment_service.go
+│       ├── lpr_service.go
+│       ├── lift_service.go
+│       ├── ev_service.go
+│       ├── printing_service.go
+│       └── notification_service.go
+├── application/
+│   ├── entry_vehicle.go
+│   ├── exit_vehicle.go
+│   ├── calculate_fee.go
+│   ├── process_payment.go
+│   ├── print_ticket.go
+│   ├── print_receipt.go
+│   ├── print_invoice.go
+│   ├── generate_report.go
+│   ├── manage_maintenance.go
+│   └── emergency_mode.go
+├── infrastructure/
+│   ├── hardware/
+│   │   ├── led_controller.go
+│   │   ├── boom_controller.go
+│   │   ├── lift_controller.go
+│   │   ├── anti_crash.go
+│   │   ├── mode_switch.go
+│   │   └── ev_charger_controller.go
+│   ├── lpr/
+│   │   └── plate_reader.go
+│   ├── payment/
+│   │   ├── qr_payment.go
+│   │   └── cash_payment.go
+│   ├── printing/
+│   │   ├── escpos_client.go
+│   │   ├── receipt_printer.go
+│   │   ├── invoice_printer.go
+│   │   └── template_engine.go
+│   ├── notification/
+│   │   ├── line_notify.go
+│   │   └── email_notify.go
+│   └── persistence/
+│       ├── postgres/
+│       └── influxdb/
+└── interfaces/
+    ├── http/
+    │   ├── parking_handler.go
+    │   ├── payment_handler.go
+    │   ├── printing_handler.go
+    │   ├── admin_handler.go
+    │   └── routes.go
+    ├── websocket/
+    │   └── realtime_handler.go
+    └── mqtt/
+        └── mqtt_handler.go
+</code></pre>
+<hr>
+<h2>5. Application Layer</h2>
+<h3>5.1 Entry Vehicle (เข้ารับจอด)</h3>
+<pre><code class="language-go">// application/entry_vehicle.go
+package application
+
+import (
+    &quot;context&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/hardware&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/printing&quot;
+)
+
+type EntryVehicleUseCase struct {
+    ticketRepo   repository.TicketRepository
+    spaceRepo    repository.SpaceRepository
+    vehicleRepo  repository.VehicleRepository
+    printer      *printing.ReceiptPrinter
+    ledCtrl      *hardware.LEDController
+    boomCtrl     *hardware.BoomController
+    lprService   *LPRService
+}
+
+func NewEntryVehicleUseCase(
+    ticketRepo repository.TicketRepository,
+    spaceRepo repository.SpaceRepository,
+    vehicleRepo repository.VehicleRepository,
+    printer *printing.ReceiptPrinter,
+    ledCtrl *hardware.LEDController,
+    boomCtrl *hardware.BoomController,
+    lprService *LPRService,
+) *EntryVehicleUseCase {
+    return &amp;EntryVehicleUseCase{
+        ticketRepo:  ticketRepo,
+        spaceRepo:   spaceRepo,
+        vehicleRepo: vehicleRepo,
+        printer:     printer,
+        ledCtrl:     ledCtrl,
+        boomCtrl:    boomCtrl,
+        lprService:  lprService,
+    }
+}
+
+type EntryVehicleRequest struct {
+    BuildingID int64  `json:&quot;building_id&quot;`
+    PlateNo    string `json:&quot;plate_no&quot;`
+    VehicleType string `json:&quot;vehicle_type&quot;`
+    IsEV       bool   `json:&quot;is_ev&quot;`
+}
+
+type EntryVehicleResponse struct {
+    TicketNo  string    `json:&quot;ticket_no&quot;`
+    SpaceNo   string    `json:&quot;space_no&quot;`
+    ZoneCode  string    `json:&quot;zone_code&quot;`
+    Floor     int       `json:&quot;floor&quot;`
+    EntryTime time.Time `json:&quot;entry_time&quot;`
+    QRCode    string    `json:&quot;qr_code&quot;`
+}
+
+func (uc *EntryVehicleUseCase) Execute(ctx context.Context, req EntryVehicleRequest) (*EntryVehicleResponse, error) {
+    // 1. ค้นหาที่จอดว่าง
+    space, err := uc.spaceRepo.FindAvailable(ctx, req.BuildingID, req.VehicleType, req.IsEV)
+    if err != nil {
+        return nil, fmt.Errorf(&quot;no available space: %w&quot;, err)
+    }
+
+    // 2. ตรวจสอบป้ายทะเบียน
+    vehicle, err := uc.vehicleRepo.FindByPlate(ctx, req.PlateNo)
+    if err != nil {
+        // สร้างรถใหม่ถ้ายังไม่มีในระบบ
+        vehicle = &amp;entity.Vehicle{
+            PlateNo:     req.PlateNo,
+            VehicleType: entity.VehicleType(req.VehicleType),
+            IsEV:        req.IsEV,
+            CreatedAt:   time.Now(),
+        }
+        if err := uc.vehicleRepo.Create(ctx, vehicle); err != nil {
+            return nil, err
+        }
+    }
+
+    // 3. สร้าง Ticket
+    ticketNo := generateTicketNo()
+    ticket := &amp;entity.ParkingTicket{
+        TicketNo:    ticketNo,
+        BuildingID:  req.BuildingID,
+        FloorID:     space.FloorID,
+        SpaceID:     space.ID,
+        VehicleID:   vehicle.ID,
+        PlateNo:     req.PlateNo,
+        VehicleType: req.VehicleType,
+        EntryTime:   time.Now(),
+        Status:      &quot;active&quot;,
+        PaymentStatus: &quot;pending&quot;,
+        CreatedAt:   time.Now(),
+        UpdatedAt:   time.Now(),
+    }
+
+    if err := uc.ticketRepo.Create(ctx, ticket); err != nil {
+        return nil, err
+    }
+
+    // 4. อัปเดตสถานะที่จอด
+    space.Status = &quot;occupied&quot;
+    uc.spaceRepo.Update(ctx, space)
+
+    // 5. เปลี่ยนไฟ LED
+    uc.ledCtrl.SetOccupied(space.ID)
+
+    // 6. เปิด Boom Barrier
+    uc.boomCtrl.Open(req.BuildingID)
+
+    // 7. พิมพ์บัตรจอดรถ
+    ticketPrint := &amp;entity.ParkingTicketPrint{
+        TicketNo:    ticketNo,
+        EntryTime:   ticket.EntryTime,
+        PlateNo:     req.PlateNo,
+        VehicleType: req.VehicleType,
+        ZoneCode:    space.ZoneCode,
+        SpaceNo:     space.SpaceNo,
+        QRCode:      generateQRCode(ticketNo),
+        Barcode:     generateBarcode(ticketNo),
+    }
+    uc.printer.PrintTicket(ticketPrint)
+
+    return &amp;EntryVehicleResponse{
+        TicketNo:  ticketNo,
+        SpaceNo:   space.SpaceNo,
+        ZoneCode:  space.ZoneCode,
+        Floor:     space.FloorNo,
+        EntryTime: ticket.EntryTime,
+        QRCode:    ticketPrint.QRCode,
+    }, nil
+}
+
+func generateTicketNo() string {
+    return fmt.Sprintf(&quot;TK-%s-%04d&quot;, time.Now().Format(&quot;20060102&quot;), rand.Intn(10000))
+}
+
+func generateQRCode(ticketNo string) string {
+    return fmt.Sprintf(&quot;https://parking.com/ticket/%s&quot;, ticketNo)
+}
+
+func generateBarcode(ticketNo string) string {
+    return ticketNo
+}
+</code></pre>
+<h3>5.2 Exit Vehicle (ออกจากที่จอด)</h3>
+<pre><code class="language-go">// application/exit_vehicle.go
+package application
+
+import (
+    &quot;context&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/hardware&quot;
+    &quot;github.com/yourproject/internal/modules/parking/infrastructure/printing&quot;
+)
+
+type ExitVehicleUseCase struct {
+    ticketRepo   repository.TicketRepository
+    spaceRepo    repository.SpaceRepository
+    paymentRepo  repository.PaymentRepository
+    printer      *printing.ReceiptPrinter
+    ledCtrl      *hardware.LEDController
+    boomCtrl     *hardware.BoomController
+}
+
+func NewExitVehicleUseCase(
+    ticketRepo repository.TicketRepository,
+    spaceRepo repository.SpaceRepository,
+    paymentRepo repository.PaymentRepository,
+    printer *printing.ReceiptPrinter,
+    ledCtrl *hardware.LEDController,
+    boomCtrl *hardware.BoomController,
+) *ExitVehicleUseCase {
+    return &amp;ExitVehicleUseCase{
+        ticketRepo:  ticketRepo,
+        spaceRepo:   spaceRepo,
+        paymentRepo: paymentRepo,
+        printer:     printer,
+        ledCtrl:     ledCtrl,
+        boomCtrl:    boomCtrl,
+    }
+}
+
+type ExitVehicleRequest struct {
+    TicketNo  string  `json:&quot;ticket_no&quot;`
+    PlateNo   string  `json:&quot;plate_no&quot;`
+    DiscountCode string `json:&quot;discount_code&quot;`
+}
+
+type ExitVehicleResponse struct {
+    TicketNo    string    `json:&quot;ticket_no&quot;`
+    PlateNo     string    `json:&quot;plate_no&quot;`
+    EntryTime   time.Time `json:&quot;entry_time&quot;`
+    ExitTime    time.Time `json:&quot;exit_time&quot;`
+    Duration    string    `json:&quot;duration&quot;`
+    TotalAmount float64   `json:&quot;total_amount&quot;`
+    Discount    float64   `json:&quot;discount&quot;`
+    NetAmount   float64   `json:&quot;net_amount&quot;`
+    QRCode      string    `json:&quot;qr_code&quot;`
+}
+
+func (uc *ExitVehicleUseCase) Execute(ctx context.Context, req ExitVehicleRequest) (*ExitVehicleResponse, error) {
+    // 1. ค้นหา Ticket
+    ticket, err := uc.ticketRepo.FindByNo(ctx, req.TicketNo)
+    if err != nil {
+        return nil, fmt.Errorf(&quot;ticket not found: %w&quot;, err)
+    }
+
+    // 2. คำนวณค่าจอด
+    duration := time.Since(ticket.EntryTime)
+    rate, err := uc.getRate(ctx, ticket.BuildingID, ticket.VehicleType)
+    if err != nil {
+        return nil, err
+    }
+
+    totalAmount := uc.calculateFee(duration, rate)
+
+    // 3. ตรวจสอบส่วนลด
+    discount := 0.0
+    if req.DiscountCode != &quot;&quot; {
+        discount, err = uc.applyDiscount(ctx, req.DiscountCode, ticket.ID)
+        if err != nil {
+            // ไม่มีส่วนลด หรือส่วนลดหมดอายุ
+        }
+    }
+
+    netAmount := totalAmount - discount
+
+    // 4. บันทึกการออก
+    now := time.Now()
+    ticket.ExitTime = &amp;now
+    ticket.Duration = int(duration.Minutes())
+    ticket.TotalAmount = totalAmount
+    ticket.Discount = discount
+    ticket.NetAmount = netAmount
+    ticket.Status = &quot;completed&quot;
+
+    if err := uc.ticketRepo.Update(ctx, ticket); err != nil {
+        return nil, err
+    }
+
+    // 5. อัปเดตที่จอด
+    space, _ := uc.spaceRepo.GetByID(ctx, ticket.SpaceID)
+    space.Status = &quot;available&quot;
+    uc.spaceRepo.Update(ctx, space)
+
+    // 6. เปลี่ยนไฟ LED
+    uc.ledCtrl.SetAvailable(space.ID)
+
+    // 7. พิมพ์ใบเสร็จ
+    receipt := &amp;entity.ReceiptPrint{
+        ReceiptNo:   generateReceiptNo(),
+        TicketNo:    ticket.TicketNo,
+        PlateNo:     ticket.PlateNo,
+        EntryTime:   ticket.EntryTime,
+        ExitTime:    now,
+        Duration:    formatDuration(duration),
+        RateType:    rate.RateType,
+        RateAmount:  rate.FirstHour,
+        TotalAmount: totalAmount,
+        Discount:    discount,
+        NetAmount:   netAmount,
+        PaymentDate: now,
+        QRCode:      generateQRCode(ticket.TicketNo),
+    }
+    uc.printer.PrintReceipt(receipt)
+
+    // 8. เปิด Boom Barrier
+    uc.boomCtrl.Open(ticket.BuildingID)
+
+    return &amp;ExitVehicleResponse{
+        TicketNo:    ticket.TicketNo,
+        PlateNo:     ticket.PlateNo,
+        EntryTime:   ticket.EntryTime,
+        ExitTime:    now,
+        Duration:    formatDuration(duration),
+        TotalAmount: totalAmount,
+        Discount:    discount,
+        NetAmount:   netAmount,
+        QRCode:      receipt.QRCode,
+    }, nil
+}
+
+func (uc *ExitVehicleUseCase) calculateFee(duration time.Duration, rate *entity.ParkingRate) float64 {
+    hours := int(duration.Hours())
+    minutes := int(duration.Minutes()) % 60
+
+    if hours == 0 &amp;&amp; minutes == 0 {
+        return 0
+    }
+
+    // ชั่วโมงแรก
+    fee := rate.FirstHour
+    hours-- // หักชั่วโมงแรก
+
+    // ชั่วโมงต่อไป
+    if hours &gt; 0 {
+        fee += float64(hours) * rate.SubsequentHour
+    }
+
+    // คิดนาทีที่เกิน (คิดเป็นชั่วโมง)
+    if minutes &gt; 0 {
+        fee += rate.SubsequentHour
+    }
+
+    // ตรวจสอบค่าสูงสุด
+    if fee &gt; rate.MaxCharge {
+        fee = rate.MaxCharge
+    }
+
+    // ค่าปรับจอดเกินเวลา
+    if hours &gt; 24 {
+        overstayHours := hours - 24
+        fee += float64(overstayHours) * rate.OverstayFee
+    }
+
+    return fee
+}
+
+func (uc *ExitVehicleUseCase) applyDiscount(ctx context.Context, code string, ticketID int64) (float64, error) {
+    // หาส่วนลดจากโค้ด
+    discount, err := uc.discountRepo.FindByCode(ctx, code)
+    if err != nil {
+        return 0, err
+    }
+
+    // ตรวจสอบว่าใช้ได้หรือไม่
+    if !discount.IsActive {
+        return 0, fmt.Errorf(&quot;discount is not active&quot;)
+    }
+
+    if time.Now().After(discount.EndDate) || time.Now().Before(discount.StartDate) {
+        return 0, fmt.Errorf(&quot;discount expired&quot;)
+    }
+
+    if discount.UsedCount &gt;= discount.MaxUses {
+        return 0, fmt.Errorf(&quot;discount limit reached&quot;)
+    }
+
+    // คำนวณส่วนลด
+    ticket, _ := uc.ticketRepo.GetByID(ctx, ticketID)
+    var discountAmount float64
+    if discount.Type == &quot;percentage&quot; {
+        discountAmount = ticket.TotalAmount * (discount.Value / 100)
+    } else {
+        discountAmount = discount.Value
+    }
+
+    // บันทึกการใช้งาน
+    usage := &amp;entity.DiscountUsage{
+        DiscountID: discount.ID,
+        TicketID:   ticketID,
+        UsedAt:     time.Now(),
+    }
+    uc.discountRepo.CreateUsage(ctx, usage)
+
+    // อัปเดตจำนวนการใช้
+    discount.UsedCount++
+    uc.discountRepo.Update(ctx, discount)
+
+    return discountAmount, nil
+}
+
+func formatDuration(d time.Duration) string {
+    hours := int(d.Hours())
+    minutes := int(d.Minutes()) % 60
+    return fmt.Sprintf(&quot;%d ชั่วโมง %d นาที&quot;, hours, minutes)
+}
+
+func generateReceiptNo() string {
+    return fmt.Sprintf(&quot;RCP-%s-%04d&quot;, time.Now().Format(&quot;20060102&quot;), rand.Intn(10000))
+}
+</code></pre>
+<h3>5.3 ระบบพิมพ์ใบเสร็จและบัตรจอดรถ</h3>
+<pre><code class="language-go">// infrastructure/printing/receipt_printer.go
+package printing
+
+import (
+    &quot;bytes&quot;
+    &quot;fmt&quot;
+    &quot;image/png&quot;
+    &quot;time&quot;
+
+    &quot;github.com/boombuler/barcode&quot;
+    &quot;github.com/boombuler/barcode/qr&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+)
+
+type ReceiptPrinter struct {
+    printerName string
+    ipAddress   string
+    port        int
+}
+
+func NewReceiptPrinter(printerName, ipAddress string, port int) *ReceiptPrinter {
+    return &amp;ReceiptPrinter{
+        printerName: printerName,
+        ipAddress:   ipAddress,
+        port:        port,
+    }
+}
+
+func (p *ReceiptPrinter) PrintTicket(data *entity.ParkingTicketPrint) error {
+    // สร้าง QR Code
+    qrCode, err := p.generateQRCode(data.QRCode)
+    if err != nil {
+        return err
+    }
+
+    // สร้าง Barcode
+    barcode, err := p.generateBarcode(data.Barcode)
+    if err != nil {
+        return err
+    }
+
+    // สร้างเนื้อหาสำหรับพิมพ์
+    content := p.buildTicketContent(data, qrCode, barcode)
+
+    // ส่งไปพิมพ์
+    return p.sendToPrinter(content)
+}
+
+func (p *ReceiptPrinter) PrintReceipt(data *entity.ReceiptPrint) error {
+    // สร้าง QR Code
+    qrCode, err := p.generateQRCode(data.QRCode)
+    if err != nil {
+        return err
+    }
+
+    // สร้างเนื้อหาสำหรับพิมพ์
+    content := p.buildReceiptContent(data, qrCode)
+
+    // ส่งไปพิมพ์
+    return p.sendToPrinter(content)
+}
+
+func (p *ReceiptPrinter) PrintInvoice(data *entity.InvoicePrint) error {
+    // สร้าง QR Code
+    qrCode, err := p.generateQRCode(data.QRCode)
+    if err != nil {
+        return err
+    }
+
+    // สร้างเนื้อหาสำหรับพิมพ์
+    content := p.buildInvoiceContent(data, qrCode)
+
+    // ส่งไปพิมพ์
+    return p.sendToPrinter(content)
+}
+
+func (p *ReceiptPrinter) buildTicketContent(data *entity.ParkingTicketPrint, qrCode []byte, barcode []byte) []byte {
+    var buf bytes.Buffer
+
+    // Header
+    buf.WriteString(&quot;┌─────────────────────────────────────────────┐\n&quot;)
+    buf.WriteString(&quot;│              SMART PARKING                   │\n&quot;)
+    buf.WriteString(&quot;│          อาคารจอดรถอัจฉริยะ                  │\n&quot;)
+    buf.WriteString(&quot;│          123 ถนนสุขุมวิท แขวงคลองเตย          │\n&quot;)
+    buf.WriteString(&quot;│          กรุงเทพมหานคร 10110                 │\n&quot;)
+    buf.WriteString(&quot;│          โทร: 02-123-4567                    │\n&quot;)
+    buf.WriteString(&quot;├─────────────────────────────────────────────┤\n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   📋 ใบรับจอดรถ / PARKING TICKET            \n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   เลขที่ / Ticket No:  %s\n&quot;, data.TicketNo))
+    buf.WriteString(fmt.Sprintf(&quot;   วันที่ / Date:     %s\n&quot;, data.EntryTime.Format(&quot;2006-01-02 15:04&quot;)))
+    buf.WriteString(fmt.Sprintf(&quot;   ประเภทยานพาหนะ:    %s\n&quot;, data.VehicleType))
+    buf.WriteString(fmt.Sprintf(&quot;   ทะเบียน / Plate:   %s\n&quot;, data.PlateNo))
+    buf.WriteString(fmt.Sprintf(&quot;   โซนจอด:            %s\n&quot;, data.ZoneCode))
+    buf.WriteString(fmt.Sprintf(&quot;   ที่จอด:            %s\n&quot;, data.SpaceNo))
+    buf.WriteString(&quot;\n&quot;)
+
+    // QR Code
+    buf.WriteString(&quot;   ┌────────────────────────────────────┐\n&quot;)
+    buf.WriteString(&quot;   │                                    │\n&quot;)
+    buf.WriteString(&quot;   │        [QR CODE HERE]              │\n&quot;)
+    buf.WriteString(&quot;   │                                    │\n&quot;)
+    buf.WriteString(&quot;   └────────────────────────────────────┘\n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+
+    // Footer
+    buf.WriteString(&quot;   ⚠️ กรุณาชำระค่าจอดก่อนนำรถออก              \n&quot;)
+    buf.WriteString(&quot;   ⚠️ Please pay before exit                  \n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   อัตราค่าบริการ / Rates:                    \n&quot;)
+    buf.WriteString(&quot;   ชั่วโมงแรก         ฿30                    \n&quot;)
+    buf.WriteString(&quot;   ชั่วโมงต่อไป       ฿20                    \n&quot;)
+    buf.WriteString(&quot;   สูงสุดรายวัน       ฿150                   \n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   ขอบคุณที่ใช้บริการ / Thank You             \n&quot;)
+    buf.WriteString(&quot;   www.smartparking.com                       \n&quot;)
+    buf.WriteString(&quot;├─────────────────────────────────────────────┤\n&quot;)
+    buf.WriteString(&quot;   ฝ่ายบริการลูกค้า: 02-123-4567 ต่อ 100      \n&quot;)
+    buf.WriteString(&quot;   Line: @smartparking                        \n&quot;)
+    buf.WriteString(&quot;└─────────────────────────────────────────────┘\n&quot;)
+
+    return buf.Bytes()
+}
+
+func (p *ReceiptPrinter) buildReceiptContent(data *entity.ReceiptPrint, qrCode []byte) []byte {
+    var buf bytes.Buffer
+
+    // Header
+    buf.WriteString(&quot;┌─────────────────────────────────────────────┐\n&quot;)
+    buf.WriteString(&quot;│              SMART PARKING                   │\n&quot;)
+    buf.WriteString(&quot;│          อาคารจอดรถอัจฉริยะ                  │\n&quot;)
+    buf.WriteString(&quot;│          123 ถนนสุขุมวิท แขวงคลองเตย          │\n&quot;)
+    buf.WriteString(&quot;│          กรุงเทพมหานคร 10110                 │\n&quot;)
+    buf.WriteString(&quot;│          โทร: 02-123-4567                    │\n&quot;)
+    buf.WriteString(&quot;│          Tax ID: 0123456789012              │\n&quot;)
+    buf.WriteString(&quot;├─────────────────────────────────────────────┤\n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   🧾 ใบเสร็จรับเงิน / PAYMENT RECEIPT       \n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   เลขที่ / Receipt No:  %s\n&quot;, data.ReceiptNo))
+    buf.WriteString(fmt.Sprintf(&quot;   วันที่ / Date:       %s\n&quot;, data.PaymentDate.Format(&quot;2006-01-02 15:04&quot;)))
+    buf.WriteString(fmt.Sprintf(&quot;   ทะเบียน / Plate:    %s\n&quot;, data.PlateNo))
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(&quot;   รายการ / Description                     \n&quot;)
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   ค่าจอดรถ (%s)            ฿%.2f\n&quot;, data.Duration, data.TotalAmount))
+    if data.Discount &gt; 0 {
+        buf.WriteString(fmt.Sprintf(&quot;   ส่วนลด                    -฿%.2f\n&quot;, data.Discount))
+    }
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   รวมสุทธิ / Net Total      ฿%.2f\n&quot;, data.NetAmount))
+    buf.WriteString(fmt.Sprintf(&quot;   ภาษีมูลค่าเพิ่ม (7%%)       ฿%.2f\n&quot;, data.NetAmount*0.07))
+    buf.WriteString(fmt.Sprintf(&quot;   รวมทั้งสิ้น / Grand Total  ฿%.2f\n&quot;, data.NetAmount*1.07))
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   วิธีการชำระเงิน: %s\n&quot;, data.PaymentMethod))
+    buf.WriteString(&quot;\n&quot;)
+
+    // QR Code
+    buf.WriteString(&quot;   ┌────────────────────────────────────┐\n&quot;)
+    buf.WriteString(&quot;   │                                    │\n&quot;)
+    buf.WriteString(&quot;   │        [QR CODE HERE]              │\n&quot;)
+    buf.WriteString(&quot;   │                                    │\n&quot;)
+    buf.WriteString(&quot;   └────────────────────────────────────┘\n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+
+    // Footer
+    buf.WriteString(&quot;   📱 สแกน QR เพื่อตรวจสอบใบเสร็จ           \n&quot;)
+    buf.WriteString(&quot;   ขอบคุณที่ใช้บริการ / Thank You             \n&quot;)
+    buf.WriteString(&quot;   www.smartparking.com                       \n&quot;)
+    buf.WriteString(&quot;├─────────────────────────────────────────────┤\n&quot;)
+    buf.WriteString(&quot;   ฝ่ายบริการลูกค้า: 02-123-4567 ต่อ 100      \n&quot;)
+    buf.WriteString(&quot;   Line: @smartparking                        \n&quot;)
+    buf.WriteString(&quot;└─────────────────────────────────────────────┘\n&quot;)
+
+    return buf.Bytes()
+}
+
+func (p *ReceiptPrinter) buildInvoiceContent(data *entity.InvoicePrint, qrCode []byte) []byte {
+    var buf bytes.Buffer
+
+    // Header
+    buf.WriteString(&quot;┌─────────────────────────────────────────────┐\n&quot;)
+    buf.WriteString(&quot;│              SMART PARKING                   │\n&quot;)
+    buf.WriteString(&quot;│          อาคารจอดรถอัจฉริยะ                  │\n&quot;)
+    buf.WriteString(&quot;│          123 ถนนสุขุมวิท แขวงคลองเตย          │\n&quot;)
+    buf.WriteString(&quot;│          กรุงเทพมหานคร 10110                 │\n&quot;)
+    buf.WriteString(&quot;│          โทร: 02-123-4567                    │\n&quot;)
+    buf.WriteString(&quot;│          Tax ID: 0123456789012              │\n&quot;)
+    buf.WriteString(&quot;├─────────────────────────────────────────────┤\n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   📄 ใบแจ้งหนี้ / INVOICE                    \n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   Invoice No:   %s\n&quot;, data.InvoiceNo))
+    buf.WriteString(fmt.Sprintf(&quot;   Invoice Date: %s\n&quot;, data.PaymentDate.Format(&quot;2006-01-02&quot;)))
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(&quot;   ข้อมูลลูกค้า / Customer Information       \n&quot;)
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   ชื่อบริษัท:  %s\n&quot;, data.CompanyName))
+    buf.WriteString(fmt.Sprintf(&quot;   Tax ID:     %s\n&quot;, data.TaxID))
+    buf.WriteString(fmt.Sprintf(&quot;   ที่อยู่:     %s\n&quot;, data.Address))
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(&quot;   รายการ / Items                           \n&quot;)
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(&quot;   รายการ                  จำนวน    ราคา       \n&quot;)
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    for _, item := range data.Items {
+        buf.WriteString(fmt.Sprintf(&quot;   %-20s %3d    ฿%8.2f\n&quot;, item.Description, item.Quantity, item.Total))
+    }
+    buf.WriteString(&quot;   ─────────────────────────────────────────\n&quot;)
+    buf.WriteString(fmt.Sprintf(&quot;   รวมสุทธิ               ฿%.2f\n&quot;, data.SubTotal))
+    buf.WriteString(fmt.Sprintf(&quot;   ภาษีมูลค่าเพิ่ม (7%%)    ฿%.2f\n&quot;, data.TaxAmount))
+    buf.WriteString(fmt.Sprintf(&quot;   รวมทั้งสิ้น             ฿%.2f\n&quot;, data.TotalAmount))
+    buf.WriteString(&quot;\n&quot;)
+
+    // QR Code
+    buf.WriteString(&quot;   ┌────────────────────────────────────┐\n&quot;)
+    buf.WriteString(&quot;   │                                    │\n&quot;)
+    buf.WriteString(&quot;   │        [QR CODE HERE]              │\n&quot;)
+    buf.WriteString(&quot;   │                                    │\n&quot;)
+    buf.WriteString(&quot;   └────────────────────────────────────┘\n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+
+    // Footer
+    buf.WriteString(&quot;   📱 สแกน QR เพื่อชำระเงิน                 \n&quot;)
+    buf.WriteString(&quot;   ข้อมูลการชำระเงิน:                        \n&quot;)
+    buf.WriteString(&quot;   ธนาคาร:        ธนาคารกรุงไทย            \n&quot;)
+    buf.WriteString(&quot;   บัญชี:          012-3-45678-9            \n&quot;)
+    buf.WriteString(&quot;   ชื่อบัญชี:      บริษัท สมาร์ทพาร์คกิ้ง จำกัด\n&quot;)
+    buf.WriteString(&quot;   PromptPay:     0123456789012             \n&quot;)
+    buf.WriteString(&quot;\n&quot;)
+    buf.WriteString(&quot;   หมายเหตุ:                                  \n&quot;)
+    buf.WriteString(&quot;   - กรุณาชำระเงินตามกำหนดเวลา              \n&quot;)
+    buf.WriteString(&quot;   - หากชำระล่าช้ามีค่าปรับ 5%% ต่อเดือน     \n&quot;)
+    buf.WriteString(&quot;├─────────────────────────────────────────────┤\n&quot;)
+    buf.WriteString(&quot;   ฝ่ายบัญชี: 02-123-4567 ต่อ 200             \n&quot;)
+    buf.WriteString(&quot;   E-mail: accounting@sp.com                  \n&quot;)
+    buf.WriteString(&quot;└─────────────────────────────────────────────┘\n&quot;)
+
+    return buf.Bytes()
+}
+
+func (p *ReceiptPrinter) generateQRCode(data string) ([]byte, error) {
+    qrCode, err := qr.Encode(data, qr.M, qr.Auto)
+    if err != nil {
+        return nil, err
+    }
+
+    var buf bytes.Buffer
+    if err := png.Encode(&amp;buf, qrCode); err != nil {
+        return nil, err
+    }
+
+    return buf.Bytes(), nil
+}
+
+func (p *ReceiptPrinter) generateBarcode(data string) ([]byte, error) {
+    // ใช้ barcode library
+    return []byte(data), nil
+}
+
+func (p *ReceiptPrinter) sendToPrinter(content []byte) error {
+    // ส่งข้อมูลไปยังเครื่องพิมพ์ผ่าน TCP/IP
+    // หรือใช้ ESC/POS commands
+    return nil
+}
+</code></pre>
+<hr>
+<h2>6. API Endpoints</h2>
+<h3>6.1 Routes</h3>
+<pre><code class="language-go">// interfaces/http/routes.go
+package http
+
+import (
+    &quot;github.com/gin-gonic/gin&quot;
+)
+
+func SetupRoutes(
+    r *gin.Engine,
+    parkingHandler *ParkingHandler,
+    paymentHandler *PaymentHandler,
+    printingHandler *PrintingHandler,
+    adminHandler *AdminHandler,
+) {
+    api := r.Group(&quot;/api/v1/parking&quot;)
+
+    // Public endpoints (no auth required for entry/exit)
+    api.POST(&quot;/entry&quot;, parkingHandler.EntryVehicle)
+    api.POST(&quot;/exit&quot;, parkingHandler.ExitVehicle)
+    api.GET(&quot;/space/available&quot;, parkingHandler.GetAvailableSpaces)
+    api.GET(&quot;/qr/:ticket_no&quot;, parkingHandler.GetTicketInfo)
+
+    // Payment endpoints
+    payment := api.Group(&quot;/payment&quot;)
+    {
+        payment.POST(&quot;/qr&quot;, paymentHandler.GenerateQRPayment)
+        payment.POST(&quot;/confirm&quot;, paymentHandler.ConfirmPayment)
+        payment.POST(&quot;/discount&quot;, paymentHandler.ApplyDiscount)
+        payment.GET(&quot;/rates&quot;, paymentHandler.GetRates)
+    }
+
+    // Printing endpoints
+    printing := api.Group(&quot;/print&quot;)
+    {
+        printing.POST(&quot;/ticket/:ticket_id&quot;, printingHandler.PrintTicket)
+        printing.POST(&quot;/receipt/:ticket_id&quot;, printingHandler.PrintReceipt)
+        printing.POST(&quot;/invoice/:ticket_id&quot;, printingHandler.PrintInvoice)
+        printing.GET(&quot;/status/:printer_id&quot;, printingHandler.GetPrinterStatus)
+    }
+
+    // Admin endpoints (require auth)
+    admin := api.Group(&quot;/admin&quot;)
+    admin.Use(authMiddleware)
+    {
+        // Building management
+        admin.GET(&quot;/buildings&quot;, adminHandler.GetBuildings)
+        admin.POST(&quot;/buildings&quot;, adminHandler.CreateBuilding)
+        admin.PUT(&quot;/buildings/:id&quot;, adminHandler.UpdateBuilding)
+        admin.DELETE(&quot;/buildings/:id&quot;, adminHandler.DeleteBuilding)
+
+        // Space management
+        admin.GET(&quot;/spaces&quot;, adminHandler.GetSpaces)
+        admin.POST(&quot;/spaces&quot;, adminHandler.CreateSpace)
+        admin.PUT(&quot;/spaces/:id&quot;, adminHandler.UpdateSpace)
+        admin.DELETE(&quot;/spaces/:id&quot;, adminHandler.DeleteSpace)
+
+        // Rate management
+        admin.GET(&quot;/rates&quot;, adminHandler.GetRates)
+        admin.POST(&quot;/rates&quot;, adminHandler.CreateRate)
+        admin.PUT(&quot;/rates/:id&quot;, adminHandler.UpdateRate)
+
+        // Discount management
+        admin.GET(&quot;/discounts&quot;, adminHandler.GetDiscounts)
+        admin.POST(&quot;/discounts&quot;, adminHandler.CreateDiscount)
+        admin.PUT(&quot;/discounts/:id&quot;, adminHandler.UpdateDiscount)
+        admin.DELETE(&quot;/discounts/:id&quot;, adminHandler.DeleteDiscount)
+
+        // Statistics
+        admin.GET(&quot;/statistics/daily&quot;, adminHandler.GetDailyStatistics)
+        admin.GET(&quot;/statistics/weekly&quot;, adminHandler.GetWeeklyStatistics)
+        admin.GET(&quot;/statistics/monthly&quot;, adminHandler.GetMonthlyStatistics)
+        admin.GET(&quot;/statistics/quarterly&quot;, adminHandler.GetQuarterlyStatistics)
+        admin.GET(&quot;/statistics/yearly&quot;, adminHandler.GetYearlyStatistics)
+
+        // Maintenance
+        admin.GET(&quot;/equipment&quot;, adminHandler.GetEquipment)
+        admin.POST(&quot;/equipment&quot;, adminHandler.CreateEquipment)
+        admin.PUT(&quot;/equipment/:id&quot;, adminHandler.UpdateEquipment)
+        admin.GET(&quot;/maintenance/schedule&quot;, adminHandler.GetMaintenanceSchedule)
+        admin.POST(&quot;/maintenance/log&quot;, adminHandler.CreateMaintenanceLog)
+
+        // Emergency
+        admin.GET(&quot;/emergency/events&quot;, adminHandler.GetEmergencyEvents)
+        admin.POST(&quot;/emergency/trigger&quot;, adminHandler.TriggerEmergency)
+        admin.POST(&quot;/emergency/resolve&quot;, adminHandler.ResolveEmergency)
+
+        // System mode
+        admin.GET(&quot;/mode&quot;, adminHandler.GetSystemMode)
+        admin.POST(&quot;/mode&quot;, adminHandler.SetSystemMode)
+
+        // Printer management
+        admin.GET(&quot;/printers&quot;, adminHandler.GetPrinters)
+        admin.POST(&quot;/printers&quot;, adminHandler.CreatePrinter)
+        admin.PUT(&quot;/printers/:id&quot;, adminHandler.UpdatePrinter)
+        admin.POST(&quot;/printers/:id/test&quot;, adminHandler.TestPrinter)
+    }
+}
+</code></pre>
+<hr>
+<h2>7. Dashboard UI</h2>
+<h3>7.1 React Dashboard</h3>
+<pre><code class="language-tsx">// src/pages/Dashboard.tsx
+import React, { useEffect, useState } from &#39;react&#39;;
+import {
+    Grid,
+    Paper,
+    Typography,
+    Box,
+    Card,
+    CardContent,
+    IconButton,
+    Chip,
+    LinearProgress,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Select,
+    MenuItem,
+    Switch,
+    FormControlLabel,
+} from &#39;@mui/material&#39;;
+import {
+    Thermostat,
+    Opacity,
+    Speed,
+    DoorFront,
+    PlayArrow,
+    Stop,
+    Pause,
+    QrCode,
+    History,
+    Assessment,
+    Settings,
+    Print,
+    Receipt,
+    LocalParking,
+    ElectricCar,
+    Warning,
+    Lightbulb,
+} from &#39;@mui/icons-material&#39;;
+import { useWebSocket } from &#39;../hooks/useWebSocket&#39;;
+
+interface Zone {
+    id: number;
+    code: string;
+    name: string;
+    type: string;
+    status: string;
+    totalSpaces: number;
+    availableSpaces: number;
+    occupancy: number;
+}
+
+interface ParkingSpace {
+    id: number;
+    spaceNo: string;
+    status: string;
+    ledColor: string;
+    vehicleType: string;
+    plateNo?: string;
+    entryTime?: string;
+}
+
+const Dashboard: React.FC = () =&gt; {
+    const [zones, setZones] = useState&lt;Zone[]&gt;([]);
+    const [spaces, setSpaces] = useState&lt;ParkingSpace[]&gt;([]);
+    const [selectedZone, setSelectedZone] = useState&lt;number | null&gt;(null);
+    const [systemMode, setSystemMode] = useState&lt;&#39;auto&#39; | &#39;manual&#39; | &#39;emergency&#39; | &#39;maintenance&#39;&gt;(&#39;auto&#39;);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedPrinter, setSelectedPrinter] = useState&lt;string&gt;(&#39;&#39;);
+    const [printers, setPrinters] = useState&lt;any[]&gt;([]);
+
+    const { lastMessage, sendMessage } = useWebSocket(&#39;/ws/parking&#39;);
+
+    useEffect(() =&gt; {
+        fetchZones();
+        fetchSpaces();
+        fetchSystemMode();
+        fetchPrinters();
+
+        // Subscribe to real-time updates
+        sendMessage(JSON.stringify({
+            type: &#39;subscribe&#39;,
+            channel: &#39;parking_updates&#39;,
+        }));
+    }, []);
+
+    useEffect(() =&gt; {
+        if (lastMessage) {
+            const data = JSON.parse(lastMessage);
+            if (data.type === &#39;space_update&#39;) {
+                updateSpace(data.payload);
+            } else if (data.type === &#39;zone_update&#39;) {
+                updateZone(data.payload);
+            } else if (data.type === &#39;alert&#39;) {
+                showAlert(data.payload);
+            } else if (data.type === &#39;mode_change&#39;) {
+                setSystemMode(data.payload.mode);
+            }
+        }
+    }, [lastMessage]);
+
+    const fetchZones = async () =&gt; {
+        const response = await fetch(&#39;/api/v1/parking/admin/buildings&#39;);
+        const data = await response.json();
+        setZones(data);
+    };
+
+    const fetchSpaces = async () =&gt; {
+        const response = await fetch(&#39;/api/v1/parking/space/available&#39;);
+        const data = await response.json();
+        setSpaces(data);
+    };
+
+    const fetchSystemMode = async () =&gt; {
+        const response = await fetch(&#39;/api/v1/parking/admin/mode&#39;);
+        const data = await response.json();
+        setSystemMode(data.mode);
+    };
+
+    const fetchPrinters = async () =&gt; {
+        const response = await fetch(&#39;/api/v1/parking/admin/printers&#39;);
+        const data = await response.json();
+        setPrinters(data);
+    };
+
+    const updateSpace = (data: ParkingSpace) =&gt; {
+        setSpaces(prev =&gt; prev.map(s =&gt; s.id === data.id ? data : s));
+    };
+
+    const updateZone = (data: Zone) =&gt; {
+        setZones(prev =&gt; prev.map(z =&gt; z.id === data.id ? data : z));
+    };
+
+    const showAlert = (alert: any) =&gt; {
+        // Show toast notification
+        console.log(&#39;Alert:&#39;, alert);
+    };
+
+    const handleModeChange = async (mode: string) =&gt; {
+        const response = await fetch(&#39;/api/v1/parking/admin/mode&#39;, {
+            method: &#39;POST&#39;,
+            headers: { &#39;Content-Type&#39;: &#39;application/json&#39; },
+            body: JSON.stringify({ mode }),
+        });
+        if (response.ok) {
+            setSystemMode(mode as any);
+        }
+    };
+
+    const printTicket = async (ticketId: string) =&gt; {
+        await fetch(`/api/v1/parking/print/ticket/${ticketId}`, {
+            method: &#39;POST&#39;,
+            headers: { &#39;Content-Type&#39;: &#39;application/json&#39; },
+            body: JSON.stringify({ printer: selectedPrinter }),
+        });
+    };
+
+    const printReceipt = async (ticketId: string) =&gt; {
+        await fetch(`/api/v1/parking/print/receipt/${ticketId}`, {
+            method: &#39;POST&#39;,
+            headers: { &#39;Content-Type&#39;: &#39;application/json&#39; },
+            body: JSON.stringify({ printer: selectedPrinter }),
+        });
+    };
+
+    return (
+        &lt;Box sx={{ flexGrow: 1, p: 3 }}&gt;
+            {/* Header */}
+            &lt;Box display=&quot;flex&quot; justifyContent=&quot;space-between&quot; alignItems=&quot;center&quot; mb={3}&gt;
+                &lt;Typography variant=&quot;h4&quot;&gt;
+                    🏢 Smart Parking Management
+                &lt;/Typography&gt;
+                &lt;Box display=&quot;flex&quot; alignItems=&quot;center&quot; gap={2}&gt;
+                    &lt;FormControlLabel
+                        control={
+                            &lt;Switch
+                                checked={systemMode === &#39;auto&#39;}
+                                onChange={(e) =&gt; handleModeChange(e.target.checked ? &#39;auto&#39; : &#39;manual&#39;)}
+                            /&gt;
+                        }
+                        label=&quot;Auto Mode&quot;
+                    /&gt;
+                    &lt;Chip
+                        label={systemMode.toUpperCase()}
+                        color={systemMode === &#39;auto&#39; ? &#39;success&#39; : systemMode === &#39;emergency&#39; ? &#39;error&#39; : &#39;warning&#39;}
+                    /&gt;
+                    &lt;Button
+                        variant=&quot;contained&quot;
+                        startIcon={&lt;Print /&gt;}
+                        onClick={() =&gt; setOpenDialog(true)}
+                    &gt;
+                        พิมพ์เอกสาร
+                    &lt;/Button&gt;
+                &lt;/Box&gt;
+            &lt;/Box&gt;
+
+            {/* System Status */}
+            &lt;Grid container spacing={2} mb={3}&gt;
+                &lt;Grid item xs={12} sm={3}&gt;
+                    &lt;Card&gt;
+                        &lt;CardContent&gt;
+                            &lt;Typography variant=&quot;body2&quot; color=&quot;textSecondary&quot;&gt;ที่จอดทั้งหมด&lt;/Typography&gt;
+                            &lt;Typography variant=&quot;h4&quot;&gt;{spaces.length}&lt;/Typography&gt;
+                        &lt;/CardContent&gt;
+                    &lt;/Card&gt;
+                &lt;/Grid&gt;
+                &lt;Grid item xs={12} sm={3}&gt;
+                    &lt;Card&gt;
+                        &lt;CardContent&gt;
+                            &lt;Typography variant=&quot;body2&quot; color=&quot;textSecondary&quot;&gt;ที่จอดว่าง&lt;/Typography&gt;
+                            &lt;Typography variant=&quot;h4&quot; color=&quot;success.main&quot;&gt;
+                                {spaces.filter(s =&gt; s.status === &#39;available&#39;).length}
+                            &lt;/Typography&gt;
+                        &lt;/CardContent&gt;
+                    &lt;/Card&gt;
+                &lt;/Grid&gt;
+                &lt;Grid item xs={12} sm={3}&gt;
+                    &lt;Card&gt;
+                        &lt;CardContent&gt;
+                            &lt;Typography variant=&quot;body2&quot; color=&quot;textSecondary&quot;&gt;รถที่จอดอยู่&lt;/Typography&gt;
+                            &lt;Typography variant=&quot;h4&quot; color=&quot;warning.main&quot;&gt;
+                                {spaces.filter(s =&gt; s.status === &#39;occupied&#39;).length}
+                            &lt;/Typography&gt;
+                        &lt;/CardContent&gt;
+                    &lt;/Card&gt;
+                &lt;/Grid&gt;
+                &lt;Grid item xs={12} sm={3}&gt;
+                    &lt;Card&gt;
+                        &lt;CardContent&gt;
+                            &lt;Typography variant=&quot;body2&quot; color=&quot;textSecondary&quot;&gt;รายได้วันนี้&lt;/Typography&gt;
+                            &lt;Typography variant=&quot;h4&quot; color=&quot;primary.main&quot;&gt;
+                                ฿{calculateTodayRevenue()}
+                            &lt;/Typography&gt;
+                        &lt;/CardContent&gt;
+                    &lt;/Card&gt;
+                &lt;/Grid&gt;
+            &lt;/Grid&gt;
+
+            {/* Zone Overview */}
+            &lt;Typography variant=&quot;h5&quot; mb={2}&gt;
+                📍 โซนจอดรถ
+            &lt;/Typography&gt;
+            &lt;Grid container spacing={2} mb={3}&gt;
+                {zones.map((zone) =&gt; (
+                    &lt;Grid item xs={12} md={6} lg={4} key={zone.id}&gt;
+                        &lt;ZoneCard zone={zone} /&gt;
+                    &lt;/Grid&gt;
+                ))}
+            &lt;/Grid&gt;
+
+            {/* Parking Spaces */}
+            &lt;Typography variant=&quot;h5&quot; mb={2}&gt;
+                🚗 สถานะที่จอดรถ
+            &lt;/Typography&gt;
+            &lt;Paper sx={{ p: 2, maxHeight: 400, overflow: &#39;auto&#39; }}&gt;
+                &lt;Grid container spacing={1}&gt;
+                    {spaces.map((space) =&gt; (
+                        &lt;Grid item xs={2} sm={1} key={space.id}&gt;
+                            &lt;SpaceIndicator space={space} /&gt;
+                        &lt;/Grid&gt;
+                    ))}
+                &lt;/Grid&gt;
+            &lt;/Paper&gt;
+
+            {/* Print Dialog */}
+            &lt;Dialog open={openDialog} onClose={() =&gt; setOpenDialog(false)} maxWidth=&quot;sm&quot; fullWidth&gt;
+                &lt;DialogTitle&gt;พิมพ์เอกสาร&lt;/DialogTitle&gt;
+                &lt;DialogContent&gt;
+                    &lt;Box sx={{ mt: 2 }}&gt;
+                        &lt;TextField
+                            select
+                            fullWidth
+                            label=&quot;เลือกเครื่องพิมพ์&quot;
+                            value={selectedPrinter}
+                            onChange={(e) =&gt; setSelectedPrinter(e.target.value)}
+                            margin=&quot;normal&quot;
+                        &gt;
+                            {printers.map((printer) =&gt; (
+                                &lt;MenuItem key={printer.id} value={printer.id}&gt;
+                                    {printer.name} - {printer.status}
+                                &lt;/MenuItem&gt;
+                            ))}
+                        &lt;/TextField&gt;
+
+                        &lt;TextField
+                            fullWidth
+                            label=&quot;หมายเลข Ticket&quot;
+                            placeholder=&quot;TK-2024-001234&quot;
+                            margin=&quot;normal&quot;
+                        /&gt;
+
+                        &lt;Box display=&quot;flex&quot; gap={2} mt={2}&gt;
+                            &lt;Button variant=&quot;outlined&quot; startIcon={&lt;LocalParking /&gt;} fullWidth&gt;
+                                บัตรจอดรถ
+                            &lt;/Button&gt;
+                            &lt;Button variant=&quot;outlined&quot; startIcon={&lt;Receipt /&gt;} fullWidth&gt;
+                                ใบเสร็จ
+                            &lt;/Button&gt;
+                            &lt;Button variant=&quot;outlined&quot; startIcon={&lt;Assessment /&gt;} fullWidth&gt;
+                                ใบแจ้งหนี้
+                            &lt;/Button&gt;
+                        &lt;/Box&gt;
+                    &lt;/Box&gt;
+                &lt;/DialogContent&gt;
+                &lt;DialogActions&gt;
+                    &lt;Button onClick={() =&gt; setOpenDialog(false)}&gt;ยกเลิก&lt;/Button&gt;
+                    &lt;Button variant=&quot;contained&quot; startIcon={&lt;Print /&gt;}&gt;
+                        พิมพ์
+                    &lt;/Button&gt;
+                &lt;/DialogActions&gt;
+            &lt;/Dialog&gt;
+        &lt;/Box&gt;
+    );
+};
+
+// Zone Card Component
+const ZoneCard: React.FC&lt;{ zone: Zone }&gt; = ({ zone }) =&gt; {
+    const occupancy = zone.totalSpaces &gt; 0 ? (zone.occupancy / zone.totalSpaces) * 100 : 0;
+
+    return (
+        &lt;Card&gt;
+            &lt;CardContent&gt;
+                &lt;Box display=&quot;flex&quot; justifyContent=&quot;space-between&quot;&gt;
+                    &lt;Typography variant=&quot;h6&quot;&gt;{zone.code} - {zone.name}&lt;/Typography&gt;
+                    &lt;Chip
+                        label={zone.status}
+                        size=&quot;small&quot;
+                        color={zone.status === &#39;available&#39; ? &#39;success&#39; : &#39;error&#39;}
+                    /&gt;
+                &lt;/Box&gt;
+                &lt;Box display=&quot;flex&quot; justifyContent=&quot;space-around&quot; mt={1}&gt;
+                    &lt;Box textAlign=&quot;center&quot;&gt;
+                        &lt;Typography variant=&quot;body2&quot; color=&quot;textSecondary&quot;&gt;ทั้งหมด&lt;/Typography&gt;
+                        &lt;Typography variant=&quot;h6&quot;&gt;{zone.totalSpaces}&lt;/Typography&gt;
+                    &lt;/Box&gt;
+                    &lt;Box textAlign=&quot;center&quot;&gt;
+                        &lt;Typography variant=&quot;body2&quot; color=&quot;textSecondary&quot;&gt;ว่าง&lt;/Typography&gt;
+                        &lt;Typography variant=&quot;h6&quot; color=&quot;success.main&quot;&gt;{zone.availableSpaces}&lt;/Typography&gt;
+                    &lt;/Box&gt;
+                    &lt;Box textAlign=&quot;center&quot;&gt;
+                        &lt;Typography variant=&quot;body2&quot; color=&quot;textSecondary&quot;&gt;ใช้งาน&lt;/Typography&gt;
+                        &lt;Typography variant=&quot;h6&quot; color=&quot;warning.main&quot;&gt;{zone.totalSpaces - zone.availableSpaces}&lt;/Typography&gt;
+                    &lt;/Box&gt;
+                &lt;/Box&gt;
+                &lt;LinearProgress variant=&quot;determinate&quot; value={occupancy} sx={{ mt: 1 }} /&gt;
+                &lt;Typography variant=&quot;caption&quot; color=&quot;textSecondary&quot;&gt;
+                    {occupancy.toFixed(0)}% เต็ม
+                &lt;/Typography&gt;
+            &lt;/CardContent&gt;
+        &lt;/Card&gt;
+    );
+};
+
+// Space Indicator Component
+const SpaceIndicator: React.FC&lt;{ space: ParkingSpace }&gt; = ({ space }) =&gt; {
+    const getColor = () =&gt; {
+        switch (space.ledColor) {
+            case &#39;green&#39;: return &#39;success.main&#39;;
+            case &#39;red&#39;: return &#39;error.main&#39;;
+            case &#39;blue&#39;: return &#39;info.main&#39;;
+            case &#39;yellow&#39;: return &#39;warning.main&#39;;
+            default: return &#39;grey.500&#39;;
+        }
+    };
+
+    return (
+        &lt;Tooltip title={`${space.spaceNo} - ${space.status} ${space.plateNo ? `(${space.plateNo})` : &#39;&#39;}`}&gt;
+            &lt;Box
+                sx={{
+                    width: &#39;100%&#39;,
+                    paddingBottom: &#39;100%&#39;,
+                    position: &#39;relative&#39;,
+                    borderRadius: 1,
+                    bgcolor: getColor(),
+                    opacity: space.status === &#39;maintenance&#39; ? 0.5 : 1,
+                }}
+            &gt;
+                &lt;Box
+                    sx={{
+                        position: &#39;absolute&#39;,
+                        top: &#39;50%&#39;,
+                        left: &#39;50%&#39;,
+                        transform: &#39;translate(-50%, -50%)&#39;,
+                        fontSize: &#39;0.7rem&#39;,
+                        color: &#39;white&#39;,
+                        fontWeight: &#39;bold&#39;,
+                        textAlign: &#39;center&#39;,
+                        width: &#39;100%&#39;,
+                    }}
+                &gt;
+                    {space.spaceNo.split(&#39;-&#39;)[1]}
+                    {space.status === &#39;ev_charging&#39; &amp;&amp; &#39;⚡&#39;}
+                &lt;/Box&gt;
+            &lt;/Box&gt;
+        &lt;/Tooltip&gt;
+    );
+};
+
+const calculateTodayRevenue = () =&gt; {
+    // Implement revenue calculation
+    return 0;
+};
+
+export default Dashboard;
+</code></pre>
+<hr>
+<h2>8. Mobile App</h2>
+<h3>8.1 Flutter App - Parking Management</h3>
+<pre><code class="language-dart">// lib/screens/dashboard.dart
+import &#39;package:flutter/material.dart&#39;;
+import &#39;package:provider/provider.dart&#39;;
+import &#39;package:qr_code_scanner/qr_code_scanner.dart&#39;;
+import &#39;package:http/http.dart&#39; as http;
+import &#39;dart:convert&#39;;
+
+class DashboardScreen extends StatefulWidget {
+  @override
+  _DashboardScreenState createState() =&gt; _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State&lt;DashboardScreen&gt; {
+  final GlobalKey qrKey = GlobalKey(debugLabel: &#39;QR&#39;);
+  QRViewController? controller;
+  bool isScanning = false;
+  Map&lt;String, dynamic&gt;? scannedData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(&#39;Smart Parking&#39;),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.qr_code_scanner),
+            onPressed: () =&gt; _startScanner(),
+          ),
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () =&gt; _showNotifications(),
+          ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () =&gt; _showSettings(),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Parking Status
+            _buildParkingStatus(),
+            SizedBox(height: 16),
+
+            // Quick Actions
+            _buildQuickActions(),
+            SizedBox(height: 16),
+
+            // Recent Parking
+            _buildRecentParking(),
+            SizedBox(height: 16),
+
+            // Print Options
+            _buildPrintOptions(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: &#39;หน้าหลัก&#39;),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: &#39;ประวัติ&#39;),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: &#39;ใบเสร็จ&#39;),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: &#39;โปรไฟล์&#39;),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildParkingStatus() {
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatusItem(&#39;🟢&#39;, &#39;ว่าง&#39;, &#39;45&#39;),
+                _buildStatusItem(&#39;🔴&#39;, &#39;ไม่ว่าง&#39;, &#39;120&#39;),
+                _buildStatusItem(&#39;⚡&#39;, &#39;EV Charging&#39;, &#39;8&#39;),
+                _buildStatusItem(&#39;🟡&#39;, &#39;ซ่อมบำรุง&#39;, &#39;3&#39;),
+              ],
+            ),
+            SizedBox(height: 8),
+            LinearProgressIndicator(
+              value: 0.6,
+              backgroundColor: Colors.grey[300],
+              color: Colors.green,
+            ),
+            SizedBox(height: 4),
+            Text(&#39;อัตราการใช้งาน: 60%&#39;),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusItem(String icon, String label, String count) {
+    return Column(
+      children: [
+        Text(icon, style: TextStyle(fontSize: 24)),
+        Text(count, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey)),
+      ],
+    );
+  }
+
+  Widget _buildQuickActions() {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      crossAxisCount: 4,
+      childAspectRatio: 1.0,
+      children: [
+        _buildActionItem(Icons.local_parking, &#39;จอดรถ&#39;, () {}),
+        _buildActionItem(Icons.payment, &#39;ชำระเงิน&#39;, () {}),
+        _buildActionItem(Icons.print, &#39;พิมพ์บัตร&#39;, _showPrintDialog),
+        _buildActionItem(Icons.qr_code, &#39;สแกน QR&#39;, _startScanner),
+        _buildActionItem(Icons.history, &#39;ประวัติ&#39;, () {}),
+        _buildActionItem(Icons.local_offer, &#39;ส่วนลด&#39;, () {}),
+        _buildActionItem(Icons.electric_car, &#39;ชาร์จ EV&#39;, () {}),
+        _buildActionItem(Icons.help, &#39;ช่วยเหลือ&#39;, () {}),
+      ],
+    );
+  }
+
+  Widget _buildActionItem(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: Colors.blue[700], size: 28),
+          ),
+          SizedBox(height: 4),
+          Text(label, style: TextStyle(fontSize: 12)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentParking() {
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(&#39;🚗 ประวัติการจอดล่าสุด&#39;, style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            ListTile(
+              leading: Icon(Icons.directions_car, color: Colors.blue),
+              title: Text(&#39;กข 1234&#39;),
+              subtitle: Text(&#39;วันที่: 15/01/2024 14:30&#39;),
+              trailing: Text(&#39;฿150&#39;, style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.electric_car, color: Colors.green),
+              title: Text(&#39;กค 5678 (EV)&#39;),
+              subtitle: Text(&#39;วันที่: 15/01/2024 10:00&#39;),
+              trailing: Text(&#39;฿220&#39;, style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrintOptions() {
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(&#39;🖨️ พิมพ์เอกสาร&#39;, style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =&gt; _printDocument(&#39;ticket&#39;),
+                    icon: Icon(Icons.local_parking),
+                    label: Text(&#39;บัตรจอดรถ&#39;),
+                    style: ElevatedButton.styleFrom(primary: Colors.blue),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =&gt; _printDocument(&#39;receipt&#39;),
+                    icon: Icon(Icons.receipt),
+                    label: Text(&#39;ใบเสร็จ&#39;),
+                    style: ElevatedButton.styleFrom(primary: Colors.green),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =&gt; _printDocument(&#39;invoice&#39;),
+                    icon: Icon(Icons.assessment),
+                    label: Text(&#39;ใบแจ้งหนี้&#39;),
+                    style: ElevatedButton.styleFrom(primary: Colors.orange),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =&gt; _printDocument(&#39;monthly&#39;),
+                    icon: Icon(Icons.card_membership),
+                    label: Text(&#39;บัตรรายเดือน&#39;),
+                    style: ElevatedButton.styleFrom(primary: Colors.purple),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _startScanner() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =&gt; QRScannerScreen()),
+    );
+    if (result != null) {
+      // Handle QR scan result
+      print(&#39;QR Result: $result&#39;);
+    }
+  }
+
+  void _showPrintDialog() {
+    showDialog(
+      context: context,
+      builder: (context) =&gt; AlertDialog(
+        title: Text(&#39;พิมพ์เอกสาร&#39;),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.local_parking),
+              title: Text(&#39;บัตรจอดรถ&#39;),
+              onTap: () {
+                Navigator.pop(context);
+                _printDocument(&#39;ticket&#39;);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.receipt),
+              title: Text(&#39;ใบเสร็จ&#39;),
+              onTap: () {
+                Navigator.pop(context);
+                _printDocument(&#39;receipt&#39;);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.assessment),
+              title: Text(&#39;ใบแจ้งหนี้&#39;),
+              onTap: () {
+                Navigator.pop(context);
+                _printDocument(&#39;invoice&#39;);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _printDocument(String type) {
+    // Implement print logic
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(&#39;กำลังพิมพ์ $type...&#39;)),
+    );
+  }
+
+  void _showNotifications() {
+    // Show notifications
+  }
+
+  void _showSettings() {
+    // Show settings
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+}
+
+// QR Scanner Screen
+class QRScannerScreen extends StatefulWidget {
+  @override
+  _QRScannerScreenState createState() =&gt; _QRScannerScreenState();
+}
+
+class _QRScannerScreenState extends State&lt;QRScannerScreen&gt; {
+  final GlobalKey qrKey = GlobalKey(debugLabel: &#39;QR&#39;);
+  QRViewController? controller;
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(&#39;สแกน QR Code&#39;),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.flash_on),
+            onPressed: () =&gt; controller?.toggleFlash(),
+          ),
+          IconButton(
+            icon: Icon(Icons.switch_camera),
+            onPressed: () =&gt; controller?.switchCamera(),
+          ),
+        ],
+      ),
+      body: QRView(
+        key: qrKey,
+        onQRViewCreated: _onQRViewCreated,
+        overlay: QrScannerOverlayShape(
+          borderColor: Colors.green,
+          borderRadius: 10,
+          borderLength: 20,
+          borderWidth: 4,
+        ),
+      ),
+    );
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      final String code = scanData.code!;
+      _handleQRCode(code);
+    });
+  }
+
+  void _handleQRCode(String code) async {
+    try {
+      final response = await http.get(
+        Uri.parse(&#39;https://api.parking.com/api/v1/parking/qr/$code&#39;),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        Navigator.pop(context, data);
+      } else {
+        _showError(&#39;ไม่พบข้อมูล QR Code นี้&#39;);
+      }
+    } catch (e) {
+      _showError(&#39;เกิดข้อผิดพลาด: $e&#39;);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+}
+</code></pre>
+<hr>
+<h2>9. QR Code &amp; Payment System</h2>
+<h3>9.1 QR Payment Generation</h3>
+<pre><code class="language-go">// infrastructure/payment/qr_payment.go
+package payment
+
+import (
+    &quot;context&quot;
+    &quot;encoding/base64&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+
+    &quot;github.com/skip2/go-qrcode&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/entity&quot;
+    &quot;github.com/yourproject/internal/modules/parking/domain/repository&quot;
+)
+
+type QRPaymentService struct {
+    ticketRepo  repository.TicketRepository
+    paymentRepo repository.PaymentRepository
+}
+
+func NewQRPaymentService(
+    ticketRepo repository.TicketRepository,
+    paymentRepo repository.PaymentRepository,
+) *QRPaymentService {
+    return &amp;QRPaymentService{
+        ticketRepo:  ticketRepo,
+        paymentRepo: paymentRepo,
+    }
+}
+
+type GenerateQRRequest struct {
+    TicketNo string  `json:&quot;ticket_no&quot;`
+    Amount   float64 `json:&quot;amount&quot;`
+    Discount float64 `json:&quot;discount&quot;`
+}
+
+type GenerateQRResponse struct {
+    QRCode    string  `json:&quot;qr_code&quot;`
+    PaymentID int64   `json:&quot;payment_id&quot;`
+    Amount    float64 `json:&quot;amount&quot;`
+    ExpiresIn int     `json:&quot;expires_in&quot;` // seconds
+}
+
+func (s *QRPaymentService) GenerateQRPayment(ctx context.Context, req GenerateQRRequest) (*GenerateQRResponse, error) {
+    // 1. ตรวจสอบ Ticket
+    ticket, err := s.ticketRepo.FindByNo(ctx, req.TicketNo)
+    if err != nil {
+        return nil, fmt.Errorf(&quot;ticket not found: %w&quot;, err)
+    }
+
+    // 2. สร้าง Payment
+    payment := &amp;entity.Payment{
+        TicketID:    ticket.ID,
+        Amount:      req.Amount,
+        Discount:    req.Discount,
+        NetAmount:   req.Amount - req.Discount,
+        Method:      &quot;qr&quot;,
+        Status:      &quot;pending&quot;,
+        PaymentDate: time.Now(),
+        CreatedAt:   time.Now(),
+        UpdatedAt:   time.Now(),
+    }
+
+    if err := s.paymentRepo.Create(ctx, payment); err != nil {
+        return nil, err
+    }
+
+    // 3. สร้าง QR Code
+    paymentData := fmt.Sprintf(
+        &quot;PTT|%d|%s|%.2f|%.2f|%d&quot;,
+        payment.ID,
+        ticket.TicketNo,
+        payment.NetAmount,
+        payment.Discount,
+        time.Now().Unix()+600, // expires in 10 minutes
+    )
+
+    qrCode, err := qrcode.Encode(paymentData, qrcode.Medium, 256)
+    if err != nil {
+        return nil, err
+    }
+
+    qrBase64 := base64.StdEncoding.EncodeToString(qrCode)
+
+    // 4. บันทึก QR Code
+    payment.QRCode = qrBase64
+    s.paymentRepo.Update(ctx, payment)
+
+    return &amp;GenerateQRResponse{
+        QRCode:    qrBase64,
+        PaymentID: payment.ID,
+        Amount:    payment.NetAmount,
+        ExpiresIn: 600,
+    }, nil
+}
+
+func (s *QRPaymentService) ConfirmPayment(ctx context.Context, paymentID int64) error {
+    payment, err := s.paymentRepo.GetByID(ctx, paymentID)
+    if err != nil {
+        return err
+    }
+
+    if payment.Status != &quot;pending&quot; {
+        return fmt.Errorf(&quot;payment already processed&quot;)
+    }
+
+    payment.Status = &quot;completed&quot;
+    payment.UpdatedAt = time.Now()
+
+    if err := s.paymentRepo.Update(ctx, payment); err != nil {
+        return err
+    }
+
+    // อัปเดต Ticket
+    ticket, err := s.ticketRepo.GetByID(ctx, payment.TicketID)
+    if err != nil {
+        return err
+    }
+
+    ticket.PaymentStatus = &quot;paid&quot;
+    ticket.UpdatedAt = time.Now()
+
+    return s.ticketRepo.Update(ctx, ticket)
+}
+</code></pre>
+<hr>
+<h2>10. การติดตั้งและใช้งาน</h2>
+<h3>10.1 Docker Compose</h3>
+<pre><code class="language-yaml"># docker-compose.yml
+version: &#39;3.8&#39;
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: parking
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: parking
+    ports:
+      - &quot;5432:5432&quot;
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  influxdb:
+    image: influxdb:2.7-alpine
+    environment:
+      INFLUXDB_INIT_MODE: setup
+      INFLUXDB_INIT_USERNAME: admin
+      INFLUXDB_INIT_PASSWORD: password
+      INFLUXDB_INIT_ORG: parking
+      INFLUXDB_INIT_BUCKET: parking_stats
+      INFLUXDB_INIT_RETENTION: 365d
+    ports:
+      - &quot;8086:8086&quot;
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - &quot;6379:6379&quot;
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports:
+      - &quot;1883:1883&quot;
+      - &quot;9001:9001&quot;
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+
+  backend:
+    build: .
+    ports:
+      - &quot;8080:8080&quot;
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: parking
+      DB_PASSWORD: password
+      DB_NAME: parking
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_TOKEN: admin:password
+      INFLUX_ORG: parking
+      INFLUX_BUCKET: parking_stats
+      MQTT_BROKER: mosquitto:1883
+      REDIS_HOST: redis:6379
+    depends_on:
+      - postgres
+      - influxdb
+      - redis
+      - mosquitto
+    volumes:
+      - ./uploads:/app/uploads
+      - /dev/usb:/dev/usb  # For printers
+
+  frontend:
+    build: ./frontend
+    ports:
+      - &quot;3000:3000&quot;
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  influxdb_data:
+</code></pre>
+<h3>10.2 Environment Variables</h3>
+<pre><code class="language-env"># .env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=parking
+DB_PASSWORD=password
+DB_NAME=parking
+
+INFLUX_URL=http://localhost:8086
+INFLUX_TOKEN=admin:password
+INFLUX_ORG=parking
+INFLUX_BUCKET=parking_stats
+
+MQTT_BROKER=localhost:1883
+REDIS_HOST=localhost:6379
+
+# Printer Settings
+PRINTER_RECEIPT_HOST=localhost
+PRINTER_RECEIPT_PORT=9100
+PRINTER_INVOICE_HOST=localhost
+PRINTER_INVOICE_PORT=9101
+
+# QR Code Settings
+QR_CODE_EXPIRY=600
+
+# Payment Settings
+PAYMENT_GATEWAY_URL=https://payment.example.com
+PAYMENT_API_KEY=your_api_key
+</code></pre>
+<hr>
+<h2>11. Business Model</h2>
+<h3>11.1 Packaging &amp; Pricing</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Price</th>
+<th>Spaces</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Starter</strong></td>
+<td>฿49,900</td>
+<td>50</td>
+<td>1 Building, LPR, QR Payment, Basic Report</td>
+</tr>
+<tr>
+<td><strong>Professional</strong></td>
+<td>฿149,900</td>
+<td>200</td>
+<td>3 Buildings, EV Charging, RFID, Statistics</td>
+</tr>
+<tr>
+<td><strong>Enterprise</strong></td>
+<td>฿499,900</td>
+<td>500+</td>
+<td>Unlimited Buildings, Lift System, Custom Reports</td>
+</tr>
+<tr>
+<td><strong>Ultimate</strong></td>
+<td>฿999,900</td>
+<td>1000+</td>
+<td>Full Features, On-premise, 24/7 Support</td>
+</tr>
+</tbody></table>
+<h3>11.2 Hardware Packages</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Price</th>
+<th>Components</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Basic Kit</strong></td>
+<td>฿250,000</td>
+<td>LPR Camera, Boom Barrier, LED, Ticket Printer</td>
+</tr>
+<tr>
+<td><strong>Standard Kit</strong></td>
+<td>฿500,000</td>
+<td>Basic + RFID, EV Charger, Payment Kiosk</td>
+</tr>
+<tr>
+<td><strong>Premium Kit</strong></td>
+<td>฿1,000,000</td>
+<td>Standard + Lift System, Full CCTV, Emergency System</td>
+</tr>
+</tbody></table>
+<h3>11.3 Revenue Model</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    Revenue Model                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Hardware Sales (One-time)                                     │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Basic Kit: ฿250,000                                     │ │
+│  │  Standard Kit: ฿500,000                                  │ │
+│  │  Premium Kit: ฿1,000,000                                 │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  Subscription (Annual)                                         │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Starter: ฿15,000/ปี                                     │ │
+│  │  Professional: ฿45,000/ปี                                │ │
+│  │  Enterprise: ฿150,000/ปี                                 │ │
+│  │  Ultimate: ฿300,000/ปี                                   │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  Transaction Fee                                               │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  QR Payment: 1-2% per transaction                        │ │
+│  │  EV Charging: 5-10% per session                          │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                              +                                  │
+│  Professional Services                                         │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  Installation: ฿50,000-200,000                           │ │
+│  │  Training: ฿20,000-50,000                                │ │
+│  │  Custom Integration: ฿100,000-500,000                   │ │
+│  └───────────────────────────────────────────────────────────┘ │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>12. Prompt สำหรับการขยายระบบ</h2>
+<h3>Prompt 1: เพิ่มระบบจองที่จอดล่วงหน้า (Pre-booking)</h3>
+<pre><code>ต้องการเพิ่มระบบจองที่จอดรถล่วงหน้าผ่าน Mobile App และ Website
+
+รายละเอียด:
+1. ผู้ใช้สามารถเลือกโซน/ชั้น/วันที่/เวลาที่ต้องการจอง
+2. ระบบแสดงที่จอดว่างและราคา
+3. ชำระเงินล่วงหน้า (Deposit) ผ่าน QR Code
+4. ระบบกันที่จอดไว้ 15 นาทีก่อนถึงเวลาจอง
+5. แจ้งเตือนผ่าน Line/Email เมื่อถึงเวลาจอง
+6. ยกเลิกการจองและคืนเงิน (Refund) ตามนโยบาย
+
+สิ่งที่ต้องเพิ่ม:
+- Booking Entity และ CRUD
+- Pre-payment System
+- Space Reservation Logic
+- Notification Service
+- Booking Dashboard
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/domain/entity/booking.go
+- internal/modules/parking/application/booking/
+- internal/modules/parking/interfaces/http/booking_handler.go
+- frontend/src/pages/Booking/
+</code></pre>
+<h3>Prompt 2: เพิ่มระบบวิเคราะห์ Predictive Analytics</h3>
+<pre><code>ต้องการเพิ่มระบบวิเคราะห์และพยากรณ์อัตราการจอดรถ
+
+รายละเอียด:
+1. วิเคราะห์ข้อมูลย้อนหลัง 1 ปี
+2. พยากรณ์อัตราการจอดในวัน/เดือนถัดไป
+3. แนะนำการปรับราคาตามความต้องการ (Dynamic Pricing)
+4. แจ้งเตือนเมื่อคาดการณ์ว่าจะเต็ม
+5. แสดง Heatmap ของการจอดแต่ละโซน
+
+สิ่งที่ต้องเพิ่ม:
+- ML Model (Python/TensorFlow)
+- Predictive Service
+- Dynamic Pricing Engine
+- Heatmap Visualization
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/analytics/
+- python/models/parking_forecast.py
+- frontend/src/components/Heatmap/
+</code></pre>
+<h3>Prompt 3: เพิ่มระบบ Integration กับ ERP</h3>
+<pre><code>ต้องการเชื่อมต่อระบบ Parking กับ ERP ที่มีอยู่
+
+รายละเอียด:
+1. ส่งข้อมูลรายได้ไปยังระบบบัญชีอัตโนมัติ
+2. ซิงค์ข้อมูลพนักงานและบัตร RFID
+3. สร้าง Invoice และส่งไปยังระบบ ERP
+4. เชื่อมต่อกับระบบ CRM
+5. API Gateway สำหรับการ Integration
+
+สิ่งที่ต้องเพิ่ม:
+- ERP Adapter
+- Invoice Export Service
+- Data Synchronization
+- Webhook System
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/integration/
+- internal/modules/parking/application/sync/
+- internal/modules/parking/interfaces/webhook/
+</code></pre>
+<h3>Prompt 4: เพิ่มระบบกล้อง AI และความปลอดภัย</h3>
+<pre><code>ต้องการเพิ่มระบบกล้อง AI สำหรับความปลอดภัย
+
+รายละเอียด:
+1. ตรวจจับใบหน้าและจดจำ (Face Recognition)
+2. ตรวจจับพฤติกรรมผิดปกติ (Anomaly Detection)
+3. นับจำนวนรถอัตโนมัติ (Vehicle Counting)
+4. ตรวจจับป้ายทะเบียนที่ถูกขโมย
+5. ระบบแจ้งเตือนเหตุการณ์ผิดปกติ
+6. บันทึกวิดีโอและค้นหาย้อนหลัง
+
+สิ่งที่ต้องเพิ่ม:
+- AI Camera Service
+- Face Recognition
+- Anomaly Detection
+- Video Recording &amp; Search
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/ai/
+- internal/modules/parking/infrastructure/video/
+- frontend/src/components/CameraView/
+</code></pre>
+<h3>Prompt 5: เพิ่มระบบ Loyalty &amp; Membership</h3>
+<pre><code>ต้องการเพิ่มระบบสมาชิกและสิทธิประโยชน์
+
+รายละเอียด:
+1. สมัครสมาชิก (Member Registration)
+2. สะสมแต้ม (Points Accumulation)
+3. แลกส่วนลด (Discount Redemption)
+4. ระดับสมาชิก (Tier Levels: Silver, Gold, Platinum)
+5. สิทธิพิเศษตามระดับ (Free parking, EV charging)
+6. แจ้งเตือนโปรโมชั่น
+
+สิ่งที่ต้องเพิ่ม:
+- Member Entity และ CRUD
+- Points System
+- Tier Management
+- Promotion Engine
+- Member Dashboard
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/domain/entity/member.go
+- internal/modules/parking/application/membership/
+- internal/modules/parking/application/promotion/
+- frontend/src/pages/Membership/
+</code></pre>
+<h3>Prompt 6: เพิ่มระบบ Report &amp; Dashboard ขั้นสูง</h3>
+<pre><code>ต้องการเพิ่มระบบรายงานและ Dashboard แบบ Advance
+
+รายละเอียด:
+1. Dashboard แบบ Real-time (ทุก 5 วินาที)
+2. รายงานแบบ Interactive (กรองข้อมูลเอง)
+3. Export Report เป็น Excel, PDF, CSV
+4. Scheduled Report (ส่งอีเมลอัตโนมัติ)
+5. เปรียบเทียบข้อมูลข้ามปี/ไตรมาส
+6. KPI Dashboard (Occupancy, Revenue, EV Usage)
+
+สิ่งที่ต้องเพิ่ม:
+- Advanced Report Engine
+- Interactive Dashboard
+- Export Service
+- Scheduled Report
+- KPI Calculator
+
+ไฟล์ที่เกี่ยวข้อง:
+- internal/modules/parking/infrastructure/report/
+- internal/modules/parking/application/dashboard/
+- frontend/src/pages/Reports/
+- frontend/src/components/Charts/
+</code></pre>
+<hr>
+<h2>สรุป</h2>
+<p>ระบบ Smart Parking Management System เป็นโซลูชันที่ครบวงจรสำหรับการบริหารจัดการอาคารจอดรถอัจฉริยะ โดยมี:</p>
+<ol>
+<li><strong>Multi-Building &amp; Multi-Zone</strong> - รองรับหลายอาคาร หลายชั้น หลายโซน</li>
+<li><strong>Smart Entry/Exit</strong> - LPR, RFID, QR Code, Boom Barrier</li>
+<li><strong>EV Charging</strong> - รองรับการชาร์จรถไฟฟ้า</li>
+<li><strong>Parking Guidance</strong> - LED แสดงสถานะ, แผนที่นำทาง</li>
+<li><strong>Payment System</strong> - QR Code, Cash, Card, RFID</li>
+<li><strong>Printing System</strong> - บัตรจอดรถ, ใบเสร็จ, ใบแจ้งหนี้</li>
+<li><strong>Discount System</strong> - QR Code ส่วนลด, โปรโมชั่น</li>
+<li><strong>Statistics &amp; Reports</strong> - รายชั่วโมง/วัน/สัปดาห์/เดือน/ปี/ไตรมาส</li>
+<li><strong>Emergency System</strong> - ไฟฉุกเฉิน, แจ้งเตือน</li>
+<li><strong>Maintenance System</strong> - ตารางบำรุงรักษา, แจ้งเตือน</li>
+<li><strong>Anti-Crash System</strong> - ระบบป้องกันการกระแทก</li>
+<li><strong>Auto/Manual Mode</strong> - สลับโหมดการทำงาน</li>
+</ol>
+<p>เหมาะสำหรับการขายให้กับ:</p>
+<ul>
+<li>ห้างสรรพสินค้าและศูนย์การค้า</li>
+<li>อาคารสำนักงานและคอนโดมิเนียม</li>
+<li>โรงพยาบาลและมหาวิทยาลัย</li>
+<li>สนามบินและสถานีขนส่ง</li>
+<li>โรงแรมและรีสอร์ท</li>
+</ul>
+
+</div>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

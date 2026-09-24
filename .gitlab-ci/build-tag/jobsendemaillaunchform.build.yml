@@ -1,0 +1,13 @@
+jobsendemaillaunchform-build-tag:
+  stage: build-tag
+  extends: .build-tag
+  before_script:
+    - apk add --no-cache jq docker-cli
+    - export ROBOT_NAME=$(cat $HARBOR_ROBOT_FILE | jq -r '.name')
+    - export ROBOT_SECRET=$(cat $HARBOR_ROBOT_FILE | jq -r '.secret')
+    - echo "$ROBOT_SECRET" | docker login --username "$ROBOT_NAME" --password-stdin "$HARBOR_REGISTRY"
+    # Overrite this value globally.
+    - APP_NAME=jobsendemaillaunchform
+
+    # Export them for all jobs.
+    - export APP_NAME

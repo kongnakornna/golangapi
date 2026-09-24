@@ -1,0 +1,12 @@
+apply-host-dev:
+  extends: .apply-kong
+  before_script:
+    # Setup env
+    - export KONG_HOST_DOMAIN=${WEB_DOMAIN_DEV}
+    - export KONG_EP=${KONG_ENDPOINT_DEV}
+    - export KONG_HOST_PROXY=${KONG_HOST_DEV}
+  only:
+    refs:
+      - master
+    changes:
+      - .ci_kong.sh

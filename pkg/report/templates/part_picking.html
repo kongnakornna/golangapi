@@ -1,0 +1,67 @@
+{{define "content"}}
+<div class="header">
+  <div class="company-info">
+    <h1>{{.Company.Name}}</h1>
+    <p>{{.Company.Address}}</p>
+    <p>Tel: {{.Company.Phone}}</p>
+  </div>
+  <div class="doc-title">
+    <h2>เอกสารเบิกอะไหล่</h2>
+    <p class="doc-no">เลขที่: {{.PickingNo}}</p>
+    <p style="font-size:11px;color:#666;">วันที่: {{.RequestDate}}</p>
+  </div>
+</div>
+
+<div class="info-section">
+  <div class="info-box">
+    <h3>ข้อมูลใบงาน</h3>
+    <p>ใบงาน: {{.JobNo}}</p>
+    <p>ทะเบียน: {{.LicensePlate}}</p>
+  </div>
+  <div class="info-box">
+    <h3>ผู้เกี่ยวข้อง</h3>
+    <p>ผู้ขอเบิก: {{.RequestedBy}}</p>
+    <p>ช่าง: {{.Mechanic}}</p>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:40px;">#</th>
+      <th style="width:100px;">รหัส</th>
+      <th>รายการ</th>
+      <th style="width:60px;" class="text-center">ขอเบิก</th>
+      <th style="width:60px;" class="text-center">เบิกจริง</th>
+      <th style="width:100px;">ตำแหน่ง</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Items}}
+    <tr>
+      <td>{{.LineNo}}</td>
+      <td>{{.PartCode}}</td>
+      <td>{{.PartName}}</td>
+      <td class="text-center">{{.QtyRequest}}</td>
+      <td class="text-center">{{.QtyPicked}}</td>
+      <td>{{.Location}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+
+<div class="footer">
+  <div class="sign-box">
+    <p class="sign-line">ผู้อนุมัติ</p>
+    <p>( {{.RequestedBy}} )</p>
+  </div>
+  <div class="sign-box">
+    <p class="sign-line">ผู้เบิก</p>
+    <p>( {{.Mechanic}} )</p>
+  </div>
+  <div class="sign-box">
+    <p class="sign-line">ผู้จ่ายอะไหล่</p>
+    <p>&nbsp;</p>
+  </div>
+</div>
+{{end}}

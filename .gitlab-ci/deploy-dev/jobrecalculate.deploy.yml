@@ -1,0 +1,28 @@
+jobrecalculate-dev-deploy:
+  extends: .cronjob-kube-dev
+  before_script:
+    # Overwrite this value globally.
+    - APP_NAME=jobrecalculate
+
+    # Export them for all jobs.
+    - export APP_NAME
+
+    - export MIN_REPLICAS=1
+    - export MAX_REPLICAS=1
+    - export CPU_LIMIT="300m"
+    - export MEMORY_LIMIT="512Mi"
+    - export JOB_DURATION="* * * * *"
+  only:
+    changes:
+      - .gitlab-ci/build/build-dev.yml
+      - .gitlab-ci/build/jobrecalculate.build.yml
+      - .gitlab-ci/deploy-dev/deploy-dev.yml
+      - .gitlab-ci/deploy-dev/jobrecalculate.deploy.yml
+      - api/**/*.go
+      - cmd/jobrecalculate/*.go
+      - build/develop/Dockerfile
+      - config/**/*
+      - deployments/cronjob.yml
+      - docs/**/*
+      - pkg/**/*.go
+      - vendor/**/*

@@ -1,0 +1,106 @@
+.deploy-kube-prod:
+  stage: deploy-prod
+  #image: registryii.thaibevapp.com/tbdev/baseimage/alpine:latest
+  image: ${HARBOR_REGISTRY}/docker_hub_proxy_cache/alpine:latest
+  when: manual
+  script:
+    # Set environment variables
+    - export STAGE=prod
+    - export API_DOMAIN=${API_DOMAIN_PROD}
+    - export VER_TAG=${CI_COMMIT_TAG/-prod/}
+
+    # Kubenetes
+    - export KUBE_API_TOKEN=${KUBE_API_TOKEN_PROD}
+
+    # Set kubectl
+    - |
+      apk add curl
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl \
+          -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+      chmod +x ./kubectl
+      cp kubectl /usr/local/bin/
+    - |
+      kubectl version --client;
+      echo $KUBE_API_CERT | base64 -d > deploy.crt;
+      kubectl config set-cluster k8s --server=https://$KUBE_API_EP --certificate-authority=deploy.crt --embed-certs=true;
+      kubectl config set-credentials k8s_deployer --token=$KUBE_API_TOKEN;
+    - |
+      kubectl config set-context k8s --cluster k8s --user k8s_deployer --namespace=rtr-prod;
+
+    - kubectl config use-context k8s
+
+    # Install envsubst
+    - apk add gettext
+
+    # Clean up
+    - kubectl get deploy --no-headers=true | grep "rtr-pms-${APP_NAME}-api-deployment-${STAGE}" | awk '{print $1}' | xargs kubectl delete deploy --ignore-not-found || true
+
+    # Apply deployment
+    - cat deployments/deployment.yml | envsubst | kubectl apply -f -
+
+  only:
+    - /^v\d+\.\d+\.\d+$/
+    #- /^\d+.\d+.\d+-prod/
+
+.cronjob-kube-prod:
+  stage: deploy-prod
+  #image: registryii.thaibevapp.com/tbdev/baseimage/alpine:latest
+  image: ${HARBOR_REGISTRY}/docker_hub_proxy_cache/alpine:latest
+  when: manual
+  script:
+    # Set environment variables
+    - export STAGE=prod
+    - export API_DOMAIN=${API_DOMAIN_PROD}
+    - export VER_TAG=${CI_COMMIT_TAG/-prod/}
+
+    # Kubenetes
+    - export KUBE_API_TOKEN=${KUBE_API_TOKEN_PROD}
+
+    # Set kubectl
+    - |
+      apk add curl
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl \
+          -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+      chmod +x ./kubectl
+      cp kubectl /usr/local/bin/
+    - |
+      kubectl version --client;
+      echo $KUBE_API_CERT | base64 -d > deploy.crt;
+      kubectl config set-cluster k8s --server=https://$KUBE_API_EP --certificate-authority=deploy.crt --embed-certs=true;
+      kubectl config set-credentials k8s_deployer --token=$KUBE_API_TOKEN;
+    - |
+      kubectl config set-context k8s --cluster k8s --user k8s_deployer --namespace=rtr-prod;
+
+    - kubectl config use-context k8s
+
+    # Install envsubst
+    - apk add gettext
+
+    # Clean up
+    - kubectl get cronjobs --no-headers=true | grep "rtr-pms-${APP_NAME}-cron-deployment-${STAGE}" | awk '{print $1}' | xargs kubectl delete cronjobs --ignore-not-found || true
+
+    # Apply deployment
+    - cat deployments/cronjob.yml | envsubst | kubectl apply -f -
+
+  only:
+    - /^v\d+\.\d+\.\d+$/
+    #- /^\d+.\d+.\d+-prod/
+
+include:
+  - local: /.gitlab-ci/deploy-prod/jobrecalculate.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/jobscheduledreport.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/jobsendemaillaunchform.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/jobrouteforms.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/jobsyncemployee.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/pms.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportassessmentstatustracking.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportpmscore.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportpmscoredetail.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportglobalvaluescoredetail.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportemployee.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportemployeekpi.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportgoalstatustracking.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportpmscoredetailall.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportfinalscore.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportdashboard.deploy.yml
+  - local: /.gitlab-ci/deploy-prod/reportarchived.deploy.yml

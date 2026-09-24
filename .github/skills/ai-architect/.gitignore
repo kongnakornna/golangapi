@@ -1,0 +1,6 @@
+/materials/*
+!/materials/updates-August7/
+!/materials/updates-August7/**
+.cursor/rules/
+.cursor/rules/*.mdc
+.DS_Store

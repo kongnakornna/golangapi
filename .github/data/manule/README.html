@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>README</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+<style>
+
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #24292e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #24292e;
+}
+
+h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h2 {
+  font-size: 1.5em;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+
+h6 {
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #656d76;
+}
+
+/* Paragraphs */
+p {
+  margin: 16px 0;
+}
+
+/* Inline */
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+del {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  background-color: #eff1f3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #24292e;
+}
+
+a {
+  color: #0969da;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 3px;
+}
+
+a:hover { opacity: 0.8; }
+
+/* Blockquotes */
+blockquote {
+  margin: 16px 0;
+  padding: 0 1em;
+  border-left: 3px solid #d0d7de;
+  color: #656d76;
+}
+
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
+
+/* Lists */
+ul, ol {
+  padding-left: 2em;
+  margin: 16px 0;
+}
+
+li { margin: 4px 0; }
+ul ul, ul ol, ol ul, ol ol { margin: 0; }
+li > p { margin: 0; }
+
+input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: #0969da;
+}
+
+/* Code Blocks */
+pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  line-height: 1.45;
+  margin: 16px 0;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: auto;
+  max-width: 100%;
+  overflow: auto;
+  display: block;
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) td {
+  background-color: #f6f8fa;
+}
+
+/* Horizontal Rule */
+hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 24px 0;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Math (KaTeX MathML) */
+.math-block {
+  display: block;
+  text-align: center;
+  margin: 16px 0;
+  padding: 8px 0;
+  overflow-x: auto;
+}
+
+.math-inline {
+  display: inline;
+}
+
+.math-error {
+  color: #cf222e;
+  background-color: rgba(207, 34, 46, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Mermaid */
+pre.mermaid {
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  padding: 16px 0;
+}
+
+/* Footnotes */
+.footnotes-section {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #d0d7de;
+  font-size: 0.9em;
+  color: #656d76;
+}
+
+.footnotes-section ol {
+  padding-left: 1.5em;
+}
+
+.footnotes-section li {
+  margin: 8px 0;
+}
+
+sup.footnote-ref a {
+  color: #0969da;
+  text-decoration: none;
+  font-size: 0.85em;
+  padding: 0 2px;
+}
+
+sup.footnote-ref a:hover {
+  text-decoration: underline;
+}
+
+a.footnote-backref {
+  color: #0969da;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+/* Details/Summary */
+details {
+  margin: 8px 0;
+  border-left: 2px solid rgba(128, 128, 128, 0.3);
+  padding-left: 12px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 0;
+  color: #24292e;
+}
+
+summary:hover {
+  color: #0969da;
+}
+
+/* Print */
+@media print {
+  body { background: white; }
+  .markdown-body { max-width: none; padding: 0; }
+  pre { white-space: pre-wrap; word-wrap: break-word; }
+  a { color: #24292e; text-decoration: underline; }
+  pre.mermaid { page-break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<div class="markdown-body">
+<h1>Go Restful API</h1>
+<p><strong>หมายเหตุ เนื้อหาในหนังสือ:</strong><br>เนื้อหาในหนังสือ &quot;ใช้ AI ช่วยเขียน  เพื่อทดสอบ AI Model ผู้เขียนเป็นผู้ออกแบบ ใช้ AI ช่วยจัดเรียง ซึ่งมีค่าใช้จ่ายพอสมควร ให้ใช้ฟรีก่อน ต้องการสนับสนุนเพื่อทำเนื้อหาแนวนี้ต่อ สามารถให้การสนับสนุนได้ครับ ตามกำลังศรัทธา 
+📞 โทรศัพท์ / พร้อมเพย์: <strong>0955088091</strong>  </p>
+<ul>
+<li>Code ใช้งานได้จริง</li>
+</ul>
+<hr>
+<p>An API dev written in Golang with chi-route and Gorm. Write restful API with fast development and developer friendly.</p>
+<h2>Architecture</h2>
+<p>In this project use 3 layer architecture</p>
+<ul>
+<li>Models</li>
+<li>Repository</li>
+<li>Usecase</li>
+<li>Delivery</li>
+</ul>
+<h2>Features</h2>
+<ul>
+<li>CRUD</li>
+<li>Jwt, refresh token saved in redis</li>
+<li>Cached user in redis</li>
+<li>Email verification</li>
+<li>Forget/reset password, send email</li>
+</ul>
+<h2>Technical</h2>
+<ul>
+<li><code>chi</code>: router and middleware</li>
+<li><code>viper</code>: configuration</li>
+<li><code>cobra</code>: CLI features</li>
+<li><code>gorm</code>: orm</li>
+<li><code>validator</code>: data validation</li>
+<li><code>jwt</code>: jwt authentication</li>
+<li><code>zap</code>: logger</li>
+<li><code>gomail</code>: email</li>
+<li><code>hermes</code>: generate email body</li>
+<li><code>air</code>: hot-reload (ใช้ <code>.\air.cmd</code> หรือ <code>go run github.com/air-verse/air@latest</code> บน Windows 11 ที่ AppLocker block <code>air.exe</code>)</li>
+</ul>
+<h2>Start Application</h2>
+<h3>Generate the Private and Public Keys</h3>
+<ul>
+<li>Generate the private and public keys: <a href="https://travistidwell.com/jsencrypt/demo/">travistidwell.com/jsencrypt/demo/</a></li>
+<li>Copy the generated private key and visit this Base64 encoding website to convert it to base64</li>
+<li>Copy the base64 encoded key and add it to the <code>config/config-local.yml</code> file as <code>jwt</code></li>
+<li>Similar for public key</li>
+</ul>
+<h3>Stmp mail config</h3>
+<ul>
+<li>Create <a href="https://mailtrap.io/">mailtrap</a> account</li>
+<li>Create new inboxes</li>
+<li>Update smtp config <code>config/config-local.yml</code> file as <code>smtpEmail</code></li>
+</ul>
+<h3>Run</h3>
+<ul>
+<li><code>docker-compose up</code></li>
+<li>OR  go run ./main.go serve  on loca Windows OS</li>
+<li>Swagger: <a href="http://localhost:5000/swagger/">localhost:5000/swagger/</a></li>
+<li><a href="http://localhost:5000/swagger/index.html#/">http://localhost:5000/swagger/index.html#/</a></li>
+</ul>
+<h4>Hot Reload (air)</h4>
+<pre><code class="language-bash"># Windows 11 ที่ AppLocker block air.exe ใน C:\Users\...\go\bin\air.exe
+# ใช้ .air.cmd หรือ go run แทน:
+.\air.cmd
+# หรือ
+go run github.com/air-verse/air@latest
+# หรือ make run
+</code></pre>
+<pre><code class="language-bash">  Email: root@gmail.com
+  Password: root_password
+</code></pre>
+<h2>TODO</h2>
+<ul>
+<li>Traefik</li>
+<li>Config using .env</li>
+<li>Linter</li>
+<li>Jaeger</li>
+<li>Production docker file version</li>
+<li>Mock database using gomock</li>
+<li><input checked="" disabled="" type="checkbox"> Auth: RefreshToken UC/repo/presenter</li>
+<li><input checked="" disabled="" type="checkbox"> Job: full CRUD + status workflow + service/part/symptom/DTC</li>
+<li><input checked="" disabled="" type="checkbox"> Customer: CRUD + Car management + phone/plate search</li>
+<li><input checked="" disabled="" type="checkbox"> Quotation: CRUD + Approve/Reject + PDF + part/service</li>
+<li><input checked="" disabled="" type="checkbox"> PO: full lifecycle (DRAFT→SENT→CONFIRMED→SHIPPED→RECEIVED)</li>
+<li><input checked="" disabled="" type="checkbox"> Payment: payment + receipt + refund + outstanding balance</li>
+<li><input checked="" disabled="" type="checkbox"> Dashboard: stats/revenue/top-parts/job-status</li>
+<li><input checked="" disabled="" type="checkbox"> Document: file upload/download management</li>
+<li><input checked="" disabled="" type="checkbox"> Email: send + SMTP config + log history</li>
+<li><input checked="" disabled="" type="checkbox"> Batch: batch job CRUD + run + logs</li>
+<li><input checked="" disabled="" type="checkbox"> i18n: multi-language translation</li>
+<li><input checked="" disabled="" type="checkbox"> WOS: web order system</li>
+<li><input checked="" disabled="" type="checkbox"> SQL schema + triggers for all new modules</li>
+<li><input checked="" disabled="" type="checkbox"> Seed data for demo/testing</li>
+<li><input checked="" disabled="" type="checkbox"> Module documentation manual</li>
+<li><input checked="" disabled="" type="checkbox"> All modules compile (<code>go build ./...</code>), <code>go vet ./...</code>, <code>go test ./...</code> pass</li>
+</ul>
+<h2>Acknowledgements</h2>
+<ul>
+<li><a href="https://github.com/dhax/go-base">github.com/dhax/go-base</a></li>
+<li><a href="https://github.com/akmamun/go-fication">github.com/akmamun/go-fication</a></li>
+<li><a href="https://github.com/wpcodevo/golang-fiber-jwt">github.com/wpcodevo/golang-fiber-jwt</a></li>
+<li><a href="https://github.com/wpcodevo/golang-fiber">github.com/wpcodevo/golang-fiber</a></li>
+<li><a href="https://github.com/kienmatu/togo">github.com/kienmatu/togo</a></li>
+<li><a href="https://github.com/AleksK1NG/Go-Clean-Architecture-REST-API">github.com/AleksK1NG/Go-Clean-Architecture-REST-API</a></li>
+<li><a href="https://github.com/bxcodec/go-clean-arch">github.com/bxcodec/go-clean-arch</a></li>
+<li><a href="https://codevoweb.com/golang-and-gorm-user-registration-email-verification/">codevoweb.com/golang-and-gorm-user-registration-email-verification/</a></li>
+<li><a href="https://codevoweb.com/golang-gorm-postgresql-user-registration-with-refresh-tokens/">codevoweb.com/golang-gorm-postgresql-user-registration-with-refresh-tokens/</a></li>
+<li><a href="https://codevoweb.com/how-to-implement-google-oauth2-in-golang/">codevoweb.com/how-to-implement-google-oauth2-in-golang/</a></li>
+<li><a href="https://codevoweb.com/how-to-upload-single-and-multiple-files-in-golang/">codevoweb.com/how-to-upload-single-and-multiple-files-in-golang/</a></li>
+<li><a href="https://codevoweb.com/forgot-reset-passwords-in-golang-with-html-email/">codevoweb.com/forgot-reset-passwords-in-golang-with-html-email/</a></li>
+<li><a href="https://techmaster.vn/posts/34577/kien-truc-sach-voi-golang">techmaster.vn/posts/34577/kien-truc-sach-voi-golang</a></li>
+</ul>
+<h3>Installation</h3>
+<pre><code class="language-bash">- ตรวจสอบว่า go.mod มี replace directive หรือใช้ local module หรือไม่
+- ถ้า icmongolang เป็น local module ให้ใช้ replace icmongolang =&gt; icmongolang
+- หรือถ้าเป็น private repo ให้ตั้ง GOPRIVATE และใช้ access token
+- Perfect! You&#39;re setting up an existing Go project (icmongolang). Here&#39;s how to properly set it up and run it:
+```bash
+## Complete Setup Steps for Your icmongolang Project
+## 📘 การจัดการ `go.mod` และ dependencies สำหรับโปรเจกต์ `icmongolang`  
+## 📘 Managing `go.mod` and dependencies for `icmongolang` project
+
+&gt; คำแนะนำแบบทีละขั้นตอน (ไทย / อังกฤษ)  
+&gt; Step-by-step guide (Thai / English)
+
+---
+
+### 🧱 1. โคลนโปรเจกต์และเข้าไปในโฟลเดอร์  
+### 1. Clone and enter the project
+
+```bash
+# ไทย: โคลน repository จาก GitHub และเปลี่ยนไปยังไดเรกทอรีโปรเจกต์
+# EN: Clone the repository from GitHub and change into the project directory
+git clone github.com/kongnakornna/icmongolang.git
+cd icmongolang
+</code></pre>
+<pre><code class="language-bash">
+go mod tidy
+go mod download
+go mod verify
+
+# ล้างฐานข้อมูลเก่า (ระวังข้อมูล)
+# go run cmd/api/main.go migrate:reset (ถ้ามีคำสั่ง)
+
+# รัน migrate ใหม่
+go run  main.go migrate
+
+
+go run ./main.go serve
+
+OR ใช้ go run โดยตรง (ไม่ต้อง build exe)
+
+go run ./cmd/api/main.go serve
+
+
+ 
+go mod tidy
+go mod download
+go mod verify
+go run cmd/api/main.go migrate
+go mod vendor
+.\air.cmd  # หรือ go run github.com/air-verse/air@latest
+
+
+
+</code></pre>
+<h1>Auto Run</h1>
+<h1>Windows 11: ใช้ .air.cmd หรือ go run แทน air.exe ที่ถูก AppLocker block</h1>
+<p>.\air.cmd</p>
+<pre><code class="language-bash">
+
+- for windows 10
+ 
+ - .air.toml
+ 
+    root = &quot;.&quot;
+    tmp_dir = &quot;tmp&quot;
+    env_files = [&quot;.env.dev&quot;]   # โหลด env โดยอัตโนมัติ
+
+    [build]
+    # ใช้ array: [binary, argument1, argument2, ...]
+    entrypoint = [&quot;./tmp/main.exe&quot;, &quot;serve&quot;]
+    cmd = &quot;go build -o ./tmp/main.exe ./cmd/api&quot;
+    env = [&quot;GOOS=windows&quot;, &quot;GOARCH=amd64&quot;]
+    clean_on_exit = true
+
+    [log]
+    time = true
+
+    [misc]
+    clean_on_exit = true
+</code></pre>
+<p><img src="https://github.com/user-attachments/assets/fa802d05-f4f7-4f60-bab0-897a95cea541" alt="Icmon5"></p>
+<h1>🚀 โครงสร้างและ Workflow ของโปรเจกต์ <code>icmongolang</code> (Go Backend Clean Architecture)</h1>
+<p>เอกสารนี้  ประกอบด้วย  </p>
+<ul>
+<li>โครงสร้างการทำงานแบบละเอียด  </li>
+<li>Dataflow Diagram (Flowchart TB สำหรับ Draw.io) พร้อมคำอธิบาย  </li>
+<li>ตัวอย่างโค้ดพร้อมคอมเมนต์ไทย/อังกฤษ ที่รันได้จริง  </li>
+<li>กรณีศึกษา  </li>
+<li>สรุป (ประโยชน์, ข้อควรระวัง, ข้อดี/เสีย, ข้อห้าม, แหล่งอ้างอิง)</li>
+<li>มี Boilerplate พร้อมนำไปใช้</li>
+</ul>
+<h3>Boilerplate คือ โค้ดหรือข้อความรูปแบบมาตรฐานที่สามารถนำกลับมาใช้ใหม่ได้หลายครั้งโดยมีการเปลี่ยนแปลงแก้ไขน้อยมากหรือไม่มีเลย</h3>
+<ul>
+<li>มีวัตถุประสงค์หลักเพื่อลดเวลาในการทำงานซ้ำซ้อน เพิ่มมาตรฐานให้กับชิ้นงาน และช่วยให้โครงสร้างไฟล์เริ่มต้นเป็นระเบียบ </li>
+<li>จุดเด่นและประโยชน์ของ Boilerplate:</li>
+<li>ความรวดเร็ว: ไม่ต้องเสียเวลาเขียนโค้ดตั้งต้นใหม่ทุกครั้ง</li>
+<li>มาตรฐาน: สร้างความสม่ำเสมอในโค้ดหรือเอกสาร</li>
+<li>ลดข้อผิดพลาด: เนื่องจากใช้โค้ดที่ผ่านการตรวจสอบมาแล้ว</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/214c3fbe-dd7f-458c-9ea7-b1c13d6fea67" alt="Icmon8"></p>
+<hr>
+<h2>1. โครงสร้างการทำงานของโปรเจกต์ (Architecture Overview)</h2>
+<p>โปรเจกต์ใช้ <strong>Clean Architecture</strong> 3-layer + Delivery:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>ตำแหน่ง</th>
+<th>หน้าที่</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Model</strong></td>
+<td><code>internal/models/</code></td>
+<td>Entity (GORM) – <code>User</code>, <code>Session</code>, <code>VerificationToken</code></td>
+</tr>
+<tr>
+<td><strong>Repository</strong></td>
+<td><code>internal/repository/</code></td>
+<td>อ่าน/เขียน DB และ Redis ผ่าน interface</td>
+</tr>
+<tr>
+<td><strong>Usecase</strong></td>
+<td><code>internal/usecase/</code></td>
+<td>Business logic: hash, JWT, email queue, validation</td>
+</tr>
+<tr>
+<td><strong>Delivery</strong></td>
+<td><code>internal/delivery/rest/</code></td>
+<td>HTTP handlers, middleware, DTO, router</td>
+</tr>
+<tr>
+<td><strong>Worker</strong></td>
+<td><code>internal/delivery/worker/</code></td>
+<td>Background job สำหรับส่งอีเมล</td>
+</tr>
+</tbody></table>
+<h3>Model คืออะไร?</h3>
+<p>Models คือโครงสร้างข้อมูล (struct) ที่แทน entity ในฐานข้อมูล หรือข้อมูลที่ใช้ในการสื่อสารระหว่าง layers (DTO) โดยปกติจะสอดคล้องกับตารางใน PostgreSQL และใช้ GORM tags สำหรับ mapping</p>
+<h3>มีกี่แบบ?</h3>
+<ol>
+<li><strong>Entity Model</strong> – สอดคล้องกับตาราง DB โดยตรง (user, session)</li>
+<li><strong>DTO (Data Transfer Object)</strong> – ใช้รับ/ส่งข้อมูลระหว่าง API (Request/Response)</li>
+<li><strong>Embedded Model</strong> – struct ที่ถูกแทรกใน model อื่น (เช่น BaseModel)</li>
+<li><strong>Enum-like Model</strong> – ใช้ iota สำหรับ status constants</li>
+</ol>
+<h3>ใช้อย่างไร / นำไปใช้กรณีไหน</h3>
+<ul>
+<li>ใช้ GORM annotations (<code>gorm:&quot;column:name;type:...&quot;</code>) เพื่อกำหนด schema</li>
+<li>ใช้ JSON tags (<code>json:&quot;field_name&quot;</code>) สำหรับ serialization</li>
+<li>ใช้ Validator tags (<code>validate:&quot;required,email&quot;</code>) สำหรับ input validation</li>
+</ul>
+<h3>ทำไมต้องใช้</h3>
+<ul>
+<li>จัดระเบียบโครงสร้างข้อมูลให้เป็นหนึ่งเดียว</li>
+<li>ช่วยให้ GORM สร้างตารางอัตโนมัติ (AutoMigrate)</li>
+<li>แยก business entity ออกจาก database details</li>
+</ul>
+<h3>ประโยชน์ที่ได้รับ</h3>
+<ul>
+<li>Type safety ใน Go (ไม่ต้องใช้ map[string]interface{})</li>
+<li>ลด boilerplate code สำหรับ CRUD</li>
+<li>รองรับความสัมพันธ์ระหว่างตาราง (Relationships: BelongsTo, HasMany)</li>
+</ul>
+<h3>Boilerplate คือ โค้ดหรือข้อความรูปแบบมาตรฐานที่สามารถนำกลับมาใช้ใหม่ได้หลายครั้งโดยมีการเปลี่ยนแปลงแก้ไขน้อยมากหรือไม่มีเลย</h3>
+<ul>
+<li>มีวัตถุประสงค์หลักเพื่อลดเวลาในการทำงานซ้ำซ้อน เพิ่มมาตรฐานให้กับชิ้นงาน และช่วยให้โครงสร้างไฟล์เริ่มต้นเป็นระเบียบ เช่น โครงสร้างพื้นฐานของ HTML หรือการตั้งค่าเริ่มต้นในโปรเจกต์ซอฟต์แวร์ Amazon Web Services</li>
+<li>จุดเด่นและประโยชน์ของ Boilerplate:</li>
+<li>ความรวดเร็ว: ไม่ต้องเสียเวลาเขียนโค้ดตั้งต้นใหม่ทุกครั้ง</li>
+<li>มาตรฐาน: สร้างความสม่ำเสมอในโค้ดหรือเอกสาร</li>
+<li>ลดข้อผิดพลาด: เนื่องจากใช้โค้ดที่ผ่านการตรวจสอบมาแล้ว</li>
+</ul>
+<h3>ข้อควรระวัง</h3>
+<ul>
+<li>ห้ามเก็บ password plain text (ต้อง hashed)</li>
+<li>ใช้ pointer type สำหรับ nullable fields (<code>*time.Time</code> แทน <code>time.Time</code>)</li>
+<li>ระวัง zero values (0, &quot;&quot;, false) vs null</li>
+</ul>
+<h3>ข้อดี</h3>
+<ul>
+<li>ชัดเจน, ตรวจสอบได้ตอน compile</li>
+<li>รองรับ GORM hooks (BeforeCreate, AfterUpdate)</li>
+</ul>
+<h3>ข้อเสีย</h3>
+<ul>
+<li>ต้องเปลี่ยนแปลง struct เมื่อ schema เปลี่ยน</li>
+<li>อาจมีหลาย struct ที่คล้ายกัน (entity vs response DTO)</li>
+</ul>
+<h3>ข้อห้าม</h3>
+<ul>
+<li>ห้ามใช้ model สำหรับ business logic (ควรอยู่ใน usecase)</li>
+<li>ห้าม serialize model ที่มี password ไปเป็น JSON</li>
+</ul>
+<h3>Repository คืออะไร?</h3>
+<p>Repository Pattern คือตัวกลาง (abstraction) ระหว่าง business logic (usecase) และแหล่งข้อมูล (database, cache, external API) โดยกำหนด interface สำหรับการเข้าถึงข้อมูล และมี implementation ที่เป็นรูปธรรม (PostgreSQL, Redis) แยกออกจากกัน</p>
+<h3>มีกี่แบบ?</h3>
+<ol>
+<li><strong>Specific Repository</strong> – แต่ละ entity มี interface ของตัวเอง (UserRepository, SessionRepository) – ใช้ในโปรเจกต์นี้</li>
+<li><strong>Generic Repository</strong> – interface เดียวที่ใช้กับ entity ใดก็ได้ (ใช้ reflection หรือ interface{})</li>
+<li><strong>Transaction Repository</strong> – repository ที่มี method สำหรับ transaction (Begin, Commit, Rollback)</li>
+<li><strong>Cached Repository</strong> – decorator ที่เพิ่ม cache layer ให้กับ repository หลัก</li>
+</ol>
+<h3>ใช้อย่างไร / นำไปใช้กรณีไหน</h3>
+<ul>
+<li>ใช้ interface เพื่อกำหนด method ที่ usecase จะเรียก</li>
+<li>implementation จริงใช้ GORM สำหรับ PostgreSQL และ go-redis สำหรับ Redis</li>
+<li>usecase ไม่รู้ว่าข้อมูลมาจาก DB หรือ Cache</li>
+<li>เหมาะกับระบบที่ต้องเปลี่ยนแหล่งข้อมูลบ่อย หรือต้องการ mock สำหรับ unit test</li>
+</ul>
+<h3>ทำไมต้องใช้</h3>
+<ul>
+<li>แยก business logic ออกจาก data access code</li>
+<li>ทดสอบ usecase ได้ง่ายโดยใช้ mock repository</li>
+<li>สามารถเปลี่ยนจาก PostgreSQL เป็น MongoDB ได้โดยไม่ต้องแก้ usecase</li>
+</ul>
+<h3>ประโยชน์ที่ได้รับ</h3>
+<ul>
+<li>ลด dependency coupling</li>
+<li>โค้ดสะอาดขึ้น (Clean Architecture)</li>
+<li>รองรับ caching, logging, monitoring ได้โดยไม่แก้ usecase</li>
+</ul>
+<h3>ข้อควรระวัง</h3>
+<ul>
+<li>repository ควรคืนค่าเป็น model ของ domain (internal/models) ไม่ใช่ DTO</li>
+<li>repository ไม่ควรมี business logic (เช่น การตรวจสอบว่า email ซ้ำ ควรอยู่ใน usecase)</li>
+<li>ระวังเรื่อง transaction: ถ้าต้องการ atomic operation ควรส่ง transaction object (<code>*gorm.DB</code>) เข้าไปใน method</li>
+</ul>
+<h3>ข้อดี</h3>
+<ul>
+<li>ทดสอบง่าย, เปลี่ยนแหล่งข้อมูลได้, แยกความรับผิดชอบชัดเจน</li>
+</ul>
+<h3>ข้อเสีย</h3>
+<ul>
+<li>มีโค้ดเพิ่มขึ้น (interface + implementation หลายตัว)</li>
+<li>อาจเพิ่มความซับซ้อนในโปรเจกต์เล็ก</li>
+</ul>
+<h3>ข้อห้าม</h3>
+<ul>
+<li>ห้ามเรียก repository โดยตรงจาก handler (ต้องผ่าน usecase)</li>
+<li>ห้ามใช้ repository ใน repository อื่น (ควรใช้ service หรือ usecase แทน)</li>
+<li>ห้ามใส่ context ลงใน struct repository (ควรส่งผ่าน method argument)</li>
+</ul>
+<h3>Usecase คืออะไร?</h3>
+<p>Usecase (หรือ Service layer) คือชั้นที่บรรจุ <strong>business logic</strong> ของแอปพลิเคชัน ทำหน้าที่ประสานงานระหว่าง repository ต่างๆ ตรวจสอบกฎทางธุรกิจ และแปลงข้อมูลจากรูปแบบของ repository ให้เป็นรูปแบบที่ delivery (handler) ต้องการ โดย usecase <strong>ไม่รู้</strong> ว่า repository ใช้ PostgreSQL หรือ Redis หรือ external API</p>
+<h3>มีกี่แบบ?</h3>
+<ol>
+<li><strong>Specific Usecase</strong> – แต่ละฟีเจอร์มี usecase ของตัวเอง (AuthUsecase, UserUsecase) – ใช้ในโปรเจกต์นี้</li>
+<li><strong>Generic Usecase</strong> – ใช้ interface เดียวกันกับหลาย entity (ไม่ค่อยพบใน Go)</li>
+<li><strong>Command/Query Segregation</strong> – แยก Usecase สำหรับการแก้ไขข้อมูล (Command) และการอ่านข้อมูล (Query)</li>
+<li><strong>Domain Service</strong> – เมื่อ logic ซับซ้อนและเกี่ยวข้องกับหลาย entity</li>
+</ol>
+<h3>ใช้อย่างไร / นำไปใช้กรณีไหน</h3>
+<ul>
+<li>ใช้ใน handler: <code>authUsecase.Login(ctx, email, password)</code> </li>
+<li>usecase จะเรียก repository method ต่างๆ และอาจเรียกใช้ transaction manager</li>
+<li>คืนค่า business result หรือ error (ไม่คืน HTTP status code)</li>
+</ul>
+<h3>ทำไมต้องใช้</h3>
+<ul>
+<li>ป้องกัน business logic กระจายอยู่ใน handler หรือ repository</li>
+<li>ทำให้ทดสอบ business logic ได้โดยไม่ต้องมี HTTP request หรือ database จริง (ใช้ mock repository)</li>
+<li>สอดคล้องกับ Clean Architecture</li>
+</ul>
+<h3>ประโยชน์ที่ได้รับ</h3>
+<ul>
+<li>เปลี่ยน business logic ได้โดยไม่กระทบ delivery (handler) และ repository</li>
+<li>รองรับการ reuse logic (handler เดียวกันใช้ usecase เดียว)</li>
+<li>ง่ายต่อการเพิ่ม logging, tracing, metrics ในชั้นเดียว</li>
+</ul>
+<h3>ข้อควรระวัง</h3>
+<ul>
+<li>usecase <strong>ห้าม</strong> import package <code>net/http</code> หรือ <code>gin/chi</code> เพราะจะทำให้ coupling กับ delivery<hr>
+<h2>Coupling คืออะไร? (ในบริบทการออกแบบซอฟต์แวร์)</h2>
+</li>
+</ul>
+<p><strong>Coupling (การผูกพัน)</strong> คือระดับที่ <strong>โมดูล / คลาส / คอมโพเนนต์</strong> หนึ่งต้องพึ่งพาอีกโมดูลหนึ่ง <strong>มากน้อยแค่ไหน</strong></p>
+<ul>
+<li><strong>High coupling (ผูกพันสูง)</strong> – เปลี่ยนอะไรที่ A แล้ว B พังไปหมด  </li>
+<li><strong>Low coupling (ผูกพันต่ำ)</strong> – แต่ละส่วนเป็นอิสระ เปลี่ยนแปลงได้โดยไม่กระทบกันมาก</li>
+</ul>
+<hr>
+<h3>ประเภทของ Coupling (เรียงจากแย่ที่สุดไปดีที่สุด)</h3>
+<table>
+<thead>
+<tr>
+<th>ประเภท</th>
+<th>คำอธิบาย</th>
+<th>ตัวอย่าง</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Content coupling</strong></td>
+<td>โมดูลเข้าถึงข้อมูลภายในของอีกโมดูลโดยตรง</td>
+<td><code>otherModule.internalVar = 5</code></td>
+</tr>
+<tr>
+<td><strong>Common coupling</strong></td>
+<td>ใช้ global variable หรือ shared state ร่วมกัน</td>
+<td><code>var db *sql.DB</code> ทั่วทั้งโปรแกรม</td>
+</tr>
+<tr>
+<td><strong>Control coupling</strong></td>
+<td>ส่ง flag หรือ parameter เพื่อควบคุมลำดับการทำงานของอีกโมดูล</td>
+<td><code>ProcessData(shouldSave bool)</code></td>
+</tr>
+<tr>
+<td><strong>Stamp coupling</strong></td>
+<td>ส่งโครงสร้างข้อมูลที่ใหญ่เกินจำเป็น (ทั้ง struct ทั้งที่ใช้แค่ฟิลด์เดียว)</td>
+<td><code>func Save(user User)</code> แต่ใช้แค่ <code>user.ID</code></td>
+</tr>
+<tr>
+<td><strong>Data coupling</strong></td>
+<td>ส่งเฉพาะข้อมูลที่จำเป็นผ่านพารามิเตอร์</td>
+<td><code>func Save(userID int)</code> ✅</td>
+</tr>
+<tr>
+<td><strong>No coupling</strong></td>
+<td>ไม่มีการพึ่งพากันเลย (หายาก)</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h3>ทำไมต้องสนใจ Coupling?</h3>
+<ul>
+<li><strong>Low coupling + High cohesion (การเกาะกลุ่มกันภายใน)</strong> = โค้ดที่บำรุงรักษาง่าย  </li>
+<li>ถ้า coupling สูง →  <ul>
+<li>แก้ไขที่หนึ่งแล้วกระทบหลายที่  </li>
+<li>ทดสอบยาก (ต้อง mock เยอะ)  </li>
+<li>reuse โมดุลยาก  </li>
+<li>เข้าใจระบบยาก</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3>Coupling กับ Worker ใน Go (เชื่อมกับคำถามก่อนหน้า)</h3>
+<p>ใน pattern <strong>Worker Pool</strong> ถ้าออกแบบไม่ดีจะเกิด coupling สูง เช่น</p>
+<pre><code class="language-go">// High coupling: worker รู้จัก database โดยตรง
+func worker(jobs &lt;-chan Job) {
+    for job := range jobs {
+        db.Exec(&quot;INSERT ...&quot;, job.Data) // coupling กับ DB driver
+    }
+}
+</code></pre>
+<p>วิธีลด coupling:</p>
+<ul>
+<li>ส่ง <strong>interface</strong> ให้ worker แทนคอนกรีต type  <pre><code class="language-go">type Saver interface { Save(data []byte) error }
+func worker(jobs &lt;-chan Job, saver Saver) { ... }
+</code></pre>
+</li>
+<li>ใช้ <strong>dependency injection</strong>  </li>
+<li>ใช้ <strong>message queue</strong> (RabbitMQ, Kafka) เป็นตัวกลาง – workers ไม่รู้จักกันและกัน</li>
+</ul>
+<hr>
+<h3>ข้อควรปฏิบัติ</h3>
+<p>✅ <strong>ชอบ data coupling / message coupling</strong> (ผ่าน channel หรือ queue)<br>✅ <strong>ใช้ interface เพื่อลด coupling</strong><br>✅ <strong>แยก business logic ออกจาก infrastructure</strong> (DB, HTTP, file)<br>❌ <strong>ห้ามใช้ global state ร่วมกันระหว่าง workers</strong><br>❌ <strong>ห้ามให้ worker เรียก method อีก worker โดยตรง</strong> (ควรผ่าน channel)</p>
+<hr>
+<h3>สรุป</h3>
+<blockquote>
+<p><strong>Coupling</strong> = ระดับการพึ่งพากันระหว่างโมดูล<br><strong>Low coupling</strong> = ดี – เปลี่ยนง่าย, ทดสอบง่าย, reuse ได้<br><strong>High coupling</strong> = ร้าย – โค้ดเปราะบาง, แก้ไขลำบาก  </p>
+</blockquote>
+<p>ใน Go การใช้ <strong>channel, interface, dependency injection</strong> ช่วยให้ workers มี coupling ต่ำและยืดหยุ่นมากขึ้น</p>
+<hr>
+<ul>
+<li>usecase <strong>ห้าม</strong> ส่งออก HTTP status code หรือ JSON</li>
+<li>ควรใช้ interface สำหรับ usecase เพื่อให้ handler มองเห็นแค่ method ที่จำเป็น</li>
+</ul>
+<h3>ข้อดี</h3>
+<ul>
+<li>แยก business logic ชัดเจน</li>
+<li>ทดสอบ unit ได้ง่าย (ใช้ mock)</li>
+<li>ปรับเปลี่ยน flow ได้โดยไม่แก้ handler</li>
+</ul>
+<h3>ข้อเสีย</h3>
+<ul>
+<li>เพิ่ม layer ทำให้มีไฟล์มากขึ้น</li>
+<li>มือใหม่อาจเข้าใจยากว่าควรใส่ logic ตรงไหน (repository หรือ usecase)</li>
+</ul>
+<h3>ข้อห้าม</h3>
+<ul>
+<li>ห้ามเรียก handler โดยตรงจาก usecase</li>
+<li>ห้ามใช้ <code>*gorm.DB</code> ใน usecase (ใช้ repository interface แทน)</li>
+<li>ห้ามใช้ context เพื่อส่งค่าที่ไม่เกี่ยวกับ request (ใช้ argument ปกติ)</li>
+</ul>
+<hr>
+<h3>Delivery คืออะไร?</h3>
+<p>Delivery layer เป็นชั้นที่อยู่ด้านนอกสุดของ Clean Architecture ทำหน้าที่รับ request จากผู้ใช้ (HTTP, gRPC, CLI) แปลงข้อมูล, เรียกใช้ usecase, และส่ง response กลับ โดยไม่มีการประมวลผลทางธุรกิจใดๆ</p>
+<h3>มีกี่แบบ?</h3>
+<ol>
+<li><strong>HTTP/REST handlers</strong> – รับ JSON, เรียก usecase, ส่ง JSON response</li>
+<li><strong>Middleware</strong> – ทำงานก่อน/หลัง handlers (authentication, logging, CORS, rate limiting)</li>
+<li><strong>WebSocket handlers</strong> – จัดการ real-time connections</li>
+<li><strong>gRPC services</strong> – สำหรับ internal microservices</li>
+<li><strong>CLI commands</strong> – สำหรับ admin tasks (migrate, seed)</li>
+</ol>
+<h3>ใช้อย่างไร / นำไปใช้กรณีไหน</h3>
+<ul>
+<li>Handler: แปลง HTTP request → usecase input, usecase output → HTTP response</li>
+<li>Middleware: ตรวจสอบ token, log request, จำกัด rate, เพิ่ม security headers</li>
+<li>DTO: กำหนดโครงสร้าง JSON request/response (แยกจาก entity model)</li>
+<li>Router: จับคู่ path กับ handler และ middleware</li>
+</ul>
+<h3>ทำไมต้องใช้</h3>
+<ul>
+<li>แยกการรับ/ส่งข้อมูลออกจาก business logic</li>
+<li>เปลี่ยนจาก REST เป็น GraphQL ได้โดยไม่ต้องแก้ usecase</li>
+<li>จัดการ cross-cutting concerns (logging, auth) เป็น centralized</li>
+</ul>
+<h3>ประโยชน์ที่ได้รับ</h3>
+<ul>
+<li>เปลี่ยนรูปแบบ API (REST → gRPC) โดยไม่กระทบ usecase</li>
+<li>ทดสอบ handler แบบ integration ได้ง่าย</li>
+<li>middleware reuse</li>
+</ul>
+<h3>ข้อควรระวัง</h3>
+<ul>
+<li>handler ควรสั้น (แค่ binding, validation, call usecase, response)</li>
+<li>อย่าใส่ business logic ใน handler</li>
+<li>DTO ควรแยกจาก entity model เพื่อป้องกันข้อมูล泄露 (password hash)</li>
+</ul>
+<h3>ข้อดี</h3>
+<ul>
+<li>แยกชัดเจน, ยืดหยุ่น, middleware จัดการ统一</li>
+</ul>
+<h3>ข้อเสีย</h3>
+<ul>
+<li>มีไฟล์จำนวนมาก (handler, dto, middleware แต่ละตัว)</li>
+<li>อาจมีการ mapping ซ้ำซ้อน (entity → dto)</li>
+</ul>
+<h3>ข้อห้าม</h3>
+<ul>
+<li>ห้ามเรียก repository โดยตรงจาก handler</li>
+<li>ห้ามทำ business logic (if-else ที่เกี่ยวกับธุรกิจ) ใน handler</li>
+<li>ห้ามใช้ entity model เป็น request DTO ถ้ามี field ที่ไม่ต้องการให้ client ส่งมา</li>
+</ul>
+<h2>Golang: Worker คืออะไร?</h2>
+<p>Worker ในภาษา Go คือ <strong>กระบวนการทำงานเบื้องหลัง (background process)</strong> ที่ทำงานในรูปแบบ concurrent โดยใช้ <strong>goroutine</strong> และรับงานผ่าน <strong>channel</strong> หรือระบบ queue ต่าง ๆ เพื่อประมวลผลแบบไม่รอ (non-blocking) ช่วยให้โปรแกรมหลักทำงานต่อไปได้โดยไม่ต้องรอผลลัพธ์จากงานหนักหรืองานที่ใช้เวลานาน</p>
+<hr>
+<h2>มีกี่แบบ?</h2>
+<p>แบ่งตามรูปแบบการทำงานและได้ดังนี้</p>
+<ol>
+<li><p><strong>Single Worker</strong><br>ใช้ goroutine ตัวเดียวรับงานจาก channel และประมวลผลทีละงาน – เหมาะกับงานที่เรียงลำดับ</p>
+</li>
+<li><p><strong>Worker Pool</strong><br>มี goroutine หลายตัว (จำนวนคงที่) แชร์ channel เดียวกัน รับงานมาแล้วกระจายไปยัง workers – เพิ่ม throughput</p>
+</li>
+<li><p><strong>Scheduled / Cron Worker</strong><br>ทำงานตามเวลาที่กำหนด เช่น ทุกเที่ยงคืน – ใช้ <code>time.Ticker</code> หรือ library <code>cron</code></p>
+</li>
+<li><p><strong>CLI Command Worker</strong><br>ทำงานแบบครั้งเดียวจบ (one-off) สำหรับงานระบบ เช่น  </p>
+<ul>
+<li><code>go run cmd/migrate/main.go</code> – migrate database  </li>
+<li><code>go run cmd/seed/main.go</code> – seed ข้อมูลเริ่มต้น<br>ทำงานแยกจาก main application ไม่รันตลอดเวลา</li>
+</ul>
+</li>
+<li><p><strong>Message Queue Consumer</strong><br>ฟัง messages จาก RabbitMQ, Kafka, NATS – workers จะรอและประมวลผลแบบ long-running</p>
+</li>
+</ol>
+<hr>
+<h2>ใช้อย่างไร / นำไปใช้กรณีไหน?</h2>
+<ul>
+<li><strong>API Server ที่ต้องส่งอีเมล / อัปโหลดไฟล์</strong> – ส่งงานเข้า channel ให้ worker จัดการ async  </li>
+<li><strong>ประมวลผลรูปภาพหรือข้อมูลจำนวนมาก</strong> – ใช้ worker pool แบ่งงานกันทำ  </li>
+<li><strong>งานประจำ (batch jobs)</strong> – สรุปยอดขายทุกเที่ยงคืน, ล้าง cache  </li>
+<li><strong>CLI admin tasks</strong> – <code>migrate</code>, <code>seed</code>, <code>backup</code> ใช้เป็น disposable worker  </li>
+<li><strong>ระบบ Event-driven</strong> – worker คอย consume events จาก Kafka แล้วอัปเดตฐานข้อมูล</li>
+</ul>
+<p>ตัวอย่าง Worker Pool ง่าย ๆ ใน Go:</p>
+<pre><code class="language-go">func worker(id int, jobs &lt;-chan int, results chan&lt;- int) {
+    for job := range jobs {
+        results &lt;- job * 2 // simulate work
+    }
+}
+
+func main() {
+    const numWorkers = 5
+    jobs := make(chan int, 100)
+    results := make(chan int, 100)
+
+    for w := 1; w &lt;= numWorkers; w++ {
+        go worker(w, jobs, results)
+    }
+
+    // ส่งงาน
+    for j := 1; j &lt;= 20; j++ {
+        jobs &lt;- j
+    }
+    close(jobs)
+}
+</code></pre>
+<hr>
+<h2>ทำไมต้องใช้?</h2>
+<ul>
+<li><strong>ไม่ block main goroutine</strong> – โดยเฉพาะใน web server ที่ต้องตอบสนอง client เร็ว  </li>
+<li><strong>ใช้ทรัพยากรอย่างคุ้มค่า</strong> – Go goroutine มี overhead ต่ำ (เริ่มต้น ~2KB stack)  </li>
+<li><strong>แยกความรับผิดชอบ (separation of concerns)</strong> – โค้ดส่วน worker ไม่ปนกับ business logic  </li>
+<li><strong>รองรับการ scaling</strong> – เพิ่มจำนวน worker ได้ง่ายเมื่อโหลดสูง  </li>
+<li><strong>ทำงานขนาน (parallelism)</strong> – ถ้ามี CPU หลาย core ก็ทำงานพร้อมกันจริง</li>
+</ul>
+<hr>
+<h2>ประโยชน์ที่ได้รับ</h2>
+<ul>
+<li><strong>Response time ดีขึ้น</strong> – งาน async ไม่ทำให้ client รอนาน  </li>
+<li><strong>ใช้ goroutine ได้ตรงตามหลัก Go</strong> – “Do not communicate by sharing memory; instead, share memory by communicating”  </li>
+<li><strong>ทนทานต่อ traffic สูง</strong> – worker pool ควบคุมจำนวน goroutine ไม่ให้หลุดมือ  </li>
+<li><strong>โครงสร้างโค้ดสะอาด</strong> – แยก worker logic ออกเป็น function / package ได้  </li>
+<li><strong>รองรับ graceful shutdown</strong> – ใช้ <code>context</code> สั่งให้ worker หยุดรับงานใหม่และจบงานปัจจุบัน</li>
+</ul>
+<hr>
+<h2>ข้อควรระวัง</h2>
+<ul>
+<li><strong>Goroutine leak</strong> – ลืมปิด channel หรือไม่รับ signal ให้ worker ออก → memory leak  </li>
+<li><strong>Race condition</strong> – ถ้า workers แชร์โครงสร้างข้อมูลเดียวกัน ต้องใช้ <code>sync.Mutex</code> หรือ channel  </li>
+<li><strong>Error handling</strong> – ถ้า worker panic แล้วไม่ recover ทั้งโปรแกรมอาจ crash  </li>
+<li><strong>Buffer overflow</strong> – channel ที่ไม่มี buffer หรือ buffer น้อยเกินไปอาจ deadlock หรือ block  </li>
+<li><strong>ไม่กำหนด timeout</strong> – worker อาจทำงานค้างตลอดไป → ใช้ <code>context.WithTimeout</code>  </li>
+<li><strong>Graceful shutdown ไม่สมบูรณ์</strong> – ทำให้งานค้างหายหรือข้อมูลเสีย</li>
+</ul>
+<hr>
+<h2>ข้อดี</h2>
+<ul>
+<li><strong>น้ำหนักเบา</strong> – สร้าง goroutine นับหมื่นได้โดยไม่กิน memory มาก  </li>
+<li><strong>ง่ายด้วย channel</strong> – สื่อสารระหว่าง worker และ main ได้เป็นธรรมชาติ  </li>
+<li><strong>concurrency สูง</strong> – ได้ parallelism โดยไม่ต้องยุ่งยากเรื่อง thread  </li>
+<li><strong>เหมาะกับ I/O-bound และ CPU-bound</strong> – ปรับจำนวน worker ตามลักษณะงาน  </li>
+<li><strong>มี pipeline pattern</strong> – ต่อ worker หลายชั้น (fan-out, fan-in) ได้สวยงาม</li>
+</ul>
+<hr>
+<h2>ข้อเสีย</h2>
+<ul>
+<li><strong>ดีบักยากกว่า synchronous code</strong> – race condition, deadlock หายาก  </li>
+<li><strong>ต้องออกแบบ concurrency ให้ดี</strong> – มิฉะนั้น performance แย่กว่า sequential  </li>
+<li><strong>test ยากขึ้น</strong> – ต้องจำลอง channel, time, context  </li>
+<li><strong>overhead เล็กน้อย</strong> – channel และ scheduler มี cost (แต่ต่ำมาก)  </li>
+<li><strong>ควบคุมลำดับงานยาก</strong> – ถ้าต้องการ strict order อาจต้องมี worker เดียว</li>
+</ul>
+<hr>
+<h2>ข้อห้าม (สิ่งที่ควรหลีกเลี่ยง)</h2>
+<ul>
+<li><strong>อย่าสร้าง worker แบบไม่จำกัด</strong> – ใช้ worker pool แทน goroutine ระเบิด  </li>
+<li><strong>อย่าใช้ global state ร่วมกันโดยไม่ sync</strong> – ใช้ mutex หรือ channel แทน  </li>
+<li><strong>อย่าละเลย context cancellation</strong> – worker ควรเช็ค <code>ctx.Done()</code> เสมอ  </li>
+<li><strong>อย่าปิด channel ขณะมี worker กำลังใช้อยู่</strong> – จะ panic  </li>
+<li><strong>อย่าให้ worker ทำ blocking I/O แบบ infinite</strong> – ควรมี timeout หรือ circuit breaker  </li>
+<li><strong>อย่าใช้ worker สำหรับงานที่ต้อง transaction ACID โดยไม่ careful</strong> – rollback ยาก  </li>
+<li><strong>อย่าเพิกเฉยต่อ worker panic</strong> – ควรมี <code>recover</code> และ log</li>
+</ul>
+<hr>
+<h2>สรุป</h2>
+<p>Worker ใน Go เป็น <strong>concurrency pattern ที่ใช้ goroutine + channel</strong> เพื่อทำงานเบื้องหลังแบบ async, parallel หรือ scheduled<br>มีหลายรูปแบบ เช่น single worker, worker pool, cron worker, CLI command worker, message queue consumer<br><strong>ประโยชน์หลัก</strong> – ช่วยเพิ่ม throughput, ลด response time, ใช้ทรัพยากรน้อย, รองรับการ scaling<br><strong>ข้อควรระวัง</strong> – goroutine leak, race, graceful shutdown, error handling<br><strong>ข้อห้าม</strong> – ห้ามสร้าง worker แบบไร้ขีดจำกัด, ห้ามใช้ shared state โดยไม่ป้องกัน, ห้ามลืม context<br>โดยเฉพาะ <strong>CLI command</strong> (เช่น <code>migrate</code>, <code>seed</code>) ก็ถูกมองเป็น worker แบบ one-off ที่ใช้สำหรับ admin tasks โดยเฉพาะ – ทำงานแยกจาก main app ช่วยรักษาความสะอาดของระบบและความปลอดภัย</p>
+<hr>
+<pre><code class="language-bash">    icmongolang/
+    ├── pkg/
+    │   ├── helpers/
+    │   │   ├── iot.go          # Alarm logic (สมบูรณ์)
+    │   │   └── format.go       # ฟังก์ชันช่วยเหลือ (time, string, random)
+    │   ├── mqtt/
+    │   │   └── client.go       # MQTT client พร้อม GetDataFromTopic
+    │   ├── influxdb/
+    │   │   └── client.go       # InfluxDB client
+    │   └── redis/
+    │       └── redis_conn.go   # Redis client + Cache interface
+    ├── internal/
+    │   ├── mqtt/
+    │   │   ├── delivery/http/
+    │   │   │   ├── handler.go
+    │   │   │   └── routes.go
+    │   │   ├── presenter/
+    │   │   │   └── presenter.go
+    │   │   └── usecase/
+    │   │       └── usecase.go
+    │   ├── influxdb/
+    │   │   ├── delivery/http/
+    │   │   │   ├── handler.go
+    │   │   │   └── routes.go
+    │   │   ├── presenter/
+    │   │   │   └── presenter.go
+    │   │   └── usecase/
+    │   │       └── usecase.go
+    │   ├── alarm/
+    │   │   ├── delivery/http/
+    │   │   │   ├── handler.go
+    │   │   │   └── routes.go
+    │   │   ├── repository/
+    │   │   │   └── alarm_log_repo.go
+    │   │   └── usecase/
+    │   │       └── usecase.go
+    │   └── server/
+    │       ├── handlers.go
+    │       └── server.go
+    └── cmd/api/main.go (สมมติตามเดิม)
+</code></pre>
+<ul>
+<li>NodeJS type script  convert to golang   GORM entities</li>
+</ul>
+<h3>โฟลเดอร์หลัก (Modules)</h3>
+<p>โปรเจกต์ใช้ <strong>Clean Architecture</strong> 3-layer + Delivery:</p>
+<h4>Modules โครงสร้าง</h4>
+<pre><code>internal/modules/
+├── auth/          # Authentication &amp; Authorization
+├── batch/         # Batch/Cron job management
+├── customer/      # Customer &amp; Vehicle management
+├── dashboard/     # Dashboard &amp; Reports
+├── document/      # File upload/download management
+├── email/         # Email service &amp; SMTP config
+├── i18n/          # Multi-language translation
+├── influxdb/      # InfluxDB integration
+├── iot/           # IoT/MQTT v3 device management
+├── items/         # Item CRUD (reference module)
+├── job/           # Job card / repair order
+├── kafka/         # Kafka integration
+├── mqtt/          # Standard MQTT
+├── payment/       # Payment &amp; Receipt
+├── purchaseorder/ # Purchase Order
+├── quotation/     # Quotation management
+├── queue/         # In-memory queue
+├── users/         # User management
+├── websocket/     # WebSocket server
+└── wos/           # Web Order System
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>ตำแหน่ง</th>
+<th>หน้าที่</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Model</strong></td>
+<td><code>internal/models/</code></td>
+<td>Entity (GORM) – <code>User</code>, <code>Session</code>, <code>VerificationToken</code></td>
+</tr>
+<tr>
+<td><strong>Repository</strong></td>
+<td><code>internal/repository/</code></td>
+<td>อ่าน/เขียน DB และ Redis ผ่าน interface</td>
+</tr>
+<tr>
+<td><strong>Usecase</strong></td>
+<td><code>internal/usecase/</code></td>
+<td>Business logic: hash, JWT, email queue, validation</td>
+</tr>
+<tr>
+<td><strong>Delivery</strong></td>
+<td><code>internal/delivery/rest/</code></td>
+<td>HTTP handlers, middleware, DTO, router</td>
+</tr>
+<tr>
+<td><strong>Worker</strong></td>
+<td><code>internal/delivery/worker/</code></td>
+<td>Background job สำหรับส่งอีเมล</td>
+</tr>
+</tbody></table>
+<pre><code class="language-bash">  api/
+    ├── cmd/                     # Cobra CLI (serve, migrate, initdata, worker)
+    │   ├──apir/
+    │   │  └── main.go
+    │   ├── initdata.go             
+    │   ├── root.go
+    │   ├── serve.go
+    │   └── worker.go        
+    ├── config/                  # Viper config (YAML + env)
+    │   ├── config.default.yml
+    │   ├── config.dev.yml
+    │   └── config.go  
+    ├── internal/                # โค้ดส่วนตัว (ไม่ถูก import จากภายนอก)
+    │   ├── iot/                 # shared packages (jwt, redis, email, logger, hash, utils)
+    │   │   ├── delivery/        #  HTTP handlers, middleware, dto, router
+    │   │   │     └── http/
+    │   │   │          ├── handler.go
+    │   │   │          └── routes.go
+    │   │   ├── worker/        
+    │   │   │     └──worker.go
+    │   │   ├── helper/          #helper
+    │   │   │     └──alarm.go
+    │   │   ├── models/          # GORM entities
+    │   │   │     ├── alarm.go
+    │   │   │     ├── common.go
+    │   │   │     └── device_type.go
+    │   │   ├── presenter/          
+    │   │   │     └── presenter.go
+    │   │   ├── repository/         
+    │   │   │     ├── alarm_log_repo.go
+    │   │   │     ├── device_repo.go
+    │   │   │     └── schedule_repo.go
+    │   │   ├── usecase/          # GORM entities
+    │   │   │     └── usecase.go
+    │   │   └── iot.go
+    │   ├── repository/          # interfaces + impl (postgres, redis)
+    │   │       ├── pg.go
+    │   │       └── redis.go
+    │   ├── server/           
+    │   │       ├── handlers.go
+    │   │       └── server.go
+    │   ├── usecase/             # business logic
+    │   │       └── usecase.go
+    │   ├── pg_repository.go   
+    │   ├── redis_repository.go   
+    │   ├── usecase.go   
+    │   ├── pkg/                 #  shared packages (jwt, redis, email, logger, hash, utils)
+    │   │   ├── db/              #  DB postgres,redis
+    │   │   │   ├── postgres/ 
+    │   │   │   │     └── db_conn.go
+    │   │   │   └── redis/ 
+    │   │   │          └── redis_conn.go
+    │   │   ├── helpers/
+    │   │   │   ├── iot.go          # Alarm logic (สมบูรณ์)
+    │   │   │   └── format.go       # ฟังก์ชันช่วยเหลือ (time, string, random)
+    │   │   ├── websocket/
+    │   │   │   └── websocket.go   
+    │   │   ├── mqtt/
+    │   │   │   └── client.go       # MQTT client พร้อม GetDataFromTopic
+    │   │   ├── influxdb/
+    │   │   │   └── client.go       # InfluxDB client
+    │   │   └── httpErrors/
+    │   │       └── httpErrors.go   # httpErrors
+    ├── migrations/              # raw SQL (optional)
+    ├── docker-compose.dev.yml   # Postgres + Redis + MailHog
+    ├── Dockerfile.dev / .air.toml
+    └── go.mod
+</code></pre>
+<h1>WebSocket server</h1>
+<pre><code class="language-bash">  api/
+    ├── cmd/
+    │   ├── apiser/                 # REST API หลัก (มีอยู่แล้ว)
+    │   ├── websocket/              # *** WebSocket server
+    │   │   └── main.go
+    │   ├── initdata.go
+    │   ├── root.go
+    │   ├── serve.go
+    │   └── worker.go
+    ├── internal/
+    │   ├── websocket/              # **** โค้ดเฉพาะของ WebSocket
+    │   │   ├── delivery/
+    │   │   │   └── ws/
+    │   │   │       ├── hub.go
+    │   │   │       ├── client.go
+    │   │   │       └── handler.go     # HTTP endpoint สำหรับ upgrade
+    │   │   ├── usecase/
+    │   │   │   └── ws_usecase.go      # business logic (save message, auth)
+    │   │   ├── repository/
+    │   │   │   └── ws_repo.go         # interface สำหรับ DB
+    │   │   └── models/
+    │   │       └── ws_models.go       # entity ของ message, session
+    │   ├── pkg/                    # shared packages (มีอยู่แล้ว)
+    │   │   ├── websocket/          # **ปรับปรุง** ใช้ร่วมกันได้
+    │   │   │   ├── hub.go          # core Hub logic
+    │   │   │   ├── client.go
+    │   │   │   └── message.go      # struct ของ message
+    │   │   └── ...
+    ├── migrations/                 # **เพิ่ม** SQL schema สำหรับ websocket
+    │   └── 20250619_websocket_tables.sql
+    └── 
+</code></pre>
+<hr>
+<h2>2. Workflow &amp; Dataflow Diagram (Flowchart TB – สำหรับ Draw.io)</h2>
+<p>คัดลอกโค้ด Mermaid ด้านล่างไปวางที่ <a href="https://draw.io">draw.io</a> (เลือก File → Import from → Mermaid) หรือ <a href="https://mermaid.live">mermaid.live</a> เพื่อดูภาพจริง</p>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph Client
+        A[User] --&gt; B[HTTP Request]
+    end
+
+    subgraph &quot;API Server (Go)&quot;
+        C[Chi Router + Middleware]
+        D[auth_handler.Register]
+        E[auth_usecase.Register]
+        F[user_repo.Create]
+        G[email_worker.SendVerification]
+        H[auth_handler.Login]
+        I[auth_usecase.Login]
+        J[user_repo.FindByEmail]
+        K[hash.CheckPassword]
+        L[jwt_maker.CreateToken]
+        M[redis_store.SaveRefreshToken]
+        N[auth_handler.RefreshToken]
+        O[auth_usecase.RefreshToken]
+        P[redis_store.ValidateRefreshToken]
+        Q[jwt_maker.CreateToken]
+    end
+
+    subgraph &quot;External Services&quot;
+        R[(PostgreSQL)]
+        S[(Redis)]
+        T[SMTP Server / MailHog]
+    end
+
+    B --&gt; C
+    C -- POST /api/v1/register --&gt; D
+    D --&gt; E
+    E --&gt; F
+    F --&gt; R
+    E -- success --&gt; G
+    G --&gt; T
+    G -- enqueue job --&gt; S
+
+    C -- POST /api/v1/login --&gt; H
+    H --&gt; I
+    I --&gt; J
+    J --&gt; R
+    I --&gt; K
+    K -- valid --&gt; L
+    L -- access_token --&gt; H
+    I --&gt; M
+    M -- refresh_token --&gt; S
+    H --&gt; B
+
+    C -- POST /api/v1/refresh --&gt; N
+    N --&gt; O
+    O --&gt; P
+    P -- valid --&gt; Q
+    Q -- new_access_token --&gt; N
+    N --&gt; B
+</code></pre>
+<h3>คำอธิบายแบบละเอียด (Thai / English)</h3>
+<h4>2.1 กระบวนการสมัครสมาชิก (Register)</h4>
+<ol>
+<li><strong>Client</strong> ส่ง <code>POST /api/v1/register</code> พร้อม <code>email</code>, <code>password</code>, <code>name</code>  </li>
+<li><strong>Handler</strong> ตรวจสอบ request → เรียก <code>auth_usecase.Register</code>  </li>
+<li><strong>Usecase</strong>  <ul>
+<li>ตรวจสอบอีเมลซ้ำ (เรียก <code>user_repo.FindByEmail</code>)  </li>
+<li>Hash รหัสผ่านด้วย bcrypt  </li>
+<li>สร้าง <code>User</code> object → <code>user_repo.Create</code> ลง PostgreSQL  </li>
+<li>สร้าง verification token → เก็บใน Redis (TTL 24h)  </li>
+<li>ส่ง task ไปยัง <strong>email queue</strong> (Go channel หรือ Redis List)</li>
+</ul>
+</li>
+<li><strong>Worker</strong> ดึง task → สร้าง HTML email (Hermes) → ส่งผ่าน SMTP (MailHog หรือ Mailtrap)  </li>
+<li><strong>Response</strong> <code>201 Created</code> กลับไปยัง Client พร้อม message “กรุณายืนยันอีเมล”</li>
+</ol>
+<h4>2.2 กระบวนการล็อกอิน (Login)</h4>
+<ol>
+<li>Client ส่ง <code>POST /api/v1/login</code> พร้อม <code>email</code>, <code>password</code>  </li>
+<li>Usecase ตรวจสอบ credentials  <ul>
+<li><code>user_repo.FindByEmail</code>  </li>
+<li>ตรวจสอบ <code>verified</code> flag  </li>
+<li>เปรียบเทียบ password กับ hash</li>
+</ul>
+</li>
+<li>ถ้าถูกต้อง → สร้าง <strong>access token</strong> (RSA256, อายุ 15 นาที) และ <strong>refresh token</strong> (random 64 chars)  </li>
+<li>เก็บ refresh token ใน Redis: <code>refresh:{userID}:{tokenID}</code> → value = userID, TTL 7 วัน  </li>
+<li>Response <code>200 OK</code> พร้อม <code>access_token</code>, <code>refresh_token</code>, <code>expires_in</code></li>
+</ol>
+<h4>2.3 กระบวนการ Refresh Token</h4>
+<ol>
+<li>Client ส่ง <code>POST /api/v1/refresh</code> พร้อม <code>refresh_token</code> (ใน body หรือ header)  </li>
+<li>Usecase ตรวจสอบ token ใน Redis → ถ้าพบ → สร้าง access token ใหม่  </li>
+<li>Response access token ใหม่ (refresh token อาจถูก renew หรือคงเดิมตาม policy)</li>
+</ol>
+<h4>2.4 กระบวนการ Logout</h4>
+<ol>
+<li>Client ส่ง <code>POST /api/v1/logout</code> พร้อม access token (ใน <code>Authorization</code> header)  </li>
+<li>Middleware ตรวจสอบ JWT → ส่ง user ID ไปยัง Usecase  </li>
+<li>Usecase ลบ refresh token ออกจาก Redis และ optionally ใส่ access token ลง blacklist จนหมดอายุ</li>
+</ol>
+<hr>
+<h2>3. ตัวอย่างโค้ดพร้อมคอมเมนต์ (ไทย/อังกฤษ) และคำอธิบายการใช้งาน</h2>
+<blockquote>
+<p>ตัวอย่างนี้เป็น <strong>เทมเพลตที่รันได้จริง</strong> หลังจากติดตั้ง dependencies และตั้งค่า config แล้ว</p>
+</blockquote>
+<h3>3.1 <code>internal/usecase/auth_usecase.go</code> ( Business logic)</h3>
+<pre><code class="language-go">// Package usecase implements business logic for authentication.
+// แพ็คเกจ usecase มีตรรกะทางธุรกิจสำหรับการรับรองตัวตน
+package usecase
+
+import (
+    &quot;errors&quot;
+    &quot;time&quot;
+    &quot;yourmodule/internal/models&quot;
+    &quot;yourmodule/internal/repository&quot;
+    &quot;yourmodule/internal/pkg/hash&quot;
+    &quot;yourmodule/internal/pkg/jwt&quot;
+    &quot;yourmodule/internal/pkg/random&quot;
+    &quot;yourmodule/internal/pkg/redis&quot;
+)
+
+// AuthUsecase defines methods for authentication.
+type AuthUsecase interface {
+    Register(email, password, name string) (*models.User, error)
+    Login(email, password string) (accessToken, refreshToken string, err error)
+    RefreshToken(refreshToken string) (newAccessToken string, err error)
+    Logout(userID uint, accessToken string) error
+}
+
+type authUsecase struct {
+    userRepo   repository.UserRepository
+    redisCache *redis.Client
+    jwtMaker   jwt.Maker
+    emailQueue chan&lt;- models.EmailTask // channel สำหรับส่งงาน async
+}
+
+// NewAuthUsecace creates a new instance with dependency injection.
+func NewAuthUsecase(
+    ur repository.UserRepository,
+    rc *redis.Client,
+    jm jwt.Maker,
+    eq chan&lt;- models.EmailTask,
+) AuthUsecase {
+    return &amp;authUsecase{
+        userRepo:   ur,
+        redisCache: rc,
+        jwtMaker:   jm,
+        emailQueue: eq,
+    }
+}
+
+// Register creates a new user, hashes password, and queues verification email.
+// Register สร้าง user ใหม่, hash รหัสผ่าน, และส่งอีเมลยืนยัน (async)
+func (a *authUsecase) Register(email, password, name string) (*models.User, error) {
+    // ตรวจสอบว่าอีเมลซ้ำหรือไม่ (Check if email already exists)
+    existing, _ := a.userRepo.FindByEmail(email)
+    if existing != nil {
+        return nil, errors.New(&quot;email already exists&quot;)
+    }
+
+    hashedPwd, err := hash.HashPassword(password) // bcrypt
+    if err != nil {
+        return nil, err
+    }
+
+    user := &amp;models.User{
+        Email:        email,
+        PasswordHash: hashedPwd,
+        Name:         name,
+        Verified:     false,
+        CreatedAt:    time.Now().UTC(),
+    }
+
+    // บันทึกลง PostgreSQL (Save to DB)
+    if err := a.userRepo.Create(user); err != nil {
+        return nil, err
+    }
+
+    // สร้าง verification token และเก็บใน Redis (Create token, store in Redis)
+    verifyToken := random.String(32)
+    key := &quot;verify:&quot; + verifyToken
+    a.redisCache.Set(key, user.ID, 24*time.Hour)
+
+    // ส่ง task ไปยัง email queue (worker จะส่งอีเมลจริง)
+    a.emailQueue &lt;- models.EmailTask{
+        To:       email,
+        Subject:  &quot;Verify your email&quot;,
+        Template: &quot;verification&quot;,
+        Data:     map[string]interface{}{&quot;Token&quot;: verifyToken, &quot;UserID&quot;: user.ID},
+    }
+
+    return user, nil
+}
+
+// Login checks credentials and returns access + refresh tokens.
+// Login ตรวจสอบข้อมูลล็อกอิน และคืน access token + refresh token
+func (a *authUsecase) Login(email, password string) (string, string, error) {
+    user, err := a.userRepo.FindByEmail(email)
+    if err != nil || !user.Verified {
+        return &quot;&quot;, &quot;&quot;, errors.New(&quot;invalid credentials or email not verified&quot;)
+    }
+
+    // เปรียบเทียบรหัสผ่าน (Compare password)
+    if err := hash.CheckPasswordHash(password, user.PasswordHash); err != nil {
+        return &quot;&quot;, &quot;&quot;, errors.New(&quot;invalid credentials&quot;)
+    }
+
+    // สร้าง access token (RSA, 15 minutes)
+    accessToken, err := a.jwtMaker.CreateToken(user.ID, user.Email, 15*time.Minute)
+    if err != nil {
+        return &quot;&quot;, &quot;&quot;, err
+    }
+
+    // สร้าง refresh token และเก็บใน Redis (Create refresh token &amp; store in Redis)
+    refreshToken := random.String(64)
+    refreshKey := &quot;refresh:&quot; + string(rune(user.ID)) + &quot;:&quot; + refreshToken
+    a.redisCache.Set(refreshKey, user.ID, 7*24*time.Hour)
+
+    return accessToken, refreshToken, nil
+}
+</code></pre>
+<h3>3.2 <code>internal/delivery/rest/handler/auth_handler.go</code> (HTTP Handler)</h3>
+<pre><code class="language-go">// Package handler manages HTTP requests for auth endpoints.
+// แพ็คเกจ handler จัดการ HTTP request สำหรับ auth endpoints
+package handler
+
+import (
+    &quot;net/http&quot;
+    &quot;yourmodule/internal/delivery/rest/dto&quot;
+    &quot;yourmodule/internal/usecase&quot;
+    &quot;github.com/go-playground/validator/v10&quot;
+)
+
+type AuthHandler struct {
+    authUC   usecase.AuthUsecase
+    validate *validator.Validate
+}
+
+func NewAuthHandler(au usecase.AuthUsecase) *AuthHandler {
+    return &amp;AuthHandler{authUC: au, validate: validator.New()}
+}
+
+// Register handles POST /register
+// @Summary Register a new user
+// @Accept json
+// @Param request body dto.RegisterRequest true &quot;Registration info&quot;
+// @Success 201 {object} dto.UserResponse
+// @Failure 400 {object} dto.ErrorResponse
+func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
+    var req dto.RegisterRequest
+    if err := dto.DecodeJSON(r, &amp;req); err != nil {
+        dto.RespondError(w, http.StatusBadRequest, &quot;invalid request body&quot;)
+        return
+    }
+    if err := h.validate.Struct(req); err != nil {
+        dto.RespondError(w, http.StatusBadRequest, err.Error())
+        return
+    }
+
+    user, err := h.authUC.Register(req.Email, req.Password, req.Name)
+    if err != nil {
+        dto.RespondError(w, http.StatusConflict, err.Error())
+        return
+    }
+
+    dto.RespondJSON(w, http.StatusCreated, dto.ToUserResponse(user))
+}
+
+// Login handles POST /login
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+    var req dto.LoginRequest
+    if err := dto.DecodeJSON(r, &amp;req); err != nil {
+        dto.RespondError(w, http.StatusBadRequest, &quot;invalid request&quot;)
+        return
+    }
+
+    accessToken, refreshToken, err := h.authUC.Login(req.Email, req.Password)
+    if err != nil {
+        dto.RespondError(w, http.StatusUnauthorized, err.Error())
+        return
+    }
+
+    dto.RespondJSON(w, http.StatusOK, dto.TokenResponse{
+        AccessToken:  accessToken,
+        RefreshToken: refreshToken,
+        TokenType:    &quot;Bearer&quot;,
+        ExpiresIn:    900, // 15 minutes
+    })
+}
+</code></pre>
+<h3>3.3 <code>internal/pkg/jwt/rsa_maker.go</code> (JWT RSA sign/verify)</h3>
+<pre><code class="language-go">// Package jwt provides RSA-based JWT creation and verification.
+// แพ็คเกจ jwt ให้การสร้างและตรวจสอบ JWT ด้วย RSA
+package jwt
+
+import (
+    &quot;crypto/rsa&quot;
+    &quot;errors&quot;
+    &quot;time&quot;
+    &quot;github.com/golang-jwt/jwt/v5&quot;
+)
+
+type RSAMaker struct {
+    privateKey *rsa.PrivateKey
+    publicKey  *rsa.PublicKey
+}
+
+func NewRSAMaker(privatePEM, publicPEM []byte) (*RSAMaker, error) {
+    privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privatePEM)
+    if err != nil {
+        return nil, err
+    }
+    publicKey, err := jwt.ParseRSAPublicKeyFromPEM(publicPEM)
+    if err != nil {
+        return nil, err
+    }
+    return &amp;RSAMaker{privateKey: privateKey, publicKey: publicKey}, nil
+}
+
+// CreateToken สร้าง JWT signed ด้วย private key (RSA256)
+func (m *RSAMaker) CreateToken(userID uint, email string, duration time.Duration) (string, error) {
+    claims := jwt.MapClaims{
+        &quot;sub&quot;:   userID,
+        &quot;email&quot;: email,
+        &quot;exp&quot;:   time.Now().Add(duration).Unix(),
+        &quot;iat&quot;:   time.Now().Unix(),
+    }
+    token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+    return token.SignedString(m.privateKey)
+}
+
+// VerifyToken ตรวจสอบ JWT ด้วย public key
+func (m *RSAMaker) VerifyToken(tokenString string) (*Payload, error) {
+    token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+        if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
+            return nil, errors.New(&quot;unexpected signing method&quot;)
+        }
+        return m.publicKey, nil
+    })
+    if err != nil {
+        return nil, err
+    }
+    claims, ok := token.Claims.(jwt.MapClaims)
+    if !ok || !token.Valid {
+        return nil, errors.New(&quot;invalid token&quot;)
+    }
+    return &amp;Payload{
+        UserID: uint(claims[&quot;sub&quot;].(float64)),
+        Email:  claims[&quot;email&quot;].(string),
+    }, nil
+}
+</code></pre>
+<h3>3.4 Docker Compose สำหรับ Development (<code>docker-compose.dev.yml</code>)</h3>
+<pre><code class="language-yaml">version: &#39;3.8&#39;
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: icmongo
+    ports:
+      - &quot;5432:5432&quot;
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - &quot;6379:6379&quot;
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - &quot;1025:1025&quot;   # SMTP
+      - &quot;8025:8025&quot;   # Web UI
+
+volumes:
+  pgdata:
+</code></pre>
+<h3>3.5 วิธีรันโปรเจกต์ (Run Step-by-Step)</h3>
+<pre><code class="language-bash"># 1. สร้าง RSA key pair สำหรับ JWT
+openssl genrsa -out private.pem 2048
+openssl rsa -in private.pem -pubout -out public.pem
+
+# 2. ตั้ง environment variables (หรือใช้ .env)
+export DB_URL=&quot;postgres://appuser:secret@localhost:5432/icmongo?sslmode=disable&quot;
+export REDIS_ADDR=&quot;localhost:6379&quot;
+export JWT_PRIVATE_KEY_PATH=&quot;private.pem&quot;
+export JWT_PUBLIC_KEY_PATH=&quot;public.pem&quot;
+export SMTP_HOST=&quot;localhost&quot;
+export SMTP_PORT=&quot;1025&quot;
+
+# 3. รัน infrastructure services
+docker-compose -f docker-compose.dev.yml up -d
+
+# 4. รัน migration (สมมติใช้ GORM AutoMigrate)
+go run cmd/api/main.go migrate
+
+# 5. รัน background worker (อีกเทอร์มินัล)
+go run cmd/api/main.go worker
+
+# 6. รัน HTTP server (หรือใช้ air เพื่อ hot-reload)
+go run ./main.go serve
+# หรือ
+air -c .air.toml
+
+# 7. ทดสอบ API
+curl -X POST http://localhost:5000/api/v1/register \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;email&quot;:&quot;test@example.com&quot;,&quot;password&quot;:&quot;P@ssw0rd&quot;,&quot;name&quot;:&quot;Test User&quot;}&#39;
+
+curl -X POST http://localhost:5000/api/v1/login \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;email&quot;:&quot;test@example.com&quot;,&quot;password&quot;:&quot;P@ssw0rd&quot;}&#39;
+</code></pre>
+<hr>
+<h2>4. กรณีศึกษา (Case Study)</h2>
+<p><strong>บริษัท E‑commerce ขนาดกลาง</strong> ต้องการระบบสมาชิกที่รวดเร็วและปลอดภัย</p>
+<ul>
+<li><strong>ปัญหาเดิม</strong>: ระบบ legacy ใช้ session บนไฟล์, ไม่รองรับ mobile, ส่งอีเมลแบบ sync ทำให้ response ช้า  </li>
+<li><strong>Solution ด้วยโครงสร้างนี้</strong>:<ul>
+<li><strong>JWT + Redis</strong> ทำให้ Stateless authentication, mobile ใช้งานง่าย  </li>
+<li><strong>Background email queue</strong> ช่วยให้ register/login response เร็ว (&lt; 50ms)  </li>
+<li><strong>RSA JWT</strong> ช่วยให้ฝั่ง mobile ตรวจสอบ token ได้เอง (ถ้ามี public key)  </li>
+<li><strong>Rate limiter</strong> (Redis sliding window) ป้องกัน brute force</li>
+</ul>
+</li>
+<li><strong>ผลลัพธ์</strong>:<ul>
+<li>รองรับ user 200,000 คน, 并发 5,000 req/s  </li>
+<li>Developer onboarding ลดลง 60% เพราะโครงสร้างมาตรฐาน  </li>
+<li>สามารถ deploy แบบ containerized บน Kubernetes ได้ง่าย</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>5. สรุป</h2>
+<h3>✅ ประโยชน์ที่ได้รับ</h3>
+<ul>
+<li><strong>Clean Architecture</strong> – แยกหน้าที่, ทดสอบง่าย (mock repository)  </li>
+<li><strong>Stateless JWT + Redis</strong> – scale แนวนอนได้, ไม่ต้อง sticky session  </li>
+<li><strong>Async email</strong> – API response เร็ว, ไม่ติด I/O  </li>
+<li><strong>Hot‑reload (Air)</strong> – เพิ่ม productivity ใน development  </li>
+<li><strong>Docker Compose</strong> – dev environment 一致, ลด “มันทำงานบนเครื่องฉัน”</li>
+</ul>
+<h3>⚠️ ข้อควรระวัง</h3>
+<ul>
+<li><strong>RSA private key</strong> ต้องเก็บให้ปลอดภัย (ใช้ Vault หรือ K8s secret)  </li>
+<li><strong>Refresh token rotation</strong> – ต้อง implement blacklist และป้องกัน replay  </li>
+<li><strong>Redis เป็น Single Point of Failure</strong> – สำหรับ production ควรใช้ Redis Sentinel หรือ Cluster  </li>
+<li><strong>GORM AutoMigrate</strong> ไม่เหมาะกับ production (ควรใช้ <code>golang-migrate</code> หรือ <code>goose</code>)  </li>
+<li><strong>Email queue</strong> ต้องมี dead‑letter และ monitoring</li>
+</ul>
+<h3>👍 ข้อดี</h3>
+<ul>
+<li>Performance สูง (Go + Chi + GORM)  </li>
+<li>โครงสร้างเป็นมาตรฐาน ทำให้ทีมงานเข้าใจง่าย  </li>
+<li>สามารถเปลี่ยน database หรือ cache ได้โดยไม่ต้องแก้ usecase  </li>
+<li>รองรับ unit test และ integration test ดี (เพราะใช้ interface)</li>
+</ul>
+<h3>👎 ข้อเสีย</h3>
+<ul>
+<li>Boilerplate code ค่อนข้างมาก (repository, usecase, dto)  </li>
+<li>มือใหม่ที่ยังไม่เข้าใจ Clean Architecture อาจสับสนกับการแมป layer  </li>
+<li>การใช้ Go channel เป็น email queue เหมาะกับ monolith; ถ้าต้อง distributed ควรใช้ RabbitMQ / Kafka</li>
+</ul>
+<h3>🚫 ข้อห้าม (ต้องห้าม)</h3>
+<ul>
+<li><strong>ห้ามเก็บ plain‑text password</strong> – ต้อง bcrypt หรือ argon2  </li>
+<li><strong>ห้ามตั้ง JWT expiry เกิน 1 วัน</strong> (ควร 15‑30 นาที)  </li>
+<li><strong>ห้ามส่ง access token ผ่าน URL parameter</strong> – ใช้ <code>Authorization: Bearer</code> เท่านั้น  </li>
+<li><strong>ห้าม commit private key ลง Git</strong> – ใส่ใน <code>.gitignore</code> เสมอ  </li>
+<li><strong>ห้ามใช้ GORM AutoMigrate ใน production โดยไม่ตรวจสอบ schema change</strong></li>
+</ul>
+<h3>📚 แหล่งอ้างอิง / ที่มา</h3>
+<ul>
+<li><a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">Clean Architecture in Go (Uncle Bob)</a>  </li>
+<li><a href="https://tools.ietf.org/html/rfc7519">JWT with RSA – RFC 7519</a>  </li>
+<li><a href="https://gorm.io">GORM</a>, <a href="https://github.com/go-chi/chi">Chi router</a>  </li>
+<li><a href="https://github.com/uber-go/guide">Uber Go Style Guide</a>  </li>
+<li><a href="https://github.com/cosmtrek/air">Air – live reload for Go</a>  </li>
+<li><a href="https://codevoweb.com">Codevoweb – Go + GORM tutorials</a>  </li>
+<li><a href="https://techmaster.vn/posts/34577/kien-truc-sach-voi-golang">Techmaster – Clean Architecture in Go</a>  </li>
+<li>Template ต้นแบบจาก <code>github.com/dhax/go-base</code> และ <code>github.com/AleksK1NG/Go-Clean-Architecture-REST-API</code></li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>หมายเหตุ</strong>: ตัวอย่างโค้ดทั้งหมดอยู่ใน namespace <code>yourmodule</code> – คุณควรเปลี่ยนเป็น <code>icmongolang</code> ตามชื่อโปรเจกต์จริง และต้องติดตั้ง dependencies ด้วย <code>go mod tidy</code> ก่อนรัน</p>
+</blockquote>
+<h1>คำอธิบายการทำงานตามโครงสร้าง <code>icmongolang</code></h1>
+<h2>1. โครงสร้างนี้คืออะไร?</h2>
+<p>โครงสร้าง <code>icmongolang</code> คือ <strong>เทมเพลตสำหรับพัฒนา REST API ด้วยภาษา Go</strong> ที่ใช้ <strong>Clean Architecture</strong> (หรือเรียกอีกแบบว่า <strong>Layered Architecture</strong>) โดยแบ่งชั้นหน้าที่ชัดเจน 3–4 ชั้น ได้แก่:</p>
+<ul>
+<li><strong>Model Layer</strong> (<code>internal/models/</code>) – กำหนดโครงสร้างข้อมูล (entity) ที่สอดคล้องกับฐานข้อมูล</li>
+<li><strong>Repository Layer</strong> (<code>internal/repository/</code>) – ติดต่อฐานข้อมูลและ Redis โดยใช้ interface</li>
+<li><strong>Usecase Layer</strong> (<code>internal/usecase/</code>) – จัดการ business logic (การ hash password, สร้าง JWT, ส่งอีเมล async, ฯลฯ)</li>
+<li><strong>Delivery Layer</strong> (<code>internal/delivery/</code>) – รับผิดชอบ HTTP handler, middleware, DTO, router (รวมถึง background worker สำหรับอีเมล)</li>
+</ul>
+<p>นอกจากนี้ยังมี <code>pkg/</code> สำหรับ shared packages (JWT, Redis client, logger, validator, email sender) และ <code>cmd/</code> สำหรับ CLI commands (Cobra) เช่น การรัน server, migrate, init data, worker</p>
+<hr>
+<h2>2. มีกี่แบบ (รูปแบบของสถาปัตยกรรม)</h2>
+<p>โครงสร้างนี้มี <strong>3 รูปแบบหลัก</strong> ที่ซ้อนกันอยู่:</p>
+<table>
+<thead>
+<tr>
+<th>แบบ</th>
+<th>คำอธิบาย</th>
+<th>ปรากฏในโครงสร้างนี้หรือไม่</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>3-Layer Architecture</strong></td>
+<td>Presentation (Delivery) – Business () – Data (Repository)</td>
+<td>✅ ใช่ – เป็นพื้นฐาน</td>
+</tr>
+<tr>
+<td><strong>Clean Architecture</strong></td>
+<td>วงในสุดคือ Entity (Model), วงถัดมา , วงนอก Delivery และ Repository (dependency inversion)</td>
+<td>✅ ใช่ – ใช้ interface ทำให้ dependency ชี้เข้าใน</td>
+</tr>
+<tr>
+<td><strong>Modular Monolith</strong></td>
+<td>โครงสร้างภายในแบ่งตาม module (auth, user, item) แต่ยัง compile เป็น binary เดียว</td>
+<td>✅ ใช่ – มีโฟลเดอร์ <code>auth</code>, <code>users</code>, <code>items</code> อยู่ใน <code>internal/</code></td>
+</tr>
+</tbody></table>
+<p>นอกจากนี้ยังมี <strong>รูปแบบการทำงานของ CLI</strong> แบบ Command Pattern (Cobra) และ <strong>Background Worker</strong> แบบ Queue (channel หรือ Redis Stream)</p>
+<hr>
+<h2>3. ใช้อย่างไร? (วิธีใช้งานแต่ละ layer)</h2>
+<h3>3.1 การทำงานของแต่ละ layer (จาก request ไป response)</h3>
+<pre><code>Client Request → Router (Chi) → Middleware → Handler (Delivery) →  → Repository → DB/Redis
+                ← Response ←          ←         ← (return)      ←        ←
+</code></pre>
+<p><strong>รายละเอียด:</strong></p>
+<ul>
+<li><strong>Router</strong> (<code>router.go</code>) กำหนดเส้นทางและ middleware (CORS, Logger, RateLimit, Auth)</li>
+<li><strong>Handler</strong> (<code>*_handler.go</code>) รับ request → แปลงเป็น DTO → เรียก  → แปลง response → ส่ง JSON กลับ</li>
+<li>**** (<code>*_.go</code>) ทำงาน business logic โดยไม่สนใจว่า data มาจาก DB หรือ cache หรือ external API</li>
+<li><strong>Repository</strong> (<code>*_repo.go</code>) เป็น interface ที่  เรียก; implementation จะติดต่อ PostgreSQL (GORM) หรือ Redis (go-redis)</li>
+<li><strong>Model</strong> (<code>models/*.go</code>) เป็น struct ที่ GORM ใช้ map กับตาราง</li>
+</ul>
+<h3>3.2 Dependency Injection (DI)</h3>
+<p> ต้องการ Repository → สร้าง Repository ก่อนแล้วส่งเข้า NewUsecase<br>Handler ต้องการ Usecase → สร้าง Usecase แล้วส่งเข้า NewHandler<br>Router ต้องการ Handler → สร้าง Handler แล้ว register route  </p>
+<p>ตัวอย่างใน <code>main.go</code> หรือ <code>cmd/serve.go</code>:</p>
+<pre><code class="language-go">userRepo := repository.NewUserRepository(db)
+redisClient := redis.NewClient(cfg.Redis)
+jwtMaker := jwt.NewRSAMaker(privateKey, publicKey)
+authUC := usecase.NewAuthUsecase(userRepo, redisClient, jwtMaker, emailQueue)
+authHandler := handler.NewAuthHandler(authUC)
+router.RegisterAuthRoutes(authHandler)
+</code></pre>
+<hr>
+<h2>4. นำไปใช้ในกรณีใด?</h2>
+<table>
+<thead>
+<tr>
+<th>กรณี</th>
+<th>เหมาะสมหรือไม่</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ระบบ authentication / user management</strong></td>
+<td>✅ เหมาะมาก – มี JWT, refresh token, email verify, forget password ครบ</td>
+</tr>
+<tr>
+<td><strong>ระบบ e-commerce หรือ membership</strong></td>
+<td>✅ เหมาะ – มี RBAC (role), caching, background worker</td>
+</tr>
+<tr>
+<td><strong>ระบบที่ต้องรองรับการเปลี่ยนแปลง database</strong></td>
+<td>✅ เหมาะ – เพราะ repository เป็น interface เปลี่ยนจาก PostgreSQL เป็น MySQL ได้โดยไม่แก้ usecase</td>
+</tr>
+<tr>
+<td><strong>API ที่ต้องการ performance สูง</strong></td>
+<td>✅ เหมาะ – Go + Chi + GORM + Redis ให้ throughput ดี</td>
+</tr>
+<tr>
+<td><strong>ระบบ monolith ขนาดกลางถึงใหญ่</strong></td>
+<td>✅ เหมาะ – แยก module ชัดเจน (auth, users, items)</td>
+</tr>
+<tr>
+<td><strong>ระบบที่ต้องการ distributed / microservices</strong></td>
+<td>⚠️ ต้องปรับ – เปลี่ยน channel queue เป็น message broker (RabbitMQ, Kafka) และใช้ API gateway</td>
+</tr>
+<tr>
+<td><strong>ระบบ(CRUD ธรรมดา)</strong></td>
+<td>❌ เกินความจำเป็น – อาจใช้แค่ Gin + GORM ก็พอ</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>5. ทำไมต้องใช้โครงสร้างนี้? (เหตุผล)</h2>
+<ol>
+<li><strong>แยกความรับผิดชอบ (Separation of Concerns)</strong> – แต่ละ layer ทำหน้าที่ของตัวเอง ไม่ยุ่งกัน  </li>
+<li><strong>ทดสอบง่าย (Testability)</strong> – สามารถ mock repository หรือ usecase ได้โดยไม่ต้องต่อ database จริง  </li>
+<li><strong>เปลี่ยนเทคโนโลยีได้โดยไม่กระทบ logic</strong> – เช่น เปลี่ยนจาก GORM เป็น sqlx ก็แค่แก้ repository, usecase ไม่ต้องเปลี่ยน  </li>
+<li><strong>ลด coupling</strong> – ใช้ interface ทำให้ layer ภายในไม่รู้จัก layer นอก  </li>
+<li><strong>รองรับการขยาย (Scalability of code)</strong> – เพิ่ม feature ใหม่โดยไม่พัง feature เดิม  </li>
+<li><strong>ทำงานเป็นทีมได้ง่าย</strong> – นักพัฒนาสามารถทำ handler, usecase, repository พร้อมกันโดยไม่ชนกัน</li>
+</ol>
+<hr>
+<h2>6. ประโยชน์ที่ได้รับ</h2>
+<h3>✅ ด้านการพัฒนา</h3>
+<ul>
+<li><strong>Hot-reload (Air)</strong> – แก้โค้ดแล้วเซฟ แอป restart อัตโนมัติ  </li>
+<li><strong>CLI commands</strong> – migrate, seed data, start worker แยกออกจาก server  </li>
+<li><strong>Swagger docs</strong> – สร้างอัตโนมัติจาก annotation</li>
+</ul>
+<h3>✅ ด้านความปลอดภัย</h3>
+<ul>
+<li><strong>JWT with RSA</strong> – ไม่ต้องแชร์ secret key ระหว่าง services  </li>
+<li><strong>Refresh token ใน Redis</strong> – สามารถ revoke ได้  </li>
+<li><strong>Bcrypt hash password</strong> – ป้องกัน credential leak  </li>
+<li><strong>Rate limiter</strong> – ป้องกัน brute force</li>
+</ul>
+<h3>✅ ด้าน performance</h3>
+<ul>
+<li><strong>Redis cache</strong> – ลด load database  </li>
+<li><strong>Background email queue</strong> – API response ไม่ติด I/O  </li>
+<li><strong>GORM preloading &amp; connection pool</strong> – จัดการ query ได้ดี</li>
+</ul>
+<h3>✅ ด้าน maintenance</h3>
+<ul>
+<li>โครงสร้างเป็นมาตรฐาน – developer ใหม่เข้าใจเร็ว  </li>
+<li>เปลี่ยน database หรือ cache ได้โดยไม่แก้ business logic  </li>
+<li>ใช้ dependency injection – เปลี่ยน implementation ได้ง่าย</li>
+</ul>
+<hr>
+<h2>7. โครงสร้างการทำงาน (Flow ของ request)</h2>
+<pre><code class="language-mermaid">flowchart LR
+    A[Client] --&gt; B[Chi Router]
+    B --&gt; C[Middleware: Logger, CORS, RateLimit]
+    C --&gt; D[Auth Middleware ถ้า route ต้องการ]
+    D --&gt; E[Handler]
+    E --&gt; F[Usecase]
+    F --&gt; G[Repository Interface]
+    G --&gt; H[(PostgreSQL)]
+    G --&gt; I[(Redis)]
+    F --&gt; J[JWT Maker]
+    F --&gt; K[Email Queue]
+    K --&gt; L[Worker]
+    L --&gt; M[SMTP]
+    F --&gt; N[Response DTO]
+    N --&gt; E
+    E --&gt; A
+</code></pre>
+<hr>
+<h2>8. ออกแบบ Workflow (ยกตัวอย่าง 2 workflow หลัก)</h2>
+<h3>8.1 Workflow การสมัครสมาชิก (Register)</h3>
+<ol>
+<li><strong>Client</strong> → <code>POST /api/v1/register</code> (email, password, name)  </li>
+<li><strong>Handler</strong> → validate DTO → เรียก <code>authUsecase.Register</code>  </li>
+<li><strong>Usecase</strong>  <ul>
+<li><code>userRepo.FindByEmail</code> ตรวจสอบอีเมลซ้ำ  </li>
+<li><code>hash.HashPassword</code>  </li>
+<li><code>userRepo.Create</code> ลง PostgreSQL  </li>
+<li>สร้าง verification token → <code>redis.Set</code> (TTL 24h)  </li>
+<li>ส่ง task ไปยัง <code>emailQueue</code> (channel)</li>
+</ul>
+</li>
+<li><strong>Worker</strong> (รันใน goroutine อื่น)  <ul>
+<li>ดึง task จาก queue  </li>
+<li>สร้าง HTML email ด้วย Hermes  </li>
+<li>ส่งผ่าน SMTP (MailHog หรือ Mailtrap)</li>
+</ul>
+</li>
+<li><strong>Handler</strong> → response <code>201 Created</code> ทันที (ไม่รออีเมล)</li>
+</ol>
+<h3>8.2 Workflow การล็อกอิน (Login)</h3>
+<ol>
+<li><strong>Client</strong> → <code>POST /api/v1/login</code> (email, password)  </li>
+<li><strong>Usecase</strong>  <ul>
+<li><code>userRepo.FindByEmail</code>  </li>
+<li>ตรวจสอบ <code>user.Verified</code> และ password  </li>
+<li><code>jwtMaker.CreateToken</code> สร้าง access token (RSA, 15m)  </li>
+<li>สร้าง refresh token (random string)  </li>
+<li><code>redis.Set</code> เก็บ refresh token (key: <code>refresh:{userID}:{tokenID}</code>, TTL 7d)</li>
+</ul>
+</li>
+<li><strong>Handler</strong> → response <code>200 OK</code> พร้อม <code>access_token</code>, <code>refresh_token</code>  </li>
+<li><strong>Client</strong> เก็บ token (localStorage / secure cookie)  </li>
+<li>เมื่อ access token หมดอายุ → Client ส่ง <code>POST /api/v1/refresh</code> พร้อม refresh token  </li>
+<li><strong>Usecase</strong> → ตรวจสอบ refresh token ใน Redis → สร้าง access token ใหม่</li>
+</ol>
+<hr>
+<h2>9. สรุปตารางเปรียบเทียบ Layer</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>โฟลเดอร์</th>
+<th>รับผิดชอบ</th>
+<th>ขึ้นอยู่กับอะไร</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Model</strong></td>
+<td><code>internal/models/</code></td>
+<td>กำหนด struct entity (GORM tags)</td>
+<td>ไม่ขึ้นกับ layer อื่น</td>
+</tr>
+<tr>
+<td><strong>Repository</strong></td>
+<td><code>internal/repository/</code></td>
+<td>อ่าน/เขียน DB, Redis (implement interface)</td>
+<td>Model, DB driver</td>
+</tr>
+<tr>
+<td><strong>Usecase</strong></td>
+<td><code>internal/usecase/</code></td>
+<td>Business logic, validation, hash, JWT, queue</td>
+<td>Repository interface, pkg helpers</td>
+</tr>
+<tr>
+<td><strong>Delivery (Handler)</strong></td>
+<td><code>internal/delivery/rest/handler/</code></td>
+<td>รับ HTTP request, เรียก usecase, ส่ง response</td>
+<td>Usecase interface, DTO</td>
+</tr>
+<tr>
+<td><strong>Delivery (Middleware)</strong></td>
+<td><code>internal/delivery/rest/middleware/</code></td>
+<td>ตรวจสอบ JWT, log, rate limit, CORS</td>
+<td>pkg/logger, pkg/jwt</td>
+</tr>
+<tr>
+<td><strong>Worker</strong></td>
+<td><code>internal/delivery/worker/</code></td>
+<td>ดึงงานจาก queue, ส่ง email</td>
+<td>pkg/email, pkg/redis</td>
+</tr>
+<tr>
+<td><strong>Shared Packages</strong></td>
+<td><code>internal/pkg/</code></td>
+<td>JWT, Redis client, email sender, hash, logger, validator, utils</td>
+<td>third-party libs</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>หมายเหตุ:</strong> โครงสร้างนี้ <strong>ไม่เหมาะกับโปรเจกต์เล็ก ๆ ที่มีแค่ 2–3 endpoint</strong> เพราะ แต่เหมาะกับ <strong>ระบบที่มี business logic ซับซ้อน, ต้องทดสอบบ่อย, และมีโอกาสเปลี่ยนเทคโนโลยีในอนาคต</strong></p>
+<h1>ภาค 2</h1>
+<p><img src="https://github.com/user-attachments/assets/090c0205-fbd3-43b1-be6a-d831fee5b7be" alt="Icmon6"></p>
+<p><img src="https://github.com/user-attachments/assets/cb1af147-f601-47b7-b28f-f3e1f6f14551" alt="Icmon9"></p>
+<p><img src="https://github.com/user-attachments/assets/4905b6e7-57cb-4ff7-a46d-31f90295d45e" alt="Icmon7"></p>
+<p><img src="https://github.com/user-attachments/assets/cbb342e0-2e51-47c6-b755-40a58dc3f59f" alt="Icmon3"></p>
+<h1>🧩 การเพิ่มฟีเจอร์ใหม่ในโครงสร้าง <code>icmongolang</code></h1>
+<h2>ตัวอย่าง: เพิ่ม Module IoT (ระบบสั่งซื้อน้ำออนไลน์ + GPS Tracking + MQTT + Queue Processor)</h2>
+<p>โครงสร้างเดิมเป็น Clean Architecture ที่แยก Model → Repository → Usecase → Delivery อย่างชัดเจน การเพิ่ม module ใหม่จะทำแบบ <strong>Modular</strong> โดยไม่กระทบ module เดิม (auth, users)</p>
+<hr>
+<h2>1. ขั้นตอนการเพิ่มฟีเจอร์ใหม่ (ตามลำดับ)</h2>
+<h3>✅ ขั้นตอนที่ 1: วิเคราะห์และออกแบบ entity / data model</h3>
+<ul>
+<li>ระบุ entity ที่เกี่ยวข้อง เช่น <code>Device</code> (IoT device), <code>WaterOrder</code>, <code>GpsLocation</code>, <code>MqttMessage</code></li>
+<li>กำหนดความสัมพันธ์ (Device มีหลาย WaterOrder, Device มีหลาย GpsLocation)</li>
+<li>ออกแบบตารางใน PostgreSQL</li>
+</ul>
+<p><strong>ตัวอย่าง entity:</strong></p>
+<pre><code class="language-go">// internal/models/device.go
+type Device struct {
+    ID        uint      `gorm:&quot;primaryKey&quot;`
+    SerialNo  string    `gorm:&quot;uniqueIndex&quot;`
+    Name      string
+    UserID    uint      // เจ้าของ device (FK ไป users)
+    Status    string    // active, inactive, maintenance
+    CreatedAt time.Time
+}
+
+// internal/models/water_order.go
+type WaterOrder struct {
+    ID          uint
+    DeviceID    uint
+    Quantity    int       // ลิตร
+    OrderTime   time.Time
+    Status      string    // pending, processing, completed, failed
+    ProcessedAt *time.Time
+}
+
+// internal/models/gps_location.go
+type GpsLocation struct {
+    ID        uint
+    DeviceID  uint
+    Lat       float64
+    Lng       float64
+    Timestamp time.Time
+}
+</code></pre>
+<h3>✅ ขั้นตอนที่ 2: สร้าง Repository Interface + Implementation (PostgreSQL + Redis cache)</h3>
+<ul>
+<li>สร้างไฟล์ <code>internal/repository/device_repo.go</code> (interface + GORM impl)</li>
+<li>สร้าง <code>internal/repository/water_order_repo.go</code></li>
+<li>สร้าง <code>internal/repository/gps_repo.go</code> (อาจใช้ Redis สำหรับตำแหน่งล่าสุด)</li>
+</ul>
+<p><strong>ตัวอย่าง interface:</strong></p>
+<pre><code class="language-go">type DeviceRepository interface {
+    Create(ctx context.Context, device *models.Device) error
+    FindByID(ctx context.Context, id uint) (*models.Device, error)
+    FindBySerial(ctx context.Context, serial string) (*models.Device, error)
+    Update(ctx context.Context, device *models.Device) error
+    Delete(ctx context.Context, id uint) error
+    ListByUser(ctx context.Context, userID uint) ([]models.Device, error)
+}
+</code></pre>
+<h3>✅ ขั้นตอนที่ 3: สร้าง Usecase (Business Logic)</h3>
+<ul>
+<li>สร้าง <code>internal/usecase/iot_usecase.go</code> (หรือแยกเป็น <code>device_usecase.go</code>, <code>order_usecase.go</code>)</li>
+<li>ใช้ repository หลายตัว, เรียก MQTT client, ส่งงานเข้า queue</li>
+</ul>
+<p><strong>ตัวอย่าง:</strong></p>
+<pre><code class="language-go">type IotUsecase interface {
+    RegisterDevice(userID uint, serialNo, name string) (*models.Device, error)
+    CreateWaterOrder(deviceID uint, quantity int) (*models.WaterOrder, error)
+    PublishMqttCommand(deviceID uint, command string) error
+    ProcessOrderQueue() // worker จะเรียก
+    UpdateGpsLocation(deviceID uint, lat, lng float64) error
+}
+</code></pre>
+<h3>✅ ขั้นตอนที่ 4: สร้าง Handler (Delivery/REST)</h3>
+<ul>
+<li>สร้าง <code>internal/delivery/rest/handler/device_handler.go</code></li>
+<li>สร้าง <code>internal/delivery/rest/handler/order_handler.go</code></li>
+<li>กำหนด DTO ใน <code>internal/delivery/rest/dto/iot_dto.go</code></li>
+</ul>
+<p><strong>ตัวอย่าง handler:</strong></p>
+<pre><code class="language-go">func (h *DeviceHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
+    // อ่าน deviceID จาก URL หรือ JWT claims
+    // เรียก iotUsecase.CreateWaterOrder
+    // response 201
+}
+</code></pre>
+<h3>✅ ขั้นตอนที่ 5: เพิ่ม Route ใน <code>router.go</code></h3>
+<pre><code class="language-go">func (r *Router) SetupIotRoutes(deviceHandler *handler.DeviceHandler, authMiddleware func(http.Handler) http.Handler) {
+    r.router.Route(&quot;/api/v1/devices&quot;, func(dev chi.Router) {
+        dev.Use(authMiddleware)
+        dev.Post(&quot;/&quot;, deviceHandler.RegisterDevice)
+        dev.Get(&quot;/&quot;, deviceHandler.ListDevices)
+        dev.Post(&quot;/{deviceID}/orders&quot;, deviceHandler.CreateOrder)
+        dev.Post(&quot;/{deviceID}/command&quot;, deviceHandler.SendMqttCommand)
+    })
+}
+</code></pre>
+<h3>✅ ขั้นตอนที่ 6: สร้าง MQTT Client (ใน <code>internal/pkg/mqtt/</code>)</h3>
+<ul>
+<li>ใช้ไลบรารี <code>eclipse/paho.mqtt.golang</code></li>
+<li>สร้าง interface <code>MqttPublisher</code>, <code>MqttSubscriber</code></li>
+<li>Subscribe topic เช่น <code>device/+/gps</code>, <code>device/+/response</code></li>
+</ul>
+<h3>✅ ขั้นตอนที่ 7: สร้าง Queue Processor สำหรับ Water Order</h3>
+<ul>
+<li>ใช้ Redis Stream หรือ Go channel (ตามโครงสร้างเดิมมี email queue อยู่แล้ว)</li>
+<li>สร้าง worker ใหม่: <code>internal/delivery/worker/order_worker.go</code></li>
+<li>worker จะดึง order จาก queue → ประมวลผล → สั่ง MQTT → อัปเดตสถานะ</li>
+</ul>
+<h3>✅ ขั้นตอนที่ 8: เพิ่ม Command ใน Cobra (ถ้าต้องการรัน worker แยก)</h3>
+<ul>
+<li>เพิ่ม <code>cmd/iotworker.go</code> (หรือขยาย <code>cmd/worker.go</code> ให้รองรับหลาย queue)</li>
+<li>คำสั่ง: <code>go run cmd/api/main.go iot-worker</code></li>
+</ul>
+<h3>✅ ขั้นตอนที่ 9: อัปเดต Docker Compose (ถ้าต้องการ MQTT broker)</h3>
+<ul>
+<li>เพิ่ม service <code>mosquitto</code> (MQTT broker) ใน <code>docker-compose.dev.yml</code></li>
+<li>เพิ่ม environment variables ใน <code>.env.dev</code> (MQTT_BROKER_URL, MQTT_USERNAME, MQTT_PASSWORD)</li>
+</ul>
+<h3>✅ ขั้นตอนที่ 10: ทดสอบและ Document API (Swagger)</h3>
+<ul>
+<li>ใส่ annotation ใน handler เพื่อให้ <code>swag</code> สร้าง docs</li>
+<li>รัน <code>swag init</code> แล้วทดสอบที่ <code>/swagger/index.html</code></li>
+</ul>
+<hr>
+<p><strong>หมายเหตุ:</strong> ขั้นตอนทั้งหมดสอดคล้องกับ Clean Architecture ของ <code>icmongolang</code> และสามารถนำไปปรับใช้กับฟีเจอร์อื่น ๆ ในรายการ (Smart Building, Smart Farm, Smart Healthcare, ฯลฯ) ได้โดยเปลี่ยน model และ usecase เท่านั้น ส่วนโครงสร้างหลัก (repository, delivery, pkg) จะเหมือนกัน</p>
+<h3>การนำ Template ไปใช้</h3>
+<ul>
+<li><strong>ผู้เริ่มต้น</strong> ควรศึกษาเนื้อหาตามลำดับตั้งแต่ภาคที่ 1 ถึงภาคที่ 3</li>
+<li><a href="https://github.com/kongnakornna/icmongolang/blob/main/Book/BookGolang1.md">https://github.com/kongnakornna/icmongolang/blob/main/Book/BookGolang1.md</a></li>
+<li><strong>นักพัฒนาที่มีประสบการณ์</strong> สามารถข้ามไปยังภาคที่ 7-9 เพื่อศึกษา Clean Architecture, DDD และการผสานระบบภายนอก</li>
+<li><a href="https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/sulution">https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/sulution</a></li>
+<li><strong>ทีมพัฒนา</strong> สามารถนำ Task List Template และ Checklist Template ไปปรับใช้ในการทำงาน</li>
+<li><a href="https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/Template">https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/Template</a></li>
+<li>**Design Thinking  &amp; Business Model Canvas (BMC) - Design &amp; Implementation Package **</li>
+<li><a href="https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/DesignThinking">https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/DesignThinking</a></li>
+</ul>
+<hr>
+<p><strong>ผู้เขียน:</strong> คงนคร จันทะคุณ<br><strong>อีเมล:</strong> <a href="mailto:kongnakornjantakun@gmail.com">kongnakornjantakun@gmail.com</a><br><strong>Line:</strong> kongnakornna
+<img src="https://github.com/user-attachments/assets/ad5dc390-9ac2-4402-972c-437c8d700bf8" alt="88278"></p>
+<h2><strong>วันที่:</strong> เมษายน 2026</h2>
+<h2>** ประวัติของผู้เขียน:**</h2>
+<h2>เส้นทางนักพัฒนาซอฟต์แวร์: จากโค้ดบรรทัดแรกสู่ผู้นำทางเทคนิค</h2>
+<p>ทุกเส้นทางของนักพัฒนาซอฟต์แวร์มักเริ่มต้นจากความอยากรู้อยากเห็น และสำหรับผม เส้นทางนั้นเริ่มขึ้นเมื่อราว 15 ปีก่อน ด้วยพื้นฐานด้านวิทยาการคอมพิวเตอร์จากมหาวิทยาลัยราชภัฏพิบูลสงคราม ก่อนจะขยับขยายขอบเขตความรู้ไปสู่ศาสตร์อีกด้านอย่างนิติศาสตร์ จากมหาวิทยาลัยสุโขทัยธรรมาธิราช และประกาศนียบัตรทนายความจากสภาทนายความ ความรู้ด้านกฎหมายนี้เองที่กลายเป็นจุดแข็งสำคัญ ช่วยให้ผมมองเห็นภาพรวมของธุรกิจ เข้าใจข้อกำหนด และสื่อสารกับผู้ใช้งานได้อย่างมีประสิทธิภาพมากขึ้นในเวลาต่อมา</p>
+<h3>จุดเริ่มต้นของนักปฏิบัติ</h3>
+<p>ปี 2549 ผมเริ่มต้นเส้นทางสายไอทีในฐานะ IT Support และ PHP Web Developer ที่บริษัท คอนโทรล ดาต้า (ประเทศไทย) จำกัด ช่วงเวลานั้นเป็นช่วงของการเรียนรู้พื้นฐานอย่างแท้จริง ทั้งการดูแล Data Center การให้บริการลูกค้า และการพัฒนาเว็บไซต์ด้วย PHP ซึ่งเป็นรากฐานสำคัญที่ทำให้เข้าใจทั้งด้านเทคนิคและความต้องการของผู้ใช้ไปพร้อมกัน</p>
+<h3>ก้าวสู่โลกของเนื้อหาคุณภาพ</h3>
+<p>ปี 2552 ผมได้ร่วมงานกับบริษัท สยามสปอร์ต ซินดิเคท จำกัด (มหาชน) ในตำแหน่ง Senior Developer นี่คือช่วงเวลาที่ได้พัฒนาทักษะการเขียน PHP และจัดการฐานข้อมูล MySQL, MSSQL ในการขับเคลื่อนเว็บไซต์ข่าวกีฬาชื่อดังอย่าง siamsport.co.th ซึ่งต้องรองรับผู้เข้าชมจำนวนมากและต้องการประสิทธิภาพสูง การดูแลระบบ การทดสอบซอฟต์แวร์ และการฝึกอบรมผู้ใช้ในช่วงนี้ ทำให้เข้าใจความสำคัญของซอฟต์แวร์ที่เสถียรและใช้งานง่าย</p>
+<h3>ขยายขอบเขตกับองค์กรใหญ่</h3>
+<p>ปี 2559 ถือเป็นอีกหนึ่งจุดเปลี่ยนสำคัญ เมื่อผมเข้าร่วมงานกับบริษัท ทรู คอร์ปอเรชั่น จำกัด (มหาชน) ในตำแหน่ง Senior Full Stack Developer ที่นี่ผมได้ขยายขีดความสามารถจากการใช้ PHP ไปสู่ Node.js, TypeScript และการจัดการฐานข้อมูลที่หลากหลาย ทั้ง MySQL, MSSQL รวมถึงการใช้ ORM อย่าง TypeORM อย่างมืออาชีพ</p>
+<p>ผลงานสำคัญในช่วงนี้คือการมีส่วนร่วมพัฒนาและปรับปรุงระบบการศึกษาระดับประเทศอย่าง connexted.org และ trueplookpanya.com ซึ่งเป็นแพลตฟอร์มที่เข้าถึงผู้ใช้จำนวนมาก การได้ร่วมกับทีมออกแบบกระบวนการทางธุรกิจ วางแผนพัฒนา ทำ UAT และให้การสนับสนุนผู้ใช้ เปิดมุมมองว่าการพัฒนาซอฟต์แวร์ไม่ได้จบที่การเขียนโค้ด แต่ต้องทำให้ผู้ใช้ใช้งานได้จริงและเกิดประโยชน์สูงสุด</p>
+<h3>พลิกโฉมด้วยเทคโนโลยีใหม่</h3>
+<p>ปัจจุบัน ผมดำรงตำแหน่ง Technical Lead / Full Stack Software Engineer ที่บริษัท ชีทีชี โกลบอล (ประเทศไทย) จำกัด บทบาทนี้ท้าทายกว่าเดิมมาก เพราะนอกจากจะต้องพัฒนาระบบด้วย Node.js, TypeScript, Python แล้ว ยังต้องวางสถาปัตยกรรมซอฟต์แวร์ กำหนดมาตรฐานการเขียนโค้ด และดูแลทีมพัฒนา ทั้ง Developer, Application Support และ DevOps</p>
+<p>สิ่งที่ทำให้ช่วงเวลานี้พิเศษคือการได้นำเทคโนโลยีสมัยใหม่มาประยุกต์ใช้อย่างจริงจัง:</p>
+<ul>
+<li><strong>ระบบอัตโนมัติ</strong> ด้วย n8n และ UiPath RPA ช่วยลดงานซ้ำซ้อนและเพิ่มประสิทธิภาพการทำงาน</li>
+<li><strong>Generative AI</strong> ผสาน OpenAI API เข้ากับแอปพลิเคชันเพื่อสร้างฟีเจอร์อัจฉริยะ</li>
+<li><strong>CI/CD Pipeline</strong> ตั้งค่า Jenkins, GitHub Actions พร้อม Quality Gates (SonarQube, ESLint, Test Coverage) เพื่อให้การ deploy มั่นใจและปลอดภัย</li>
+<li><strong>ระบบ Monitoring</strong> ด้วย Grafana และ ELK Stack เพื่อให้เห็นภาพรวมของระบบแบบ Real-time</li>
+</ul>
+<h3>ความสำเร็จที่ภูมิใจ</h3>
+<p>ตลอดเส้นทางที่ผ่านมา มีผลงานหลายอย่างที่สร้างความภูมิใจ:
+-- **PoC  <a href="http://cmoniot.trueddns.com:52160">http://cmoniot.trueddns.com:52160</a> ที่นำ IoT มาติดตามอุณหภูมิ น้ำรั่ว และควัน พร้อม Dashboard แจ้งเตือนแบบ Real-time</p>
+<ul>
+<li><strong>การเป็นวิทยากรและที่ปรึกษา</strong> ถ่ายทอดความรู้ด้าน DevOps, การเขียนโค้ดคุณภาพ, Design Thinking และ Business Model Canvas ให้ทีมพัฒนาทั้งภายในและภายนอกองค์กร</li>
+<li><strong>การลดข้อผิดพลาดในการ deploy</strong> จากการนำ Branch Protection และ CI/CD มาบังคับใช้ เพิ่มความมั่นใจให้ทีม</li>
+</ul>
+<h3>จุดแข็งที่สร้างความแตกต่าง</h3>
+<p>นอกเหนือจากทักษะทางเทคนิคที่หลากหลาย จุดแข็งที่ทำให้การทำงานประสบความสำเร็จคือ:</p>
+<ul>
+<li><strong>การสื่อสารที่มีประสิทธิภาพ</strong> สามารถอธิบายเรื่องเทคนิคให้คนที่ไม่ใช่สายเทคนิคเข้าใจ และทำงานร่วมกับทีมธุรกิจได้อย่างราบรื่น</li>
+<li><strong>การแก้ปัญหาอย่างเป็นระบบ</strong> วิเคราะห์หาสาเหตุที่แท้จริง และเสนอแนวทางที่เหมาะสม ไม่ใช่แค่แก้ปัญหาที่ปลายเหตุ</li>
+<li><strong>การเรียนรู้เร็วและปรับตัวเก่ง</strong> ติดตามเทคโนโลยีใหม่อย่างสม่ำเสมอ และพร้อมนำมาประยุกต์ใช้เมื่อเห็นว่าจะเกิดประโยชน์</li>
+<li><strong>ภาวะผู้นำและการทำงานเป็นทีม</strong> ให้คำปรึกษา สนับสนุนสมาชิก และสร้างบรรยากาศที่ทุกคนเติบโตไปด้วยกัน</li>
+</ul>
+<p>ความมุ่งมั่นในการพัฒนาตนเองสะท้อนผ่านการเรียนคอร์สออนไลน์มากมาย ตั้งแต่ Data Science, Machine Learning, Docker &amp; Kubernetes ไปจนถึง DevOps และการพัฒนา Full Stack ด้วย Angular &amp; Nest JS รวมถึงการอบรม Business Model Canvas, Design Thinking, Agile &amp; Scrum จาก True Digital Academy และ General Assembly</p>
+<p>เส้นทางกว่าสิบห้าปีที่ผ่านมา สอนให้รู้ว่านักพัฒนาซอฟต์แวร์ที่ดีไม่ได้มีแค่ทักษะการเขียนโค้ด แต่ต้องเข้าใจธุรกิจ มีวิสัยทัศน์ในการออกแบบระบบ มีทักษะการนำทีม และที่สำคัญคือต้องมีใจที่อยากเรียนรู้และแบ่งปันเสมอ ผมเชื่อว่าทุกโครงการ ทุกบรรทัดโค้ด ที่เขียนขึ้น ล้วนเป็นส่วนหนึ่งในการขับเคลื่อนองค์กรและสร้างประสบการณ์ที่ดีให้ผู้ใช้ และนั่นคือความภาคภูมิใจของนักพัฒนาทุกคน</p>
+<hr>
+<h1>----</h1>
+<p>go mod tidy
+go mod download
+go mod verify
+go run cmd/api/main.go migrate
+swag init -g cmd/api/main.go 
+mockery --all<br>go clean -cache<br>go clean -modcache
+go mod vendor 
+go test ./...<br>air</p>
+<hr>
+<p>go clean -cache<br>go clean -modcache<br>mockery --all<br>go test ./...<br>go build ./...<br>go test -v ./internal/modules/mqtt/delivery/http -run TestMQTTHandler_Publish
+go test -cover ./internal/modules/mqtt/...<br>go test ./internal/modules/mqtt/...        </p>
+<hr>
+<h1>1. ล้าง cache ของ Go</h1>
+<p>go clean -cache
+go clean -modcache</p>
+<h1>2. จัดการ dependencies</h1>
+<p>go mod tidy
+go mod download
+go mod verify</p>
+<h1>3. Migrate ฐานข้อมูล (ใช้คำสั่งจาก cmd/api/main.go)</h1>
+<p>go run cmd/api/main.go migrate</p>
+<h1>4. สร้าง Swagger docs (ใช้ -g ชี้ไฟล์หลัก)</h1>
+<p>swag init -g cmd/api/main.go</p>
+<h1>5. Vendor dependencies (ถ้าต้องการ)</h1>
+<p>go mod vendor</p>
+<h1>6. วิ่งทดสอบทุก package</h1>
+<p>go test ./...</p>
+<h1>7. รันด้วย Air (hot-reload) หรือใช้ go run</h1>
+<p>air</p>
+<hr>
+<p>go clean -cache
+go clean -modcache
+go mod tidy
+go mod download
+go mod verify
+go run cmd/api/main.go migrate
+swag init -g cmd/api/main.go
+go mod vendor
+go test ./...
+air</p>
+<hr>
+<ul>
+<li><p><a href="http://localhost:5000/api/iot/monitordevicegroup?bucket=BAACTW01&location_id=&hardware_id=&lang=th&delcache=0">http://localhost:5000/api/iot/monitordevicegroup?bucket=BAACTW01&amp;location_id=&amp;hardware_id=&amp;lang=th&amp;delcache=0</a></p>
+</li>
+<li><p>db oracle
+lsnrctl start
+net start OracleServiceXE</p>
+</li>
+</ul>
+<p>net stop OracleServiceXE 
+lsnrctl start
+net start OracleServiceXE
+lsnrctl status</p>
+<p>make clean
+make tidy
+make download
+make verify
+make migrate
+make swag
+make vendor
+make test
+make run</p>
+<p>go run main.go kafka</p>
+<h1>----</h1>
+<p>go mod tidy
+go mod download
+go mod verify
+go run cmd/api/main.go migrate
+swag init -g cmd/api/main.go 
+go clean -cache<br>go clean -modcache
+go mod vendor 
+go test ./...<br>air
+./air.cmd</p>
+<p>swag init -g cmd/api/main.go          </p>
+
+</div>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

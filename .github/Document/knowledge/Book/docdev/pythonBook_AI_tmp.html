@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>pythonBook_AI.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+html,footer,header{
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Custom MD PDF CSS
+ */
+html,footer,header{
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+
+ }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+<link rel="stylesheet" href="file:///r%3A/2.Travail/1.Enseignement/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css"><link rel="stylesheet" href="file:///d%3A/rdaros/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css">
+</head>
+
+<body>
+    <p>ส่วน แผนการสอน<br>
+1.วัตุประสงค์<br>
+2.กลุ่มเป้าหมาย<br>
+3.ความรู้พื้นฐาน<br>
+4.เนื้อหา โดยย่อ กระชับ เน้น วัตถุประสงค์  ประโยชน์ของการใช้<br>
+ส่วน เอกสาร<br>
+1.สร้างบทนำ<br>
+2.สร้างบทนิยาม<br>
+3.สร้างบทหัวข้อ<br>
+5.ออกแบบคู่มือ<br>
+6.ออกแบบ workflow<br>
+7.TASK LIST Template<br>
+8.CHECKLIST Template<br>
+9.สรุป<br>
+1.บทนำ<br>
+2.บทนิยาม ศัพท์ ทุกส่วน<br>
+เช่น<br>
+Queue Processor คืออะไร<br>
+Queue Processor มีกี่แบบ<br>
+Queue Processor ใช้อย่างไร นำในกรณีไหน ทำไม่ต้องใช้ ประโยชน์ที่ได้รับ<br>
+3.ออกแบบ workflow</p>
+<ul>
+<li>วาดรูป dataflow สร้างรูปแบบ draw.io เหมือนจริง ลักษณะ flowchart TB   เพื่ออธิบายกระบวนการ ทำความเข้าใจ</li>
+<li>พร้อมอธิบาย แบบ ละเอียด</li>
+<li>ยกตัวอย่างการใช้งานจริง หรือ กรณีศึกษา</li>
+<li>เทมเพลตและตัวอย่างโค้ด พร้อมนำไป run ได้ทันที  มีคำอธิบายการใช้งานแต่ละจุด การคอมเม้น ภาษาไทย และ ภาษาอังกถษ<br>
+4.ทำบทสรุปท้ายบท<br>
+-ประโยชน์ที่ได้รับ<br>
+-ข้อควรระวัง<br>
+-ข้อดี<br>
+-ข้อเสีย<br>
+-ข้อห้าม ถ้ามี<br>
+-แหล่ง อ้างอิ่ง ที่มา<br>
+5.คู่มือ<br>
+-TASK LIST Template<br>
+-กระบวนการทำงานแต่ละขั้นตอน<br>
+-กระบวนการตรวจสอบ การทำงานแต่ละขั้นตอน<br>
+-กระบวนการ อธิบายปัญหา สรุป
+<ul>
+<li>Root Cause Analysis (RCA) คือแนวทางหรือกระบวนการวิเคราะห์ปัญหาอย่างเป็นระบบ เพื่อค้นหา &quot;สาเหตุที่แท้จริง&quot; (Root Cause) ของปัญหาที่เกิดขึ้น<br>
+แทนที่จะแก้ไขเพียงอาการ (Symptoms) ที่ปรากฏ ช่วยป้องกันปัญหาไม่ให้เกิดซ้ำอย่างยั่งยืน<br>
+โดยนิยมใช้เครื่องมืออย่างเทคนิค 5 Why หรือแผนภูมิก้างปลามาช่วยในการวิเคราะห์<br>
+แนวทางและขั้นตอนการวิเคราะห์ Root Cause<br>
+กำหนดปัญหาให้ชัดเจน (Define the Problem): ระบุสิ่งที่เกิดขึ้นจริง ผลกระทบ และขอบเขตของปัญหาอย่างชัดเจนและวัดผลได้<br>
+รวบรวมข้อมูล (Gather Data): หาหลักฐาน บันทึกข้อมูล หรือสัมภาษณ์ผู้เกี่ยวข้อง เพื่อทำความเข้าใจสถานการณ์<br>
+วิเคราะห์สาเหตุ (Analyze the Root Cause): ใช้เทคนิค เช่น &quot;5 Why&quot; (ถาม &quot;ทำไม&quot; เพื่อเจาะลึก 5 ครั้ง) หรือ แผนภูมิก้างปลา (Fishbone Diagram)<br>
+เพื่อแยกแยะสาเหตุที่เป็นไปได้จนถึงสาเหตุรากฐาน<br>
+หาวิธีแก้ไข (Implement Solutions): กำหนดแนวทางแก้ไขที่ตรงจุดเพื่อกำจัดต้นตอของปัญหา<br>
+ติดตามผล (Monitor): ติดตามและประเมินผลลัพธ์เพื่อยืนยันว่าการแก้ไขได้ผลและปัญหาไม่กลับมาเกิดขึ้นซ้ำ<br>
+- ประโยชน์ของการใช้ RCA<br>
+แก้ไขปัญหาได้อย่างยั่งยืน: ป้องกันไม่ให้ปัญหาเดิมเกิดขึ้นซ้ำอีก<br>
+ลดต้นทุนและความสูญเสีย: ไม่ต้องเสียเวลาและค่าใช้จ่ายในการแก้ไขปัญหาเดิมๆ ซ้ำซาก<br>
+ปรับปรุงกระบวนการ: ช่วยให้เห็นจุดอ่อนในกระบวนการทำงานและแก้ไขให้ดี<br>
+-CHECKLIST Template เช่่น<br>
+-กระบวนการทำงานแต่ละขั้นตอน<br>
+-กระบวนการตรวจสอบ การทำงานแต่ละขั้นตอน</li>
+</ul>
+</li>
+</ul>
+<p><strong>ชื่อหนังสือ: Python Basic</strong><br>
+<strong>Mastering Python 2026: จากพื้นฐานสู่ Web Development (FastAPI + Django) และ AI/Machine Learning</strong></p>
+<h2 id="%F0%9F%93%91-%E0%B8%AA%E0%B8%B2%E0%B8%A3%E0%B8%9A%E0%B8%B1%E0%B8%8D-120-%E0%B8%9A%E0%B8%97-python--fastapi--django--mlai">📑 สารบัญ 120 บท (Python + FastAPI + Django + ML/AI)</h2>
+<h3 id="%E0%B8%A0%E0%B8%B2%E0%B8%84-0-%E0%B9%80%E0%B8%84%E0%B8%A3%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B9%81%E0%B8%99%E0%B8%A7%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%A3%E0%B8%B9%E0%B9%89-%E0%B8%9A%E0%B8%97%E0%B8%97%E0%B8%B5%E0%B9%88-1%E2%80%936">ภาค 0: เครื่องมือและแนวทางการเรียนรู้ (บทที่ 1–6)</h3>
+<p><code>bash  </code><br>
+<strong>บทที่ 1:</strong> บทนำ – หนังสือเล่มนี้เหมาะกับใคร  ภาพรวม Python ในปี 2026, วิธีอ่านหนังสือ, แหล่งอ้างอิง (Python.org, FastAPI docs, Django docs, PyTorch/TensorFlow)</p>
+<p><strong>บทที่ 2:</strong> นิยามพื้นฐาน – Python (interpreter, dynamic typing), FastAPI (async, OpenAPI), Django (MVT, ORM), ORM (SQLAlchemy, Django ORM), DTO (Pydantic), CRUD, Cache (Redis), Message Queue (Celery + RabbitMQ/Redis), Machine Learning (Scikit-learn, TensorFlow, PyTorch), MLOps</p>
+<p><strong>บทที่ 3:</strong> หัวข้อสำคัญของหนังสือ (Roadmap) – สายงาน Developer (Backend, Full-stack, Data Scientist, ML Engineer), สถาปัตยกรรม (Layered, Hexagonal, Microservices), ฐานข้อมูล (PostgreSQL, MySQL, MongoDB, SQLite), Redis, Celery, Testing (pytest), Deployment (Docker, Kubernetes), AI/ML (Supervised/Unsupervised, Deep Learning, LLM)</p>
+<p><strong>บทที่ 4:</strong> การออกแบบคู่มือ – รูปแบบหนังสือ, สัญลักษณ์, มาตรฐานการเขียนโค้ด Python (PEP 8, Black, type hints)</p>
+<p><strong>บทที่ 5:</strong> การออกแบบ Workflow สำหรับนักพัฒนา – Git + GitHub, CI/CD (GitHub Actions, GitLab CI), Testing Workflow (Unit → Integration → E2E), การใช้ Poetry/pipenv สำหรับ dependency management</p>
+<p><strong>บทที่ 6:</strong> แผนภาพการทำงาน (Workflow Diagram) + Dataflow Diagram ด้วย Draw.io – รู้จัก Draw.io, การวาด Flowchart แบบ TB, ตัวอย่าง Dataflow (HTTP Request → FastAPI → Service → Repository → Database → Response), อธิบายแต่ละโหนด, เทมเพลต Workflow สำหรับโปรเจกต์ Python</p>
+<hr>
+<h3 id="%E0%B8%A0%E0%B8%B2%E0%B8%84-1-%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%90%E0%B8%B2%E0%B8%99%E0%B8%A0%E0%B8%B2%E0%B8%A9%E0%B8%B2-python-%E0%B8%9A%E0%B8%97%E0%B8%97%E0%B8%B5%E0%B9%88-7%E2%80%9340">ภาค 1: พื้นฐานภาษา Python (บทที่ 7–40)</h3>
+<p><strong>บทที่ 7:</strong> การติดตั้ง Python (3.12/3.13), Virtual Environment (venv, conda), VS Code / PyCharm<br>
+<strong>บทที่ 8:</strong> โปรเจกต์แรก Hello World และการรัน Python (REPL, script)<br>
+<strong>บทที่ 9:</strong> ตัวแปรและชนิดข้อมูล (int, float, str, bool, None)<br>
+<strong>บทที่ 10:</strong> การรับข้อมูลผู้ใช้ (input()) และการแปลงชนิด<br>
+<strong>บทที่ 11:</strong> ตัวดำเนินการ (arithmetic, comparison, logical, assignment)<br>
+<strong>บทที่ 12:</strong> Control Flow: if-elif-else, match-case (Python 3.10+)<br>
+<strong>บทที่ 13:</strong> Loops: for, while, break, continue, else ในลูป<br>
+<strong>บทที่ 14:</strong> Data Structures: list, tuple, set, dictionary (พื้นฐาน)<br>
+<strong>บทที่ 15:</strong> List comprehensions และ generator expressions<br>
+<strong>บทที่ 16:</strong> slicing และการจัดการ sequence<br>
+<strong>บทที่ 17:</strong> Functions – def, return, parameters (positional, keyword, default, *args, **kwargs)<br>
+<strong>บทที่ 18:</strong> Lambda functions และ higher-order functions (map, filter, reduce)<br>
+<strong>บทที่ 19:</strong> Scope และ LEGB rule, global/nonlocal<br>
+<strong>บทที่ 20:</strong> Exception Handling (try-except-else-finally, raise, custom exception)<br>
+<strong>บทที่ 21:</strong> การทำงานกับไฟล์ (open, with context manager, read/write text/CSV/JSON)<br>
+<strong>บทที่ 22:</strong> Modules และ packages, import system, <code>__name__ == &quot;__main__&quot;</code><br>
+<strong>บทที่ 23:</strong> OOP: class, object, constructor (<code>__init__</code>), instance/class/static methods<br>
+<strong>บทที่ 24:</strong> Inheritance, polymorphism, method overriding, super()<br>
+<strong>บทที่ 25:</strong> Encapsulation (private attributes <code>_</code>, <code>__</code>), properties (<code>@property</code>)<br>
+<strong>บทที่ 26:</strong> Abstract classes (ABC, abstractmethod) และ interfaces (Protocol)<br>
+<strong>บทที่ 27:</strong> Magic methods (<code>__str__</code>, <code>__repr__</code>, <code>__len__</code>, <code>__call__</code>, etc.)<br>
+<strong>บทที่ 28:</strong> Type hints (PEP 484) และการใช้ mypy<br>
+<strong>บทที่ 29:</strong> Decorators (function decorator, class decorator, @staticmethod, @classmethod)<br>
+<strong>บทที่ 30:</strong> Iterators และ generators (<code>yield</code>)<br>
+<strong>บทที่ 31:</strong> Context managers (<code>__enter__</code>, <code>__exit__</code>, <code>contextlib</code>)<br>
+<strong>บทที่ 32:</strong> การทดสอบพื้นฐานด้วย unittest และ doctest<br>
+<strong>บทที่ 33:</strong> การใช้ pytest เบื้องต้น (assert, fixtures)<br>
+<strong>บทที่ 34:</strong> โปรเจกต์เล็ก: CLI calculator + unit test<br>
+<strong>บทที่ 35:</strong> Cheatsheet: Python essentials<br>
+<strong>บทที่ 36:</strong> การจัดการ dependencies ด้วย pip, requirements.txt, Poetry<br>
+<strong>บทที่ 37:</strong> การใช้ Jupyter Notebook สำหรับ prototyping<br>
+<strong>บทที่ 38:</strong> การ Debug ด้วย pdb และ breakpoint()<br>
+<strong>บทที่ 39:</strong> การทำงานกับ datetime, random, math, itertools<br>
+<strong>บทที่ 40:</strong> แบบฝึกหัดรวมภาค 1</p>
+<hr>
+<h3 id="%E0%B8%A0%E0%B8%B2%E0%B8%84-2-web-development-%E0%B8%94%E0%B9%89%E0%B8%A7%E0%B8%A2-fastapi-%E0%B8%9A%E0%B8%97%E0%B8%97%E0%B8%B5%E0%B9%88-41%E2%80%9360">ภาค 2: Web Development ด้วย FastAPI (บทที่ 41–60)</h3>
+<p><strong>บทที่ 41:</strong> ทำความรู้จัก FastAPI – จุดเด่น (async, auto-docs, performance)<br>
+<strong>บทที่ 42:</strong> สร้าง FastAPI project แรก, uvicorn, path operation decorators<br>
+<strong>บทที่ 43:</strong> Path parameters, query parameters, request body (Pydantic)<br>
+<strong>บทที่ 44:</strong> Response models และ status codes<br>
+<strong>บทที่ 45:</strong> Dependency Injection ใน FastAPI (Depends)<br>
+<strong>บทที่ 46:</strong> การจัดการ Validation (Field, validator, model_validator)<br>
+<strong>บทที่ 47:</strong> Exception handling (HTTPException, custom exception handlers)<br>
+<strong>บทที่ 48:</strong> Middleware (CORS, logging, authentication)<br>
+<strong>บทที่ 49:</strong> การทำงานกับ Database (SQLAlchemy ORM) – models, session<br>
+<strong>บทที่ 50:</strong> CRUD operations ด้วย SQLAlchemy + async<br>
+<strong>บทที่ 51:</strong> การใช้ Alembic สำหรับ migration<br>
+<strong>บทที่ 52:</strong> การเชื่อมต่อ PostgreSQL และ MongoDB (motor)<br>
+<strong>บทที่ 53:</strong> Authentication – OAuth2, JWT, passlib, python-jose<br>
+<strong>บทที่ 54:</strong> การทดสอบ FastAPI ด้วย TestClient (pytest)<br>
+<strong>บทที่ 55:</strong> การทำ BackgroundTasks (Celery, asyncio.create_task)<br>
+<strong>บทที่ 56:</strong> WebSocket support (real-time chat example)<br>
+<strong>บทที่ 57:</strong> การสร้าง API documentation อัตโนมัติ (Swagger, ReDoc)<br>
+<strong>บทที่ 58:</strong> โปรเจกต์: Blog API (FastAPI + PostgreSQL + SQLAlchemy + JWT)<br>
+<strong>บทที่ 59:</strong> Deployment FastAPI ด้วย Docker, Gunicorn + Uvicorn<br>
+<strong>บทที่ 60:</strong> Cheatsheet และแบบฝึกหัด FastAPI</p>
+<hr>
+<h3 id="%E0%B8%A0%E0%B8%B2%E0%B8%84-3-web-development-%E0%B8%94%E0%B9%89%E0%B8%A7%E0%B8%A2-django-%E0%B8%9A%E0%B8%97%E0%B8%97%E0%B8%B5%E0%B9%88-61%E2%80%9375">ภาค 3: Web Development ด้วย Django (บทที่ 61–75)</h3>
+<p><strong>บทที่ 61:</strong> ทำความรู้จัก Django – MVT pattern, batteries-included<br>
+<strong>บทที่ 62:</strong> การติดตั้งและสร้างโปรเจกต์ Django, runserver<br>
+<strong>บทที่ 63:</strong> Django apps, URL dispatcher, views (function-based, class-based)<br>
+<strong>บทที่ 64:</strong> Django ORM (models, migrations, QuerySet)<br>
+<strong>บทที่ 65:</strong> Admin interface – การปรับแต่ง<br>
+<strong>บทที่ 66:</strong> Templates (Django Template Language), static files<br>
+<strong>บทที่ 67:</strong> Forms และ ModelForms, validation<br>
+<strong>บทที่ 68:</strong> Authentication system (User model, login, logout, permissions)<br>
+<strong>บทที่ 69:</strong> Django REST Framework (DRF) – Serializers, ViewSets, Routers<br>
+<strong>บทที่ 70:</strong> การทำ JWT authentication ด้วย DRF (djangorestframework-simplejwt)<br>
+<strong>บทที่ 71:</strong> การใช้ Celery + Redis สำหรับ background tasks ใน Django<br>
+<strong>บทที่ 72:</strong> Django Channels สำหรับ WebSocket (real-time)<br>
+<strong>บทที่ 73:</strong> การทดสอบ Django (unittest, pytest-django)<br>
+<strong>บทที่ 74:</strong> โปรเจกต์: e-Commerce site (Django + DRF + PostgreSQL + Celery)<br>
+<strong>บทที่ 75:</strong> เปรียบเทียบ FastAPI vs Django – ควรเลือกใช้เมื่อใด</p>
+<hr>
+<h3 id="%E0%B8%A0%E0%B8%B2%E0%B8%84-4-%E0%B8%90%E0%B8%B2%E0%B8%99%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5-orm-cache-message-queue-%E0%B8%9A%E0%B8%97%E0%B8%97%E0%B8%B5%E0%B9%88-76%E2%80%9390">ภาค 4: ฐานข้อมูล, ORM, Cache, Message Queue (บทที่ 76–90)</h3>
+<p><strong>บทที่ 76:</strong> ภาพรวมฐานข้อมูลที่ใช้กับ Python (PostgreSQL, MySQL, MongoDB, SQLite)<br>
+<strong>บทที่ 77:</strong> SQLAlchemy Core และ ORM (declarative, relationship)<br>
+<strong>บทที่ 78:</strong> การทำ CRUD, eager loading (joinedload, selectinload)<br>
+<strong>บทที่ 79:</strong> การใช้ Pydantic ร่วมกับ SQLAlchemy (Schema ↔ Model)<br>
+<strong>บทที่ 80:</strong> การเชื่อมต่อ MongoDB ด้วย motor (async) และ pymongo<br>
+<strong>บทที่ 81:</strong> การใช้ Redis ใน Python (redis-py) – cache session, rate limiting<br>
+<strong>บทที่ 82:</strong> Redis สำหรับ caching ใน FastAPI/Django (<code>@cache_page</code>, django-redis)<br>
+<strong>บทที่ 83:</strong> Redis Pub/Sub – lightweight message queue<br>
+<strong>บทที่ 84:</strong> RabbitMQ + Celery – สร้าง task queue, periodic tasks<br>
+<strong>บทที่ 85:</strong> การ monitor Celery ด้วย Flower<br>
+<strong>บทที่ 86:</strong> การจัดการ configuration (environment variables, python-dotenv, pydantic-settings)<br>
+<strong>บทที่ 87:</strong> Task List Template สำหรับโปรเจกต์ฐานข้อมูล/Redis/RabbitMQ<br>
+<strong>บทที่ 88:</strong> Checklist Template สำหรับการตรวจสอบระบบ<br>
+<strong>บทที่ 89:</strong> Dataflow Diagram สำหรับระบบ Full-stack (Draw.io) – Client → API → Cache → DB → Queue → Worker<br>
+<strong>บทที่ 90:</strong> แหล่งอ้างอิงเกี่ยวกับ database, cache, queue สำหรับ Python</p>
+<hr>
+<h3 id="%E0%B8%A0%E0%B8%B2%E0%B8%84-5-machine-learning-%E0%B9%81%E0%B8%A5%E0%B8%B0-ai-%E0%B8%9A%E0%B8%97%E0%B8%97%E0%B8%B5%E0%B9%88-91%E2%80%93110">ภาค 5: Machine Learning และ AI (บทที่ 91–110)</h3>
+<p><strong>บทที่ 91:</strong> พื้นฐาน Data Science ด้วย Python – NumPy (arrays, broadcasting)<br>
+<strong>บทที่ 92:</strong> pandas – Series, DataFrame, data cleaning, groupby, merge<br>
+<strong>บทที่ 93:</strong> Matplotlib และ Seaborn – การ visualize ข้อมูล<br>
+<strong>บทที่ 94:</strong> Scikit-learn – การแบ่ง train/test, preprocessing (StandardScaler, OneHotEncoder)<br>
+<strong>บทที่ 95:</strong> การทำ supervised learning: linear regression, logistic regression, decision tree<br>
+<strong>บทที่ 96:</strong> การประเมินโมเดล (accuracy, precision, recall, F1, confusion matrix, ROC)<br>
+<strong>บทที่ 97:</strong> Unsupervised learning: clustering (KMeans), PCA<br>
+<strong>บทที่ 98:</strong> Ensemble methods (Random Forest, XGBoost)<br>
+<strong>บทที่ 99:</strong> การทำ Hyperparameter tuning (GridSearchCV, RandomizedSearchCV)<br>
+<strong>บทที่ 100:</strong> Deep Learning ด้วย TensorFlow/Keras – สร้าง Sequential model, Dense layers, training<br>
+<strong>บทที่ 101:</strong> Convolutional Neural Networks (CNN) สำหรับภาพ (CIFAR-10)<br>
+<strong>บทที่ 102:</strong> Recurrent Neural Networks (RNN, LSTM) สำหรับอนุกรมเวลา<br>
+<strong>บทที่ 103:</strong> การใช้ PyTorch (tensors, autograd, nn.Module)<br>
+<strong>บทที่ 104:</strong> Transfer learning (fine-tuning pretrained models เช่น ResNet, BERT)<br>
+<strong>บทที่ 105:</strong> การ deploy ML model เป็น API ด้วย FastAPI (pickle, ONNX, TensorFlow Serving)<br>
+<strong>บทที่ 106:</strong> LLM (Large Language Models) พื้นฐาน – การใช้ Hugging Face transformers (text generation, sentiment analysis)<br>
+<strong>บทที่ 107:</strong> การใช้ LangChain สำหรับสร้าง RAG (Retrieval-Augmented Generation)<br>
+<strong>บทที่ 108:</strong> MLOps ขั้นต้น – MLflow สำหรับ tracking experiment, model registry<br>
+<strong>บทที่ 109:</strong> การทำ batch inference กับ Celery และ Redis<br>
+<strong>บทที่ 110:</strong> โปรเจกต์: ระบบทำนายราคาบ้าน + API + caching + logging</p>
+<hr>
+<h3 id="%E0%B8%A0%E0%B8%B2%E0%B8%84-6-%E0%B8%AB%E0%B8%B1%E0%B8%A7%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%82%E0%B8%B1%E0%B9%89%E0%B8%99%E0%B8%AA%E0%B8%B9%E0%B8%87-clean-code-deployment-%E0%B8%A0%E0%B8%B2%E0%B8%84%E0%B8%9C%E0%B8%99%E0%B8%A7%E0%B8%81-%E0%B8%9A%E0%B8%97%E0%B8%97%E0%B8%B5%E0%B9%88-111%E2%80%93120">ภาค 6: หัวข้อขั้นสูง, Clean Code, Deployment, ภาคผนวก (บทที่ 111–120)</h3>
+<p><strong>บทที่ 111:</strong> Clean Code ใน Python – naming, functions (PEP 8), comments, type hints<br>
+<strong>บทที่ 112:</strong> SOLID Principles – ตัวอย่างปรับใช้ใน Python<br>
+<strong>บทที่ 113:</strong> Design Patterns ที่พบบ่อย (Singleton, Factory, Observer, Dependency Injection)<br>
+<strong>บทที่ 114:</strong> Asynchronous Programming (asyncio, await, gather, aiohttp)<br>
+<strong>บทที่ 115:</strong> การเขียน Unit Test และ Integration Test ระดับสูง (pytest fixtures, mocking with unittest.mock)<br>
+<strong>บทที่ 116:</strong> การทำ CI/CD สำหรับ Python (GitHub Actions, Docker, Deploy to Heroku/Railway/AWS)<br>
+<strong>บทที่ 117:</strong> การทำ monitoring ด้วย Prometheus + Grafana (expose metrics จาก FastAPI/Django)<br>
+<strong>บทที่ 118:</strong> ภาคผนวก ก: เทมเพลต Task List และ Checklist (Excel, PDF, Markdown)<br>
+<strong>บทที่ 119:</strong> ภาคผนวก ข: ไฟล์ Draw.io ตัวอย่าง (Workflow, Dataflow, Architecture) และลิงก์ GitHub โค้ดตัวอย่าง<br>
+<strong>บทที่ 120:</strong> ภาคผนวก ค: อภิธานศัพท์สองภาษา (ไทย-อังกฤษ) และเฉลยแบบฝึกหัด</p>
+
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+name: Validate Skills
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'evals/**'
+      - 'scripts/validate.sh'
+      - '.github/workflows/validate.yml'
+      # discovery files — validate.sh checks they list every skill
+      - 'README.md'
+      - 'CLAUDE.md'
+      - '.github/copilot-instructions.md'
+      - '.cursor/rules/**'
+      - '.windsurf/rules/**'
+      - '.clinerules/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'evals/**'
+      - 'scripts/validate.sh'
+      - '.github/workflows/validate.yml'
+      # discovery files — validate.sh checks they list every skill
+      - 'README.md'
+      - 'CLAUDE.md'
+      - '.github/copilot-instructions.md'
+      - '.cursor/rules/**'
+      - '.windsurf/rules/**'
+      - '.clinerules/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate SKILL.md files
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Run validation
+        run: ./scripts/validate.sh
+
+      - name: Check for trailing whitespace
+        run: |
+          if grep -rn '[[:space:]]$' skills/ --include="*.md" --include="*.json"; then
+            echo "::error::Trailing whitespace found in skill files"
+            exit 1
+          fi
+
+      - name: Check final newlines
+        run: |
+          EXIT=0
+          while IFS= read -r -d '' file; do
+            if [ -s "$file" ] && [ "$(tail -c 1 "$file" | xxd -p)" != "0a" ]; then
+              echo "::error file=$file::Missing final newline"
+              EXIT=1
+            fi
+          done < <(find skills/ -type f \( -name "*.md" -o -name "*.json" \) -print0)
+          exit $EXIT
+
+      - name: Verify skill count in README matches actual
+        run: |
+          ACTUAL=$(find skills/ -name "SKILL.md" | wc -l)
+          echo "Found $ACTUAL skills"
+          if [ "$ACTUAL" -lt 1 ]; then
+            echo "::error::No skills found"
+            exit 1
+          fi

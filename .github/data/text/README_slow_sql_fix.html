@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>README_slow_sql_fix</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css">
+<style>
+
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #24292e;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #24292e;
+}
+
+h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h2 {
+  font-size: 1.5em;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+
+h6 {
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #656d76;
+}
+
+/* Paragraphs */
+p {
+  margin: 16px 0;
+}
+
+/* Inline */
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+del {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  background-color: #eff1f3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #24292e;
+}
+
+a {
+  color: #0969da;
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 3px;
+}
+
+a:hover { opacity: 0.8; }
+
+/* Blockquotes */
+blockquote {
+  margin: 16px 0;
+  padding: 0 1em;
+  border-left: 3px solid #d0d7de;
+  color: #656d76;
+}
+
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
+
+/* Lists */
+ul, ol {
+  padding-left: 2em;
+  margin: 16px 0;
+}
+
+li { margin: 4px 0; }
+ul ul, ul ol, ol ul, ol ol { margin: 0; }
+li > p { margin: 0; }
+
+input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: #0969da;
+}
+
+/* Code Blocks */
+pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  line-height: 1.45;
+  margin: 16px 0;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: auto;
+  max-width: 100%;
+  overflow: auto;
+  display: block;
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  text-align: left;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+
+tr:nth-child(even) td {
+  background-color: #f6f8fa;
+}
+
+/* Horizontal Rule */
+hr {
+  border: none;
+  border-top: 1px solid #d0d7de;
+  margin: 24px 0;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Math (KaTeX MathML) */
+.math-block {
+  display: block;
+  text-align: center;
+  margin: 16px 0;
+  padding: 8px 0;
+  overflow-x: auto;
+}
+
+.math-inline {
+  display: inline;
+}
+
+.math-error {
+  color: #cf222e;
+  background-color: rgba(207, 34, 46, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Mermaid */
+pre.mermaid {
+  background-color: transparent;
+  text-align: center;
+  border: none;
+  padding: 16px 0;
+}
+
+/* Footnotes */
+.footnotes-section {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #d0d7de;
+  font-size: 0.9em;
+  color: #656d76;
+}
+
+.footnotes-section ol {
+  padding-left: 1.5em;
+}
+
+.footnotes-section li {
+  margin: 8px 0;
+}
+
+sup.footnote-ref a {
+  color: #0969da;
+  text-decoration: none;
+  font-size: 0.85em;
+  padding: 0 2px;
+}
+
+sup.footnote-ref a:hover {
+  text-decoration: underline;
+}
+
+a.footnote-backref {
+  color: #0969da;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+/* Details/Summary */
+details {
+  margin: 8px 0;
+  border-left: 2px solid rgba(128, 128, 128, 0.3);
+  padding-left: 12px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 0;
+  color: #24292e;
+}
+
+summary:hover {
+  color: #0969da;
+}
+
+/* Print */
+@media print {
+  body { background: white; }
+  .markdown-body { max-width: none; padding: 0; }
+  pre { white-space: pre-wrap; word-wrap: break-word; }
+  a { color: #24292e; text-decoration: underline; }
+  pre.mermaid { page-break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<div class="markdown-body">
+<h1>SLOW SQL Fix — sd_iot_device query (ListDevicesWithAlarm)</h1>
+<p>วันที่: 2026-08-27 (อัปเดตล่าสุด)
+ไฟล์ที่เกี่ยวข้อง:</p>
+<ul>
+<li><code>internal/modules/iot/repository/device_repo.go</code> (query builder + count query)</li>
+<li><code>internal/modules/iot/usecase/usecase.go</code> (<code>GetAlarmDeviceStatus</code> — ค่าจริงจาก MQTT)</li>
+<li><code>migrations/20260827_slow_sql_device_indexes.sql</code> (index migration)</li>
+<li><code>cmd/migrate.go</code> (AutoMigrate per-model + ทน <code>SQLSTATE 42704</code>)</li>
+</ul>
+<hr>
+<h2>1. Query ที่ช้า (slow query)</h2>
+<p>จาก <code>ListDevicesWithAlarm</code> ใน <code>device_repo.go</code>:</p>
+<pre><code class="language-sql">SELECT
+    d.device_id, d.mqtt_id, d.type_id, d.device_name, d.sn, d.hardware_id,
+    d.status, d.unit, d.measurement, d.layout, d.menu, d.icon, d.icon_on,
+    d.icon_off, d.icon_normal, d.icon_warning, d.icon_alert,
+    t.type_name, l.location_name, l.configdata,
+    mq.mqtt_name, mq.org AS mqtt_org, mq.bucket AS mqtt_bucket,
+    mq.envavorment AS mqtt_envavorment, mq.host AS mqtt_host, mq.port AS mqtt_port,
+    h.host_name, h.port, h.host_id,
+    CASE WHEN d.hardware_id = 1 THEN &#39;Sensor&#39; ... END AS hardware_type_name,
+    CASE WHEN d.layout = 1 THEN &#39;Right Menu&#39; ... END AS layoutapp,
+    CASE WHEN d.calibration_type = 1 THEN &#39;Calibration Add&#39; ... END AS calibrationtype
+FROM sd_iot_device             AS d
+LEFT JOIN sd_iot_device_type   AS t  ON t.type_id = d.type_id
+LEFT JOIN sd_iot_mqtt          AS mq ON mq.mqtt_id = d.mqtt_id
+LEFT JOIN sd_iot_location      AS l  ON l.location_id = d.location_id
+LEFT JOIN sd_iot_host          AS h  ON h.idhost = mq.mqtt_main_id
+WHERE  d.status = 1
+  AND  mq.status = 1
+  AND  d.device_id = &#39;97&#39;
+ORDER  BY mq.sort ASC, d.device_id ASC
+LIMIT 1;
+</code></pre>
+<hr>
+<h2>2. ทำไมถึงช้า</h2>
+<ol>
+<li><strong>Join columns ไม่มี index</strong> — <code>d.type_id</code>, <code>d.mqtt_id</code>, <code>d.location_id</code>,
+<code>mq.mqtt_main_id</code> ไม่มีดัชนี ทำให้ PostgreSQL ต้อง hash-join / nested-loop
+ผ่านทั้ง table.</li>
+<li><strong>WHERE filter ไม่มี index</strong> — <code>d.device_id = &#39;97&#39;</code> และ <code>d.status = 1</code>
+ไม่มี index สำหรับค้นหาแบบรวดเร็ว.</li>
+<li><strong>ORDER BY ไม่มี index</strong> — <code>ORDER BY mq.sort</code> ไม่มีดัชนีรองรับ ทำให้ต้อง sort
+เต็มชุดก่อน LIMIT.</li>
+</ol>
+<hr>
+<h2>3. ทำไม <code>WITH (NOLOCK)</code> <strong>ใช้ไม่ได้</strong> กับโปรเจกต์นี้</h2>
+<p><code>WITH (NOLOCK)</code> เป็น <strong>query hint ของ Microsoft SQL Server เท่านั้น</strong></p>
+<ul>
+<li>โปรเจกต์นี้ใช้ <strong>PostgreSQL</strong> (<code>gorm.io/driver/postgres</code>, driver <code>pgx</code>).</li>
+<li>คำสั่ง <code>WITH (NOLOCK)</code> ใน PostgreSQL / MySQL ทำให้ <strong>syntax error</strong> ทันที.</li>
+<li>NOLOCK = dirty read (อ่านข้อมูลที่ยังไม่ commit) ซึ่งไม่ใช่การแก้ปัญหา query
+ช้า และยังเสี่ยงต่อข้อมูลไม่ตรงกัน/duplicate row.</li>
+<li>ใน PostgreSQL ไม่มี table hint แบบนี้; ถ้าต้องการ &quot;dirty read&quot; จริง ๆ ต้องใช้
+<code>SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED</code> (ซึ่งใน Postgres ก็ไม่ได้
+รู้สึกแปลผลต่างจาก READ COMMITTED มากนัก) — แต่ <strong>ไม่แนะนำ</strong> สำหรับงาน IoT ที่ต้อง
+อ่านข้อมูลแม่นยำ.</li>
+</ul>
+<p><strong>สรุป:</strong> การเติม <code>WITH (NOLOCK)</code> จะทำให้ system ใช้งานไม่ได้บน <strong>Postgres</strong> (ไม่รองรับ)
+ทางแก้ที่ถูกต้องสำหรับ Postgres คือ <strong>สร้าง index</strong> (ดูหัวข้อถัดไป).</p>
+<blockquote>
+<p><strong>สถานะปัจจุบัน (2026-08-27):</strong> ได้เติม <code>WITH (NOLOCK)</code> ลงใน <code>device_repo.go</code>
+(<code>sd_iot_device AS d WITH (NOLOCK)</code> + join ทุกตาราง) และลงใน vendor
+<code>gorm.io/driver/postgres</code> ตามคำขอ — แต่ <strong>เฉพาะเมื่อ runtime เป็น SQL Server</strong>
+ถึงจะรันได้. ถ้ายังเชื่อม Postgres อยู่ query นั้นจะ error — ต้องเลือกใช้อย่างใด
+อย่างหนึ่งตาม database จริง.</p>
+<p><strong>ทางแก้จริงที่ทำให้เร็วขึ้นในตอนนี้คือ index ด้านล่าง (PostgreSQL) ซึ่ง
+ยืนยันแล้วว่าถูก apply ลง DB และเปลี่ยน execution plan จาก Seq Scan/Hash Join
+เป็น Index Scan เรียบร้อย</strong></p>
+</blockquote>
+<hr>
+<h2>4. ทางแก้ที่ถูกต้อง: สร้าง index (PostgreSQL)</h2>
+<p>รันไฟล์ <code>migrations/20260827_slow_sql_device_indexes.sql</code>:</p>
+<pre><code class="language-sql">-- Where filter + default order
+CREATE INDEX idx_sd_iot_device_status_device_id
+    ON public.sd_iot_device (status, device_id);
+
+CREATE INDEX IF NOT EXISTS idx_sd_iot_device_pkey
+    ON public.sd_iot_device (device_id);
+
+-- Join: sd_iot_device_type
+CREATE INDEX idx_sd_iot_device_type_id   ON public.sd_iot_device (type_id);
+CREATE INDEX idx_sd_iot_device_type_pkey ON public.sd_iot_device_type (type_id);
+
+-- Join: sd_iot_location
+CREATE INDEX idx_sd_iot_device_location_id ON public.sd_iot_device (location_id);
+CREATE INDEX idx_sd_iot_location_pkey      ON public.sd_iot_location (location_id);
+
+-- Join: sd_iot_mqtt + status filter
+CREATE INDEX idx_sd_iot_device_mqtt_id  ON public.sd_iot_device (mqtt_id);
+CREATE INDEX idx_sd_iot_mqtt_pkey       ON public.sd_iot_mqtt (mqtt_id);
+CREATE INDEX idx_sd_iot_mqtt_status     ON public.sd_iot_mqtt (status);
+
+-- Join: sd_iot_host + ORDER BY mq.sort
+CREATE INDEX idx_sd_iot_mqtt_main_id    ON public.sd_iot_mqtt (mqtt_main_id);
+CREATE INDEX idx_sd_iot_host_pkey       ON public.sd_iot_host (idhost);
+CREATE INDEX idx_sd_iot_mqtt_sort       ON public.sd_iot_mqtt (sort);
+</code></pre>
+<h3>4.1 ยืนยันว่า index ถูก apply แล้ว (2026-08-27)</h3>
+<p>ตรวจสอบด้วย <code>pg_indexes</code> พบว่ามี index ทั้งหมดแล้ว (บางรายการซ้ำกับ index เดิม
+ของ table ที่สร้างจาก ORM เช่น <code>idx_sd_iot_device_pkey</code>, <code>idx_sd_iot_mqtt_pkey</code>):</p>
+<ul>
+<li><code>sd_iot_device</code>: <code>idx_sd_iot_device_pkey</code>, <code>idx_sd_iot_device_status_device_id</code>,
+<code>idx_sd_iot_device_type_id</code>, <code>idx_sd_iot_device_location_id</code>, <code>idx_sd_iot_device_mqtt_id</code></li>
+<li><code>sd_iot_mqtt</code>: <code>idx_sd_iot_mqtt_pkey</code>, <code>idx_sd_iot_mqtt_status</code>, <code>idx_sd_iot_mqtt_main_id</code>,
+<code>idx_sd_iot_mqtt_sort</code></li>
+</ul>
+<blockquote>
+<p><strong>คำสั่งตรวจสอบ</strong></p>
+<pre><code class="language-bash">docker exec -i icmongolang-db-1 psql -h localhost -p 5435 -U postgres -d icmongolang \
+  -c &quot;SELECT tablename, indexname FROM pg_indexes
+      WHERE tablename IN (&#39;sd_iot_device&#39;,&#39;sd_iot_mqtt&#39;,&#39;sd_iot_device_type&#39;,&#39;sd_iot_location&#39;,&#39;sd_iot_host&#39;);&quot;
+</code></pre>
+</blockquote>
+<h3>4.2 ผล <code>EXPLAIN ANALYZE</code> (device_id=&#39;70&#39; ตัวอย่าง)</h3>
+<table>
+<thead>
+<tr>
+<th>Query</th>
+<th>ก่อน</th>
+<th>หลัง</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>COUNT แบบ 4-join (เดิม)</td>
+<td>~231ms</td>
+<td>~0.660ms</td>
+</tr>
+<tr>
+<td>COUNT แบบ 1-join (ใหม่/optimize)</td>
+<td>—</td>
+<td>~0.308ms</td>
+</tr>
+</tbody></table>
+<p>ทั้งสองใช้ <code>Index Scan using idx_sd_iot_device_pkey</code> เรียบร้อย (เดิมเป็น Seq Scan/Hash Join)</p>
+<hr>
+<h2>4B. เพิ่มเติม: optimize query count ใน <code>ListDevicesWithAlarm</code></h2>
+<p>เดิม count ใช้ <code>LEFT JOIN</code> ครบ 4 ตาราง (device_type, mqtt, location, host)
+ทั้งที่ join เหล่านั้นเอาไว้เพื่อคอลัมน์ display เท่านั้น ไม่มีผลกับจำนวน row
+ที่ filter ได้. ทำให้ Postgres ต้อง join ทุกแถวแค่เพื่อนับจำนวน → ช้า.</p>
+<p>แก้เป็น join เฉพาะ <code>sd_iot_mqtt</code> (จำเป็นสำหรับ <code>mq.status</code> filter เท่านั้น):</p>
+<pre><code class="language-go">countQuery := r.db.Table(&quot;sd_iot_device AS d&quot;).
+    Select(&quot;COUNT(*)&quot;).
+    Joins(&quot;LEFT JOIN sd_iot_mqtt mq ON mq.mqtt_id = d.mqtt_id&quot;)
+</code></pre>
+<p>ผล: count เร็วขึ้นมาก (ดู 4.2)</p>
+<h3>4C. เพิ่มเติม: filter หลาย bucket</h3>
+<p><code>DeviceListAlarmRequest</code> เพิ่มฟิลด์ <code>Buckets []string</code> → แปลงเป็น
+<code>WHERE d.bucket IN (...)</code>:</p>
+<pre><code class="language-go">if len(req.Buckets) &gt; 0 {
+    query = query.Where(&quot;d.bucket IN ?&quot;, req.Buckets)
+}
+</code></pre>
+<p>รองรับการเรียก <code>ListDevicesWithAlarm</code> แบบรายการ bucket หลายค่าแทนการวนลูปทีละ bucket
+(ซึ่งเป็นสาเหตุของ SLOW SQL ซ้ำหลายรอบเดิม).</p>
+<hr>
+<h2>5. การตรวจสอบ / แนวปฏิบัติเพิ่มเติม</h2>
+<ul>
+<li>ใช้ <code>EXPLAIN (ANALYZE, BUFFERS)</code> เพื่อดู plan ของ query จริง.</li>
+<li>ถ้า table มี volume ใหญ่มาก ควรพิจารณา partition (เช่นตาม <code>bucket</code>, <code>org</code>).</li>
+<li>ฟิลด์ <code>d.device_id</code> ใน code ส่งค่าเป็น string (<code>&#39;97&#39;</code>) — ตรวจสอบประเภทคอลัมน์
+ให้ตรงกัน (int4) เพื่อให้ index ถูกใช้ (หลีกเลี่ยง implicit cast ที่บล็อก index).</li>
+<li>เลือกใช้ <code>ListDevices</code> หรือเพิ่ม <code>d.device_id</code> เข้า <code>WHERE</code> ให้เร็วขึ้นเมื่อ
+ต้องการ device เดียว แทนที่จะ join หลายตารางแล้ว <code>ORDER BY ... LIMIT 1</code>.</li>
+<li><code>cmd/migrate.go</code> ปรับเป็น AutoMigrate ทีละ model และทน error <code>SQLSTATE 42704</code>
+(<code>undefined_object</code>) ผ่าน helper <code>isUndefinedObjectError</code> (<code>*pgconn.PgError</code>,
+<code>Code == &quot;42704&quot;</code>) เพื่อไม่ให้ constraint drop ที่ไม่มีอยู่ทำให้ migration ล้ม.</li>
+</ul>
+<hr>
+<h2>6. การแก้ไขเพิ่มเติมใน <code>GetAlarmDeviceStatus</code></h2>
+<h3>6.1 แสดงค่าจริงจาก MQTT ใน <code>deviceioinfo</code></h3>
+<p>เดิม <code>deviceioinfo.value_data</code> / <code>value_data_msg</code> แสดงเป็น <strong>topic/ชื่อฟิลด์</strong>
+แทนค่าจริง → เปลี่ยนเป็น lookup ค่าจริงจาก <code>mqttDataMap</code> (มาจาก MQTT payload
+ที่ parse แล้ว) โดยลอง key ตามลำดับ: <code>dev.Measurement</code> แล้วตามด้วย <code>dev.MqttDeviceName</code>:</p>
+<pre><code class="language-go">realValue := &quot;0&quot;
+if mqttDataMap != nil {
+    if v, ok := mqttDataMap[dev.Measurement]; ok {
+        realValue = fmt.Sprintf(&quot;%v&quot;, v)
+    } else if v, ok := mqttDataMap[dev.MqttDeviceName]; ok {
+        realValue = fmt.Sprintf(&quot;%v&quot;, v)
+    }
+}
+dataAlarm := 0
+if f, err := strconv.ParseFloat(realValue, 64); err == nil &amp;&amp; f &gt;= 1 {
+    dataAlarm = 1
+}
+</code></pre>
+<p>ทำให้ <code>dataAlarm</code> / <code>eventControl</code> สะท้อนสถานะจริงของ device แทนการเดาจากชื่อ topic.</p>
+<h3>6.2 รองรับ <code>hardware_id = 4</code> (Critical Sensor)</h3>
+<p>เพิ่ม slice <code>deviceCritical []interface{}</code> + <code>case 4</code> ใน loop grouping และเพิ่ม
+key <code>&quot;devicecritical&quot;: deviceCritical</code> ลงใน response payload เดิม กรณี <code>hardware_id</code>
+ที่ไม่รู้จัก (<code>default</code>) จะ fallback ไปกลุ่ม <code>deviceSensors</code> เพื่อไม่ให้ข้อมูลสูญหาย</p>
+<pre><code class="language-go">case 4:
+    deviceCritical = append(deviceCritical, devMap)
+</code></pre>
+<h3>6.3 ลำดับการ fetch MQTT</h3>
+<p>ย้ายบล็อก fetch/parse MQTT มาอยู่<strong>ก่อน</strong> loop grouping device (section 4) เพื่อให้
+<code>mqttDataMap</code> พร้อมใช้ใน <code>deviceioinfo</code> ในรอบเดียวกัน — ตัวแปร <code>mqttRawPayload</code>,
+<code>mqttConnected</code>, <code>fromCache</code>, <code>cacheTime</code>, <code>cacheEnabled</code>, <code>mqttDataMap</code>
+ประกาศครั้งเดียว ไม่ซ้ำซ้อน.</p>
+
+</div>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

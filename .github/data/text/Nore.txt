@@ -1,0 +1,53 @@
+อ่าน  C:\github\gistdaapi\src\modules\settings
+ีupdate 
+C:\github\icmongolang\internal\modules\settings
+
+api
+
+http://localhost:5000/api/settings/listschedulepage?page=1&pageSize=10&start=
+
+{
+    "createddate": "2025-07-30 20:19:36",
+    "device_id": 1,
+    "device_name": "Temperature",
+    "event": 0,
+    "friday": 1,
+    "monday": 1,
+    "saturday": 1,
+    "schedule_id": 25,
+    "schedule_name": "TASK 18",
+    "start": "02:00",
+    "status": 1,
+    "sunday": 1,
+    "thursday": 1,
+    "tuesday": 1,
+    "updateddate": "2026-08-26 19:51:57",
+    "wednesday": 1
+}
+
+
+เพิ่ม   "countRs": 2
+
+
+
+
+เช่น
+
+{
+    "schedule_id": 1,
+    "schedule_name": "TASK 1  05:00  ON",
+    "device_id": 1,
+    "start": "05:00",
+    "event": 1,
+    "sunday": 0,
+    "monday": 1,
+    "tuesday": 1,
+    "wednesday": 1,
+    "thursday": 1,
+    "friday": 1,
+    "saturday": 1,
+    "createddate": "2025-06-16 02:31:55",
+    "updateddate": "2026-08-25 20:45:06",
+    "status": 1,
+    "countRs": 2
+}
