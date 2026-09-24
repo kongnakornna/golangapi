@@ -1935,16 +1935,7 @@ func (r *Router) SetupIotRoutes(deviceHandler *handler.DeviceHandler, authMiddle
 --- 
 **หมายเหตุ:** ขั้นตอนทั้งหมดสอดคล้องกับ Clean Architecture ของ `icmongolang` และสามารถนำไปปรับใช้กับฟีเจอร์อื่น ๆ ในรายการ (Smart Building, Smart Farm, Smart Healthcare, ฯลฯ) ได้โดยเปลี่ยน model และ usecase เท่านั้น ส่วนโครงสร้างหลัก (repository, delivery, pkg) จะเหมือนกัน
 
-### การนำ Template ไปใช้
-
-- **ผู้เริ่มต้น** ควรศึกษาเนื้อหาตามลำดับตั้งแต่ภาคที่ 1 ถึงภาคที่ 3
-- https://github.com/kongnakornna/icmongolang/blob/main/Book/BookGolang1.md
-- **นักพัฒนาที่มีประสบการณ์** สามารถข้ามไปยังภาคที่ 7-9 เพื่อศึกษา Clean Architecture, DDD และการผสานระบบภายนอก
-- https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/sulution
-- **ทีมพัฒนา** สามารถนำ Task List Template และ Checklist Template ไปปรับใช้ในการทำงาน
-- https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/Template
-- **Design Thinking  & Business Model Canvas (BMC) - Design & Implementation Package **
-- https://github.com/kongnakornna/icmongolang/tree/main/project_manamet/DesignThinking
+ 
 ---
 **ผู้เขียน:** คงนคร จันทะคุณ  
 **อีเมล:** kongnakornjantakun@gmail.com  
