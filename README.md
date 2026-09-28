@@ -1939,7 +1939,8 @@ func (r *Router) SetupIotRoutes(deviceHandler *handler.DeviceHandler, authMiddle
 ---
 **ผู้เขียน:** คงนคร จันทะคุณ  
 **อีเมล:** kongnakornjantakun@gmail.com  
-**Line:** kongnakornna
+**Line:** kongnakornna 
+**Mobile:** 095-508-8091
 ![88278](https://github.com/user-attachments/assets/ad5dc390-9ac2-4402-972c-437c8d700bf8)
 
 **วันที่:** เมษายน 2026
