@@ -1,0 +1,13 @@
+// ============================================================
+// เพิ่มใน cmd/migrate.go — ใน allModels slice
+// ต้องเรียงลำดับ FK: Policy, Purpose → Consent → UserRequest →
+//                     UserAccountStatus → AuditTrail → RequestResponse
+// ============================================================
+
+&models.PdpaPolicy{},
+&models.PdpaPurpose{},
+&models.PdpaConsent{},
+&models.PdpaUserRequest{},
+&models.PdpaUserAccountStatus{},
+&models.PdpaAuditTrail{},
+&models.PdpaRequestResponse{},

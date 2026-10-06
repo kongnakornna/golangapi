@@ -2,7 +2,7 @@ package http
 
 import (
 	"encoding/json"
-	"io"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -19,50 +19,174 @@ import (
 	"icmongolang/pkg/utils"
 
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 )
 
+// ============================================================================
+// Log type IDs (ตรงกับ seed ใน sd_user_log_type)
+// ============================================================================
+const (
+	LogTypeSignIn  = 1
+	LogTypeSignOut = 2
+)
+
+// ============================================================================
+// authHandler
+// ============================================================================
 type authHandler struct {
-	usersUC             users.UserUseCaseI
-	cfg                 *config.Config
-	logger              logger.Logger
-	rateLimitMiddleware *middleware.RateLimitMiddleware
+	usersUC users.UserUseCaseI
+	logUC   users.LogUseCaseI
+	cfg     *config.Config
+	logger  logger.Logger
 }
 
-// CreateAuthHandler creates auth handler instance
-func CreateAuthHandler(uc users.UserUseCaseI, cfg *config.Config, logger logger.Logger) auth.Handlers {
-	// สร้าง rate limit middleware (กำหนดค่าเองได้)
-	rateLimitConfig := middleware.RateLimitConfig{
-		// RequestsPerSecond: จำนวนคำขอสูงสุดที่อนุญาตต่อวินาที
-		// Maximum number of requests allowed per second
-		RequestsPerSecond: 50, // 50 requests per second | 50 คำขอต่อวินาที
-
-		// Burst: จำนวนคำขอสูงสุดที่อนุญาตให้ส่งพร้อมกัน (กระชุ)
-		// Maximum number of requests allowed to burst at once
-		Burst: 100, // Burst up to 100 | อนุญาตให้ส่งสูงสุด 100 คำขอในครั้งเดียว
-
-		// CleanupInterval: ระยะเวลาในการทำความสะอาดข้อมูล IP ที่ไม่ใช้งาน
-		// Interval for cleaning up inactive IP data
-		CleanupInterval: 15 * time.Minute, // Clean up every 15 minutes | ทำความสะอาดทุก 15 นาที
-	}
-	rateLimitMiddleware := middleware.NewRateLimitMiddleware(rateLimitConfig)
-
+func CreateAuthHandler(
+	uc users.UserUseCaseI,
+	logUC users.LogUseCaseI,
+	cfg *config.Config,
+	logger logger.Logger,
+) auth.Handlers {
 	return &authHandler{
-		cfg:                 cfg,
-		usersUC:             uc,
-		logger:              logger,
-		rateLimitMiddleware: rateLimitMiddleware, // เพิ่ม
+		cfg:     cfg,
+		usersUC: uc,
+		logUC:   logUC,
+		logger:  logger,
 	}
 }
 
-// setAuthCookies เก็บ access/refresh token ลง cookie เพื่อให้ browser ส่งไปกับ
-// request ถัดไปโดยอัตโนมัติ (ไม่ต้องแนบ Authorization header ด้วยมือ)
-func (h *authHandler) setAuthCookies(w http.ResponseWriter, accessToken, refreshToken string, accessExpiresIn, refreshExpiresIn int) {
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+func (h *authHandler) secureCookies() bool {
+	if h.cfg == nil {
+		return false
+	}
+	env := strings.ToLower(h.cfg.Server.Env)
+	return env == "production" || env == "staging"
+}
+
+func (h *authHandler) tokenExpirySeconds() (accessSec, refreshSec int) {
+	return int(h.cfg.Jwt.AccessTokenExpireDuration * 60),
+		int(h.cfg.Jwt.RefreshTokenExpireDuration * 60)
+}
+
+func (h *authHandler) respondError(w http.ResponseWriter, r *http.Request, err error) {
+	if renderErr := render.Render(w, r, responses.CreateErrorResponse(err)); renderErr != nil {
+		h.logger.Errorf("failed to render error response: %v", renderErr)
+	}
+}
+
+// logTokenMeta — sanitized log (ไม่เปิดเผย token)
+func (h *authHandler) logTokenMeta(where, token string, r *http.Request) {
+	h.logger.Infof("[%s] token.len=%d hasAuthHdr=%t cookieNames=%v",
+		where, len(token), r.Header.Get("Authorization") != "", cookieNames(r))
+}
+
+func cookieNames(r *http.Request) []string {
+	cs := r.Cookies()
+	names := make([]string, 0, len(cs))
+	for _, c := range cs {
+		names = append(names, c.Name)
+	}
+	return names
+}
+
+func bindRequest(r *http.Request, dst any) error {
+	ct := r.Header.Get("Content-Type")
+	if strings.Contains(ct, "application/json") {
+		dec := json.NewDecoder(r.Body)
+		dec.UseNumber()
+		return dec.Decode(dst)
+	}
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+	if len(r.Form) == 0 {
+		return nil
+	}
+	formMap := make(map[string]string, len(r.Form))
+	for k := range r.Form {
+		formMap[k] = r.Form.Get(k)
+	}
+	buf, err := json.Marshal(formMap)
+	if err != nil {
+		return err
+	}
+	dec := json.NewDecoder(strings.NewReader(string(buf)))
+	dec.UseNumber()
+	return dec.Decode(dst)
+}
+
+// extractClientMeta — ดึง IP/Device/Browser จาก request
+func extractClientMeta(r *http.Request) (ip, device, browser string) {
+	ip = r.Header.Get("X-Real-IP")
+	if ip == "" {
+		ip = r.Header.Get("X-Forwarded-For")
+		if i := strings.IndexByte(ip, ','); i > 0 {
+			ip = strings.TrimSpace(ip[:i])
+		}
+	}
+	if ip == "" {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err == nil {
+			ip = host
+		} else {
+			ip = r.RemoteAddr
+		}
+	}
+	browser = r.UserAgent()
+	device = r.Header.Get("X-Device-Access")
+	if device == "" {
+		device = detectDevice(browser)
+	}
+	return
+}
+
+func detectDevice(ua string) string {
+	ua = strings.ToLower(ua)
+	switch {
+	case strings.Contains(ua, "iphone"), strings.Contains(ua, "ipad"):
+		return "iOS"
+	case strings.Contains(ua, "android"):
+		return "Android"
+	case strings.Contains(ua, "windows"):
+		return "Windows"
+	case strings.Contains(ua, "mac os"), strings.Contains(ua, "macintosh"):
+		return "macOS"
+	case strings.Contains(ua, "linux"):
+		return "Linux"
+	case strings.Contains(ua, "curl"), strings.Contains(ua, "postman"):
+		return "API-Client"
+	default:
+		return "Unknown"
+	}
+}
+
+// auditAuth — fire-and-forget audit log
+func (h *authHandler) auditAuth(r *http.Request, uid uuid.UUID, logTypeID int, name, detail string) {
+	if h.logUC == nil || uid == uuid.Nil {
+		return
+	}
+	ip, device, browser := extractClientMeta(r)
+	h.logUC.WriteAuditLogWithMeta(r.Context(), uid, logTypeID, name, detail, ip, device, browser)
+}
+
+// setAuthCookies stores access/refresh token in cookies.
+func (h *authHandler) setAuthCookies(
+	w http.ResponseWriter,
+	accessToken, refreshToken string,
+	accessExpiresIn, refreshExpiresIn int,
+) {
+	secure := h.secureCookies()
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     middleware.AccessTokenCookieName,
 		Value:    accessToken,
 		Path:     "/",
 		MaxAge:   accessExpiresIn,
 		HttpOnly: true,
+		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 	})
 	http.SetCookie(w, &http.Cookie{
@@ -71,18 +195,23 @@ func (h *authHandler) setAuthCookies(w http.ResponseWriter, accessToken, refresh
 		Path:     "/",
 		MaxAge:   refreshExpiresIn,
 		HttpOnly: true,
+		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 	})
 }
 
-// clearAuthCookies ลบ cookie ที่เกี่ยวข้องกับ auth (ใช้ตอน logout)
 func (h *authHandler) clearAuthCookies(w http.ResponseWriter) {
+	secure := h.secureCookies()
+	epoch := time.Unix(0, 0)
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     middleware.AccessTokenCookieName,
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
+		Expires:  epoch,
 		HttpOnly: true,
+		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 	})
 	http.SetCookie(w, &http.Cookie{
@@ -90,116 +219,61 @@ func (h *authHandler) clearAuthCookies(w http.ResponseWriter) {
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
+		Expires:  epoch,
 		HttpOnly: true,
+		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 	})
 }
 
-// SignInEmail – POST /api/auth/signin (email + password)
-// @Summary      User login with email and password
-// @Description  Authenticates a user using email and password. Accepts either a JSON body {"email","password"} or multipart/form-data (email, password). Returns access and refresh tokens (also set as HttpOnly cookies). Rate-limited.
+// ============================================================================
+// Handlers
+// ============================================================================
+
+// SignIn – POST /api/auth/signin
+// @Summary      User login with email
+// @Description  Authenticate using email + password. Returns JWT tokens + sets HttpOnly cookies.
+// @Description  **Demo credentials**: `demo@example.com` / `Demo@1234`
 // @Tags         auth
-// @Accept       json,multipart/form-data
+// @Accept       json
 // @Produce      json
-// @Param        email    formData string true "User email"
-// @Param        password formData string true "User password"
-// @Param        Authorization header string false "Bearer token (not required for sign-in)"
-// @Success      200  {object}  map[string]interface{}  "Tokens returned successfully (access_token, refresh_token, token_type, expires_in)"
-// @Failure      400  {object}  responses.ErrorResponse  "Bad request / validation error"
-// @Failure      401  {object}  responses.ErrorResponse  "Unauthorized (wrong email/password)"
-// @Failure      404  {object}  responses.ErrorResponse  "User not found"
-// @Failure      422  {object}  responses.ErrorResponse  "Unprocessable entity / validation error"
-// @Failure      429  {object}  responses.ErrorResponse  "Too many requests (rate-limited)"
+// @Param        request body presenter.UserSignIn true "User credentials"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Failure      401  {object}  responses.ErrorResponse
 // @Router       /auth/signin [post]
 func (h *authHandler) SignIn() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// ใช้ rate limit middleware ตรวจสอบก่อน
-		// สร้าง handler ชั่วคราวเพื่อตรวจสอบ rate limit
-		checkHandler := h.rateLimitMiddleware.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// ถ้าผ่าน rate limit ให้ทำงานปกติ
-		}))
-
-		// สร้าง response writer จับ error
-		recorder := &responseRecorder{
-			ResponseWriter: w,
-			statusCode:     http.StatusOK,
-		}
-
-		// ตรวจสอบ rate limit
-		checkHandler.ServeHTTP(recorder, r)
-
-		// ถ้า status เป็น 429 แสดงว่าโดน rate limit
-		if recorder.statusCode == http.StatusTooManyRequests {
-			return
-		}
-
 		user := new(presenter.UserSignIn)
 
-		contentType := r.Header.Get("Content-Type")
-
-		var email, password string
-
-		if strings.Contains(contentType, "application/json") {
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				h.logger.Error("Failed to read request body")
-				render.Render(w, r, responses.CreateErrorResponse(err))
-				return
-			}
-			defer r.Body.Close()
-
-			var jsonBody map[string]interface{}
-			if err := json.Unmarshal(body, &jsonBody); err != nil {
-				h.logger.Error("Failed to parse JSON body")
-				render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
-				return
-			}
-
-			email, _ = jsonBody["email"].(string)
-			password, _ = jsonBody["password"].(string)
-		} else {
-			if err := r.ParseForm(); err != nil {
-				h.logger.Error("Failed to parse form")
-				render.Render(w, r, responses.CreateErrorResponse(err))
-				return
-			}
-			email = r.FormValue("email")
-			password = r.FormValue("password")
+		if err := bindRequest(r, user); err != nil {
+			h.logger.Error("SignIn: failed to decode request")
+			h.respondError(w, r, httpErrors.ErrValidation(err))
+			return
 		}
-
-		if email == "" || password == "" {
-			h.logger.Warn("SignIn: missing email or password")
+		if user.Email == "" || user.Password == "" {
+			h.respondError(w, r, httpErrors.ErrValidation(nil))
+			return
 		}
-
-		user.Email = email
-		user.Password = password
-
-		h.logger.Info("SignIn attempt")
-
-		err := utils.ValidateStruct(r.Context(), user)
-		if err != nil {
-			h.logger.Error("SignIn validation failed")
-			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
+		if err := utils.ValidateStruct(r.Context(), user); err != nil {
+			h.respondError(w, r, httpErrors.ErrValidation(err))
 			return
 		}
 
-		accessToken, refreshToken, err := h.usersUC.SignIn(
-			r.Context(),
-			user.Email,
-			user.Password,
-		)
+		accessToken, refreshToken, err := h.usersUC.SignIn(r.Context(), user.Email, user.Password)
 		if err != nil {
 			h.logger.Info("SignIn failed")
-			render.Render(w, r, responses.CreateErrorResponse(err))
+			h.respondError(w, r, err)
 			return
 		}
 
-		expiresIn := h.cfg.Jwt.AccessTokenExpireDuration * 60
-		refreshExpiresIn := h.cfg.Jwt.RefreshTokenExpireDuration * 60
+		// 🆕 Audit log
+		if u, err := h.usersUC.GetByEmail(r.Context(), user.Email); err == nil && u != nil {
+			h.auditAuth(r, u.ID, LogTypeSignIn, "User SignIn", "Sign in via /auth/signin")
+		}
 
-		h.setAuthCookies(w, accessToken, refreshToken, int(expiresIn), int(refreshExpiresIn))
-
-		h.logger.Info("SignIn successful")
+		expiresIn, refreshExpiresIn := h.tokenExpirySeconds()
+		h.setAuthCookies(w, accessToken, refreshToken, expiresIn, refreshExpiresIn)
 
 		render.Respond(w, r, map[string]interface{}{
 			"access_token":  accessToken,
@@ -210,113 +284,50 @@ func (h *authHandler) SignIn() func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// SignInUsername – POST /api/auth/login (username + password)
-// @Summary      User login with username and password
-// @Description  Authenticates a user using username and password. Accepts either a JSON body {"username","password"} or multipart/form-data (username, password). Returns access and refresh tokens (also set as HttpOnly cookies). Rate-limited.
+// Login – POST /api/auth/login
+// @Summary      User login with username
+// @Description  Authenticate using username (or email) + password. Returns JWT tokens + sets HttpOnly cookies.
+// @Description  **Demo credentials**: `demouser` / `Demo@1234`
 // @Tags         auth
-// @Accept       json,multipart/form-data
+// @Accept       json
 // @Produce      json
-// @Param        username formData string true "username"
-// @Param        password formData string true "password"
-// @Param        Authorization header string false "Bearer token (not required for login)"
-// @Success      200  {object}  map[string]interface{}  "Tokens returned successfully (access_token, refresh_token, token_type, expires_in)"
-// @Failure      400  {object}  responses.ErrorResponse  "Bad request / validation error"
-// @Failure      401  {object}  responses.ErrorResponse  "Unauthorized (wrong username/password)"
-// @Failure      404  {object}  responses.ErrorResponse  "User not found"
-// @Failure      422  {object}  responses.ErrorResponse  "Unprocessable entity / validation error"
-// @Failure      429  {object}  responses.ErrorResponse  "Too many requests (rate-limited)"
+// @Param        request body presenter.SignIn true "User credentials (username + password)"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Failure      401  {object}  responses.ErrorResponse
 // @Router       /auth/login [post]
 func (h *authHandler) Login() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// ใช้ rate limit middleware ตรวจสอบก่อน
-		// สร้าง handler ชั่วคราวเพื่อตรวจสอบ rate limit
-		checkHandler := h.rateLimitMiddleware.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// ถ้าผ่าน rate limit ให้ทำงานปกติ
-		}))
-
-		// สร้าง response writer จับ error
-		recorder := &responseRecorder{
-			ResponseWriter: w,
-			statusCode:     http.StatusOK,
-		}
-
-		// ตรวจสอบ rate limit
-		checkHandler.ServeHTTP(recorder, r)
-
-		// ถ้า status เป็น 429 แสดงว่าโดน rate limit
-		if recorder.statusCode == http.StatusTooManyRequests {
-			return
-		}
-
 		user := new(presenter.SignIn)
 
-		contentType := r.Header.Get("Content-Type")
-
-		var username, password string
-
-		if strings.Contains(contentType, "application/json") {
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				h.logger.Error("Failed to read request body")
-				render.Render(w, r, responses.CreateErrorResponse(err))
-				return
-			}
-			defer r.Body.Close()
-
-			var jsonBody map[string]interface{}
-			if err := json.Unmarshal(body, &jsonBody); err != nil {
-				h.logger.Error("Failed to parse JSON body")
-				render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
-				return
-			}
-
-			username, _ = jsonBody["username"].(string)
-			password, _ = jsonBody["password"].(string)
-		} else {
-			if err := r.ParseForm(); err != nil {
-				h.logger.Error("Failed to parse form")
-				render.Render(w, r, responses.CreateErrorResponse(err))
-				return
-			}
-			username = r.FormValue("username")
-			password = r.FormValue("password")
+		if err := bindRequest(r, user); err != nil {
+			h.logger.Error("Login: failed to decode request")
+			h.respondError(w, r, httpErrors.ErrValidation(err))
+			return
 		}
-
-		if username == "" || password == "" {
-			h.logger.Warn("Login: missing username or password")
+		if user.Username == "" || user.Password == "" {
+			h.respondError(w, r, httpErrors.ErrValidation(nil))
+			return
 		}
-
-		user = &presenter.SignIn{
-			Username: username,
-			Password: password,
-		}
-
-		h.logger.Info("Login attempt")
-
-		err := utils.ValidateStruct(r.Context(), user)
-		if err != nil {
-			h.logger.Info("Login validation failed")
-			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
+		if err := utils.ValidateStruct(r.Context(), user); err != nil {
+			h.respondError(w, r, httpErrors.ErrValidation(err))
 			return
 		}
 
-		accessToken, refreshToken, err := h.usersUC.SignIn(
-			r.Context(),
-			user.Username,
-			user.Password,
-		)
+		accessToken, refreshToken, err := h.usersUC.SignInByUsername(r.Context(), user.Username, user.Password)
 		if err != nil {
 			h.logger.Info("Login failed")
-			render.Render(w, r, responses.CreateErrorResponse(err))
+			h.respondError(w, r, err)
 			return
 		}
 
-		expiresIn := h.cfg.Jwt.AccessTokenExpireDuration * 60
-		refreshExpiresIn := h.cfg.Jwt.RefreshTokenExpireDuration * 60
+		// 🆕 Audit log
+		if u, err := h.usersUC.GetByEmail(r.Context(), user.Username); err == nil && u != nil {
+			h.auditAuth(r, u.ID, LogTypeSignIn, "User SignIn", "Sign in via /auth/login")
+		}
 
-		h.setAuthCookies(w, accessToken, refreshToken, int(expiresIn), int(refreshExpiresIn))
-
-		h.logger.Info("Login successful")
+		expiresIn, refreshExpiresIn := h.tokenExpirySeconds()
+		h.setAuthCookies(w, accessToken, refreshToken, expiresIn, refreshExpiresIn)
 
 		render.Respond(w, r, map[string]interface{}{
 			"access_token":  accessToken,
@@ -327,262 +338,228 @@ func (h *authHandler) Login() func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// responseRecorder สำหรับจับ status code
-type responseRecorder struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-func (rr *responseRecorder) WriteHeader(code int) {
-	rr.statusCode = code
-	rr.ResponseWriter.WriteHeader(code)
-}
-
-func (rr *responseRecorder) Write(b []byte) (int, error) {
-	return rr.ResponseWriter.Write(b)
-}
-
-// RefreshToken godoc
-// @Summary Refresh token
-// @Description Get new access token from refresh token.
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Authentication header"
-// @Success 200 {object} presenter.Token
-// @Failure 400	{object} responses.ErrorResponse
-// @Failure 422	{object} responses.ErrorResponse
-// @Security BearerAuth
-// @Router /auth/refresh [get]
+// RefreshToken – GET /api/auth/refresh
+// @Summary      Refresh access token
+// @Description  Use HttpOnly refresh-token cookie to issue a new access token (rotation).
+// @Tags         auth
+// @Produce      json
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      401  {object}  responses.ErrorResponse
+// @Router       /auth/refresh [get]
 func (h *authHandler) RefreshToken() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		refreshToken := middleware.RefreshTokenFromRequest(r)
 
-		accessToken, refreshToken, err := h.usersUC.Refresh(ctx, refreshToken)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		h.logTokenMeta("RefreshToken", refreshToken, r)
+
+		if refreshToken == "" {
+			h.respondError(w, r, httpErrors.ErrUnauthorized(nil))
 			return
 		}
 
-		h.setAuthCookies(w, accessToken, refreshToken,
-			int(h.cfg.Jwt.AccessTokenExpireDuration*60),
-			int(h.cfg.Jwt.RefreshTokenExpireDuration*60))
+		accessToken, newRefresh, err := h.usersUC.Refresh(ctx, refreshToken)
+		if err != nil {
+			h.respondError(w, r, err)
+			return
+		}
 
-		render.Respond(w, r, presenter.Token{
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-			TokenType:    "bearer",
+		accessSec, refreshSec := h.tokenExpirySeconds()
+		h.setAuthCookies(w, accessToken, newRefresh, accessSec, refreshSec)
+
+		render.Respond(w, r, map[string]interface{}{
+			"access_token":  accessToken,
+			"refresh_token": newRefresh,
+			"token_type":    "bearer",
 		})
 	}
 }
 
-// GetPublicKey godoc
-// @Summary Get public key
-// @Description Get rsa public key to decode token.
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Success 200 {object} presenter.PublicKey
-// @Failure 400	{object} responses.ErrorResponse
-// @Failure 422	{object} responses.ErrorResponse
-// @Router /auth/publickey [get]
+// GetPublicKey – GET /api/auth/publickey
+// @Summary      Get RSA public keys
+// @Description  Return public keys used to verify access/refresh tokens (RS256).
+// @Tags         auth
+// @Produce      json
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Router       /auth/publickey [get]
 func (h *authHandler) GetPublicKey() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		publicKeyAccessToken, err := jwt.DecodeBase64(h.cfg.Jwt.AccessTokenPublicKey)
 		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+			h.respondError(w, r, err)
 			return
 		}
-
 		publicKeyRefreshToken, err := jwt.DecodeBase64(h.cfg.Jwt.RefreshTokenPublicKey)
 		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+			h.respondError(w, r, err)
 			return
 		}
-
-		render.Respond(w, r, presenter.PublicKey{
-			PublicKeyAccessToken:  string(publicKeyAccessToken[:]),
-			PublicKeyRefreshToken: string(publicKeyRefreshToken[:]),
+		render.Respond(w, r, map[string]string{
+			"public_key_access_token":  string(publicKeyAccessToken),
+			"public_key_refresh_token": string(publicKeyRefreshToken),
 		})
 	}
 }
 
-// Logout godoc
-// @Summary Logout
-// @Description Logout, remove current refresh token in db.
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Authentication header"
-// @Success 200
-// @Failure 400	{object} responses.ErrorResponse
-// @Failure 422	{object} responses.ErrorResponse
-// @Security BearerAuth
-// @Router /auth/logout [get]
+// Logout – POST /api/auth/logout
+// @Summary      Logout current session
+// @Description  Revoke the current refresh token and clear auth cookies.
+// @Tags         auth
+// @Produce      json
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Router       /auth/logout [post]
 func (h *authHandler) Logout() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		refreshToken := middleware.RefreshTokenFromRequest(r)
 
-		err := h.usersUC.Logout(ctx, refreshToken)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		h.logTokenMeta("Logout", refreshToken, r)
+
+		if refreshToken == "" {
+			h.clearAuthCookies(w)
+			render.Respond(w, r, responses.CreateSuccessResponse("logged out"))
 			return
 		}
 
+		// Parse user ID สำหรับ audit (ก่อน revoke)
+		var uid uuid.UUID
+		if id, err := h.usersUC.ParseIdFromRefreshToken(ctx, refreshToken); err == nil {
+			uid = id
+		}
+
+		if err := h.usersUC.Logout(ctx, refreshToken); err != nil {
+			h.respondError(w, r, err)
+			return
+		}
+
+		if uid != uuid.Nil {
+			h.auditAuth(r, uid, LogTypeSignOut, "User Signout", "Logout via /auth/logout")
+		}
+
 		h.clearAuthCookies(w)
+		render.Respond(w, r, responses.CreateSuccessResponse("logged out"))
 	}
 }
 
-// LogoutAllToken godoc
-// @Summary Logout all session
-// @Description Logout all session of this user. This endpoint is available for both GET and POST.
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Authentication header"
-// @Success 200
-// @Failure 400	{object} responses.ErrorResponse
-// @Failure 422	{object} responses.ErrorResponse
-// @Security BearerAuth
-// @Router /auth/logoutall [get]
-// @Router /auth/logoutall [post]
+// LogoutAllToken – POST /api/auth/logoutall
+// @Summary      Logout all sessions
+// @Description  Revoke all refresh tokens for the user.
+// @Tags         auth
+// @Produce      json
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      401  {object}  responses.ErrorResponse
+// @Router       /auth/logoutall [post]
 func (h *authHandler) LogoutAllToken() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		refreshToken := middleware.RefreshTokenFromRequest(r)
+
+		h.logTokenMeta("LogoutAll", refreshToken, r)
+
+		if refreshToken == "" {
+			h.clearAuthCookies(w)
+			h.respondError(w, r, httpErrors.ErrUnauthorized(nil))
+			return
+		}
 
 		id, err := h.usersUC.ParseIdFromRefreshToken(ctx, refreshToken)
 		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+			h.respondError(w, r, err)
 			return
 		}
 
-		err = h.usersUC.LogoutAll(ctx, id)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		if err := h.usersUC.LogoutAll(ctx, id); err != nil {
+			h.respondError(w, r, err)
 			return
 		}
+
+		h.auditAuth(r, id, LogTypeSignOut, "User Signout", "Logout all sessions")
 
 		h.clearAuthCookies(w)
+		render.Respond(w, r, responses.CreateSuccessResponse("logged out from all sessions"))
 	}
 }
 
-// VerifyEmail godoc
-// @Summary Verify user
-// @Description Verify user using code from email.
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param code query string true "offset" Format(code)
-// @Success 200 {object} string
-// @Failure 400	{object} responses.ErrorResponse
-// @Router /auth/verifyemail [get]
+// VerifyEmail – GET /api/auth/verifyemail
+// @Summary      Verify email
+// @Tags         auth
+// @Produce      json
+// @Param        code query string true "Verification code"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Router       /auth/verifyemail [get]
 func (h *authHandler) VerifyEmail() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+		verificationCode := r.URL.Query().Get("code")
 
-		q := r.URL.Query()
-		verificationCode := q.Get("code")
-
-		err := h.usersUC.Verify(ctx, verificationCode)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		if err := h.usersUC.Verify(ctx, verificationCode); err != nil {
+			h.respondError(w, r, err)
 			return
 		}
-
 		render.Respond(w, r, responses.CreateSuccessResponse("Email verified successfully"))
 	}
 }
 
-// ForgotPassword godoc
-// @Summary Forgot password
-// @Description Forgot password, code will send to email.
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param forgotPassword body presenter.ForgotPassword true "Forgot Password"
-// @Success 200 {object} string
-// @Failure 400	{object} responses.ErrorResponse
-// @Failure 422	{object} responses.ErrorResponse
-// @Router /auth/forgotpassword [post]
+// ForgotPassword – POST /api/auth/forgotpassword
+// @Summary      Request password reset
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request body presenter.ForgotPassword true "Email"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Router       /auth/forgotpassword [post]
 func (h *authHandler) ForgotPassword() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		forgotPassword := new(presenter.ForgotPassword)
 
-		err := json.NewDecoder(r.Body).Decode(&forgotPassword)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		if err := bindRequest(r, forgotPassword); err != nil {
+			h.respondError(w, r, err)
 			return
 		}
-
-		err = utils.ValidateStruct(r.Context(), forgotPassword)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err))) //nolint:errcheck
+		if err := utils.ValidateStruct(r.Context(), forgotPassword); err != nil {
+			h.respondError(w, r, httpErrors.ErrValidation(err))
 			return
 		}
-
-		err = h.usersUC.ForgotPassword(ctx, forgotPassword.Email)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		if err := h.usersUC.ForgotPassword(ctx, forgotPassword.Email); err != nil {
+			h.respondError(w, r, err)
 			return
 		}
-
 		render.Respond(w, r,
 			responses.CreateSuccessResponse("You will receive a reset email if user with that email exist"))
 	}
 }
 
-// ResetPassword godoc
-// @Summary Reset Password
-// @Description Reset Password, using code from email.
-// @Tags auth
-// @Accept json
-// @Produce json
-// @Param code query string true "code" Format(code)
-// @Param resetPassword body presenter.ResetPassword true "Reset Password"
-// @Success 200 {object} string
-// @Failure 400	{object} responses.ErrorResponse
-// @Failure 422	{object} responses.ErrorResponse
-// @Router /auth/resetpassword [patch]
+// ResetPassword – PATCH /api/auth/resetpassword
+// @Summary      Reset password
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        code query string true "Reset token"
+// @Param        request body presenter.ResetPassword true "New password"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Router       /auth/resetpassword [patch]
 func (h *authHandler) ResetPassword() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
-		q := r.URL.Query()
-		resetToken := q.Get("code")
-
+		resetToken := r.URL.Query().Get("code")
 		resetPassword := new(presenter.ResetPassword)
 
-		err := json.NewDecoder(r.Body).Decode(&resetPassword)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		if err := bindRequest(r, resetPassword); err != nil {
+			h.respondError(w, r, err)
 			return
 		}
-
-		err = utils.ValidateStruct(r.Context(), resetPassword)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err))) //nolint:errcheck
+		if err := utils.ValidateStruct(r.Context(), resetPassword); err != nil {
+			h.respondError(w, r, httpErrors.ErrValidation(err))
 			return
 		}
-
-		err = h.usersUC.ResetPassword(
-			ctx,
-			resetToken,
-			resetPassword.NewPassword,
-			resetPassword.ConfirmPassword,
-		)
-		if err != nil {
-			render.Render(w, r, responses.CreateErrorResponse(err)) //nolint:errcheck
+		if err := h.usersUC.ResetPassword(
+			ctx, resetToken,
+			resetPassword.NewPassword, resetPassword.ConfirmPassword,
+		); err != nil {
+			h.respondError(w, r, err)
 			return
 		}
-
 		render.Respond(w, r,
 			responses.CreateSuccessResponse("Password data updated successfully, please re-login"))
 	}

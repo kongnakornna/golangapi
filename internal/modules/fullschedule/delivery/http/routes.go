@@ -52,7 +52,7 @@ func MapMasterRoutes(router chi.Router, mh fullschedule.MasterHandlers, mw *midd
 // MapFullscheduleRoutes mounts the Full Schedule routes under /api/fullschedule.
 // จดทะเบียนเส้นทางโมดูล Full Schedule
 func MapFullscheduleRoutes(router chi.Router, h fullschedule.Handlers, mw *middleware.MiddlewareManager) {
-	router.Route("/fullschedule", func(r chi.Router) {
+	router.Route("/api/fullschedule", func(r chi.Router) {
 		r.Group(func(pr chi.Router) {
 			pr.Use(mw.Verifier(true), mw.Authenticator(), mw.CurrentUser(), mw.ActiveUser())
 

@@ -13,7 +13,11 @@ import (
 )
 
 func newTestHub() *Hub {
-	return NewHub(queue.NewNoop(), logger.NewLogger("websocket-test"))
+	return NewHub(HubConfig{
+		Queue:          queue.NewNoop(),
+		Log:            logger.NewLogger("websocket-test"),
+		EnablePresence: false,
+	})
 }
 
 func TestBroadcastAfterUnregister_NoPanic(t *testing.T) {

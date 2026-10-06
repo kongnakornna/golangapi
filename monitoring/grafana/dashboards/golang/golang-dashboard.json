@@ -1,0 +1,514 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Health /api/health",
+      "gridPos": { "h": 4, "w": 3, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "probe_success{job=\"backend-blackbox\", instance=\"http://backend:5000/api/health\"}",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "red", "text": "DOWN" }, "1": { "color": "green", "text": "UP" } }, "type": "value" }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 16,
+      "type": "stat",
+      "title": "Health / (localhost:5000)",
+      "gridPos": { "h": 4, "w": 3, "x": 3, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "probe_success{job=\"backend-blackbox\", instance=\"http://backend:5000/\"}",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "red", "text": "DOWN" }, "1": { "color": "green", "text": "UP" } }, "type": "value" }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Health /apimetric",
+      "gridPos": { "h": 4, "w": 3, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "probe_success{job=\"backend-blackbox\", instance=\"http://backend:5000/apimetric\"}",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "red", "text": "DOWN" }, "1": { "color": "green", "text": "UP" } }, "type": "value" }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Uptime",
+      "gridPos": { "h": 4, "w": 3, "x": 9, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "time() - process_start_time_seconds{job=\"$job\"}",
+          "legendFormat": "uptime",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "unit": "s",
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Request QPS",
+      "gridPos": { "h": 4, "w": 3, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{job=\"$job\"}[$__rate_interval]))",
+          "legendFormat": "qps",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "unit": "reqps",
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Error Rate",
+      "gridPos": { "h": 4, "w": 3, "x": 15, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "100 * sum(rate(http_requests_total{job=\"$job\", status=~\"4..|5..\"}[$__rate_interval])) / clamp_min(sum(rate(http_requests_total{job=\"$job\"}[$__rate_interval])), 1e-6)",
+          "legendFormat": "error %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 5 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Goroutines",
+      "gridPos": { "h": 4, "w": 3, "x": 18, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "go_goroutines{job=\"$job\"}",
+          "legendFormat": "goroutines",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "HTTP Request Rate",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum by (method, path) (rate(http_requests_total{job=\"$job\"}[$__rate_interval]))",
+          "legendFormat": "{{method}} {{path}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "HTTP Request Duration",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"$job\"}[$__rate_interval])) by (le))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"$job\"}[$__rate_interval])) by (le))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{job=\"$job\"}[$__rate_interval])) by (le))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Heap Memory",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "go_memstats_alloc_bytes{job=\"$job\"}",
+          "legendFormat": "alloc",
+          "refId": "A"
+        },
+        {
+          "expr": "go_memstats_heap_inuse_bytes{job=\"$job\"}",
+          "legendFormat": "heap_inuse",
+          "refId": "B"
+        },
+        {
+          "expr": "go_memstats_heap_sys_bytes{job=\"$job\"}",
+          "legendFormat": "heap_sys",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "bytes",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Probe Latency (all endpoints)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{job=\"backend-blackbox\"}",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "HTTP Status Rate",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum by (status) (rate(http_requests_total{job=\"$job\"}[$__rate_interval]))",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "System CPU Usage",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "system_cpu_usage_percent{job=\"$job\"}",
+          "legendFormat": "cpu %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 80 }, { "color": "red", "value": 90 } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "GC Pause Rate",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(rate(go_gc_pause_total_seconds{job=\"$job\"}[$__rate_interval]))",
+          "legendFormat": "gc pause",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "s",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "WebSocket Clients & Rooms",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "ws_connected_clients{job=\"$job\"}",
+          "legendFormat": "clients",
+          "refId": "A"
+        },
+        {
+          "expr": "ws_active_rooms{job=\"$job\"}",
+          "legendFormat": "rooms",
+          "refId": "B"
+        },
+        {
+          "expr": "ws_active_topics{job=\"$job\"}",
+          "legendFormat": "topics",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 15,
+      "type": "timeseries",
+      "title": "WebSocket Message Rate (broadcast)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum by (type) (rate(ws_messages_broadcast_total{job=\"$job\"}[$__rate_interval]))",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "unit": "reqps",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["golang", "backend"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "backend", "value": "backend" },
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "definition": "label_values(go_goroutines, job)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Job",
+        "multi": false,
+        "name": "job",
+        "options": [],
+        "query": { "query": "label_values(go_goroutines, job)", "refId": "prometheus-job" },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Go Backend",
+  "uid": "golang-backend",
+  "version": 3,
+  "weekStart": ""
+}

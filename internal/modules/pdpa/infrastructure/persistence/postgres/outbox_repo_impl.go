@@ -1,4 +1,3 @@
-// Package postgres implements the pdpa module persistence layer on PostgreSQL.
 package postgres
 
 import (
@@ -11,30 +10,28 @@ import (
 	"gorm.io/gorm/clause"
 
 	"icmongolang/internal/modules/pdpa/domain/event"
-	repository "icmongolang/internal/modules/pdpa/domain/repository"
+	"icmongolang/internal/modules/pdpa/domain/repository"
 	base "icmongolang/internal/repository"
 )
 
-const defaultHandler = "pdpa-outbox"
+const defaultOutboxHandler = "pdpa-outbox"
 
 type outboxEventRow struct {
-	ID           uuid.UUID              `gorm:"column:id;primaryKey"`
-	EventID      uuid.UUID              `gorm:"column:event_id"`
-	Topic        string                 `gorm:"column:topic"`
-	Key          *string                `gorm:"column:key"`
-	Payload      json.RawMessage        `gorm:"column:payload;type:jsonb"`
-	Handler      string                 `gorm:"column:handler"`
+	ID           uuid.UUID               `gorm:"column:id;primaryKey"`
+	EventID      uuid.UUID               `gorm:"column:event_id"`
+	Topic        string                  `gorm:"column:topic"`
+	Key          *string                 `gorm:"column:key"`
+	Payload      json.RawMessage         `gorm:"column:payload;type:jsonb"`
+	Handler      string                  `gorm:"column:handler"`
 	Status       event.OutboxEventStatus `gorm:"column:status"`
-	Attempts     int                    `gorm:"column:attempts"`
-	CreatedAt    time.Time              `gorm:"column:created_at"`
-	UpdatedAt    time.Time              `gorm:"column:updated_at"`
-	DispatchedAt *time.Time             `gorm:"column:dispatched_at"`
-	DeletedAt    gorm.DeletedAt         `gorm:"column:deleted_at"`
+	Attempts     int                     `gorm:"column:attempts"`
+	CreatedAt    time.Time               `gorm:"column:created_at"`
+	UpdatedAt    time.Time               `gorm:"column:updated_at"`
+	DispatchedAt *time.Time              `gorm:"column:dispatched_at"`
+	DeletedAt    gorm.DeletedAt          `gorm:"column:deleted_at"`
 }
 
-func (outboxEventRow) TableName() string {
-	return "pdpa_outbox"
-}
+func (outboxEventRow) TableName() string { return "pdpa_outbox" }
 
 func (r outboxEventRow) toEvent() event.OutboxEvent {
 	return event.OutboxEvent{
@@ -49,25 +46,26 @@ func (r outboxEventRow) toEvent() event.OutboxEvent {
 	}
 }
 
-type outboxPgRepository struct {
+type OutboxRepoImpl struct {
 	base.PgRepo[event.OutboxEvent]
 	db *gorm.DB
 }
 
 func CreateOutboxPgRepository(db *gorm.DB) repository.OutboxRepository {
-	return &outboxPgRepository{
+	return &OutboxRepoImpl{
 		PgRepo: base.CreatePgRepo[event.OutboxEvent](db),
 		db:     db,
 	}
 }
 
-func (r *outboxPgRepository) Publish(ctx context.Context, evt event.OutboxEvent) error {
+func (r *OutboxRepoImpl) Publish(ctx context.Context, evt event.OutboxEvent) error {
 	row := outboxEventRow{
+		ID:      uuid.New(),
 		EventID: evt.ID,
 		Topic:   evt.Topic,
 		Key:     stringPtr(evt.Key),
 		Payload: evt.Payload,
-		Handler: defaultHandler,
+		Handler: defaultOutboxHandler,
 		Status:  event.OutboxEventStatusPending,
 	}
 	return r.db.WithContext(ctx).
@@ -75,26 +73,25 @@ func (r *outboxPgRepository) Publish(ctx context.Context, evt event.OutboxEvent)
 		Create(&row).Error
 }
 
-func (r *outboxPgRepository) ClaimPending(ctx context.Context, limit int, handler string) ([]event.OutboxEvent, error) {
+func (r *OutboxRepoImpl) ClaimPending(ctx context.Context, limit int, handler string) ([]event.OutboxEvent, error) {
 	var rows []outboxEventRow
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.
 			Clauses(clause.Locking{Strength: "UPDATE", Options: "SKIP LOCKED"}).
 			Where("handler = ? AND status = ?", handler, event.OutboxEventStatusPending).
 			Order("created_at ASC").
-			Limit(limit).
-			Find(&rows).Error; err != nil {
+			Limit(limit).Find(&rows).Error; err != nil {
 			return err
 		}
 		if len(rows) == 0 {
 			return nil
 		}
-		eventIDs := make([]uuid.UUID, 0, len(rows))
+		ids := make([]uuid.UUID, 0, len(rows))
 		for _, row := range rows {
-			eventIDs = append(eventIDs, row.EventID)
+			ids = append(ids, row.EventID)
 		}
 		return tx.Model(&outboxEventRow{}).
-			Where("event_id IN ? AND handler = ?", eventIDs, handler).
+			Where("event_id IN ? AND handler = ?", ids, handler).
 			Update("status", event.OutboxEventStatusProcessing).Error
 	})
 	if err != nil {
@@ -107,7 +104,7 @@ func (r *outboxPgRepository) ClaimPending(ctx context.Context, limit int, handle
 	return events, nil
 }
 
-func (r *outboxPgRepository) MarkSuccess(ctx context.Context, eventID uuid.UUID, handler string) error {
+func (r *OutboxRepoImpl) MarkSuccess(ctx context.Context, eventID uuid.UUID, handler string) error {
 	now := time.Now()
 	return r.db.WithContext(ctx).
 		Model(&outboxEventRow{}).
@@ -119,7 +116,7 @@ func (r *outboxPgRepository) MarkSuccess(ctx context.Context, eventID uuid.UUID,
 		}).Error
 }
 
-func (r *outboxPgRepository) MarkFailed(ctx context.Context, eventID uuid.UUID, handler string, attempts int) error {
+func (r *OutboxRepoImpl) MarkFailed(ctx context.Context, eventID uuid.UUID, handler string, attempts int) error {
 	return r.db.WithContext(ctx).
 		Model(&outboxEventRow{}).
 		Where("event_id = ? AND handler = ?", eventID, handler).
@@ -130,7 +127,7 @@ func (r *outboxPgRepository) MarkFailed(ctx context.Context, eventID uuid.UUID, 
 		}).Error
 }
 
-func (r *outboxPgRepository) MarkPending(ctx context.Context, eventID uuid.UUID, handler string) error {
+func (r *OutboxRepoImpl) MarkPending(ctx context.Context, eventID uuid.UUID, handler string) error {
 	return r.db.WithContext(ctx).
 		Model(&outboxEventRow{}).
 		Where("event_id = ? AND handler = ?", eventID, handler).
@@ -140,14 +137,14 @@ func (r *outboxPgRepository) MarkPending(ctx context.Context, eventID uuid.UUID,
 		}).Error
 }
 
-func (r *outboxPgRepository) CleanupPublished(ctx context.Context, cutoff time.Time) (int64, error) {
-	result := r.db.WithContext(ctx).
+func (r *OutboxRepoImpl) CleanupPublished(ctx context.Context, cutoff time.Time) (int64, error) {
+	res := r.db.WithContext(ctx).
 		Where("status = ? AND dispatched_at < ?", event.OutboxEventStatusSuccess, cutoff).
 		Delete(&outboxEventRow{})
-	if result.Error != nil {
-		return 0, result.Error
+	if res.Error != nil {
+		return 0, res.Error
 	}
-	return result.RowsAffected, nil
+	return res.RowsAffected, nil
 }
 
 func stringPtr(s string) *string {

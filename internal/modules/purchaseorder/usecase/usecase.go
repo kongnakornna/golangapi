@@ -289,10 +289,10 @@ func (u *purchaseOrderUseCase) CountByFilter(ctx context.Context, supplierID *uu
 
 func (u *purchaseOrderUseCase) saveStatusHistory(ctx context.Context, poHeaderID uuid.UUID, fromStatus, toStatus string, changedBy uuid.UUID, reason string) {
 	history := &pomodels.PurchaseOrderStatusHistory{
-		PoHeaderID:  poHeaderID,
-		ToStatus:    toStatus,
-		ChangedBy:   changedBy,
-		ChangedAt:   timeNow(),
+		PoHeaderID: poHeaderID,
+		ToStatus:   toStatus,
+		ChangedBy:  changedBy,
+		ChangedAt:  timeNow(),
 	}
 	if fromStatus != "" {
 		history.FromStatus = &fromStatus

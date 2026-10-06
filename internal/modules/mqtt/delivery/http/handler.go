@@ -1,3 +1,4 @@
+// Package http จัดเตรียม HTTP layer สำหรับโมดูล mqtt
 package http
 
 import (
@@ -49,18 +50,23 @@ func CreateMQTTHandler(uc usecase.MQTTUseCase, log logger.Logger, cache Cache) *
 	return &MQTTHandler{uc: uc, logger: log, cache: cache}
 }
 
+// ============================================================
+// POST /mqtt/publish
+// ============================================================
+
 // Publish godoc
+//
 // @Summary      Publish an MQTT message
 // @Description  Publishes a payload to a specified MQTT topic. Supports QoS 0,1,2 and retained flag.
 // @Tags         mqtt
 // @Accept       json
 // @Produce      json
 // @Param        request body presenter.PublishRequest true "Publish request"
-// @Success      200 {object} presenter.PublishResponse
-// @Failure      400 {object} errResponse
-// @Failure      500 {object} errResponse
-// @Router       /mqtt/publish [post]
+// @Success      200 {object} presenter.PublishResponse "Message published successfully"
+// @Failure      400 {object} presenter.ErrResponse "Invalid request body (missing topic/payload or bad QoS)"
+// @Failure      500 {object} presenter.ErrResponse "Internal server error or MQTT publish failed"
 // @Security     BearerAuth
+// @Router       /mqtt/publish [post]
 func (h *MQTTHandler) Publish(w http.ResponseWriter, r *http.Request) {
 	var req presenter.PublishRequest
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
@@ -84,18 +90,24 @@ func (h *MQTTHandler) Publish(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, presenter.PublishResponse{Success: true, Message: "published successfully"})
 }
 
+// ============================================================
+// POST /mqtt/subscribe
+// ============================================================
+
 // Subscribe godoc
+//
 // @Summary      Subscribe to an MQTT topic
-// @Description  Subscribes to a topic and starts receiving messages (persistent subscription). The connection will stay open and messages will be broadcast via WebSocket.
+// @Description  Subscribes to a topic and starts receiving messages (persistent subscription).
+// @Description  The connection will stay open and messages will be broadcast via WebSocket.
 // @Tags         mqtt
 // @Accept       json
 // @Produce      json
 // @Param        request body presenter.SubscribeRequest true "Subscribe request"
-// @Success      200 {object} presenter.SubscribeResponse
-// @Failure      400 {object} errResponse
-// @Failure      500 {object} errResponse
-// @Router       /mqtt/subscribe [post]
+// @Success      200 {object} presenter.SubscribeResponse "Subscribed successfully"
+// @Failure      400 {object} presenter.ErrResponse "Missing topic or invalid QoS"
+// @Failure      500 {object} presenter.ErrResponse "Internal server error"
 // @Security     BearerAuth
+// @Router       /mqtt/subscribe [post]
 func (h *MQTTHandler) Subscribe(w http.ResponseWriter, r *http.Request) {
 	var req presenter.SubscribeRequest
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
@@ -124,18 +136,23 @@ func (h *MQTTHandler) Subscribe(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// ============================================================
+// POST /mqtt/unsubscribe
+// ============================================================
+
 // Unsubscribe godoc
+//
 // @Summary      Unsubscribe from an MQTT topic
 // @Description  Removes a previous subscription from a topic. Messages will no longer be received.
 // @Tags         mqtt
 // @Accept       json
 // @Produce      json
 // @Param        request body presenter.UnsubscribeRequest true "Unsubscribe request"
-// @Success      200 {object} presenter.UnsubscribeResponse
-// @Failure      400 {object} errResponse
-// @Failure      500 {object} errResponse
-// @Router       /mqtt/unsubscribe [post]
+// @Success      200 {object} presenter.UnsubscribeResponse "Unsubscribed successfully"
+// @Failure      400 {object} presenter.ErrResponse "Missing topic"
+// @Failure      500 {object} presenter.ErrResponse "Internal server error"
 // @Security     BearerAuth
+// @Router       /mqtt/unsubscribe [post]
 func (h *MQTTHandler) Unsubscribe(w http.ResponseWriter, r *http.Request) {
 	var req presenter.UnsubscribeRequest
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
@@ -155,29 +172,38 @@ func (h *MQTTHandler) Unsubscribe(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, presenter.UnsubscribeResponse{Success: true, Topic: req.Topic, Message: "unsubscribed successfully"})
 }
 
+// ============================================================
+// GET /mqtt/subscriptions
+// ============================================================
+
 // Subscriptions godoc
+//
 // @Summary      List all subscribed topics
 // @Description  Returns an array of topics that the MQTT client is currently subscribed to (persistent subscriptions).
 // @Tags         mqtt
 // @Produce      json
-// @Success      200 {object} presenter.SubscriptionsResponse
-// @Failure      500 {object} errResponse
-// @Router       /mqtt/subscriptions [get]
+// @Success      200 {object} presenter.SubscriptionsResponse "Current persistent subscriptions"
 // @Security     BearerAuth
+// @Router       /mqtt/subscriptions [get]
 func (h *MQTTHandler) Subscriptions(w http.ResponseWriter, r *http.Request) {
 	topics := h.uc.GetSubscriptions()
 	render.JSON(w, r, presenter.SubscriptionsResponse{Topics: topics, Count: len(topics)})
 }
 
+// ============================================================
+// GET /mqtt/status
+// ============================================================
+
 // Status godoc
+//
 // @Summary      Get MQTT connection status
-// @Description  Returns the current connection state of the MQTT client to the broker, along with a timestamp (Asia/Bangkok).
+// @Description  Returns the current connection state of the MQTT client to the broker,
+// @Description  along with a timestamp (Asia/Bangkok).
 // @Tags         mqtt
 // @Produce      json
-// @Success      200 {object} map[string]interface{}
-// @Failure      500 {object} errResponse
-// @Router       /mqtt/status [get]
+// @Success      200 {object} presenter.StatusResponse "MQTT connection state"
 // @Security     BearerAuth
+// @Router       /mqtt/status [get]
 func (h *MQTTHandler) Status(w http.ResponseWriter, r *http.Request) {
 	connected := h.uc.IsConnected()
 	status := "connected"
@@ -185,29 +211,35 @@ func (h *MQTTHandler) Status(w http.ResponseWriter, r *http.Request) {
 		status = "disconnected"
 	}
 	TimeLoc := helpers.GetTimeLocation()
-	render.JSON(w, r, map[string]interface{}{
-		"connected": connected,
-		"status":    status,
-		"timestamp": helpers.TimeConvertermas(time.Now().In(TimeLoc)),
+	render.JSON(w, r, presenter.StatusResponse{
+		Connected: connected,
+		Status:    status,
+		Timestamp: helpers.TimeConvertermas(time.Now().In(TimeLoc)),
 	})
 }
 
+// ============================================================
+// GET /mqtt/gettopicdata
+// ============================================================
+
 // GetTopicData godoc
-// @Summary      Get live or cached MQTT topic data (request‑response)
-// @Description  Subscribes to the given topic, waits for a single message, then unsubscribes. Caches the result for 60 seconds.
-// @Description  On MQTT timeout the endpoint returns fallback data with HTTP 504 (see `error_detail` / `from:fallback`).
+//
+// @Summary      Get live or cached MQTT topic data (request-response)
+// @Description  Subscribes to the given topic, waits for a single message, then unsubscribes.
+// @Description  Caches the result for 60 seconds. On MQTT timeout the endpoint returns
+// @Description  fallback data with HTTP 504 (see `error_detail` / `from:fallback`).
 // @Tags         mqtt
 // @Accept       json
 // @Produce      json
-// @Param        topic query string true "MQTT topic name (e.g. BAACTW05/DATA)"
-// @Success      200 {object} presenter.MQTTTopicDataResponse
-// @Failure      400 {object} errResponse "missing topic parameter"
-// @Failure      503 {object} presenter.MQTTTopicDataResponse "MQTT broker not connected"
-// @Failure      504 {object} presenter.MQTTTopicDataResponse "MQTT timeout (fallback data returned)"
-// @Failure      500 {object} presenter.MQTTTopicDataResponse "internal error"
-// @Router       /mqtt/gettopicdata [get]
+// @Param        topic query string true "MQTT topic name (e.g. BAACTW05/DATA)" example(BAACTW05/DATA)
+// @Success      200 {object} presenter.MQTTTopicDataResponse "Live or cached data returned"
+// @Failure      400 {object} presenter.ErrResponse              "Missing topic parameter"
+// @Failure      500 {object} presenter.MQTTTopicDataResponse    "Internal error (fetch failed)"
+// @Failure      503 {object} presenter.MQTTTopicDataResponse    "MQTT broker not connected"
+// @Failure      504 {object} presenter.MQTTTopicDataResponse    "MQTT timeout (fallback data returned)"
 // @Security     OAuth2Password
-// @Security BearerAuth
+// @Security     BearerAuth
+// @Router       /mqtt/gettopicdata [get]
 func (h *MQTTHandler) GetTopicData(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
 	topic := strings.TrimSpace(r.URL.Query().Get("topic"))
@@ -282,9 +314,6 @@ func (h *MQTTHandler) GetTopicData(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Errorf("GetTopicData: MQTT get failed: %v", err)
 		errorStr := err.Error()
-		// Match every error the MQTT client can produce when the device does not
-		// publish within the timeout (e.g. "timeout waiting for message on topic ...",
-		// "subscribe timeout", "context deadline exceeded", "ResumeSubs", ...).
 		isTimeout := strings.Contains(errorStr, "timeout") ||
 			strings.Contains(errorStr, "context deadline exceeded") ||
 			strings.Contains(errorStr, "ResumeSubs") ||
@@ -363,20 +392,26 @@ func (h *MQTTHandler) GetTopicData(w http.ResponseWriter, r *http.Request) {
 		topic, time.Since(startTime).Milliseconds(), time.Since(renderStart).Milliseconds())
 }
 
+// ============================================================
+// GET /mqtt/devicecontrol
+// ============================================================
+
 // DeviceControl godoc
+//
 // @Summary      Send control command to an MQTT device and wait for response
-// @Description  Publishes a control message to a topic (usually ending with CONTROL), then listens on the corresponding DATA topic (CONTROL replaced by DATA) for a response.
+// @Description  Publishes a control message to a topic (usually ending with CONTROL),
+// @Description  then listens on the corresponding DATA topic (CONTROL replaced by DATA) for a response.
+// @Description  Falls back to a default payload if MQTT is unreachable (still returns 200).
 // @Tags         mqtt
 // @Accept       json
 // @Produce      json
-// @Param        topic query string true "MQTT topic to send control message (e.g., BAACTW02/CONTROL)"
-// @Param        message query string true "Control message (e.g., ON, OFF, 1, 0)"
-// @Success      200 {object} presenter.DeviceControlResponse
-// @Failure      400 {object} errResponse
-// @Failure      500 {object} errResponse
-// @Router       /mqtt/devicecontrol [get]
+// @Param        topic   query string true "MQTT topic to send control message (e.g., BAACTW02/CONTROL)" example(BAACTW02/CONTROL)
+// @Param        message query string true "Control message (e.g., ON, OFF, 1, 0)"                       example(ON)
+// @Success      200 {object} presenter.DeviceControlResponse "Control command executed (or fallback returned)"
+// @Failure      400 {object} presenter.ErrResponse           "Missing topic or message"
 // @Security     OAuth2Password
-// @Security BearerAuth
+// @Security     BearerAuth
+// @Router       /mqtt/devicecontrol [get]
 func (h *MQTTHandler) DeviceControl(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
 	topic := strings.TrimSpace(r.URL.Query().Get("topic"))
@@ -443,6 +478,10 @@ func (h *MQTTHandler) DeviceControl(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, resp)
 }
 
+// ============================================================
+// Helpers
+// ============================================================
+
 // processPayload converts byte data to appropriate type (string or []string)
 func processPayload(data []byte) interface{} {
 	str := strings.TrimSpace(string(data))
@@ -452,7 +491,9 @@ func processPayload(data []byte) interface{} {
 	return str
 }
 
+// ============================================================
 // Error helpers
+// ============================================================
 
 // ErrInvalidRequest returns a 400 Bad Request error
 func ErrInvalidRequest(err error) render.Renderer {
@@ -469,7 +510,7 @@ func ErrInvalidRequestString(msg string) render.Renderer {
 	return &errResponse{HTTPStatusCode: http.StatusBadRequest, ErrorText: msg}
 }
 
-// errResponse represents an error response
+// errResponse represents an error response (internal — Swagger annotation ใช้ presenter.ErrResponse)
 type errResponse struct {
 	HTTPStatusCode int    `json:"-"`
 	ErrorText      string `json:"error"`

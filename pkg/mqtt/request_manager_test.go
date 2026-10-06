@@ -11,20 +11,20 @@ import (
 
 type testLogger struct{}
 
-func (testLogger) InitLogger()                                        {}
-func (testLogger) Debug(args ...interface{})                          {}
-func (testLogger) Debugf(template string, args ...interface{})        {}
-func (testLogger) Info(args ...interface{})                           {}
-func (testLogger) Infof(template string, args ...interface{})         {}
-func (testLogger) Warn(args ...interface{})                           {}
-func (testLogger) Warnf(template string, args ...interface{})         {}
-func (testLogger) Error(args ...interface{})                          {}
-func (testLogger) Errorf(template string, args ...interface{})        {}
-func (testLogger) DPanic(args ...interface{})                         {}
-func (testLogger) DPanicf(template string, args ...interface{})       {}
-func (testLogger) Fatal(args ...interface{})                          {}
-func (testLogger) Fatalf(template string, args ...interface{})        {}
-func (testLogger) Sync() error                                        { return nil }
+func (testLogger) InitLogger()                                  {}
+func (testLogger) Debug(args ...interface{})                    {}
+func (testLogger) Debugf(template string, args ...interface{})  {}
+func (testLogger) Info(args ...interface{})                     {}
+func (testLogger) Infof(template string, args ...interface{})   {}
+func (testLogger) Warn(args ...interface{})                     {}
+func (testLogger) Warnf(template string, args ...interface{})   {}
+func (testLogger) Error(args ...interface{})                    {}
+func (testLogger) Errorf(template string, args ...interface{})  {}
+func (testLogger) DPanic(args ...interface{})                   {}
+func (testLogger) DPanicf(template string, args ...interface{}) {}
+func (testLogger) Fatal(args ...interface{})                    {}
+func (testLogger) Fatalf(template string, args ...interface{})  {}
+func (testLogger) Sync() error                                  { return nil }
 
 // TestGetTopicResolvesAfterWildcardRouteReplacement reproduces the bug where the IoT
 // ingester's Subscribe("#", 0, handler) replaces the requestManager's global "#" route

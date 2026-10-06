@@ -10,7 +10,7 @@ import (
 // MapI18nRoute registers i18n routes.
 // กำหนดเส้นทาง API สำหรับการแปลภาษา
 func MapI18nRoute(router *chi.Mux, h i18n.Handlers, mw *middleware.MiddlewareManager) {
-	router.Route("/api/i18n", func(r chi.Router) {
+	router.Route("/i18n", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mw.Verifier(true))
 			r.Use(mw.Authenticator())

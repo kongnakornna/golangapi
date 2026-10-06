@@ -39,7 +39,7 @@ type ScheduleDeviceRow struct {
 	ScheduleID   uuid.UUID `json:"schedule_id"`
 	ScheduleName string    `json:"schedule_name"`
 	Mode         string    `json:"mode"`
-	Status       int8    `json:"status"`
+	Status       int8      `json:"status"`
 	Start        string    `json:"start"`
 	EventAction  string    `json:"event_action"`
 	DeviceID     int       `json:"device_id"`

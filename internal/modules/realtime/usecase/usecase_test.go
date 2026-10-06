@@ -10,11 +10,11 @@ import (
 )
 
 type stubBroadcaster struct {
-	rooms          map[string]bool
-	broadcastedRoom string
+	rooms             map[string]bool
+	broadcastedRoom   string
 	broadcastedGlobal bool
-	lastEvent      string
-	lastData       map[string]any
+	lastEvent         string
+	lastData          map[string]any
 }
 
 func newStub() *stubBroadcaster {

@@ -5,7 +5,7 @@ import "icmongolang/cmd"
 // @title Go IoT API
 // @version 1.0
 // @description API for ICMON project
-// @BasePath /api
+// @BasePath /
 
 // OAuth2Password (optional – keep if you need password flow)
 // @securityDefinitions.oauth2.password OAuth2Password

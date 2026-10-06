@@ -7,20 +7,17 @@ import (
 	"icmongolang/pkg/logger"
 )
 
-// ConsentRevokedHandler ตัวจัดการเหตุการณ์ consent.revoked
-// (ผู้ใช้ถอนความยินยอม) ทำหน้าที่บันทึก audit trail เท่านั้น
+// ConsentRevokedHandler — เหตุการณ์ consent.revoked
 type ConsentRevokedHandler struct {
 	baseHandler
 }
 
-// NewConsentRevokedHandler สร้าง ConsentRevokedHandler
-func NewConsentRevokedHandler(auditRepo repository.AuditRepository, logger logger.Logger) *ConsentRevokedHandler {
+func NewConsentRevokedHandler(auditRepo repository.AuditRepository, log logger.Logger) *ConsentRevokedHandler {
 	return &ConsentRevokedHandler{
-		baseHandler: baseHandler{auditRepo: auditRepo, logger: logger},
+		baseHandler: baseHandler{auditRepo: auditRepo, logger: log},
 	}
 }
 
-// Handle บันทึก audit trail ของเหตุการณ์ consent.revoked
 func (h *ConsentRevokedHandler) Handle(ctx context.Context, topic string, payload map[string]interface{}) error {
 	return h.saveAudit(ctx, topic, payload)
 }

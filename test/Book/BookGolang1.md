@@ -1483,7 +1483,7 @@ func main() {
     userHandler := handler.NewUserHandler(userSvc)
     
     http.HandleFunc("/user", userHandler.GetUser)
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    log.Fatal(http.ListenAndServe(":5000", nil))
 }
 ```
 
@@ -1706,7 +1706,7 @@ go run main.go
 go test -v ./...
 
 # ทดสอบ API (อีก terminal)
-curl "http://localhost:8080/user?id=1"
+curl "http://localhost:5000/user?id=1"
 ```
 
 ---
@@ -2687,7 +2687,7 @@ func TestGracefulShutdown_WithSlowRequest(t *testing.T) {
     
     go func() {
         // GET request ที่ใช้เวลานาน 10 วินาที
-        resp, err := http.Get("http://localhost:8080/slow")
+        resp, err := http.Get("http://localhost:5000/slow")
         if err != nil {
             errChan <- err
             return
@@ -4010,7 +4010,7 @@ func main() {
         json.NewEncoder(w).Encode(user)
     })
     
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(":5000", nil)
 }
 ```
 
@@ -9231,7 +9231,7 @@ func main() {
     r.GET("/ping", func(c *gin.Context) {
         c.JSON(200, gin.H{"message": "pong"})
     })
-    r.Run() // listen and serve on 0.0.0.0:8080
+    r.Run() // listen and serve on 0.0.0.0:5000
 }
 EOF
 
@@ -11479,7 +11479,7 @@ func main() {
         Auth("admin"),
     )
     
-    http.ListenAndServe(":8080", wrapped)
+    http.ListenAndServe(":5000", wrapped)
 }
 ```
 
@@ -11932,7 +11932,7 @@ func main() {
     
     // 3. Server configuration
     server := &http.Server{
-        Addr:         ":8080",
+        Addr:         ":5000",
         ReadTimeout:  15 * time.Second,
         WriteTimeout: 15 * time.Second,
         IdleTimeout:  60 * time.Second,
@@ -12027,7 +12027,7 @@ func main() {
     r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
     
     // Start server
-    http.ListenAndServe(":8080", r)
+    http.ListenAndServe(":5000", r)
 }
 
 // Middleware to load user from database
@@ -13493,7 +13493,7 @@ func main() {
     
     logger.Info("Application started",
         zap.String("version", "1.0.0"),
-        zap.Int("port", 8080),
+        zap.Int("port", 5000),
     )
     
     logger.Error("Database error",
@@ -13940,7 +13940,7 @@ type SMTPConfig struct {
 
 func LoadConfig(configPath string) (*Config, error) {
     // Set defaults
-    viper.SetDefault("server.port", 8080)
+    viper.SetDefault("server.port", 5000)
     viper.SetDefault("server.mode", "debug")
     viper.SetDefault("server.read_timeout", "15s")
     viper.SetDefault("server.write_timeout", "15s")
@@ -14013,7 +14013,7 @@ type Config struct {
 func LoadFromEnv() (*Config, error) {
     cfg := &Config{
         // Server defaults
-        ServerPort: 8080,
+        ServerPort: 5000,
         ServerMode: "debug",
         
         // Database defaults
@@ -14130,7 +14130,7 @@ func LoadFromFlags() *Config {
     cfg := &Config{}
     
     // Server flags
-    flag.IntVar(&cfg.ServerPort, "port", 8080, "Server port")
+    flag.IntVar(&cfg.ServerPort, "port", 5000, "Server port")
     flag.StringVar(&cfg.ServerMode, "mode", "debug", "Server mode (debug/release)")
     
     // Database flags
@@ -14171,7 +14171,7 @@ import (
 // config.yaml
 /*
 server:
-  port: 8080
+  port: 5000
   mode: release
   read_timeout: 15s
   write_timeout: 15s
@@ -14545,7 +14545,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
     http.HandleFunc("/", helloHandler)
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(":5000", nil)
 }
 ```
 
@@ -14554,7 +14554,7 @@ func main() {
 mux := http.NewServeMux()
 mux.HandleFunc("/hello", helloHandler)
 mux.HandleFunc("/bye", byeHandler)
-http.ListenAndServe(":8080", mux)
+http.ListenAndServe(":5000", mux)
 ```
 
 ### 26.3 การอ่าน request data
@@ -14592,7 +14592,7 @@ mux.Use(loggingMiddleware)
 ### 26.7 การสร้าง HTTP server แบบ custom
 ```go
 srv := &http.Server{
-    Addr:         ":8080",
+    Addr:         ":5000",
     Handler:      mux,
     ReadTimeout:  10 * time.Second,
     WriteTimeout: 10 * time.Second,
@@ -15020,7 +15020,7 @@ if dbHost == "" {
 ```go
 import "flag"
 
-var port = flag.Int("port", 8080, "server port")
+var port = flag.Int("port", 5000, "server port")
 flag.Parse()
 fmt.Println("port:", *port)
 ```
@@ -15555,11 +15555,11 @@ func allocateMemory() {
 # 1. วิเคราะห์ CPU profile
 go tool pprof cpu.prof
 # หรือ interactive mode
-go tool pprof -http=:8080 cpu.prof
+go tool pprof -http=:5000 cpu.prof
 
 # 2. วิเคราะห์ Memory profile
 go tool pprof mem.prof
-go tool pprof -http=:8080 mem.prof
+go tool pprof -http=:5000 mem.prof
 
 # 3. วิเคราะห์จาก running server
 go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
@@ -15613,7 +15613,7 @@ func main() {
     http.HandleFunc("/api/process", processHandler)
     http.HandleFunc("/api/compute", computeHandler)
     
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    log.Fatal(http.ListenAndServe(":5000", nil))
 }
 
 func processHandler(w http.ResponseWriter, r *http.Request) {
@@ -15649,10 +15649,10 @@ func computeHandler(w http.ResponseWriter, r *http.Request) {
 
 ```bash
 # เก็บ CPU profile 30 วินาที
-go tool pprof -http=:8080 http://localhost:6060/debug/pprof/profile?seconds=30
+go tool pprof -http=:5000 http://localhost:6060/debug/pprof/profile?seconds=30
 
 # เก็บ memory profile และแสดง flame graph
-go tool pprof -http=:8080 http://localhost:6060/debug/pprof/heap
+go tool pprof -http=:5000 http://localhost:6060/debug/pprof/heap
 ```
 
 **3. Analyzing Goroutine Leaks**
@@ -17289,7 +17289,7 @@ func NewServer(opts ...Option) *Server {
     // Default values
     s := &Server{
         host:    "localhost",
-        port:    8080,
+        port:    5000,
         timeout: 30 * time.Second,
         maxConn: 100,
     }
@@ -17943,7 +17943,7 @@ json.NewDecoder(r).Decode(&v)
 ```go
 // Basic server
 srv := &http.Server{
-    Addr:         ":8080",
+    Addr:         ":5000",
     Handler:      handler,
     ReadTimeout:  15 * time.Second,
     WriteTimeout: 15 * time.Second,
@@ -18156,7 +18156,7 @@ defer pprof.StopCPUProfile()
 
 ### 36.4 การวิเคราะห์ profile
 ```bash
-go tool pprof -http=:8080 cpu.prof
+go tool pprof -http=:5000 cpu.prof
 ```
 
 ### 36.5 การตรวจสอบ memory allocation
@@ -18507,7 +18507,7 @@ json.Unmarshal(data, &t)
 ### 42.9 HTTP
 ```go
 http.HandleFunc("/", handler)
-http.ListenAndServe(":8080", nil)
+http.ListenAndServe(":5000", nil)
 ```
 
 ### 42.10 Context
@@ -18668,14 +18668,14 @@ func main() {
 
     // Start server with graceful shutdown
     srv := &http.Server{
-        Addr:         ":8080",
+        Addr:         ":5000",
         Handler:      r,
         ReadTimeout:  15 * time.Second,
         WriteTimeout: 15 * time.Second,
     }
 
     go func() {
-        log.Println("Server starting on :8080")
+        log.Println("Server starting on :5000")
         if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
             log.Fatalf("Server failed: %v", err)
         }
@@ -18760,7 +18760,7 @@ func Load() (*Config, error) {
     viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
     // Defaults
-    viper.SetDefault("server.port", 8080)
+    viper.SetDefault("server.port", 5000)
     viper.SetDefault("server.mode", "debug")
     viper.SetDefault("jwt.expiry", "15m")
 
@@ -18833,7 +18833,7 @@ var serveCmd = &cobra.Command{
 }
 
 func init() {
-    serveCmd.Flags().IntP("port", "p", 8080, "port to listen on")
+    serveCmd.Flags().IntP("port", "p", 5000, "port to listen on")
     rootCmd.AddCommand(serveCmd)
 }
 
@@ -19275,7 +19275,7 @@ func main() {
         })
     })
     
-    http.ListenAndServe(":8080", r)
+    http.ListenAndServe(":5000", r)
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
@@ -19339,7 +19339,7 @@ func LoadConfig() (*Config, error) {
     viper.AutomaticEnv()               // อ่านจาก environment variables
     
     // กำหนดค่า default
-    viper.SetDefault("server.port", 8080)
+    viper.SetDefault("server.port", 5000)
     viper.SetDefault("server.mode", "debug")
     
     // อ่านไฟล์
@@ -19359,7 +19359,7 @@ func LoadConfig() (*Config, error) {
 **ไฟล์ config.yaml ตัวอย่าง**
 ```yaml
 server:
-  port: 8080
+  port: 5000
   mode: release
 
 database:
@@ -19427,7 +19427,7 @@ var serveCmd = &cobra.Command{
 }
 
 func init() {
-    serveCmd.Flags().IntP("port", "p", 8080, "port to listen on")
+    serveCmd.Flags().IntP("port", "p", 5000, "port to listen on")
     rootCmd.AddCommand(serveCmd)
 }
 
@@ -23960,7 +23960,7 @@ func handleMessages() {
 func main() {
     http.HandleFunc("/ws", wsHandler)
     go handleMessages()
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(":5000", nil)
 }
 ```
 
@@ -23968,7 +23968,7 @@ func main() {
 
 ```go
 func main() {
-    c, _, err := websocket.DefaultDialer.Dial("ws://localhost:8080/ws", nil)
+    c, _, err := websocket.DefaultDialer.Dial("ws://localhost:5000/ws", nil)
     if err != nil {
         log.Fatal(err)
     }
@@ -24019,7 +24019,7 @@ server.OnDisconnect("/", func(s socketio.Conn, reason string) {
 })
 
 http.Handle("/socket.io/", server)
-http.ListenAndServe(":8080", nil)
+http.ListenAndServe(":5000", nil)
 ```
 
 ---
@@ -24121,7 +24121,7 @@ func main() {
             }
         }
     })
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(":5000", nil)
 }
 ```
 
@@ -24772,7 +24772,7 @@ sequenceDiagram
 ```yaml
 # configs/config.yaml
 server:
-  port: 8080
+  port: 5000
   mode: release
   read_timeout: 15s
   write_timeout: 15s
@@ -24902,7 +24902,7 @@ func Load() (*Config, error) {
     viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
     // Defaults
-    viper.SetDefault("server.port", 8080)
+    viper.SetDefault("server.port", 5000)
     viper.SetDefault("server.mode", "debug")
     viper.SetDefault("server.read_timeout", "15s")
     viper.SetDefault("server.write_timeout", "15s")
@@ -25082,12 +25082,12 @@ func main() {
     })
 
     srv := &http.Server{
-        Addr:    ":8080",
+        Addr:    ":5000",
         Handler: r,
     }
 
     go func() {
-        log.Println("Server starting on :8080")
+        log.Println("Server starting on :5000")
         if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
             log.Fatal(err)
         }
@@ -25117,7 +25117,7 @@ func main() {
     <div id="messages"></div>
 
     <script>
-        const ws = new WebSocket("ws://localhost:8080/ws");
+        const ws = new WebSocket("ws://localhost:5000/ws");
         ws.onmessage = (event) => {
             const div = document.createElement("div");
             div.textContent = event.data;
@@ -25347,7 +25347,7 @@ app:
   version: "1.0.0"
 
 server:
-  port: 8080
+  port: 5000
   mode: release
   read_timeout: 15s
   write_timeout: 15s
@@ -25445,7 +25445,7 @@ func Load() (*Config, error) {
     viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
     // Defaults
-    viper.SetDefault("server.port", 8080)
+    viper.SetDefault("server.port", 5000)
     viper.SetDefault("server.mode", "debug")
     viper.SetDefault("log.level", "info")
     viper.SetDefault("log.format", "json")
@@ -26872,7 +26872,7 @@ func main() {
 
     // Create server
     srv := &http.Server{
-        Addr:         ":8080",
+        Addr:         ":5000",
         Handler:      router,
         ReadTimeout:  15 * time.Second,
         WriteTimeout: 15 * time.Second,
@@ -26881,7 +26881,7 @@ func main() {
 
     // Graceful shutdown
     go func() {
-        log.Println("Starting server on :8080")
+        log.Println("Starting server on :5000")
         if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
             log.Fatalf("Server failed: %v", err)
         }
@@ -27303,7 +27303,7 @@ func ExampleUsage() {
 ```yaml
 # config/config.yaml
 server:
-  port: 8080
+  port: 5000
   mode: release
   read_timeout: 15s
   write_timeout: 15s
@@ -27445,7 +27445,7 @@ func LoadConfig(configPath string) (*Config, error) {
 }
 
 func setDefaults() {
-    viper.SetDefault("server.port", 8080)
+    viper.SetDefault("server.port", 5000)
     viper.SetDefault("server.mode", "debug")
     viper.SetDefault("server.read_timeout", "15s")
     viper.SetDefault("server.write_timeout", "15s")
@@ -29551,7 +29551,7 @@ func main() {
 
     // Create server
     srv := &http.Server{
-        Addr:         ":8080",
+        Addr:         ":5000",
         Handler:      router,
         ReadTimeout:  15 * time.Second,
         WriteTimeout: 15 * time.Second,
@@ -29560,7 +29560,7 @@ func main() {
 
     // Graceful shutdown
     go func() {
-        log.Println("Starting server on :8080")
+        log.Println("Starting server on :5000")
         if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
             log.Fatalf("Server failed: %v", err)
         }
@@ -29982,7 +29982,7 @@ func ExampleUsage() {
 ```yaml
 # config/config.yaml
 server:
-  port: 8080
+  port: 5000
   mode: release
   read_timeout: 15s
   write_timeout: 15s
@@ -30124,7 +30124,7 @@ func LoadConfig(configPath string) (*Config, error) {
 }
 
 func setDefaults() {
-    viper.SetDefault("server.port", 8080)
+    viper.SetDefault("server.port", 5000)
     viper.SetDefault("server.mode", "debug")
     viper.SetDefault("server.read_timeout", "15s")
     viper.SetDefault("server.write_timeout", "15s")
@@ -30861,7 +30861,7 @@ func main() {
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         fmt.Fprintf(w, "Hello, live reload!")
     })
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(":5000", nil)
 }
 ```
 
@@ -30881,7 +30881,7 @@ Air จัดการฝั่ง Go backend เท่านั้น ถ้า
 air
 
 # terminal 2
-browser-sync start --proxy "localhost:8080" --files "templates/*.html"
+browser-sync start --proxy "localhost:5000" --files "templates/*.html"
 ```
 
 หรือเพิ่ม middleware ใน Go ที่ inject script สำหรับ WebSocket reload (advanced)
@@ -30958,7 +30958,7 @@ reflex -s -r '\.go$' -- sh -c 'go build -o app && ./app'
 
 ```go
 // graceful shutdown snippet
-srv := &http.Server{Addr: ":8080", Handler: handler}
+srv := &http.Server{Addr: ":5000", Handler: handler}
 go srv.ListenAndServe()
 
 c := make(chan os.Signal, 1)
@@ -30981,7 +30981,7 @@ watching .
 !exclude tmp
 building...
 running...
-listening on :8080
+listening on :5000
 ```
 
 แก้ไข `main.go` → Air จะแสดง:

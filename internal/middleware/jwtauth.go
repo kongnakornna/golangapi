@@ -3,11 +3,15 @@ package middleware
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"icmongolang/internal/models"
+	"icmongolang/internal/modules/auth/domain"
+	"icmongolang/pkg/apikey"
 	"icmongolang/pkg/httpErrors"
+	"icmongolang/pkg/jwe"
 	"icmongolang/pkg/jwt"
 	"icmongolang/pkg/responses"
 
@@ -15,6 +19,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// ─── context keys ─────────────────────────────────────────────
 var (
 	TokenCtxKey         = &contextKey{"Token"}
 	IdCtxKey            = &contextKey{"Id"}
@@ -22,46 +27,141 @@ var (
 	ErrorCtxKey         = &contextKey{"Error"}
 	UserCtxKey          = &contextKey{"User"}
 	DownloadTokenCtxKey = &contextKey{"DownloadToken"}
+	ClaimsCtxKey        = &contextKey{"Claims"}
 )
 
-type contextKey struct {
-	name string
+type contextKey struct{ name string }
+
+func (k *contextKey) String() string { return "jwtauth context value " + k.name }
+
+// ─── Claims ───────────────────────────────────────────────────
+// Claims ที่ handler ฝั่ง HTTP อ่าน
+type Claims struct {
+	ID        string      `json:"id"`
+	UserID    string      `json:"user_id"`
+	Email     string      `json:"email"`
+	Role      domain.Role `json:"role"`
+	SessionID string      `json:"sid"`
 }
 
-func (k *contextKey) String() string {
-	return "jwtauth context value " + k.name
+// ClaimsFromContext อ่าน claims จาก context
+func ClaimsFromContext(ctx context.Context) *Claims {
+	if c, ok := ctx.Value(ClaimsCtxKey).(*Claims); ok {
+		return c
+	}
+	return nil
 }
 
+// ─── Verifier (RS256 JWT) ─────────────────────────────────────
 func (mw *MiddlewareManager) Verifier(requireAccessToken bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
 			token := TokenFromRequest(r)
+
 			if token == "" {
-				err := httpErrors.ErrTokenNotFound(errors.New("not found token in header"))
+				err := httpErrors.ErrTokenNotFound(errors.New("token not found"))
 				ctx = context.WithValue(ctx, ErrorCtxKey, err)
-			} else {
-				var publicKey string
-				if requireAccessToken {
-					publicKey = mw.cfg.Jwt.AccessTokenPublicKey
-				} else {
-					publicKey = mw.cfg.Jwt.RefreshTokenPublicKey
-				}
-				id, email, err := jwt.ParseTokenRS256(token, publicKey)
-				ctx = context.WithValue(ctx, TokenCtxKey, token)
-				ctx = context.WithValue(ctx, IdCtxKey, id)
-				ctx = context.WithValue(ctx, EmailCtxKey, email)
-				ctx = context.WithValue(ctx, ErrorCtxKey, err)
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
 			}
+
+			var publicKey string
+			if requireAccessToken {
+				publicKey = mw.cfg.Jwt.AccessTokenPublicKey
+			} else {
+				publicKey = mw.cfg.Jwt.RefreshTokenPublicKey
+			}
+
+			id, email, err := jwt.ParseTokenRS256(token, publicKey)
+			ctx = context.WithValue(ctx, TokenCtxKey, token)
+			ctx = context.WithValue(ctx, IdCtxKey, id)
+			ctx = context.WithValue(ctx, EmailCtxKey, email)
+			ctx = context.WithValue(ctx, ErrorCtxKey, err)
+
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }
 
-// VerifierForReport authenticates /reports/*/pdf requests via either the
-// Authorization header (RS256 access token) or a short-lived ?token= download
-// token. The download token lets a browser navigate straight to a PDF link
-// without exposing the long-lived access token in the URL.
+// ─── VerifierJWE (Ed25519 + ECDH-ES) ──────────────────────────
+// ⭐ สำคัญ: set ClaimsCtxKey ให้ downstream (RequireRole) ใช้ได้
+func (mw *MiddlewareManager) VerifierJWE() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			token := TokenFromRequest(r)
+
+			if token == "" {
+				ctx = context.WithValue(ctx, ErrorCtxKey,
+					httpErrors.ErrTokenNotFound(errors.New("token not found")))
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
+			}
+
+			if mw.jweKP == nil {
+				ctx = context.WithValue(ctx, ErrorCtxKey,
+					httpErrors.ErrInvalidJWTToken(errors.New("JWE keys not configured")))
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
+			}
+
+			claims, err := jwe.OpenFromCookie(mw.jweKP, token)
+			if err != nil {
+				ctx = context.WithValue(ctx, ErrorCtxKey,
+					httpErrors.ErrInvalidJWTToken(err))
+				next.ServeHTTP(w, r.WithContext(ctx))
+				return
+			}
+
+			// user-level revoke
+			if mw.redisRepo != nil {
+				userRevokeKey := fmt.Sprintf("revoke:user:%s", claims.UserID)
+				if v, err := mw.redisRepo.GetString(ctx, userRevokeKey); err == nil && v != "" {
+					ctx = context.WithValue(ctx, ErrorCtxKey,
+						httpErrors.ErrNotFoundRefreshTokenRedis(errors.New("user sessions revoked")))
+					next.ServeHTTP(w, r.WithContext(ctx))
+					return
+				}
+			}
+
+			// token-level revoke (HMAC fingerprint)
+			if len(mw.apiKeyPepper) > 0 {
+				fp := apikey.Hash(mw.apiKeyPepper, token)
+				revokeKey := fmt.Sprintf("revoke:refresh:%s", fp)
+				if v, err := mw.redisRepo.GetString(ctx, revokeKey); err == nil && v != "" {
+					ctx = context.WithValue(ctx, ErrorCtxKey,
+						httpErrors.ErrNotFoundRefreshTokenRedis(errors.New("token revoked")))
+					next.ServeHTTP(w, r.WithContext(ctx))
+					return
+				}
+			}
+
+			// ── map role ──
+			role := domain.Role(claims.Role)
+			if !role.IsValid() {
+				role = domain.RoleUser
+			}
+
+			// ── set context ──
+			ctx = context.WithValue(ctx, TokenCtxKey, token)
+			ctx = context.WithValue(ctx, IdCtxKey, claims.UserID)
+			ctx = context.WithValue(ctx, EmailCtxKey, claims.Email)
+			ctx = context.WithValue(ctx, ErrorCtxKey, nil)
+			ctx = context.WithValue(ctx, ClaimsCtxKey, &Claims{
+				ID:        claims.UserID,
+				UserID:    claims.UserID,
+				Email:     claims.Email,
+				Role:      role,
+				SessionID: claims.SessionID,
+			})
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+
+// ─── VerifierForReport ────────────────────────────────────────
 func (mw *MiddlewareManager) VerifierForReport() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -78,6 +178,18 @@ func (mw *MiddlewareManager) VerifierForReport() func(http.Handler) http.Handler
 			}
 
 			if dt := r.URL.Query().Get("token"); dt != "" {
+				if mw.jweKP != nil {
+					claims, err := jwt.ParseDownloadTokenJWE(mw.jweKP, dt)
+					if err == nil {
+						ctx = context.WithValue(ctx, DownloadTokenCtxKey, claims)
+						ctx = context.WithValue(ctx, TokenCtxKey, dt)
+						ctx = context.WithValue(ctx, IdCtxKey, claims.Id)
+						ctx = context.WithValue(ctx, EmailCtxKey, "")
+						ctx = context.WithValue(ctx, ErrorCtxKey, nil)
+						next.ServeHTTP(w, r.WithContext(ctx))
+						return
+					}
+				}
 				claims, err := jwt.ParseDownloadTokenHS256(dt, mw.cfg.Jwt.DownloadTokenSecret)
 				if err != nil {
 					ctx = context.WithValue(ctx, ErrorCtxKey, err)
@@ -93,18 +205,20 @@ func (mw *MiddlewareManager) VerifierForReport() func(http.Handler) http.Handler
 				return
 			}
 
-			ctx = context.WithValue(ctx, ErrorCtxKey, httpErrors.ErrTokenNotFound(errors.New("not found token in header")))
+			ctx = context.WithValue(ctx, ErrorCtxKey,
+				httpErrors.ErrTokenNotFound(errors.New("token not found")))
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }
 
+// ─── Authenticator ────────────────────────────────────────────
+// ตรวจ error ที่ Verifier เก็บไว้ → 401 ถ้ามี
 func (mw *MiddlewareManager) Authenticator() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err, _ := r.Context().Value(ErrorCtxKey).(error)
-			if err != nil {
-				render.Render(w, r, responses.CreateErrorResponse(err))
+			if err, _ := r.Context().Value(ErrorCtxKey).(error); err != nil {
+				_ = render.Render(w, r, responses.CreateErrorResponse(err))
 				return
 			}
 			next.ServeHTTP(w, r)
@@ -112,6 +226,7 @@ func (mw *MiddlewareManager) Authenticator() func(http.Handler) http.Handler {
 	}
 }
 
+// ─── CurrentUser ──────────────────────────────────────────────
 func (mw *MiddlewareManager) CurrentUser() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -120,19 +235,20 @@ func (mw *MiddlewareManager) CurrentUser() func(http.Handler) http.Handler {
 			err, _ := ctx.Value(ErrorCtxKey).(error)
 
 			if err != nil || id == "" {
-				render.Render(w, r, responses.CreateErrorResponse(httpErrors.ParseErrors(err)))
+				_ = render.Render(w, r, responses.CreateErrorResponse(httpErrors.ParseErrors(err)))
 				return
 			}
 
 			idParsed, err := uuid.Parse(id)
 			if err != nil {
-				render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrInvalidJWTClaims(errors.New("can not convert id to uuid from id in token"))))
+				_ = render.Render(w, r, responses.CreateErrorResponse(
+					httpErrors.ErrInvalidJWTClaims(errors.New("cannot convert id to uuid"))))
 				return
 			}
 
 			user, err := mw.usersUC.Get(ctx, idParsed)
 			if err != nil {
-				render.Render(w, r, responses.CreateErrorResponse(err))
+				_ = render.Render(w, r, responses.CreateErrorResponse(err))
 				return
 			}
 
@@ -142,17 +258,19 @@ func (mw *MiddlewareManager) CurrentUser() func(http.Handler) http.Handler {
 	}
 }
 
+// ─── SuperUser / ActiveUser ───────────────────────────────────
 func (mw *MiddlewareManager) SuperUser() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
 			user, err := GetUserFromCtx(ctx)
 			if err != nil {
-				render.Render(w, r, responses.CreateErrorResponse(err))
+				_ = render.Render(w, r, responses.CreateErrorResponse(err))
 				return
 			}
 			if !mw.usersUC.IsSuper(ctx, *user) {
-				render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrNotEnoughPrivileges(errors.New("user is not super user"))))
+				_ = render.Render(w, r, responses.CreateErrorResponse(
+					httpErrors.ErrNotEnoughPrivileges(errors.New("not super user"))))
 				return
 			}
 			next.ServeHTTP(w, r)
@@ -166,17 +284,22 @@ func (mw *MiddlewareManager) ActiveUser() func(http.Handler) http.Handler {
 			ctx := r.Context()
 			user, err := GetUserFromCtx(ctx)
 			if err != nil {
-				render.Render(w, r, responses.CreateErrorResponse(err))
+				_ = render.Render(w, r, responses.CreateErrorResponse(err))
 				return
 			}
 			if !mw.usersUC.IsActive(ctx, *user) {
-				render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrInactiveUser(errors.New("user inactive"))))
+				_ = render.Render(w, r, responses.CreateErrorResponse(
+					httpErrors.ErrInactiveUser(errors.New("user inactive"))))
 				return
 			}
 			next.ServeHTTP(w, r)
 		})
 	}
 }
+
+// ─── Token extractors ─────────────────────────────────────────
+const AccessTokenCookieName = "access_token"
+const RefreshTokenCookieName = "refresh_token"
 
 func TokenFromHeader(r *http.Request) string {
 	bearer := r.Header.Get("Authorization")
@@ -186,14 +309,6 @@ func TokenFromHeader(r *http.Request) string {
 	return ""
 }
 
-// AccessTokenCookieName is the cookie name checked when the Authorization
-// header is absent, so cookie-based clients can authenticate without changes.
-const AccessTokenCookieName = "access_token"
-
-// RefreshTokenCookieName is the cookie used for the refresh token on login.
-const RefreshTokenCookieName = "refresh_token"
-
-// TokenFromCookie returns the value of the named cookie, or "" when absent.
 func TokenFromCookie(r *http.Request, name string) string {
 	if c, err := r.Cookie(name); err == nil && c.Value != "" {
 		return c.Value
@@ -201,33 +316,26 @@ func TokenFromCookie(r *http.Request, name string) string {
 	return ""
 }
 
-// tokenFromHeaderOrCookie returns the token from the Authorization header or,
-// as a fallback, from the access_token cookie.
 func tokenFromHeaderOrCookie(r *http.Request) string {
-	if token := TokenFromHeader(r); token != "" {
-		return token
+	if t := TokenFromHeader(r); t != "" {
+		return t
 	}
 	return TokenFromCookie(r, AccessTokenCookieName)
 }
 
-// RefreshTokenFromRequest returns the refresh token from the Authorization
-// header or, as a fallback, from the refresh_token cookie.
 func RefreshTokenFromRequest(r *http.Request) string {
-	if token := TokenFromHeader(r); token != "" {
-		return token
+	if t := TokenFromHeader(r); t != "" {
+		return t
 	}
 	return TokenFromCookie(r, RefreshTokenCookieName)
 }
 
-// TokenFromRequest returns the access token from the Authorization header, the
-// access_token cookie, or the access_token/token query parameter, in that order
-// of preference.
 func TokenFromRequest(r *http.Request) string {
-	if token := tokenFromHeaderOrCookie(r); token != "" {
-		return token
+	if t := tokenFromHeaderOrCookie(r); t != "" {
+		return t
 	}
-	if token := r.URL.Query().Get("access_token"); token != "" {
-		return token
+	if t := r.URL.Query().Get("access_token"); t != "" {
+		return t
 	}
 	return r.URL.Query().Get("token")
 }

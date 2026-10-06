@@ -30,16 +30,16 @@ type ReceiveRequest struct {
 }
 
 type ReceiveItem struct {
-	DetailID        uuid.UUID
+	DetailID         uuid.UUID
 	ReceivedQuantity int
 }
 
 type SuggestionItem struct {
-	PartID         uuid.UUID
-	PartName       string
-	PartCode       string
-	SuggestedQty   int
-	CurrentStock   int
-	UnitPrice      float64
-	FromQuotation  bool
+	PartID        uuid.UUID
+	PartName      string
+	PartCode      string
+	SuggestedQty  int
+	CurrentStock  int
+	UnitPrice     float64
+	FromQuotation bool
 }

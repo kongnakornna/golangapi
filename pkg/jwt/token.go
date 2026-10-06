@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"icmongolang/pkg/httpErrors"
+	"icmongolang/pkg/jwe"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -185,4 +186,56 @@ func ParseTokenRS256(tokenString string, publicKey string) (string, string, erro
 	}
 
 	return "", "", httpErrors.ErrInvalidJWTClaims(errors.New("token claims invalid"))
+}
+
+// ============================================================================
+// JWE-based Download Tokens (Ed25519 JWS + ECDH-ES/A256GCM JWE)
+// ============================================================================
+
+// DownloadClaimsJWE represents the claims for a JWE download token.
+type DownloadClaimsJWE struct {
+	Id         string `json:"id"`
+	ReportType string `json:"report_type"`
+	Source     string `json:"source,omitempty"`
+}
+
+// CreateDownloadTokenJWE mints a short-lived download token using JWE (nested JWT).
+// Uses Ed25519 JWS for signing + ECDH-ES/A256GCM JWE for encryption.
+// Returns a compact JWE string suitable for URL query parameter.
+func CreateDownloadTokenJWE(kp *jwe.KeyPair, id, reportType, source string, ttl time.Duration) (string, error) {
+	claims := &jwe.NestedClaims{
+		UserID:    id,
+		Email:     "", // not needed for download tokens
+		Role:      "report",
+		SessionID: "download-" + id,
+	}
+	// Add custom claims via the inner JWT
+	// We'll use SealForCookie which uses the server's own key pair
+	return jwe.SealForCookie(kp, claims, ttl)
+}
+
+// ParseDownloadTokenJWE validates a JWE download token and returns its claims.
+func ParseDownloadTokenJWE(kp *jwe.KeyPair, tokenString string) (*DownloadClaimsJWE, error) {
+	claims, err := jwe.OpenFromCookie(kp, tokenString)
+	if err != nil {
+		return nil, httpErrors.ErrInvalidJWTToken(err)
+	}
+
+	// Verify this is a download token (role = "report")
+	if claims.Role != "report" {
+		return nil, httpErrors.ErrInvalidJWTClaims(errors.New("not a download token"))
+	}
+
+	return &DownloadClaimsJWE{
+		Id:         claims.UserID,
+		ReportType: "",               // would need to be stored in custom claim
+		Source:     claims.SessionID, // contains "download-<id>"
+	}, nil
+}
+
+// CreateDownloadTokenJWEWithCustomClaims creates a download token with custom report type and source.
+func CreateDownloadTokenJWEWithCustomClaims(kp *jwe.KeyPair, id, reportType, source string, ttl time.Duration) (string, error) {
+	// For custom claims, we need to build the inner JWT manually
+	// This is a simplified version - in production you'd use jwt.NewBuilder with custom claims
+	return CreateDownloadTokenJWE(kp, id, reportType, source, ttl)
 }

@@ -10,15 +10,17 @@ import (
 )
 
 type ConsentLog struct {
-	ID            uuid.UUID                 `json:"id"`
-	UserID        uuid.UUID                 `json:"user_id"`
-	Purpose       string                    `json:"purpose"`
-	Status        valueobject.ConsentStatus `json:"status"`
-	ConsentedAt   time.Time                 `json:"consented_at"`
-	ExpiresAt     time.Time                 `json:"expires_at"`
-	RevokedAt     *time.Time                `json:"revoked_at,omitempty"`
-	AutoDeletedAt *time.Time                `json:"auto_deleted_at,omitempty"`
+	ID            uuid.UUID                 `json:"id" gorm:"column:id;primaryKey"`
+	UserID        uuid.UUID                 `json:"user_id" gorm:"column:user_id;index"`
+	Purpose       string                    `json:"purpose" gorm:"column:purpose"`
+	Status        valueobject.ConsentStatus `json:"status" gorm:"column:status"`
+	ConsentedAt   time.Time                 `json:"consented_at" gorm:"column:consented_at"`
+	ExpiresAt     time.Time                 `json:"expires_at" gorm:"column:expires_at"`
+	RevokedAt     *time.Time                `json:"revoked_at,omitempty" gorm:"column:revoked_at"`
+	AutoDeletedAt *time.Time                `json:"auto_deleted_at,omitempty" gorm:"column:auto_deleted_at"`
 }
+
+func (ConsentLog) TableName() string { return "pdpa_consents" }
 
 func NewConsentLog(userID uuid.UUID, purpose string, grantedAt time.Time) *ConsentLog {
 	return &ConsentLog{

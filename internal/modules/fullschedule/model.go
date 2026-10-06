@@ -301,8 +301,8 @@ type Schedule struct {
 	Thursday      int8       `gorm:"column:thursday;type:int8;default:0" json:"thursday"`
 	Friday        int8       `gorm:"column:friday;type:int8;default:0" json:"friday"`
 	Saturday      int8       `gorm:"column:saturday;type:int8;default:0" json:"saturday"`
-	Months        IntArray     `gorm:"column:months;type:integer[];not null;default:'{}'" json:"months"`
-	Dates         IntArray     `gorm:"column:dates;type:integer[];not null;default:'{}'" json:"dates"`
+	Months        IntArray   `gorm:"column:months;type:integer[];not null;default:'{}'" json:"months"`
+	Dates         IntArray   `gorm:"column:dates;type:integer[];not null;default:'{}'" json:"dates"`
 	CronExpr      *string    `gorm:"column:cron_expr;type:varchar(100)" json:"cron_expr,omitempty"`
 	ManualTrigger bool       `gorm:"column:manual_trigger;not null;default:false" json:"manual_trigger"`
 	LastRunAt     *time.Time `gorm:"column:last_run_at" json:"last_run_at,omitempty"`

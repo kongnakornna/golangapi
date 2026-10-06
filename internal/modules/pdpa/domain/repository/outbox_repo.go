@@ -2,10 +2,11 @@ package repository
 
 import (
 	"context"
-	"icmongolang/internal/modules/pdpa/domain/event"
 	"time"
 
 	"github.com/google/uuid"
+
+	"icmongolang/internal/modules/pdpa/domain/event"
 )
 
 type OutboxRepository interface {

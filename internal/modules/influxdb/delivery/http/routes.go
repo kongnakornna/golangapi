@@ -1,4 +1,4 @@
-﻿package http
+package http
 
 import (
 	"icmongolang/internal/middleware"

@@ -1,0 +1,83 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "kafka-exporter"
+    static_configs:
+      - targets: ["kafka-exporter:9308"]
+
+  - job_name: "redis-exporter"
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+
+  - job_name: "postgres-exporter"
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+
+  - job_name: "mosquitto-exporter"
+    static_configs:
+      - targets: ["mosquitto-exporter:9234"]
+
+  - job_name: "influxdb"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["influxdb:8086"]
+
+  - job_name: "elasticsearch-exporter"
+    static_configs:
+      - targets: ["elasticsearch-exporter:9114"]
+
+  - job_name: "ollama-exporter"
+    static_configs:
+      - targets: ["ollama-exporter:9309"]
+
+  # Go backend – Prometheus native metrics
+  - job_name: "backend"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["backend:5000"]
+
+  # Node-RED – requires node-red-contrib-prometheus plugin installed in Node-RED
+  - job_name: "nodered"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:1881"]
+
+  # Go backend endpoint probes (blackbox) – /health, /api/health, /apimetric and / availability + latency
+  # Note: blackbox-exporter runs inside the Docker network, so "localhost:5000" must be probed
+  # via the service name (backend:5000). To test through the host-published port instead,
+  # replace with "http://host.docker.internal:5000/"
+  - job_name: "backend-blackbox"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - "http://backend:5000/health"
+          - "http://backend:5000/apimetric"
+          - "http://backend:5000/api/health"
+          - "http://backend:5000/"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # Go backend health probe (host) – http://localhost:4200/api/health
+  - job_name: "golang-health"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - "http://host.docker.internal:4200/api/health"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

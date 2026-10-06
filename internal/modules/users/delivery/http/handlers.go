@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"icmongolang/config"
 	"icmongolang/internal/middleware"
 	"icmongolang/internal/models"
 	"icmongolang/internal/modules/users"
+	usermodels "icmongolang/internal/modules/users/models"
 	"icmongolang/internal/modules/users/presenter"
 	"icmongolang/pkg/helpers"
 	"icmongolang/pkg/httpErrors"
@@ -23,27 +23,60 @@ import (
 	"github.com/google/uuid"
 )
 
+// ============================================================================
+// userHandler — aggregator ของ UC ทุกตัวในโมดูล users
+// ============================================================================
 type userHandler struct {
-	cfg     *config.Config
-	usersUC users.UserUseCaseI
-	logger  logger.Logger
+	cfg          *config.Config
+	usersUC      users.UserUseCaseI
+	accessMenuUC users.AccessMenuUseCaseI
+	fileUC       users.FileUseCaseI
+	logUC        users.LogUseCaseI
+	logTypeUC    users.LogTypeUseCaseI
+	menuUC       users.MenuUseCaseI
+	moduleUC     users.ModuleUseCaseI
+	logger       logger.Logger
 }
 
-func CreateUserHandler(uc users.UserUseCaseI, cfg *config.Config, logger logger.Logger) users.Handlers {
-	return &userHandler{cfg: cfg, usersUC: uc, logger: logger}
+// CreateUserHandler constructs the aggregator handler.
+func CreateUserHandler(
+	uc users.UserUseCaseI,
+	accessMenuUC users.AccessMenuUseCaseI,
+	fileUC users.FileUseCaseI,
+	logUC users.LogUseCaseI,
+	logTypeUC users.LogTypeUseCaseI,
+	menuUC users.MenuUseCaseI,
+	moduleUC users.ModuleUseCaseI,
+	cfg *config.Config,
+	l logger.Logger,
+) users.Handlers {
+	return &userHandler{
+		cfg:          cfg,
+		usersUC:      uc,
+		accessMenuUC: accessMenuUC,
+		fileUC:       fileUC,
+		logUC:        logUC,
+		logTypeUC:    logTypeUC,
+		menuUC:       menuUC,
+		moduleUC:     moduleUC,
+		logger:       l,
+	}
 }
 
-// SignInEmail – POST /api/auth/signin (email + password)
+// ============================================================================
+// AUTH
+// ============================================================================
+
+// SignInEmail – POST /api/auth/signin
 // @Summary      User login with email and password
 // @Description  Authenticates a user using email and password. Returns access and refresh tokens.
 // @Tags         auth
-// @Accept       json
+// @Accept       json,multipart/form-data
 // @Produce      json
 // @Param        request body presenter.UserSignIn true "User credentials"
-// @Success      200  {object}  map[string]interface{}  "Tokens returned successfully"
-// @Failure      400  {object}  responses.ErrorResponse  "Bad request / validation error"
-// @Failure      401  {object}  responses.ErrorResponse  "Unauthorized (wrong email/password)"
-// @Failure      404  {object}  responses.ErrorResponse  "User not found"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.Token} "Tokens returned"
+// @Failure      400  {object}  responses.ErrorResponse "Bad request / validation error"
+// @Failure      401  {object}  responses.ErrorResponse "Unauthorized (wrong email/password)"
 // @Router       /auth/signin [post]
 func (h *userHandler) SignInEmail() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -58,12 +91,10 @@ func (h *userHandler) SignInEmail() http.HandlerFunc {
 		} else {
 			err = errors.New("unsupported content type")
 		}
-
 		if err != nil {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-
 		if err := utils.ValidateStruct(r.Context(), req); err != nil {
 			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
 			return
@@ -75,6 +106,12 @@ func (h *userHandler) SignInEmail() http.HandlerFunc {
 			return
 		}
 
+		// audit log (IP/Device/Browser)
+		if u, err := h.usersUC.GetByEmail(r.Context(), req.Email); err == nil && u != nil {
+			ip, device, browser := extractClientMeta(r)
+			h.logUC.WriteAuditLogWithMeta(r.Context(), u.ID, 1, "User SignIn", "Sign in via /auth/signin", ip, device, browser)
+		}
+
 		render.Respond(w, r, responses.CreateSuccessResponse(presenter.Token{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
@@ -83,17 +120,15 @@ func (h *userHandler) SignInEmail() http.HandlerFunc {
 	}
 }
 
-// SignInUsername – POST /api/auth/login (username + password)
+// SignInUsername – POST /api/auth/login
 // @Summary      User login with username and password
-// @Description  Authenticates a user using username and password. Returns access and refresh tokens.
 // @Tags         auth
-// @Accept       json
+// @Accept       json,multipart/form-data
 // @Produce      json
 // @Param        request body presenter.SignIn true "User credentials (username + password)"
-// @Success      200  {object}  map[string]interface{}  "Tokens returned successfully"
-// @Failure      400  {object}  responses.ErrorResponse  "Bad request / validation error"
-// @Failure      401  {object}  responses.ErrorResponse  "Unauthorized (wrong username/password)"
-// @Failure      404  {object}  responses.ErrorResponse  "User not found"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.Token} "Tokens returned"
+// @Failure      400  {object}  responses.ErrorResponse
+// @Failure      401  {object}  responses.ErrorResponse
 // @Router       /auth/login [post]
 func (h *userHandler) SignInUsername() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -108,12 +143,10 @@ func (h *userHandler) SignInUsername() http.HandlerFunc {
 		} else {
 			err = errors.New("unsupported content type")
 		}
-
 		if err != nil {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-
 		if err := utils.ValidateStruct(r.Context(), req); err != nil {
 			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
 			return
@@ -124,7 +157,6 @@ func (h *userHandler) SignInUsername() http.HandlerFunc {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-
 		render.Respond(w, r, responses.CreateSuccessResponse(presenter.Token{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
@@ -133,14 +165,13 @@ func (h *userHandler) SignInUsername() http.HandlerFunc {
 	}
 }
 
-// Register – POST /register (public, no auth)
-// @Summary      สมัครสมาชิกผู้ใช้ใหม่
-// @Description  ลงทะเบียนผู้ใช้ทั่วไป (ไม่ต้องใช้ token)
+// Register – POST /register
+// @Summary      Register new user
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param        user body presenter.UserCreate true "ข้อมูลสมัคร"
-// @Success      200  {object}  map[string]interface{}
+// @Param        user body presenter.UserCreate true "Registration data"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserResponse}
 // @Failure      400  {object}  responses.ErrorResponse
 // @Failure      422  {object}  responses.ErrorResponse
 // @Router       /register [post]
@@ -160,26 +191,30 @@ func (h *userHandler) Register() http.HandlerFunc {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-		userResp := mapModelResponse(newUser)
-		if userResp == nil {
+		resp := mapModelResponse(newUser)
+		if resp == nil {
 			render.Render(w, r, responses.CreateErrorResponse(errors.New("internal server error")))
 			return
 		}
-		render.Respond(w, r, responses.CreateSuccessResponse(*userResp))
+		render.Respond(w, r, responses.CreateSuccessResponse(*resp))
 	}
 }
 
-// Create – POST /user (admin only)
-// @Security      BearerAuth
-// @Summary       Create user (admin only)
-// @Tags          users
-// @Accept        json
-// @Produce       json
-// @Param         user body presenter.UserCreate true "User creation data"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Failure       403  {object}  responses.ErrorResponse
-// @Router        /user [post]
+// ============================================================================
+// USER CRUD (admin)
+// ============================================================================
+
+// Create – POST /user
+// @Security     BearerAuth
+// @Summary      Create user (admin only)
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user body presenter.UserCreate true "User creation data"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserResponse}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Failure      403  {object}  responses.ErrorResponse
+// @Router       /user [post]
 func (h *userHandler) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := new(presenter.UserCreate)
@@ -188,52 +223,40 @@ func (h *userHandler) Create() http.HandlerFunc {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-		h.logger.Infof("request body decoded: email=%s, role_id=%d", req.Email, req.RoleID)
-
 		if err := utils.ValidateStruct(r.Context(), req); err != nil {
-			h.logger.Warnf("validation failed: %v", err)
 			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
 			return
 		}
-		h.logger.Info("validation passed")
-
-		userModel := mapModel(req)
-		if userModel == nil {
-			h.logger.Error("mapModel returned nil")
-			render.Render(w, r, responses.CreateErrorResponse(errors.New("internal mapping error")))
-			return
-		}
-		h.logger.Infof("mapped to model: email=%s, role_id=%d, status=%d", userModel.Email, userModel.RoleID, userModel.Status)
-
-		newUser, err := h.usersUC.CreateUser(r.Context(), userModel, req.ConfirmPassword)
+		newUser, err := h.usersUC.CreateUser(r.Context(), mapModel(req), req.ConfirmPassword)
 		if err != nil {
-			h.logger.Errorf("CreateUser error: %v", err)
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-		h.logger.Infof("user created successfully with id=%s", newUser.ID)
-
-		responseData := mapModelResponse(newUser)
-		if responseData == nil {
-			h.logger.Error("mapModelResponse returned nil")
-			render.Render(w, r, responses.CreateErrorResponse(errors.New("internal response error")))
+		resp := mapModelResponse(newUser)
+		if resp == nil {
+			render.Render(w, r, responses.CreateErrorResponse(errors.New("internal server error")))
 			return
 		}
 
-		render.Respond(w, r, responses.CreateSuccessResponse(responseData))
+		// audit
+		ip, device, browser := extractClientMeta(r)
+		h.logUC.WriteAuditLogWithMeta(r.Context(), newUser.ID, 3, "User Create",
+			"Created user "+newUser.Email, ip, device, browser)
+
+		render.Respond(w, r, responses.CreateSuccessResponse(resp))
 	}
 }
 
 // Get – GET /user/{id}
-// @Security      BearerAuth
-// @Summary       Get user by ID
-// @Tags          users
-// @Produce       json
-// @Param         id path string true "User ID"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Failure       404  {object}  responses.ErrorResponse
-// @Router        /user/{id} [get]
+// @Security     BearerAuth
+// @Summary      Get user by ID
+// @Tags         users
+// @Produce      json
+// @Param        id path string true "User ID"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserResponse}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Failure      404  {object}  responses.ErrorResponse
+// @Router       /user/{id} [get]
 func (h *userHandler) Get() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -250,95 +273,84 @@ func (h *userHandler) Get() http.HandlerFunc {
 	}
 }
 
-// GetMulti – GET /user?limit=10&offset=0
-// @Security      BearerAuth
-// @Summary       List users (admin only)
-// @Tags          users
-// @Produce       json
-// @Param         limit query int false "Page size" default(20)
-// @Param         offset query int false "Offset" default(0)
-// @Param         email query string false "Filter by email"
-// @Param         username query string false "Filter by username"
-// @Param         status query int false "Filter by status"
-// @Param         role_id query int false "Filter by role ID"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user [get]
+// GetMulti – GET /user
+// @Security     BearerAuth
+// @Summary      List users (admin only)
+// @Tags         users
+// @Produce      json
+// @Param        page      query int    false "Page" default(1)
+// @Param        per_page  query int    false "Items per page" default(10)
+// @Param        email     query string false "Filter email"
+// @Param        username  query string false "Filter username"
+// @Param        fullname  query string false "Filter fullname"
+// @Param        status    query int    false "Filter status"
+// @Param        role_id   query int    false "Filter role"
+// @Param        verified  query bool   false "Filter verified"
+// @Param        sort      query string false "Sort field-ASC|DESC"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserListResponse}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user [get]
 func (h *userHandler) GetMulti() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
-		limit, _ := strconv.Atoi(q.Get("limit"))
-		if limit <= 0 {
-			limit = 20
-		}
-		offset, _ := strconv.Atoi(q.Get("offset"))
-		if offset < 0 {
-			offset = 0
-		}
+		page, perPage := parsePageParams(q)
+		limit := perPage
+		offset := (page - 1) * perPage
 
 		filters := make(map[string]interface{})
-		if email := q.Get("email"); email != "" {
-			filters["email"] = email
+		if v := q.Get("email"); v != "" {
+			filters["email"] = v
 		}
-		if username := q.Get("username"); username != "" {
-			filters["username"] = username
+		if v := q.Get("username"); v != "" {
+			filters["username"] = v
 		}
-		if fullname := q.Get("fullname"); fullname != "" {
-			filters["fullname"] = fullname
+		if v := q.Get("fullname"); v != "" {
+			filters["fullname"] = v
 		}
-		if statusStr := q.Get("status"); statusStr != "" {
-			if status, err := strconv.ParseInt(statusStr, 10, 16); err == nil {
-				filters["status"] = int16(status)
+		if v := q.Get("status"); v != "" {
+			if n, err := strconvAtoi16(v); err == nil {
+				filters["status"] = n
 			}
 		}
-		if roleStr := q.Get("role_id"); roleStr != "" {
-			if roleID, err := strconv.Atoi(roleStr); err == nil {
-				filters["role_id"] = roleID
+		if v := q.Get("role_id"); v != "" {
+			if n, err := strconvAtoi(v); err == nil {
+				filters["role_id"] = n
 			}
 		}
-		if verifiedStr := q.Get("verified"); verifiedStr != "" {
-			filters["verified"] = verifiedStr == "true"
+		if v := q.Get("verified"); v != "" {
+			filters["verified"] = v == "true"
 		}
-		if sortBy := q.Get("sort_by"); sortBy != "" {
-			filters["sort_by"] = sortBy
-		}
-		if sortOrder := q.Get("sort_order"); sortOrder != "" {
-			filters["sort_order"] = sortOrder
+		if field, order := parseSortParam(q.Get("sort")); field != "" {
+			filters["sort_by"] = field
+			filters["sort_order"] = strings.ToLower(order)
+		} else {
+			if v := q.Get("sort_by"); v != "" {
+				filters["sort_by"] = v
+			}
+			if v := q.Get("sort_order"); v != "" {
+				filters["sort_order"] = v
+			}
 		}
 
-		users, total, err := h.usersUC.GetMultiWithTotal(r.Context(), limit, offset, filters)
+		list, total, err := h.usersUC.GetMultiWithTotal(r.Context(), limit, offset, filters)
 		if err != nil {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-
-		response := map[string]interface{}{
-			"payload": mapModelsResponse(users),
-			"pagination": map[string]interface{}{
-				"limit":  limit,
-				"offset": offset,
-				"total":  total,
-				"next_offset": func() int {
-					if offset+limit < int(total) {
-						return offset + limit
-					}
-					return -1
-				}(),
-			},
-		}
-		render.Respond(w, r, responses.CreateSuccessResponse(response))
+		payload := presenter.NewUserListResponse(mapModelsResponse(list), page, perPage, total)
+		render.Respond(w, r, responses.CreateSuccessResponse(payload))
 	}
 }
 
-// Delete – DELETE /user/{id} (admin only)
-// @Security      BearerAuth
-// @Summary       Delete user (admin only)
-// @Tags          users
-// @Param         id path string true "User ID"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Failure       404  {object}  responses.ErrorResponse
-// @Router        /user/{id} [delete]
+// Delete – DELETE /user/{id}
+// @Security     BearerAuth
+// @Summary      Delete user (admin only)
+// @Tags         users
+// @Param        id path string true "User ID"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Failure      404  {object}  responses.ErrorResponse
+// @Router       /user/{id} [delete]
 func (h *userHandler) Delete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -351,21 +363,25 @@ func (h *userHandler) Delete() http.HandlerFunc {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
+		ip, device, browser := extractClientMeta(r)
+		h.logUC.WriteAuditLogWithMeta(r.Context(), id, 5, "User Delete",
+			"Deleted user "+user.Email, ip, device, browser)
+
 		render.Respond(w, r, responses.CreateSuccessResponse(mapModelResponse(user)))
 	}
 }
 
-// Update – PUT /user/{id} (admin only)
-// @Security      BearerAuth
-// @Summary       Update user (admin only)
-// @Tags          users
-// @Accept        json
-// @Produce       json
-// @Param         id path string true "User ID"
-// @Param         user body presenter.UserUpdate true "Fields to update"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/{id} [put]
+// Update – PUT /user/{id}
+// @Security     BearerAuth
+// @Summary      Update user (admin only)
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "User ID"
+// @Param        user body presenter.UserUpdate true "Fields to update"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserResponse}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/{id} [put]
 func (h *userHandler) Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -405,21 +421,25 @@ func (h *userHandler) Update() http.HandlerFunc {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
+		ip, device, browser := extractClientMeta(r)
+		h.logUC.WriteAuditLogWithMeta(r.Context(), id, 4, "User Update",
+			"Updated user fields", ip, device, browser)
+
 		render.Respond(w, r, responses.CreateSuccessResponse(mapModelResponse(updatedUser)))
 	}
 }
 
-// UpdatePassword – PATCH /user/{id}/updatepass (admin only)
-// @Security      BearerAuth
-// @Summary       Update user password (admin only)
-// @Tags          users
-// @Accept        json
-// @Produce       json
-// @Param         id path string true "User ID"
-// @Param         password body presenter.UserUpdatePassword true "Password data"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/{id}/updatepass [patch]
+// UpdatePassword – PATCH /user/{id}/updatepass
+// @Security     BearerAuth
+// @Summary      Update user password (admin)
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "User ID"
+// @Param        password body presenter.UserUpdatePassword true "Password data"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/{id}/updatepass [patch]
 func (h *userHandler) UpdatePassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -445,17 +465,17 @@ func (h *userHandler) UpdatePassword() http.HandlerFunc {
 	}
 }
 
-// UpdateRole – PATCH /user/{id}/role (admin only)
-// @Security      BearerAuth
-// @Summary       Update user role (admin only)
-// @Tags          users
-// @Accept        json
-// @Produce       json
-// @Param         id path string true "User ID"
-// @Param         role body presenter.UserUpdateRole true "Role ID"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/{id}/role [patch]
+// UpdateRole – PATCH /user/{id}/role
+// @Security     BearerAuth
+// @Summary      Update user role (admin)
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "User ID"
+// @Param        role body presenter.UserUpdateRole true "Role ID"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserResponse}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/{id}/role [patch]
 func (h *userHandler) UpdateRole() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -481,14 +501,18 @@ func (h *userHandler) UpdateRole() http.HandlerFunc {
 	}
 }
 
+// ============================================================================
+// SELF
+// ============================================================================
+
 // Me – GET /user/me
-// @Security      BearerAuth
-// @Summary       Get current user profile (with role title and permissions)
-// @Tags          users
-// @Produce       json
-// @Success       200  {object}  map[string]interface{}
-// @Failure       401  {object}  responses.ErrorResponse
-// @Router        /user/me [get]
+// @Security     BearerAuth
+// @Summary      Get current user profile
+// @Tags         users
+// @Produce      json
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserProfileResponse}
+// @Failure      401  {object}  responses.ErrorResponse
+// @Router       /user/me [get]
 func (h *userHandler) Me() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, err := middleware.GetUserFromCtx(r.Context())
@@ -511,15 +535,15 @@ func (h *userHandler) Me() http.HandlerFunc {
 }
 
 // UpdateMe – PUT /user/me
-// @Security      BearerAuth
-// @Summary       Update current user profile
-// @Tags          users
-// @Accept        json
-// @Produce       json
-// @Param         user body presenter.UserUpdate true "Fields to update"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/me [put]
+// @Security     BearerAuth
+// @Summary      Update current user profile
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user body presenter.UserUpdate true "Fields to update"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserResponse}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/me [put]
 func (h *userHandler) UpdateMe() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, err := middleware.GetUserFromCtx(r.Context())
@@ -564,15 +588,15 @@ func (h *userHandler) UpdateMe() http.HandlerFunc {
 }
 
 // UpdatePasswordMe – PATCH /user/me/updatepass
-// @Security      BearerAuth
-// @Summary       Change current user password
-// @Tags          users
-// @Accept        json
-// @Produce       json
-// @Param         password body presenter.UserUpdatePassword true "Password data"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/me/updatepass [patch]
+// @Security     BearerAuth
+// @Summary      Change current user password
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        password body presenter.UserUpdatePassword true "Password data"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/me/updatepass [patch]
 func (h *userHandler) UpdatePasswordMe() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, err := middleware.GetUserFromCtx(r.Context())
@@ -598,14 +622,14 @@ func (h *userHandler) UpdatePasswordMe() http.HandlerFunc {
 	}
 }
 
-// LogoutAllAdmin – GET /user/{id}/logoutall (admin only)
-// @Security      BearerAuth
-// @Summary       Force logout all sessions of a user (admin only)
-// @Tags          users
-// @Param         id path string true "User ID"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/{id}/logoutall [get]
+// LogoutAllAdmin – GET /user/{id}/logoutall
+// @Security     BearerAuth
+// @Summary      Force logout all sessions
+// @Tags         users
+// @Param        id path string true "User ID"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/{id}/logoutall [get]
 func (h *userHandler) LogoutAllAdmin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -622,15 +646,15 @@ func (h *userHandler) LogoutAllAdmin() http.HandlerFunc {
 }
 
 // Profile – GET /user/profile/{id}
-// @Security      BearerAuth
-// @Summary       Get user profile with role title and permissions
-// @Tags          users
-// @Produce       json
-// @Param         id path string true "User ID"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Failure       404  {object}  responses.ErrorResponse
-// @Router        /user/profile/{id} [get]
+// @Security     BearerAuth
+// @Summary      Get user profile with role title & permissions
+// @Tags         users
+// @Produce      json
+// @Param        id path string true "User ID"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserProfileResponse}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Failure      404  {object}  responses.ErrorResponse
+// @Router       /user/profile/{id} [get]
 func (h *userHandler) Profile() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -652,87 +676,65 @@ func (h *userHandler) Profile() http.HandlerFunc {
 	}
 }
 
-// ListUsers – GET /user/list (admin only)
-// @Security      BearerAuth
-// @Summary       List users with keyword/status/sort/pagination (admin only)
-// @Tags          users
-// @Produce       json
-// @Param         keyword query string false "Keyword (username or email)"
-// @Param         status query string false "Status csv (e.g. 0,1)"
-// @Param         active_status query string false "Active status csv"
-// @Param         sort query string false "Sort field-ASC|DESC (e.g. username-ASC)"
-// @Param         page query int false "Page number" default(1)
-// @Param         page_size query int false "Page size" default(20)
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/list [get]
+// ListUsers – GET /user/list
+// @Security     BearerAuth
+// @Summary      List users with keyword/status/sort/pagination
+// @Tags         users
+// @Produce      json
+// @Param        keyword       query string false "Keyword"
+// @Param        status        query string false "Status csv"
+// @Param        active_status query string false "Active status csv"
+// @Param        page          query int    false "Page" default(1)
+// @Param        per_page      query int    false "Items per page" default(10)
+// @Param        sort          query string false "Sort field-ASC|DESC"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.UserListResponse}
+// @Router       /user/list [get]
 func (h *userHandler) ListUsers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
-		f := users.UserFilter{Keyword: q.Get("keyword")}
+		page, perPage := parsePageParams(q)
 
+		f := users.UserFilter{
+			Keyword: q.Get("keyword"),
+			Limit:   perPage,
+			Offset:  (page - 1) * perPage,
+		}
 		if v := q.Get("status"); v != "" {
 			for _, part := range strings.Split(v, ",") {
-				if n, err := strconv.ParseInt(strings.TrimSpace(part), 10, 16); err == nil {
-					f.Statuses = append(f.Statuses, int16(n))
+				if n, err := strconvAtoi16(strings.TrimSpace(part)); err == nil {
+					f.Statuses = append(f.Statuses, n)
 				}
 			}
 		}
 		if v := q.Get("active_status"); v != "" {
 			for _, part := range strings.Split(v, ",") {
-				if n, err := strconv.ParseInt(strings.TrimSpace(part), 10, 16); err == nil {
-					f.ActiveStatuses = append(f.ActiveStatuses, int16(n))
+				if n, err := strconvAtoi16(strings.TrimSpace(part)); err == nil {
+					f.ActiveStatuses = append(f.ActiveStatuses, n)
 				}
 			}
 		}
-		if v := q.Get("sort"); v != "" {
-			if idx := strings.LastIndex(v, "-"); idx > 0 {
-				f.SortField = v[:idx]
-				f.SortOrder = v[idx+1:]
-			} else {
-				f.SortField = v
-			}
+		if field, order := parseSortParam(q.Get("sort")); field != "" {
+			f.SortField = field
+			f.SortOrder = order
 		}
-
-		page, _ := strconv.Atoi(q.Get("page"))
-		if page < 1 {
-			page = 1
-		}
-		pageSize, _ := strconv.Atoi(q.Get("page_size"))
-		if pageSize < 1 {
-			pageSize = 20
-		}
-		if pageSize > 100 {
-			pageSize = 100
-		}
-		f.Limit = pageSize
-		f.Offset = (page - 1) * pageSize
 
 		list, total, err := h.usersUC.ListUsers(r.Context(), f)
 		if err != nil {
 			render.Render(w, r, responses.CreateErrorResponse(err))
 			return
 		}
-
-		response := map[string]interface{}{
-			"payload": mapModelsResponse(list),
-			"pagination": map[string]interface{}{
-				"page":      page,
-				"page_size": pageSize,
-				"total":     total,
-			},
-		}
-		render.Respond(w, r, responses.CreateSuccessResponse(response))
+		payload := presenter.NewUserListResponse(mapModelsResponse(list), page, perPage, total)
+		render.Respond(w, r, responses.CreateSuccessResponse(payload))
 	}
 }
 
-// Statistics – GET /user/statistics (admin only)
-// @Security      BearerAuth
-// @Summary       User statistics aggregated by status and role (admin only)
-// @Tags          users
-// @Produce       json
-// @Success       200  {object}  map[string]interface{}
-// @Router        /user/statistics [get]
+// Statistics – GET /user/statistics
+// @Security     BearerAuth
+// @Summary      User statistics
+// @Tags         users
+// @Produce      json
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Router       /user/statistics [get]
 func (h *userHandler) Statistics() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		stats, err := h.usersUC.Statistics(r.Context())
@@ -744,15 +746,14 @@ func (h *userHandler) Statistics() http.HandlerFunc {
 	}
 }
 
-// NotifyList – GET /user/notify/{channel} (admin only)
-// @Security      BearerAuth
-// @Summary       List active users by notification channel (admin only)
-// @Tags          users
-// @Produce       json
-// @Param         channel path string true "Notification channel (email|sms|line)"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/notify/{channel} [get]
+// NotifyList – GET /user/notify/{channel}
+// @Security     BearerAuth
+// @Summary      List active users by notification channel
+// @Tags         users
+// @Produce      json
+// @Param        channel path string true "Channel" Enums(email,sms,line)
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Router       /user/notify/{channel} [get]
 func (h *userHandler) NotifyList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ch := users.NotificationChannel(chi.URLParam(r, "channel"))
@@ -765,18 +766,17 @@ func (h *userHandler) NotifyList() http.HandlerFunc {
 	}
 }
 
-// UpdateActiveStatus – PATCH /user/{id}/activestatus (admin only)
-// @Security      BearerAuth
-// @Summary       Toggle user active status (admin only)
-// @Tags          users
-// @Accept        json
-// @Produce       json
-// @Param         id path string true "User ID"
-// @Param         body body presenter.UserUpdateActiveStatus true "Active status"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Failure       404  {object}  responses.ErrorResponse
-// @Router        /user/{id}/activestatus [patch]
+// UpdateActiveStatus – PATCH /user/{id}/activestatus
+// @Security     BearerAuth
+// @Summary      Toggle user active status
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id path string true "User ID"
+// @Param        body body presenter.UserUpdateActiveStatus true "Active status"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/{id}/activestatus [patch]
 func (h *userHandler) UpdateActiveStatus() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := uuid.Parse(chi.URLParam(r, "id"))
@@ -802,15 +802,15 @@ func (h *userHandler) UpdateActiveStatus() http.HandlerFunc {
 }
 
 // UploadAvatar – POST /user/me/avatar
-// @Security      BearerAuth
-// @Summary       Upload current user avatar (jpg/jpeg/png)
-// @Tags          users
-// @Accept        multipart/form-data
-// @Produce       json
-// @Param         file formData file true "Avatar file"
-// @Success       200  {object}  map[string]interface{}
-// @Failure       400  {object}  responses.ErrorResponse
-// @Router        /user/me/avatar [post]
+// @Security     BearerAuth
+// @Summary      Upload avatar (jpg/jpeg/png)
+// @Tags         users
+// @Accept       multipart/form-data
+// @Produce      json
+// @Param        file formData file true "Avatar file"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/me/avatar [post]
 func (h *userHandler) UploadAvatar() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, err := middleware.GetUserFromCtx(r.Context())
@@ -840,9 +840,201 @@ func (h *userHandler) UploadAvatar() http.HandlerFunc {
 	}
 }
 
-// ------------------------------
-// Mapping functions
-// ------------------------------
+// ============================================================================
+// ACCESS MENU (handlers)
+// ============================================================================
+
+// CreateAccessMenu – POST /user/access-menus
+// @Security     BearerAuth
+// @Summary      Create access menu mapping
+// @Tags         access-menu
+// @Accept       json
+// @Produce      json
+// @Param        body body presenter.AccessMenuCreate true "Access menu data"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=usermodels.SdUserAccessMenu}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/access-menus [post]
+func (h *userHandler) CreateAccessMenu() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := new(presenter.AccessMenuCreate)
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(err))
+			return
+		}
+		if err := utils.ValidateStruct(r.Context(), req); err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
+			return
+		}
+	    m := &usermodels.SdUserAccessMenu{
+			UserTypeID: &req.UserTypeID,
+			RoleID:     &req.RoleID,
+			MenuID:     &req.MenuID,
+			ParentID:   &req.ParentID,
+		}
+		out, err := h.accessMenuUC.CreateAccessMenu(r.Context(), m)
+		if err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(err))
+			return
+		}
+		render.Respond(w, r, responses.CreateSuccessResponse(out))
+	}
+}
+
+// GetAccessMenu – GET /user/access-menus/{id}
+// @Security     BearerAuth
+// @Summary      Get access menu by ID
+// @Tags         access-menu
+// @Produce      json
+// @Param        id path int true "Access menu ID"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=usermodels.SdUserAccessMenu}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/access-menus/{id} [get]
+func (h *userHandler) GetAccessMenu() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconvAtoi(chi.URLParam(r, "id"))
+		if err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
+			return
+		}
+		out, err := h.accessMenuUC.GetAccessMenu(r.Context(), id)
+		if err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(err))
+			return
+		}
+		render.Respond(w, r, responses.CreateSuccessResponse(out))
+	}
+}
+
+// UpdateAccessMenu – PUT /user/access-menus/{id}
+// @Security     BearerAuth
+// @Summary      Update access menu
+// @Tags         access-menu
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Access menu ID"
+// @Param        body body presenter.AccessMenuUpdate true "Fields to update"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=usermodels.SdUserAccessMenu}
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/access-menus/{id} [put]
+func (h *userHandler) UpdateAccessMenu() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconvAtoi(chi.URLParam(r, "id"))
+		if err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
+			return
+		}
+		req := new(presenter.AccessMenuUpdate)
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(err))
+			return
+		}
+		values := map[string]interface{}{}
+		if req.UserTypeID != nil {
+			values["user_type_id"] = *req.UserTypeID
+		}
+		if req.RoleID != nil {
+			values["role_id"] = *req.RoleID
+		}
+		if req.MenuID != nil {
+			values["menu_id"] = *req.MenuID
+		}
+		if req.ParentID != nil {
+			values["parent_id"] = *req.ParentID
+		}
+		out, err := h.accessMenuUC.UpdateAccessMenu(r.Context(), id, values)
+		if err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(err))
+			return
+		}
+		render.Respond(w, r, responses.CreateSuccessResponse(out))
+	}
+}
+
+// DeleteAccessMenu – DELETE /user/access-menus/{id}
+// @Security     BearerAuth
+// @Summary      Delete access menu
+// @Tags         access-menu
+// @Param        id path int true "Access menu ID"
+// @Success      200  {object}  responses.SwaggerSuccessResponse
+// @Failure      400  {object}  responses.ErrorResponse
+// @Router       /user/access-menus/{id} [delete]
+func (h *userHandler) DeleteAccessMenu() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconvAtoi(chi.URLParam(r, "id"))
+		if err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(httpErrors.ErrValidation(err)))
+			return
+		}
+		if err := h.accessMenuUC.DeleteAccessMenu(r.Context(), id); err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(err))
+			return
+		}
+		render.Respond(w, r, responses.CreateSuccessResponse(struct{}{}))
+	}
+}
+
+// ListAccessMenus – GET /user/access-menus
+// @Security     BearerAuth
+// @Summary      List access menus
+// @Tags         access-menu
+// @Produce      json
+// @Param        page         query int false "Page" default(1)
+// @Param        per_page     query int false "Items per page" default(20)
+// @Param        user_type_id query int false "Filter user_type_id"
+// @Param        role_id      query int false "Filter role_id"
+// @Param        menu_id      query int false "Filter menu_id"
+// @Param        parent_id    query int false "Filter parent_id"
+// @Success      200  {object}  responses.SwaggerSuccessResponse{data=presenter.AccessMenuListResponse}
+// @Router       /user/access-menus [get]
+func (h *userHandler) ListAccessMenus() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		q := r.URL.Query()
+		page, perPage := parsePageParams(q)
+		f := users.AccessMenuFilter{Limit: perPage, Offset: (page - 1) * perPage}
+		if v := q.Get("user_type_id"); v != "" {
+			if n, err := strconvAtoi(v); err == nil {
+				f.UserTypeID = &n
+			}
+		}
+		if v := q.Get("role_id"); v != "" {
+			if n, err := strconvAtoi(v); err == nil {
+				f.RoleID = &n
+			}
+		}
+		if v := q.Get("menu_id"); v != "" {
+			if n, err := strconvAtoi(v); err == nil {
+				f.MenuID = &n
+			}
+		}
+		if v := q.Get("parent_id"); v != "" {
+			if n, err := strconvAtoi(v); err == nil {
+				f.ParentID = &n
+			}
+		}
+		items, total, err := h.accessMenuUC.ListAccessMenus(r.Context(), f)
+		if err != nil {
+			render.Render(w, r, responses.CreateErrorResponse(err))
+			return
+		}
+		list := make([]*presenter.AccessMenuResponse, 0, len(items))
+		for _, m := range items {
+			list = append(list, &presenter.AccessMenuResponse{
+				UserAccessID: m.UserAccessID,
+				UserTypeID:   derefInt(m.UserTypeID),
+				RoleID:       derefInt(m.RoleID),
+				MenuID:       derefInt(m.MenuID),
+				ParentID:     derefInt(m.ParentID),
+			})
+		}
+		render.Respond(w, r, responses.CreateSuccessResponse(
+			presenter.NewAccessMenuListResponse(list, page, perPage, total),
+		))
+	}
+}
+
+// ============================================================================
+// Mapping helpers
+// ============================================================================
 
 func mapModel(req *presenter.UserCreate) *models.SdUser {
 	var fullname *string
@@ -876,6 +1068,8 @@ func mapModelResponse(user *models.SdUser) *presenter.UserResponse {
 	if user == nil {
 		return nil
 	}
+	createdAt := helpers.NewLocalTime(user.CreatedDate)
+	updatedAt := helpers.NewLocalTime(user.UpdatedDate)
 	return &presenter.UserResponse{
 		ID:           user.ID,
 		Email:        user.Email,
@@ -897,8 +1091,8 @@ func mapModelResponse(user *models.SdUser) *presenter.UserResponse {
 		Verified:     user.Verified,
 		LastSignIn:   helpers.NewLocalTimePtr(&user.Lastsignindate),
 		Remark:       user.Remark,
-		CreatedAt:    helpers.NewLocalTime(user.CreatedDate),
-		UpdatedAt:    helpers.NewLocalTime(user.UpdatedDate),
+		CreatedAt:    &createdAt,
+		UpdatedAt:    &updatedAt,
 	}
 }
 
@@ -911,6 +1105,9 @@ func mapModelsResponse(users []*models.SdUser) []*presenter.UserResponse {
 }
 
 func mapProfileResponse(d *users.UserProfileDetail) *presenter.UserProfileResponse {
+	if d == nil {
+		return nil
+	}
 	base := mapModelResponse(d.User)
 	if base == nil {
 		return nil
@@ -919,9 +1116,14 @@ func mapProfileResponse(d *users.UserProfileDetail) *presenter.UserProfileRespon
 	resp.Permissions = make([]presenter.PermissionFlag, 0, len(d.Permissions))
 	for _, p := range d.Permissions {
 		item := presenter.PermissionFlag{
-			Name: p.Name, Insert: p.Insert, Update: p.Update,
-			Delete: p.Delete, Select: p.Select, Log: p.Log,
-			Config: p.Config, Truncate: p.Truncate,
+			Name:     p.Name,
+			Insert:   p.Insert,
+			Update:   p.Update,
+			Delete:   p.Delete,
+			Select:   p.Select,
+			Log:      p.Log,
+			Config:   p.Config,
+			Truncate: p.Truncate,
 		}
 		if p.Detail != nil {
 			item.Detail = *p.Detail

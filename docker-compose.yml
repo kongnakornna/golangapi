@@ -13,19 +13,22 @@ services:
       - REDIS_ADDR=redis:6379
       - TASK_REDIS_ADDR=redis:6379
       - LLM_BASE_URL=http://ollama:11434/v1
-      - ICMON_MQTT_BROKER=mqtt://mqtt:1883
+      - ICMON_MQTT_BROKER=mqtt://mosquitto:1883
       - ICMON_MQTT_PORT=1883
       - ELASTICSEARCH_ADDRESSES=http://elasticsearch:9200
       - INFLUXDB_URL=http://influxdb:8086
+      - KAFKA_BROKERS=kafka:9092
     depends_on:
       - db
       - redis
       - elasticsearch
       - ollama
-      - mqtt
       - influxdb
+      - kafka
     env_file:
       - ${COMPOSE_ENV_FILE:-.env}
+    networks:
+      - iot
 
   worker:
     build:
@@ -41,8 +44,11 @@ services:
       - POSTGRES_HOST=db
       - REDIS_ADDR=redis:6379
       - TASK_REDIS_ADDR=redis:6379
+      - KAFKA_BROKERS=kafka:9092
     env_file:
       - ${COMPOSE_ENV_FILE:-.env}
+    networks:
+      - iot
 
   db:
     image: pgvector/pgvector:pg15
@@ -55,7 +61,9 @@ services:
       - "5435:5435"
     volumes:
       - ./app-postgres-data:/var/lib/postgresql/data/
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   redis:
     image: redis:7-alpine
@@ -63,20 +71,26 @@ services:
       - 6379
     volumes:
       - app-redis-data:/data
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   kafka:
     image: apache/kafka:3.7.1
+    container_name: kafka
+    hostname: kafka
     ports:
-      - 9092:9092
+      - "9092:9092"
+      - "9094:9094"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -85,7 +99,15 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     volumes:
       - app-kafka-data:/var/lib/kafka/data
-    restart: unless-stopped
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list > /dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+    networks:
+      - iot
 
   kafka-exporter:
     image: danielqsj/kafka-exporter:latest
@@ -93,8 +115,11 @@ services:
     expose:
       - 9308
     depends_on:
-      - kafka
-    restart: unless-stopped
+      kafka:
+        condition: service_healthy
+    restart: always
+    networks:
+      - iot
 
   prometheus:
     image: prom/prometheus:latest
@@ -108,11 +133,12 @@ services:
       - redis-exporter
       - postgres-exporter
       - blackbox-exporter
-      - mosquitto-exporter
       - influxdb
       - elasticsearch-exporter
       - ollama-exporter
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   redis-exporter:
     image: oliver006/redis_exporter:latest
@@ -121,7 +147,9 @@ services:
       - 9121
     depends_on:
       - redis
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:latest
@@ -131,13 +159,17 @@ services:
       - 9187
     depends_on:
       - db
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   blackbox-exporter:
     image: prom/blackbox-exporter:latest
     expose:
       - 9115
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
@@ -145,8 +177,13 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - network.host=0.0.0.0
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
       - ingest.geoip.downloader.enabled=false
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - 9200:9200
     volumes:
@@ -156,7 +193,10 @@ services:
       interval: 10s
       timeout: 10s
       retries: 30
-    restart: unless-stopped
+      start_period: 60s
+    restart: always
+    networks:
+      - iot
 
   elasticsearch-exporter:
     image: prometheuscommunity/elasticsearch-exporter:latest
@@ -169,7 +209,9 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.13.4
@@ -184,7 +226,9 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.4
@@ -196,25 +240,9 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-    restart: unless-stopped
-
-  mqtt:
-    image: eclipse-mosquitto:2
-    ports:
-      - 1885:1883
-    volumes:
-      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - app-mqtt-data:/mosquitto/data
-    restart: unless-stopped
-
-  mosquitto-exporter:
-    image: sapcc/mosquitto-exporter:latest
-    command: ["--endpoint=tcp://mqtt:1883", "--bind-address=0.0.0.0:9234"]
-    expose:
-      - 9234
-    depends_on:
-      - mqtt
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   influxdb:
     image: influxdb:2.7
@@ -238,7 +266,9 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   ollama:
     image: ollama/ollama:latest
@@ -254,7 +284,9 @@ services:
       timeout: 10s
       retries: 5
       start_period: 15s
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   ollama-exporter:
     build:
@@ -267,7 +299,9 @@ services:
       - 9309
     depends_on:
       - ollama
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   ai:
     build:
@@ -282,7 +316,9 @@ services:
     depends_on:
       ollama:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
 
   grafana:
     image: grafana/grafana:latest
@@ -298,7 +334,30 @@ services:
       - app-grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
-    restart: unless-stopped
+    restart: always
+    networks:
+      - iot
+
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    ports:
+      - "1888:1880"
+    environment:
+      - TZ=Asia/Bangkok
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN:-NrQIxbV5FdcAoV6DSzAUCA0P-NMTLuTjptbH53q6kNg1RPOwva4qH0o3DrZcb9ELuBDUDbfhhk-OT1kiTMFQMw==}
+      - INFLUXDB_ORG=cmon_org
+      - INFLUXDB_BUCKET=AIRCOM1
+      - KAFKA_BROKERS=kafka:9092
+    volumes:
+      - app-node-red-data:/data
+    depends_on:
+      - influxdb
+      - kafka
+    restart: always
+    networks:
+      - iot
 
 volumes:
   app-postgres-data:
@@ -307,6 +366,10 @@ volumes:
   app-prometheus-data:
   app-grafana-data:
   app-elasticsearch-data:
-  app-mqtt-data:
   app-influxdb-data:
+  app-node-red-data:
   app-ollama-data:
+
+networks:
+  iot:
+    driver: bridge

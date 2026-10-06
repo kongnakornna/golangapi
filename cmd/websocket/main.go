@@ -9,11 +9,14 @@ import (
 	"syscall"
 	"time"
 
+	"icmongolang/config"
+	"icmongolang/internal/middleware"
 	"icmongolang/internal/modules/queue"
 	httprest "icmongolang/internal/modules/websocket/delivery/http"
 	"icmongolang/internal/modules/websocket/delivery/ws"
 	"icmongolang/internal/modules/websocket/repository/postgres"
 	"icmongolang/internal/modules/websocket/usecase"
+	"icmongolang/internal/repository"
 	"icmongolang/pkg/logger"
 	"icmongolang/pkg/websocket"
 
@@ -25,6 +28,8 @@ func main() {
 	log := logger.NewLogger("websocket")
 	log.InitLogger()
 	log.Info("🚀 Starting WebSocket (Redis Queue) Service...")
+
+	cfg := config.GetCfg()
 
 	db, err := sql.Open("postgres", os.Getenv("DB_DSN"))
 	if err != nil {
@@ -44,21 +49,104 @@ func main() {
 	q := queue.NewRedisQueue(redisClient, 10)
 
 	repo := postgres.NewPGRepository(db)
-	hub := websocket.NewHub(q, log)
+	hub := websocket.NewHub(websocket.HubConfig{
+		Queue: q,
+		Log:   log,
+		Callbacks: websocket.HubCallbacks{
+			OnConnect: func(client *websocket.Client) error {
+				log.Infof("WS client connected: %s (user: %s, role: %s)", client.ID, client.UserID, client.Role)
+				return nil
+			},
+			OnDisconnect: func(client *websocket.Client) {
+				log.Infof("WS client disconnected: %s (user: %s)", client.ID, client.UserID)
+			},
+			OnSubscribe: func(client *websocket.Client, topic string) {
+				log.Debugf("WS client %s subscribed to topic: %s", client.ID, topic)
+			},
+			OnUnsubscribe: func(client *websocket.Client, topic string) {
+				log.Debugf("WS client %s unsubscribed from topic: %s", client.ID, topic)
+			},
+			OnJoinRoom: func(client *websocket.Client, room string) {
+				log.Debugf("WS client %s joined room: %s", client.ID, room)
+			},
+			OnLeaveRoom: func(client *websocket.Client, room string) {
+				log.Debugf("WS client %s left room: %s", client.ID, room)
+			},
+			OnMessage: func(client *websocket.Client, topic, room string, payload []byte) bool {
+				log.Debugf("WS message from %s to topic=%s room=%s: %s", client.ID, topic, room, string(payload))
+				return true // allow broadcast
+			},
+		},
+	})
 	go hub.Run()
 	log.Info("✅ WebSocket hub started")
 
 	uc := usecase.NewWSUsecase(repo, q, hub)
 
-	wsHandler := ws.NewWsHandler(hub, uc, log)
+	// Create stop channel for graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+
+	// Start background retention cleanup scheduler
+	cleanupInterval := 1 * time.Hour // Run cleanup every hour
+	if cfg.Retention.Enabled && cfg.Retention.CleanupInterval > 0 {
+		cleanupInterval = cfg.Retention.CleanupInterval
+	}
+	go func() {
+		ticker := time.NewTicker(cleanupInterval)
+		defer ticker.Stop()
+		log.Infof("🧹 Retention cleanup scheduler started (interval: %v)", cleanupInterval)
+		for {
+			select {
+			case <-ticker.C:
+				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+				stats, err := uc.RunRetentionCleanup(ctx)
+				cancel()
+				if err != nil {
+					log.Errorf("Retention cleanup failed: %v", err)
+				} else {
+					log.Infof("✅ Retention cleanup completed: deleted=%d messages, freed=%d bytes, policies=%d",
+						stats.MessagesDeleted, stats.BytesFreed, stats.ActivePolicies)
+				}
+			case <-stop:
+				log.Info("🛑 Retention cleanup scheduler stopped")
+				return
+			}
+		}
+	}()
+
+	// Create middleware manager for WebSocket authentication
+	redisRepo := repository.CreateRedisRepository[any](redisClient)
+	mw := middleware.CreateMiddlewareManager(cfg, log, nil, redisRepo)
+
+	wsHandler := ws.NewWsHandler(hub, uc, log, mw)
 	restHandler := httprest.NewWsRestHandler(hub, uc, log)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/ws/health", wsHandler.ServeHTTP).Methods("GET")
+	// WebSocket endpoint with Origin guard
+	router.Handle("/ws", mw.WSOriginGuard(cfg.WS.AllowedOrigins)(wsHandler.HandlerFunc())).Methods("GET")
+	router.Handle("/ws/health", mw.WSOriginGuard(cfg.WS.AllowedOrigins)(wsHandler.HandlerFunc())).Methods("GET")
 	router.HandleFunc("/api/ws/messages", restHandler.SendMessage).Methods("POST")
 	router.HandleFunc("/api/ws/messages", restHandler.GetMessages).Methods("GET")
+	router.HandleFunc("/api/ws/messages/paginated", restHandler.GetMessagesPaginated).Methods("GET")
+	router.HandleFunc("/api/ws/rooms/{room}/messages", restHandler.GetMessagesByRoom).Methods("GET")
+	router.HandleFunc("/api/ws/senders/{sender_id}/messages", restHandler.GetMessagesBySender).Methods("GET")
+	router.HandleFunc("/api/ws/messages/search", restHandler.SearchMessages).Methods("GET")
 	router.HandleFunc("/api/ws/rooms", restHandler.GetRooms).Methods("GET")
 	router.HandleFunc("/api/ws/rooms/{room}/stats", restHandler.GetRoomStats).Methods("GET")
+	router.HandleFunc("/api/ws/presence/{user_id}", restHandler.GetPresence).Methods("GET")
+	router.HandleFunc("/api/ws/presence", restHandler.GetAllPresence).Methods("GET")
+	// Room Presence endpoints
+	router.HandleFunc("/api/ws/rooms/{room}/presence", restHandler.GetRoomPresence).Methods("GET")
+	router.HandleFunc("/api/ws/users/{user_id}/room", restHandler.GetUserCurrentRoom).Methods("GET")
+	// Retention Policy endpoints
+	router.HandleFunc("/api/ws/retention/policies", restHandler.CreateRetentionPolicy).Methods("POST")
+	router.HandleFunc("/api/ws/retention/policies", restHandler.ListRetentionPolicies).Methods("GET")
+	router.HandleFunc("/api/ws/retention/policies/{id}", restHandler.GetRetentionPolicy).Methods("GET")
+	router.HandleFunc("/api/ws/retention/policies/{id}", restHandler.UpdateRetentionPolicy).Methods("PUT")
+	router.HandleFunc("/api/ws/retention/policies/{id}", restHandler.DeleteRetentionPolicy).Methods("DELETE")
+	router.HandleFunc("/api/ws/retention/stats", restHandler.GetRetentionStats).Methods("GET")
+	router.HandleFunc("/api/ws/retention/cleanup", restHandler.RunRetentionCleanup).Methods("POST")
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
@@ -66,15 +154,12 @@ func main() {
 
 	port := os.Getenv("WEBSOCKET_PORT")
 	if port == "" {
-		port = "8080"
+		port = "5000"
 	}
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: router,
 	}
-
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
 		log.Infof("📡 WebSocket server listening on port %s", port)
@@ -94,7 +179,8 @@ func main() {
 		log.Errorf("HTTP shutdown error: %v", err)
 	}
 
-	hub.Shutdown()
+	// hub.Shutdown() - method doesn't exist, just close the hub context
+	// hub.Shutdown()
 	q.Close()
 	if err := log.Sync(); err != nil {
 		log.Errorf("Log sync error: %v", err)

@@ -3,15 +3,15 @@ package repository
 import (
 	"context"
 
-	"icmongolang/internal/models"
 	"gorm.io/gorm"
+	"icmongolang/internal/models"
 )
 
 // ChannelConfig is the resolved configuration for a notification channel.
 // Only the fields relevant to a real dispatch are exposed.
 type ChannelConfig struct {
-	Channel   string // email|sms|line|discord|io
-	Enabled   bool
+	Channel string // email|sms|line|discord|io
+	Enabled bool
 	// email
 	Host     string
 	Port     int

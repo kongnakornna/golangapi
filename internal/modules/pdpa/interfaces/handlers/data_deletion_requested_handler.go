@@ -7,20 +7,17 @@ import (
 	"icmongolang/pkg/logger"
 )
 
-// DataDeletionRequestedHandler ตัวจัดการเหตุการณ์ data.deletion_requested
-// (ผู้ใช้ยืนยันการลบข้อมูลส่วนบุคคล) ทำหน้าที่บันทึก audit trail เท่านั้น
+// DataDeletionRequestedHandler — เหตุการณ์ data.deletion_requested
 type DataDeletionRequestedHandler struct {
 	baseHandler
 }
 
-// NewDataDeletionRequestedHandler สร้าง DataDeletionRequestedHandler
-func NewDataDeletionRequestedHandler(auditRepo repository.AuditRepository, logger logger.Logger) *DataDeletionRequestedHandler {
+func NewDataDeletionRequestedHandler(auditRepo repository.AuditRepository, log logger.Logger) *DataDeletionRequestedHandler {
 	return &DataDeletionRequestedHandler{
-		baseHandler: baseHandler{auditRepo: auditRepo, logger: logger},
+		baseHandler: baseHandler{auditRepo: auditRepo, logger: log},
 	}
 }
 
-// Handle บันทึก audit trail ของเหตุการณ์ data.deletion_requested
 func (h *DataDeletionRequestedHandler) Handle(ctx context.Context, topic string, payload map[string]interface{}) error {
 	return h.saveAudit(ctx, topic, payload)
 }

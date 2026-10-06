@@ -65,7 +65,9 @@ type stubCache struct {
 	counts map[string]int64
 }
 
-func (c *stubCache) Get(ctx context.Context, key string, dst interface{}) error { return errors.New("n/a") }
+func (c *stubCache) Get(ctx context.Context, key string, dst interface{}) error {
+	return errors.New("n/a")
+}
 func (c *stubCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
 	return nil
 }

@@ -1,0 +1,236 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Ollama Up",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "ollama_up{job=\"$job\"}",
+          "legendFormat": "ollama",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } }, "type": "value" }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "red", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Loaded Models",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "count(ollama_loaded_models{job=\"$job\"})",
+          "legendFormat": "loaded",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 3 }, { "color": "red", "value": 5 } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Catalog Models",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "count(ollama_catalog_models{job=\"$job\"})",
+          "legendFormat": "catalog",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Version",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "ollama_version_info{job=\"$job\"}",
+          "legendFormat": "{{version}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [ { "options": { "match": "null", "result": { "text": "N/A" } }, "type": "special" } ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "purple", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Loaded Models Over Time",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(ollama_loaded_models{job=\"$job\"})",
+          "legendFormat": "loaded",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 15, "lineWidth": 2, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "VRAM Usage",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "ollama_model_vram_bytes{job=\"$job\"}",
+          "legendFormat": "{{model}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Model Size on Disk",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "ollama_model_size_bytes{job=\"$job\"}",
+          "legendFormat": "{{model}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never" },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "Loaded Models Detail",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "ollama_loaded_models{job=\"$job\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "align": "auto", "filterable": true },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Time" }, "properties": [ { "id": "custom.hidden", "value": true } ] }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": { "Value #A": 4, "family": 2, "model": 0, "parameter_size": 3, "quantization": 1 },
+            "renameByName": { "Value #A": "State", "family": "Family", "model": "Model", "parameter_size": "Params", "quantization": "Quantization" }
+          }
+        }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["ollama", "llm"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "ollama-exporter", "value": "ollama-exporter" },
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "definition": "label_values(ollama_up, job)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Job",
+        "multi": false,
+        "name": "job",
+        "options": [],
+        "query": { "query": "label_values(ollama_up, job)", "refId": "prometheus-job" },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Ollama",
+  "uid": "ollama-dashboard",
+  "version": 1,
+  "weekStart": ""
+}

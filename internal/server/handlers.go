@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 
 	"icmongolang/config"
 	apiMiddleware "icmongolang/internal/middleware"
 	alarmHttp "icmongolang/internal/modules/alarm/delivery/http"
-	"icmongolang/internal/modules/alarm/repository"
+	alarmRepo "icmongolang/internal/modules/alarm/repository"
 	alarmUsecase "icmongolang/internal/modules/alarm/usecase"
 	apimanagerHttp "icmongolang/internal/modules/apimanager/delivery/http"
 	apimanagerRepo "icmongolang/internal/modules/apimanager/repository"
@@ -20,8 +21,7 @@ import (
 	auditlogRepo "icmongolang/internal/modules/auditlog/repository"
 	auditlogUsecase "icmongolang/internal/modules/auditlog/usecase"
 	authHttp "icmongolang/internal/modules/auth/delivery/http"
-	authPgRepo "icmongolang/internal/modules/auth/repository"
-	authUsecase "icmongolang/internal/modules/auth/usecase"
+	authDomain "icmongolang/internal/modules/auth/domain"
 	batchHttp "icmongolang/internal/modules/batch/delivery/http"
 	batchPgRepo "icmongolang/internal/modules/batch/repository"
 	batchUsecase "icmongolang/internal/modules/batch/usecase"
@@ -64,6 +64,9 @@ import (
 	jobHttp "icmongolang/internal/modules/job/delivery/http"
 	jobPgRepo "icmongolang/internal/modules/job/repository"
 	jobUsecase "icmongolang/internal/modules/job/usecase"
+	keyHttp "icmongolang/internal/modules/keys/delivery/http"
+	keyRepo "icmongolang/internal/modules/keys/repository"
+	keyUsecase "icmongolang/internal/modules/keys/usecase"
 	mqttHttp "icmongolang/internal/modules/mqtt/delivery/http"
 	mqttUsecase "icmongolang/internal/modules/mqtt/usecase"
 	notifierHttp "icmongolang/internal/modules/notifier/delivery/http"
@@ -72,6 +75,8 @@ import (
 	paymentHttp "icmongolang/internal/modules/payment/delivery/http"
 	paymentPgRepo "icmongolang/internal/modules/payment/repository"
 	paymentUsecase "icmongolang/internal/modules/payment/usecase"
+	pdpamod "icmongolang/internal/modules/pdpa"
+	pdpahttp "icmongolang/internal/modules/pdpa/interfaces/http"
 	purchaseorderHttp "icmongolang/internal/modules/purchaseorder/delivery/http"
 	purchaseorderRepo "icmongolang/internal/modules/purchaseorder/repository"
 	purchaseorderUsecase "icmongolang/internal/modules/purchaseorder/usecase"
@@ -96,6 +101,7 @@ import (
 	wosHttp "icmongolang/internal/modules/wos/delivery/http"
 	wosPgRepo "icmongolang/internal/modules/wos/repository"
 	wosUsecase "icmongolang/internal/modules/wos/usecase"
+	"icmongolang/internal/repository"
 	redisDb "icmongolang/pkg/db/redis"
 	"icmongolang/pkg/elasticsearch"
 	"icmongolang/pkg/influxdb"
@@ -119,78 +125,120 @@ import (
 	"gorm.io/gorm"
 )
 
-// New creates the main application router with all dependencies.
+// ============================================================================
+// Middleware composition helpers
+// ============================================================================
+
+// composeMiddleware รวม middleware หลายตัวเป็น middleware ตัวเดียว
+// ลำดับการเรียก: m1 → m2 → m3 → handler
+func composeMiddleware(mws ...func(http.Handler) http.Handler) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		for i := len(mws) - 1; i >= 0; i-- {
+			if mws[i] != nil {
+				next = mws[i](next)
+			}
+		}
+		return next
+	}
+}
+
+// ============================================================================
+// New — wire router + return Runtime with lifecycle hooks
+// ============================================================================
+
+// New wires the main application router and returns a Runtime that carries
+// shutdown hooks. parentCtx controls background tasks (PDPA outbox dispatcher,
+// FullSchedule scheduler, IoT ingester) — they stop when parentCtx is cancelled.
 func New(
+	parentCtx context.Context,
 	db *gorm.DB,
 	redisClient *redis.Client,
-	taskRedisClient *asynq.Client, // ✅ now typed correctly
+	taskRedisClient *asynq.Client,
 	cfg *config.Config,
 	logger logger.Logger,
 	influxClient *influxdb.InfluxClient,
 	mqttClient mqtt.Client,
 	esClient *elasticsearch.Client,
 	llmClient *llm.Client,
-) (*chi.Mux, error) {
+) (*Runtime, error) {
 
-	// --- 1. Repositories and UseCases ---
-	userPgRepo := userRepository.CreateUserPgRepository(db)
-	userRedisRepo := userRepository.CreateUserRedisRepository(redisClient)
-	itemPgRepo := itemRepository.CreateItemPgRepository(db)
+	// ========================================================================
+	// 1. Repositories and UseCases
+	// ========================================================================
+	// --- User module: repos ---
+	userPgRepo     := userRepository.CreateUserPgRepository(db)
+	userRedisRepo  := userRepository.CreateUserRedisRepository(redisClient)
+	accessMenuRepo := userRepository.CreateAccessMenuPgRepository(db)
+	fileRepo       := userRepository.CreateFilePgRepository(db)
+	logRepo        := userRepository.CreateLogPgRepository(db)
+	logTypeRepo    := userRepository.CreateLogTypePgRepository(db)
+	moduleRepo     := userRepository.CreateModulePgRepository(db)
+	menuRepo       := userRepository.CreateMenuPgRepository(db)
+	cacheRepo      := userRepository.CreateCacheRepository(redisClient)
 
+	// --- User module: usecases ---
 	userRedisTaskDistributor := userDistributor.NewUserRedisTaskDistributor(taskRedisClient, cfg, logger)
 
-	userUC := userUseCase.CreateUserUseCaseI(userPgRepo, userRedisRepo, userRedisTaskDistributor, cfg, logger)
-	itemUC := itemUseCase.CreateItemUseCaseI(itemPgRepo, cfg, logger)
+	userUC       := userUseCase.CreateUserUseCaseI(userPgRepo, userRedisRepo, userRedisTaskDistributor, cfg, logger)
+	accessMenuUC := userUseCase.NewAccessMenuUseCase(accessMenuRepo, cacheRepo, logger)
+	fileUC       := userUseCase.NewFileUseCase(fileRepo, cacheRepo, logger)
+	logUC        := userUseCase.NewLogUseCase(logRepo, cacheRepo, logger)
+	logTypeUC    := userUseCase.NewLogTypeUseCase(logTypeRepo, cacheRepo, logger)
+	moduleUC     := userUseCase.NewModuleUseCase(moduleRepo, cacheRepo, logger)
+	menuUC       := userUseCase.NewMenuUseCase(menuRepo, cacheRepo, logger)
 
-	// --- New module repositories and usecases ---
+	// --- Item module ---
+	itemPgRepo := itemRepository.CreateItemPgRepository(db)
+	itemUC     := itemUseCase.CreateItemUseCaseI(itemPgRepo, cfg, logger)
+
+	// --- Business modules ---
 	poPgRepo := purchaseorderRepo.CreatePurchaseOrderPgRepository(db)
-	poUC := purchaseorderUsecase.CreatePurchaseOrderUseCaseI(poPgRepo, cfg, logger)
+	poUC     := purchaseorderUsecase.CreatePurchaseOrderUseCaseI(poPgRepo, cfg, logger)
 
 	paymentRepoVar := paymentPgRepo.CreatePaymentPgRepository(db)
-	paymentUC := paymentUsecase.CreatePaymentUseCaseI(paymentRepoVar, cfg, logger)
+	paymentUC      := paymentUsecase.CreatePaymentUseCaseI(paymentRepoVar, cfg, logger)
 
 	dashRepoVar := dashboardRepo.CreateDashboardPgRepository(db)
-	dashUC := dashboardUsecase.CreateDashboardUseCaseI(dashRepoVar, cfg, logger)
+	dashUC      := dashboardUsecase.CreateDashboardUseCaseI(dashRepoVar, cfg, logger)
 
 	docRepoVar := documentRepo.CreateDocumentPgRepository(db)
-	docUC := documentUsecase.CreateDocumentUseCaseI(docRepoVar, cfg, logger)
+	docUC      := documentUsecase.CreateDocumentUseCaseI(docRepoVar, cfg, logger)
 
 	emailRepoVar := emailPgRepo.CreateEmailPgRepository(db)
-	emailUC := emailUsecase.CreateEmailUseCaseI(emailRepoVar, cfg, logger)
+	emailUC      := emailUsecase.CreateEmailUseCaseI(emailRepoVar, cfg, logger)
 
 	batchRepoVar := batchPgRepo.CreateBatchPgRepository(db)
-	batchUC := batchUsecase.CreateBatchUseCaseI(batchRepoVar, cfg, logger)
+	batchUC      := batchUsecase.CreateBatchUseCaseI(batchRepoVar, cfg, logger)
 
 	i18nRepoVar := i18nPgRepo.CreateI18nPgRepository(db)
-	i18nUC := i18nUsecase.CreateI18nUseCaseI(i18nRepoVar, cfg, logger)
+	i18nUC      := i18nUsecase.CreateI18nUseCaseI(i18nRepoVar, cfg, logger)
 
 	wosRepoVar := wosPgRepo.CreateWosPgRepository(db)
-	wosUC := wosUsecase.CreateWosUseCaseI(wosRepoVar, cfg, logger)
+	wosUC      := wosUsecase.CreateWosUseCaseI(wosRepoVar, cfg, logger)
 
 	jobRepoVar := jobPgRepo.CreateJobPgRepository(db)
-	jobUC := jobUsecase.CreateJobUseCaseI(jobRepoVar, cfg, logger)
+	jobUC      := jobUsecase.CreateJobUseCaseI(jobRepoVar, cfg, logger)
 
 	customerPgrepo := customerPgRepo.CreateCustomerPgRepository(db)
-	carPgrepo := customerPgRepo.CreateCarPgRepository(db)
-	customerUC := customerUsecase.CreateCustomerUseCaseI(customerPgrepo, cfg, logger)
-	carUC := customerUsecase.CreateCarUseCaseI(carPgrepo, cfg, logger)
+	carPgrepo      := customerPgRepo.CreateCarPgRepository(db)
+	customerUC     := customerUsecase.CreateCustomerUseCaseI(customerPgrepo, cfg, logger)
+	carUC          := customerUsecase.CreateCarUseCaseI(carPgrepo, cfg, logger)
 
 	quotationRepoVar := quotationPgRepo.CreateQuotationPgRepository(db)
-	quotationUC := quotationUsecase.CreateQuotationUseCaseI(quotationRepoVar, cfg, logger)
+	quotationUC      := quotationUsecase.CreateQuotationUseCaseI(quotationRepoVar, cfg, logger)
 
-	authPgRepoVar := authPgRepo.CreateAuthPgRepository(db)
-	_ = authPgRepoVar
-	authUC := authUsecase.CreateAuthUseCaseI(userUC, cfg, logger)
-	_ = authUC
-
-	// --- 2. Middleware Manager ---
-	mw := apiMiddleware.CreateMiddlewareManager(cfg, logger, userUC)
+	// ========================================================================
+	// 2. Middleware Manager
+	// ========================================================================
+	redisRepo := repository.CreateRedisRepository[any](redisClient)
+	mw := apiMiddleware.CreateMiddlewareManager(cfg, logger, userUC, redisRepo)
 	apiMiddleware.StartMetricsCollector(redisClient)
 
-	// --- 3. Router ---
+	// ========================================================================
+	// 3. Router + Global middlewares
+	// ========================================================================
 	r := chi.NewRouter()
 
-	// --- 4. Global middlewares ---
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
@@ -201,7 +249,7 @@ func New(
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 	r.Use(cors.Handler(mw.Cors()))
 
-	// --- Static avatar uploads ---
+	// Static avatar uploads
 	uploadRoot := cfg.Upload.Dir
 	if uploadRoot == "" {
 		uploadRoot = "./uploads"
@@ -209,13 +257,30 @@ func New(
 	avatarFS := http.FileServer(http.Dir(filepath.Join(uploadRoot, "avatar")))
 	r.Handle("/uploads/avatar/*", http.StripPrefix("/uploads/avatar/", avatarFS))
 
-	// --- 5. API sub-router ---
+	// API sub-router
 	apiRouter := chi.NewRouter()
 	r.Mount("/api", apiRouter)
 
-	// --- 6. Core handlers ---
-	userHandler := userHttp.CreateUserHandler(userUC, cfg, logger)
-	authHandler := authHttp.CreateAuthHandler(userUC, cfg, logger)
+	// ─────────────────────────────────────────────────────────────────────────
+	// Runtime — bundle router + shutdown hooks
+	// ─────────────────────────────────────────────────────────────────────────
+	rt := &Runtime{Router: r}
+
+	// ========================================================================
+	// 4. Core handlers
+	// ========================================================================
+	userHandler := userHttp.CreateUserHandler(
+		userUC,
+		accessMenuUC,
+		fileUC,
+		logUC,
+		logTypeUC,
+		menuUC,
+		moduleUC,
+		cfg,
+		logger,
+	)
+	authHandler := authHttp.CreateAuthHandler(userUC, logUC, cfg, logger)
 	itemHandler := itemHttp.CreateItemHandler(itemUC, cfg, logger)
 	poHandler := purchaseorderHttp.CreatePurchaseOrderHandler(poUC, cfg, logger)
 	paymentHandler := paymentHttp.CreatePaymentHandler(paymentUC, cfg, logger)
@@ -230,7 +295,9 @@ func New(
 	quotationHandler := quotationHttp.CreateQuotationHandler(quotationUC, cfg, logger)
 	reportHandler := reportHttp.CreateReportHandler(cfg, logger, customerUC, reportUsecase.NewReportUseCase(customerUC, quotationUC))
 
-	// --- 7. InfluxDB routes (optional) ---
+	// ========================================================================
+	// 5. InfluxDB routes (optional)
+	// ========================================================================
 	if influxClient != nil {
 		influxUC := influxUsecase.NewInfluxUseCase(influxClient, logger)
 		influxHandler := influxHttp.CreateInfluxHandler(influxUC, logger)
@@ -240,7 +307,9 @@ func New(
 		logger.Warn("⚠️ InfluxDB client is nil – Influx routes skipped")
 	}
 
-	// --- 7.1 Elasticsearch + LLM vector search routes (optional) ---
+	// ========================================================================
+	// 5.1 Elasticsearch + LLM vector search (optional)
+	// ========================================================================
 	if esClient != nil && llmClient != nil {
 		esUC := elasticsearchUsecase.NewElasticsearchUseCase(esClient, llmClient, logger)
 		esHandler := elasticsearchHttp.NewElasticsearchHandler(esUC, logger)
@@ -250,7 +319,9 @@ func New(
 		logger.Warn("⚠️ Elasticsearch client is nil – ES routes skipped")
 	}
 
-	// --- 7.2 VectorData routes (abstract vector DB: elasticsearch | pgvector) ---
+	// ========================================================================
+	// 5.2 VectorData routes (abstract vector DB)
+	// ========================================================================
 	vdb, err := vectordb.New(&cfg.VectorDB, esClient, db, logger)
 	if err != nil {
 		logger.Errorf("❌ Failed to init vector DB: %v", err)
@@ -261,40 +332,58 @@ func New(
 		logger.Infof("✅ VectorData routes registered (provider=%s, index=%s)", vdb.Provider(), cfg.VectorDB.Index)
 	}
 
-	// --- 8. WebSocket Hub & Alarm Log ---
-	wsHub := websocket.NewHub(queue.NewQueue(), logger) // ใช้ NewHub แทน New
+	// ========================================================================
+	// 6. WebSocket Hub
+	// ========================================================================
+	wsHub := websocket.NewHub(websocket.HubConfig{
+		Queue: queue.NewQueue(),
+		Log:   logger,
+		Callbacks: websocket.HubCallbacks{
+			OnConnect: func(client *websocket.Client) error {
+				logger.Infof("WS client connected: %s (user: %s, role: %s)", client.ID, client.UserID, client.Role)
+				return nil
+			},
+			OnDisconnect: func(client *websocket.Client) {
+				logger.Infof("WS client disconnected: %s (user: %s)", client.ID, client.UserID)
+			},
+			OnSubscribe:   func(client *websocket.Client, topic string) { logger.Debugf("WS sub: %s -> %s", client.ID, topic) },
+			OnUnsubscribe: func(client *websocket.Client, topic string) { logger.Debugf("WS unsub: %s -> %s", client.ID, topic) },
+			OnJoinRoom:    func(client *websocket.Client, room string) { logger.Debugf("WS join: %s -> %s", client.ID, room) },
+			OnLeaveRoom:   func(client *websocket.Client, room string) { logger.Debugf("WS leave: %s -> %s", client.ID, room) },
+			OnMessage: func(client *websocket.Client, topic, room string, payload []byte) bool {
+				logger.Debugf("WS msg: %s topic=%s room=%s", client.ID, topic, room)
+				return true
+			},
+		},
+	})
 	go wsHub.Run()
-	alarmLogRepo := repository.NewAlarmLogRepository(db) // --- 9. Redis Cache ---
+
+	// ========================================================================
+	// 7. Redis Cache
+	// ========================================================================
+	alarmLogRepo := alarmRepo.NewAlarmLogRepository(db)
 	redisCache := redisDb.NewCache(redisClient)
 
-	// --- 10. IoT MQTT v3 routes ---
+	// ========================================================================
+	// 8. IoT MQTT v3 routes
+	// ========================================================================
 	deviceRepo := iotRepo.NewDeviceRepository(db)
 	iotAlarmLogRepo := iotRepo.NewAlarmLogRepository(db)
 	deviceStatusRepo := iotRepo.NewDeviceStatusRepository(db)
 	deviceConfigRepo := iotRepo.NewDeviceConfigRepository(db)
 	iotDataRepo := iotRepo.NewIotDataRepository(db)
 	activityLogRepo := iotRepo.NewActivityLogRepository(db)
-
 	commandLogRepo := iotRepo.NewCommandLogRepository(db)
 	deviceAlertRepo := iotRepo.NewDeviceAlertRepository(db)
 
 	iotUC := iotUsecase.NewMQTT3UseCase(
-		deviceRepo,
-		iotAlarmLogRepo,
-		mqttClient,
-		redisClient,
-		influxClient,
-		logger,
-		cfg,
-		deviceStatusRepo,
-		deviceConfigRepo,
-		iotDataRepo,
-		activityLogRepo,
-		commandLogRepo,
-		deviceAlertRepo,
+		deviceRepo, iotAlarmLogRepo, mqttClient, redisClient, influxClient,
+		logger, cfg,
+		deviceStatusRepo, deviceConfigRepo, iotDataRepo,
+		activityLogRepo, commandLogRepo, deviceAlertRepo,
 	)
 	if mqttClient != nil && mqttClient.IsConnected() {
-		if err := iotUC.StartIngest(context.Background()); err != nil {
+		if err := iotUC.StartIngest(parentCtx); err != nil {
 			logger.Errorf("❌ Failed to start IoT ingester: %v", err)
 		} else {
 			logger.Info("✅ IoT MQTT ingester started (topic #)")
@@ -308,21 +397,17 @@ func New(
 	}
 	logger.Info("✅ MQTT3 routes registered")
 
-	// --- 11. MQTT (standard) routes with WebSocket, alarm log, cache, influx ---
+	// ========================================================================
+	// 9. MQTT (standard) routes
+	// ========================================================================
 	if mqttClient != nil && mqttClient.IsConnected() {
 		var influxDBClient influxdb.Client
 		if influxClient != nil {
 			influxDBClient = influxClient
 		}
 		mqttUC, err := mqttUsecase.NewMQTTUseCaseWithClientAndWS(
-			mqttClient,
-			cfg,
-			logger,
-			wsHub, // wsHub implements Broadcaster
-			db,
-			alarmLogRepo,
-			influxDBClient,
-			redisCache,
+			mqttClient, cfg, logger, wsHub, db,
+			alarmLogRepo, influxDBClient, redisCache,
 		)
 		if err != nil {
 			logger.Errorf("❌ Failed to create MQTT usecase: %v", err)
@@ -335,17 +420,23 @@ func New(
 		logger.Warn("⚠️ MQTT client not connected – MQTT routes skipped")
 	}
 
-	// --- 12. Alarm routes ---
+	// ========================================================================
+	// 10. Alarm routes
+	// ========================================================================
 	alarmUC := alarmUsecase.NewAlarmUseCase()
 	alarmHandler := alarmHttp.NewAlarmHandler(alarmUC, logger)
 	alarmHttp.MapAlarmRoutes(apiRouter, alarmHandler, mw)
 
-	// --- 13. Auth, user, item routes ---
+	// ========================================================================
+	// 11. Core routes (auth, user, item)
+	// ========================================================================
 	authHttp.MapAuthRoute(apiRouter, authHandler, mw)
 	userHttp.MapUserRoute(apiRouter, userHandler, mw)
 	itemHttp.MapItemRoute(apiRouter, itemHandler, mw)
 
-	// --- 14. New module routes ---
+	// ========================================================================
+	// 12. Business module routes
+	// ========================================================================
 	purchaseorderHttp.MapPurchaseOrderRoute(apiRouter, poHandler, mw)
 	paymentHttp.MapPaymentRoute(apiRouter, paymentHandler, mw)
 	paymentHttp.MapReceiptRoute(apiRouter, paymentHandler, mw)
@@ -361,14 +452,18 @@ func New(
 	reportHttp.MapReportRoute(r, cfg, reportHandler, mw)
 	logger.Info("✅ New module routes registered")
 
-	// --- 15. Settings module (NestJS settings port) ---
+	// ========================================================================
+	// 13. Settings module
+	// ========================================================================
 	settingsRepo := settingsRepoPkg.CreateSettingsPgRepository(db)
 	settingsUC := settingsUCPkg.CreateSettingsUseCaseI(settingsRepo, mqttClient, redisCache, logger)
 	settingsHandler := settingsHttp.CreateSettingsHandler(settingsUC, cfg, logger)
 	settingsHttp.MapSettingRoute(apiRouter, settingsHandler, mw)
 	logger.Info("✅ Settings routes registered")
 
-	// --- 15b. New platform modules (Phase 0 skeletons; nil-safe, additive) ---
+	// ========================================================================
+	// 14. Platform modules (Phase 0 skeletons)
+	// ========================================================================
 	notifierRepoVar := notifierRepo.NewPgRepository(db)
 	notifierUC := notifierUsecase.NewNotifierUseCase(notifierRepoVar, cfg, mqttClient, logger)
 	notifierHandler := notifierHttp.CreateNotifierHandler(notifierUC, logger)
@@ -382,9 +477,18 @@ func New(
 	auditlogHttp.MapAuditLogRoutes(apiRouter, auditlogHandler, mw)
 	logger.Info("✅ AuditLog routes registered (hash-chain)")
 
+	// --- API Keys module (pkg/apikey backed) ---
+	// Configure the API key pepper through the API_KEY_PEPPER environment variable.
+	keyRepoVar := keyRepo.NewPostgresRepository(db)
+	keyUC := keyUsecase.NewAPIKeyUseCase(keyRepoVar, []byte(os.Getenv("API_KEY_PEPPER")))
+	keyHandler := keyHttp.NewHandler(keyUC)
+	keyHttp.MapRoutes(apiRouter, keyHandler, mw)
+	logger.Info("✅ API keys routes registered")
+
+	// --- APIManager: wire rate-limit cache adapter ---
+	apiCache := &apiCacheAdapter{cache: redisCache, redis: redisClient}
 	apimanagerRepoVar := apimanagerRepo.NewPgRepository(db)
-	apimanagerCache := &apiCacheAdapter{cache: redisCache, redis: redisClient}
-	apimanagerUC := apimanagerUsecase.NewAPIManagerUseCase(apimanagerRepoVar, apimanagerCache, logger)
+	apimanagerUC := apimanagerUsecase.NewAPIManagerUseCase(apimanagerRepoVar, apiCache, logger)
 	apimanagerHandler := apimanagerHttp.CreateAPIManagerHandler(apimanagerUC, logger)
 	apimanagerHttp.MapAPIManagerRoutes(apiRouter, apimanagerHandler, mw)
 	logger.Info("✅ APIManager routes registered (key + rate-limit)")
@@ -398,16 +502,20 @@ func New(
 	flowengineUC := flowengineUsecase.NewFlowEngineUseCase(flowengineRepoVar, notifierUC, realtimeUC, logger)
 	flowengineHandler := flowengineHttp.CreateFlowEngineHandler(flowengineUC, logger)
 	flowengineHttp.MapFlowEngineRoutes(apiRouter, flowengineHandler, mw)
-	logger.Info("✅ FlowEngine routes registered (workflow runtime + notifier/realtime wired)")
+	logger.Info("✅ FlowEngine routes registered")
 
-	// --- 15c. Control module (Phase 4 auto-control manager; nil-safe, additive) ---
+	// ========================================================================
+	// 15. Control module
+	// ========================================================================
 	controlRepoVar := controlRepo.NewPgRepository(db)
 	controlUC := controlUsecase.NewControlUseCase(controlRepoVar, mqttClient, logger)
 	controlHandler := controlHttp.CreateControlHandler(controlUC, logger)
 	controlHttp.MapControlRoutes(apiRouter, controlHandler, mw)
 	logger.Info("✅ Control routes registered (auto-control manager)")
 
-	// --- 15d. FullSchedule module (ปกติ / ปฏิทิน / Batch Cron) ---
+	// ========================================================================
+	// 16. FullSchedule module
+	// ========================================================================
 	fsRepoVar := fsPgRepo.CreateFullSchedulePgRepository(db)
 	fsMasterRepo := fsPgRepo.CreateMasterPgRepository(db)
 	fsMasterUC := fsUsecase.CreateMasterUseCaseI(fsMasterRepo, cfg, logger)
@@ -416,41 +524,109 @@ func New(
 	fsHandler := fsHttp.CreateFullscheduleHandler(fsUC, cfg, logger)
 	fsMasterHandler := fsHttp.CreateMasterHandler(fsMasterUC, cfg, logger)
 	fsHttp.MapFullscheduleRoutes(apiRouter, fsHandler, mw)
-	// Master Data: Group / Zone / Area + ขอบเขตการทำงาน
 	fsHttp.MapMasterRoutes(apiRouter, fsMasterHandler, mw)
 	fsSched := fsScheduler.New(fsUC, redisClient, logger, 0)
-	fsSched.Start(context.Background())
+	fsSched.Start(parentCtx)
 	logger.Info("✅ FullSchedule routes registered + scheduler started")
 
-	// --- 16. WebSocket endpoint ---
-	wsHandler := wsdelivery.NewWsHandler(wsHub, nil, logger) // usecase nil (ไม่ต้องบันทึกใน API server หลัก)
-	apiRouter.Get("/ws", wsHandler.ServeHTTP)
+	// ========================================================================
+	// 17. PDPA module (compliance: consent, DSAR, account, policy, audit)
+	// ========================================================================
+	pdpaMod, err := pdpamod.NewModule(db, redisClient, cfg, logger)
+	if err != nil {
+		logger.Errorf("❌ Failed to init PDPA module: %v", err)
+		// ไม่ Fatal — PDPA optional
+	} else {
+		// Start outbox dispatcher bound to parent ctx (auto-stop on shutdown)
+		pdpaMod.StartBackground(parentCtx)
 
-	// --- 17. Metrics ---
+		// Register cleanup hook — Kafka producer flush + dispatcher stop
+		rt.AddShutdown(func(ctx context.Context) error {
+			logger.Info("⏳ Shutting down PDPA module...")
+			return pdpaMod.Shutdown()
+		})
+
+		// HTTP handlers
+		pdpaHandlers := &pdpahttp.Handlers{
+			Consent: pdpahttp.NewConsentHandler(
+				pdpaMod.GrantConsent,
+				pdpaMod.RevokeConsent,
+				pdpaMod.ListConsentLog,
+				logger,
+			),
+			DSAR: pdpahttp.NewDSARHandler(
+				pdpaMod.SubmitDSAR,
+				pdpaMod.ProcessDSAR,
+				pdpaMod.ListDSAR,
+				pdpaMod.GetDSARStatus,
+				logger,
+			),
+			Account: pdpahttp.NewAccountHandler(
+				pdpaMod.SuspendAccount,
+				pdpaMod.TerminateAccount,
+				pdpaMod.ConfirmDeletion,
+				logger,
+			),
+			Policy: pdpahttp.NewPolicyHandler(
+				pdpaMod.GetActivePolicy,
+				logger,
+			),
+			Admin: pdpahttp.NewAdminHandler(
+				pdpaMod.GetAdminReport,
+				logger,
+			),
+		}
+
+		// Auth middleware: verifier + authenticator + currentUser + activeUser
+		pdpaAuthMW := pdpahttp.AuthMiddleware(composeMiddleware(
+			mw.Verifier(true),
+			mw.Authenticator(),
+			mw.CurrentUser(),
+			mw.ActiveUser(),
+		))
+
+		// Admin middleware: role check only (auth already applied by outer group)
+		pdpaAdminMW := pdpahttp.AuthMiddleware(mw.RequireRole(authDomain.RoleAdmin))
+
+		pdpahttp.RegisterRoutes(apiRouter, pdpaHandlers, pdpaAuthMW, pdpaAdminMW)
+		logger.Info("✅ PDPA routes registered (consent, DSAR, account, policy, audit)")
+	}
+
+	// ========================================================================
+	// 18. WebSocket endpoint
+	// ========================================================================
+	wsHandler := wsdelivery.NewWsHandler(wsHub, nil, logger, mw)
+	apiRouter.Get("/ws", mw.WSOriginGuard(cfg.WS.AllowedOrigins)(wsHandler.HandlerFunc()))
+
+	// ========================================================================
+	// 19. Metrics + Health
+	// ========================================================================
 	r.Get("/apimetric", apiMiddleware.MetricsHandler)
 	r.Get("/metrics", promhttp.Handler().ServeHTTP)
 
-	// --- 17b. Root health check ---
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok"}`))
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
 	})
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok"}`))
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
 	})
 
-	// --- 18. Swagger ---
+	// ========================================================================
+	// 20. Swagger
+	// ========================================================================
 	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
 
-	// --- 19. Health check ---
+	// ========================================================================
+	// 21. Detailed health check
+	// ========================================================================
 	apiRouter.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		render.Respond(w, r, map[string]string{"status": "ok", "timestamp": time.Now().UTC().String()})
 	})
 
-	// Detailed health
 	apiRouter.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		status := map[string]interface{}{
 			"status": "up",
@@ -463,10 +639,11 @@ func New(
 				"llm":           llmClient != nil,
 				"mqtt":          mqttClient != nil && mqttClient.IsConnected(),
 				"websocket":     true,
+				"pdpa":          pdpaMod != nil,
 			},
 		}
 		render.Respond(w, r, status)
 	})
 
-	return r, nil
+	return rt, nil
 }

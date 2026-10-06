@@ -12,24 +12,24 @@ import (
 // ScheduleCreate is the payload for creating a schedule.
 // คำขอสร้าง schedule
 type ScheduleCreate struct {
-	Name        string  `json:"name" validate:"required,max=255"`
-	Mode        string  `json:"mode" validate:"required,oneof=normal full batch"`
-	Status      *int8   `json:"status,omitempty" validate:"omitempty,oneof=0 1 3"`
-	TimeStart   string  `json:"time_start" validate:"omitempty,datetime=15:04"`
-	EventType   string  `json:"event_type" validate:"required,oneof=device email"`
-	EventAction string  `json:"event_action" validate:"required,oneof=ON OFF start stop"`
-	Event       *int8   `json:"event,omitempty"` // 1=ON,0=OFF,2=start,3=stop (ทางเลือก)
-	Sunday      *int8   `json:"sunday,omitempty"`
-	Monday      *int8   `json:"monday,omitempty"`
-	Tuesday     *int8   `json:"tuesday,omitempty"`
-	Wednesday   *int8   `json:"wednesday,omitempty"`
-	Thursday    *int8   `json:"thursday,omitempty"`
-	Friday      *int8   `json:"friday,omitempty"`
-	Saturday    *int8   `json:"saturday,omitempty"`
+	Name        string                `json:"name" validate:"required,max=255"`
+	Mode        string                `json:"mode" validate:"required,oneof=normal full batch"`
+	Status      *int8                 `json:"status,omitempty" validate:"omitempty,oneof=0 1 3"`
+	TimeStart   string                `json:"time_start" validate:"omitempty,datetime=15:04"`
+	EventType   string                `json:"event_type" validate:"required,oneof=device email"`
+	EventAction string                `json:"event_action" validate:"required,oneof=ON OFF start stop"`
+	Event       *int8                 `json:"event,omitempty"` // 1=ON,0=OFF,2=start,3=stop (ทางเลือก)
+	Sunday      *int8                 `json:"sunday,omitempty"`
+	Monday      *int8                 `json:"monday,omitempty"`
+	Tuesday     *int8                 `json:"tuesday,omitempty"`
+	Wednesday   *int8                 `json:"wednesday,omitempty"`
+	Thursday    *int8                 `json:"thursday,omitempty"`
+	Friday      *int8                 `json:"friday,omitempty"`
+	Saturday    *int8                 `json:"saturday,omitempty"`
 	Months      fullschedule.IntArray `json:"months"`
 	Dates       fullschedule.IntArray `json:"dates"`
-	CronExpr    *string `json:"cron_expr,omitempty"`
-	DeviceIDs   []int   `json:"device_ids"`
+	CronExpr    *string               `json:"cron_expr,omitempty"`
+	DeviceIDs   []int                 `json:"device_ids"`
 	// Scope — ขอบเขตการทำงาน (ทั้งหมด optional)
 	GroupID   *uuid.UUID        `json:"group_id,omitempty"`
 	ZoneID    *uuid.UUID        `json:"zone_id,omitempty"`
@@ -41,24 +41,24 @@ type ScheduleCreate struct {
 // ScheduleUpdate is the payload for updating a schedule.
 // คำขอแก้ไข schedule
 type ScheduleUpdate struct {
-	Name        *string `json:"name,omitempty"`
-	Mode        *string `json:"mode,omitempty"`
-	Status      *int8   `json:"status,omitempty"`
-	TimeStart   *string `json:"time_start,omitempty"`
-	EventType   *string `json:"event_type,omitempty"`
-	EventAction *string `json:"event_action,omitempty"`
-	Event       *int8   `json:"event,omitempty"` // 1=ON,0=OFF,2=start,3=stop
-	Sunday      *int8   `json:"sunday,omitempty"`
-	Monday      *int8   `json:"monday,omitempty"`
-	Tuesday     *int8   `json:"tuesday,omitempty"`
-	Wednesday   *int8   `json:"wednesday,omitempty"`
-	Thursday    *int8   `json:"thursday,omitempty"`
-	Friday      *int8   `json:"friday,omitempty"`
-	Saturday    *int8   `json:"saturday,omitempty"`
+	Name        *string               `json:"name,omitempty"`
+	Mode        *string               `json:"mode,omitempty"`
+	Status      *int8                 `json:"status,omitempty"`
+	TimeStart   *string               `json:"time_start,omitempty"`
+	EventType   *string               `json:"event_type,omitempty"`
+	EventAction *string               `json:"event_action,omitempty"`
+	Event       *int8                 `json:"event,omitempty"` // 1=ON,0=OFF,2=start,3=stop
+	Sunday      *int8                 `json:"sunday,omitempty"`
+	Monday      *int8                 `json:"monday,omitempty"`
+	Tuesday     *int8                 `json:"tuesday,omitempty"`
+	Wednesday   *int8                 `json:"wednesday,omitempty"`
+	Thursday    *int8                 `json:"thursday,omitempty"`
+	Friday      *int8                 `json:"friday,omitempty"`
+	Saturday    *int8                 `json:"saturday,omitempty"`
 	Months      fullschedule.IntArray `json:"months,omitempty"`
 	Dates       fullschedule.IntArray `json:"dates,omitempty"`
-	CronExpr    *string `json:"cron_expr,omitempty"`
-	DeviceIDs   []int   `json:"device_ids,omitempty"`
+	CronExpr    *string               `json:"cron_expr,omitempty"`
+	DeviceIDs   []int                 `json:"device_ids,omitempty"`
 	// Scope — ขอบเขตการทำงาน (ทั้งหมด optional)
 	GroupID *uuid.UUID `json:"group_id,omitempty"`
 	ZoneID  *uuid.UUID `json:"zone_id,omitempty"`
@@ -88,40 +88,40 @@ type ScheduleSettingRequest struct {
 // ScheduleResponse is the response shape of a schedule.
 // ข้อมูล schedule ที่ส่งกลับ
 type ScheduleResponse struct {
-	ID            uuid.UUID         `json:"id"`
-	Name          string            `json:"name"`
-	Mode          string            `json:"mode"`
-	Status        int8              `json:"status"`
-	TimeStart     string            `json:"time_start"`
-	EventType     string            `json:"event_type"`
-	EventAction   string            `json:"event_action"`
-	Event         int8              `json:"event"`
-	Sunday        int8              `json:"sunday"`
-	Monday        int8              `json:"monday"`
-	Tuesday       int8              `json:"tuesday"`
-	Wednesday     int8              `json:"wednesday"`
-	Thursday      int8              `json:"thursday"`
-	Friday        int8              `json:"friday"`
-	Saturday      int8              `json:"saturday"`
+	ID            uuid.UUID             `json:"id"`
+	Name          string                `json:"name"`
+	Mode          string                `json:"mode"`
+	Status        int8                  `json:"status"`
+	TimeStart     string                `json:"time_start"`
+	EventType     string                `json:"event_type"`
+	EventAction   string                `json:"event_action"`
+	Event         int8                  `json:"event"`
+	Sunday        int8                  `json:"sunday"`
+	Monday        int8                  `json:"monday"`
+	Tuesday       int8                  `json:"tuesday"`
+	Wednesday     int8                  `json:"wednesday"`
+	Thursday      int8                  `json:"thursday"`
+	Friday        int8                  `json:"friday"`
+	Saturday      int8                  `json:"saturday"`
 	Months        fullschedule.IntArray `json:"months"`
 	Dates         fullschedule.IntArray `json:"dates"`
 	CronExpr      *string               `json:"cron_expr,omitempty"`
-	ManualTrigger bool              `json:"manual_trigger"`
-	LastRunAt     *time.Time        `json:"last_run_at,omitempty"`
-	NextRunAt     *time.Time        `json:"next_run_at,omitempty"`
-	RunCount      int64             `json:"run_count"`
-	SuccessCount  int64             `json:"success_count"`
-	FailedCount   int64             `json:"failed_count"`
-	DeviceCount   int64             `json:"device_count"`
-	GroupID       *uuid.UUID        `json:"group_id,omitempty"`
-	ZoneID        *uuid.UUID        `json:"zone_id,omitempty"`
-	AreaID        *uuid.UUID        `json:"area_id,omitempty"`
-	CreatedBy     *uuid.UUID        `json:"created_by,omitempty"`
-	CreatedAt     helpers.LocalTime `json:"created_at"`
-	UpdatedBy     *uuid.UUID        `json:"updated_by,omitempty"`
-	UpdatedAt     helpers.LocalTime `json:"updated_at"`
-	Version       int64             `json:"version"`
-	Devices       []DeviceResponse  `json:"devices,omitempty"`
+	ManualTrigger bool                  `json:"manual_trigger"`
+	LastRunAt     *time.Time            `json:"last_run_at,omitempty"`
+	NextRunAt     *time.Time            `json:"next_run_at,omitempty"`
+	RunCount      int64                 `json:"run_count"`
+	SuccessCount  int64                 `json:"success_count"`
+	FailedCount   int64                 `json:"failed_count"`
+	DeviceCount   int64                 `json:"device_count"`
+	GroupID       *uuid.UUID            `json:"group_id,omitempty"`
+	ZoneID        *uuid.UUID            `json:"zone_id,omitempty"`
+	AreaID        *uuid.UUID            `json:"area_id,omitempty"`
+	CreatedBy     *uuid.UUID            `json:"created_by,omitempty"`
+	CreatedAt     helpers.LocalTime     `json:"created_at"`
+	UpdatedBy     *uuid.UUID            `json:"updated_by,omitempty"`
+	UpdatedAt     helpers.LocalTime     `json:"updated_at"`
+	Version       int64                 `json:"version"`
+	Devices       []DeviceResponse      `json:"devices,omitempty"`
 }
 
 // DeviceResponse describes a mapped IoT device.

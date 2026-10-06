@@ -44,12 +44,12 @@ func (r *JobPgRepo) ChangeStatus(ctx context.Context, id uuid.UUID, status strin
 	}
 
 	history := &models.JobStatusHistory{
-		JobID:       id,
-		FromStatus:  &fromStatus,
-		ToStatus:    status,
-		ChangedBy:   jobObj.UserID,
-		ChangedAt:   now,
-		Reason:      reason,
+		JobID:        id,
+		FromStatus:   &fromStatus,
+		ToStatus:     status,
+		ChangedBy:    jobObj.UserID,
+		ChangedAt:    now,
+		Reason:       reason,
 		WhitelabelID: jobObj.WhitelabelID,
 	}
 

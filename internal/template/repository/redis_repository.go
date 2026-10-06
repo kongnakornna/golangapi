@@ -66,3 +66,18 @@ func (r *templateRedisRepo) SIsMember(ctx context.Context, key string, value str
 func (r *templateRedisRepo) Expire(ctx context.Context, key string, seconds int) error {
 	return r.rdb.Expire(ctx, key, time.Duration(seconds)*time.Second).Err()
 }
+
+func (r *templateRedisRepo) Set(ctx context.Context, key string, value string, seconds int) error {
+	return r.rdb.Set(ctx, key, value, time.Duration(seconds)*time.Second).Err()
+}
+
+func (r *templateRedisRepo) GetString(ctx context.Context, key string) (string, error) {
+	val, err := r.rdb.Get(ctx, key).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return "", nil
+		}
+		return "", err
+	}
+	return val, nil
+}

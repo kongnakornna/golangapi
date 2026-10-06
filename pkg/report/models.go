@@ -11,10 +11,10 @@ type CompanyInfo struct {
 }
 
 type QuotationData struct {
-	Company     CompanyInfo
-	QuotationNo string
-	Date        time.Time
-	ExpiryDate  time.Time
+	Company       CompanyInfo
+	QuotationNo   string
+	Date          time.Time
+	ExpiryDate    time.Time
 	CustomerName  string
 	CustomerAddr  string
 	CustomerPhone string
@@ -42,23 +42,23 @@ type QuotationItem struct {
 }
 
 type PartPickingData struct {
-	Company     CompanyInfo
-	PickingNo   string
-	JobNo       string
-	RequestDate string
-	RequestedBy string
-	Mechanic    string
+	Company      CompanyInfo
+	PickingNo    string
+	JobNo        string
+	RequestDate  string
+	RequestedBy  string
+	Mechanic     string
 	LicensePlate string
-	Items       []PartPickingItem
+	Items        []PartPickingItem
 }
 
 type PartPickingItem struct {
-	LineNo      int
-	PartCode    string
-	PartName    string
-	QtyRequest  int
-	QtyPicked   int
-	Location    string
+	LineNo     int
+	PartCode   string
+	PartName   string
+	QtyRequest int
+	QtyPicked  int
+	Location   string
 }
 
 type ReceiptData struct {
@@ -78,17 +78,17 @@ type ReceiptItem struct {
 }
 
 type DeliverySheetData struct {
-	Company       CompanyInfo
-	DeliveryNo    string
-	Date          time.Time
-	CustomerName  string
-	CustomerAddr  string
-	JobNo         string
-	LicensePlate  string
-	Items         []DeliveryItem
-	DeliveredBy   string
-	ReceivedBy    string
-	Remark        string
+	Company      CompanyInfo
+	DeliveryNo   string
+	Date         time.Time
+	CustomerName string
+	CustomerAddr string
+	JobNo        string
+	LicensePlate string
+	Items        []DeliveryItem
+	DeliveredBy  string
+	ReceivedBy   string
+	Remark       string
 }
 
 type DeliveryItem struct {
@@ -100,18 +100,18 @@ type DeliveryItem struct {
 }
 
 type CreditNoteData struct {
-	Company       CompanyInfo
-	CreditNoteNo  string
-	Date          time.Time
-	CustomerName  string
-	CustomerAddr  string
-	InvoiceNo     string
-	Reason        string
-	Items         []CreditNoteItem
-	Subtotal      float64
-	TaxAmount     float64
-	GrandTotal    float64
-	AmountWords   string
+	Company      CompanyInfo
+	CreditNoteNo string
+	Date         time.Time
+	CustomerName string
+	CustomerAddr string
+	InvoiceNo    string
+	Reason       string
+	Items        []CreditNoteItem
+	Subtotal     float64
+	TaxAmount    float64
+	GrandTotal   float64
+	AmountWords  string
 }
 
 type CreditNoteItem struct {
@@ -146,18 +146,18 @@ type DebitNoteItem struct {
 }
 
 type PurchaseOrderData struct {
-	Company    CompanyInfo
-	PONo       string
-	Date       time.Time
-	Supplier   string
+	Company      CompanyInfo
+	PONo         string
+	Date         time.Time
+	Supplier     string
 	SupplierAddr string
 	DeliveryDate string
-	Items      []PurchaseOrderItem
-	Subtotal   float64
-	TaxAmount  float64
-	GrandTotal float64
-	AmountWords string
-	Remark     string
+	Items        []PurchaseOrderItem
+	Subtotal     float64
+	TaxAmount    float64
+	GrandTotal   float64
+	AmountWords  string
+	Remark       string
 }
 
 type PurchaseOrderItem struct {
@@ -236,35 +236,35 @@ type InvoiceItem struct {
 }
 
 type DailySalesData struct {
-	Company   CompanyInfo
-	Date      time.Time
-	Sales     []DailySaleRow
-	TotalRev  float64
-	TotalCost float64
+	Company     CompanyInfo
+	Date        time.Time
+	Sales       []DailySaleRow
+	TotalRev    float64
+	TotalCost   float64
 	TotalProfit float64
-	Summary   DailySalesSummary
+	Summary     DailySalesSummary
 }
 
 type DailySaleRow struct {
-	InvoiceNo  string
-	Customer   string
-	Amount     float64
-	Cost       float64
-	Profit     float64
+	InvoiceNo     string
+	Customer      string
+	Amount        float64
+	Cost          float64
+	Profit        float64
 	PaymentMethod string
-	Time       string
+	Time          string
 }
 
 type DailySalesSummary struct {
-	InvoiceCount int
-	CashCount    int
-	CashAmount   float64
-	TransferCount int
+	InvoiceCount   int
+	CashCount      int
+	CashAmount     float64
+	TransferCount  int
 	TransferAmount float64
-	CardCount    int
-	CardAmount   float64
-	CreditCount  int
-	CreditAmount float64
+	CardCount      int
+	CardAmount     float64
+	CreditCount    int
+	CreditAmount   float64
 }
 
 type InventorySummaryData struct {
@@ -276,32 +276,32 @@ type InventorySummaryData struct {
 }
 
 type InventoryItem struct {
-	Code        string
-	Name        string
-	Category    string
-	QtyOnHand   int
-	MinStock    int
-	MaxStock    int
-	UnitPrice   float64
-	TotalValue  float64
-	IsLowStock  bool
+	Code       string
+	Name       string
+	Category   string
+	QtyOnHand  int
+	MinStock   int
+	MaxStock   int
+	UnitPrice  float64
+	TotalValue float64
+	IsLowStock bool
 }
 
 type CustomerListData struct {
-	Company CompanyInfo
-	Date    time.Time
-	Customers []CustomerListItem
+	Company    CompanyInfo
+	Date       time.Time
+	Customers  []CustomerListItem
 	TotalCount int
 }
 
 type CustomerListItem struct {
-	No          int
-	Code        string
-	Name        string
-	Phone       string
-	Email       string
-	CarCount    int
-	LastVisit   string
-	TotalSpent  float64
-	Status      string
+	No         int
+	Code       string
+	Name       string
+	Phone      string
+	Email      string
+	CarCount   int
+	LastVisit  string
+	TotalSpent float64
+	Status     string
 }

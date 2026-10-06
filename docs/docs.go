@@ -1724,7 +1724,7 @@ const docTemplate = `{
                 "tags": [
                     "websocket"
                 ],
-                "summary": "Get WebSocket message history",
+                "summary": "Get WebSocket message history (legacy)",
                 "parameters": [
                     {
                         "type": "string",
@@ -1804,6 +1804,651 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/ws/messages/paginated": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns paginated message history with cursor-based and offset-based pagination support.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get WebSocket message history with pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Topic to filter messages",
+                        "name": "topic",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Room to filter messages",
+                        "name": "room",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sender ID to filter messages",
+                        "name": "sender_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages before this time",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages after this time",
+                        "name": "after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Max messages per page (default 50, max 1000)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for offset-based pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort order: asc or desc (default desc)",
+                        "name": "order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.MessagePageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid query parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/messages/search": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Performs full-text search on persisted WebSocket messages with optional filters and highlighting.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Search messages with full-text search",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search query string",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by topic",
+                        "name": "topic",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by room",
+                        "name": "room",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by sender ID",
+                        "name": "sender_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages before this time",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages after this time",
+                        "name": "after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Max results per page (default 50, max 1000)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort order: asc or desc (default desc by rank)",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Include highlighted snippets",
+                        "name": "highlight",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.SearchPageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid query parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/presence": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the presence status of all users with pagination.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get all user presence statuses",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Comma-separated user IDs to filter",
+                        "name": "user_ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by status (online, away, busy, offline)",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Max results per page (default 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.PresencePageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid query parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/presence/{user_id}": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the presence status of a specific user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get user presence status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.PresenceItem"
+                        }
+                    },
+                    "404": {
+                        "description": "user not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/retention/cleanup": {
+            "post": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Manually triggers retention cleanup for all active policies.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Run retention cleanup",
+                "parameters": [
+                    {
+                        "description": "Cleanup request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.CleanupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.CleanupResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/retention/policies": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns all retention policies with pagination.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "List all retention policies",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Max results per page (default 50, max 1000)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.RetentionPolicyListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid query parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new message retention policy for topics/rooms.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Create a new retention policy",
+                "parameters": [
+                    {
+                        "description": "Retention policy to create",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.RetentionPolicyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.RetentionPolicyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/retention/policies/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a specific retention policy.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get a retention policy by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Policy ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.RetentionPolicyResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "policy not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing retention policy.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Update a retention policy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Policy ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Retention policy to update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.RetentionPolicyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.RetentionPolicyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "policy not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes a retention policy by ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Delete a retention policy",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Policy ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "policy not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/retention/stats": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns statistics about message retention.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get retention statistics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.RetentionStatsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/ws/rooms": {
             "get": {
                 "security": [
@@ -1827,6 +2472,131 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/presenter.RoomsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/rooms/{room}/messages": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns paginated message history for a specific room.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get WebSocket message history for a room with pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Room name",
+                        "name": "room",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages before this time",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages after this time",
+                        "name": "after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Max messages per page (default 50, max 1000)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for offset-based pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort order: asc or desc (default desc)",
+                        "name": "order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.MessagePageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid query parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/rooms/{room}/presence": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the presence status of all users currently in a specific room.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get users currently in a room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Room name",
+                        "name": "room",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/presenter.PresenceItem"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "room required",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -1875,6 +2645,131 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/ws/senders/{sender_id}/messages": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns paginated message history for a specific sender.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get WebSocket message history for a sender with pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sender ID",
+                        "name": "sender_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages before this time",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RFC3339 timestamp - messages after this time",
+                        "name": "after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Max messages per page (default 50, max 1000)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset for offset-based pagination",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort order: asc or desc (default desc)",
+                        "name": "order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/presenter.MessagePageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid query parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ws/users/{user_id}/room": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2Password": []
+                    },
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the current room for a specific user (if they have an active connection).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "Get user's current room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "user not found or not in a room",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/apimanager/key": {
             "post": {
                 "security": [
@@ -1907,7 +2802,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/presenter.APIKeyResponse"
+                            "$ref": "#/definitions/icmongolang_internal_modules_apimanager_presenter.APIKeyResponse"
                         }
                     },
                     "400": {
@@ -2162,7 +3057,6 @@ const docTemplate = `{
         },
         "/auth/forgotpassword": {
             "post": {
-                "description": "Forgot password, code will send to email.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2172,11 +3066,11 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Forgot password",
+                "summary": "Request password reset",
                 "parameters": [
                     {
-                        "description": "Forgot Password",
-                        "name": "forgotPassword",
+                        "description": "Email",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2188,19 +3082,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     }
                 }
@@ -2208,9 +3090,9 @@ const docTemplate = `{
         },
         "/auth/login": {
             "post": {
-                "description": "Authenticates a user using username and password. Returns access and refresh tokens.",
                 "consumes": [
-                    "application/json"
+                    "application/json",
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -2232,26 +3114,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Tokens returned successfully",
+                        "description": "Tokens returned",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.Token"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "Bad request / validation error",
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized (wrong username/password)",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -2260,134 +3147,44 @@ const docTemplate = `{
             }
         },
         "/auth/logout": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Logout, remove current refresh token in db.",
-                "consumes": [
-                    "application/json"
-                ],
+            "post": {
+                "description": "Revoke the current refresh token and clear auth cookies.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Logout",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
+                "summary": "Logout current session",
                 "responses": {
                     "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     }
                 }
             }
         },
         "/auth/logoutall": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Logout all session of this user. This endpoint is available for both GET and POST.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Logout all session",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            },
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Logout all session of this user. This endpoint is available for both GET and POST.",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Revoke all refresh tokens for the user.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Logout all session",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
+                "summary": "Logout all sessions",
                 "responses": {
                     "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -2397,34 +3194,19 @@ const docTemplate = `{
         },
         "/auth/publickey": {
             "get": {
-                "description": "Get rsa public key to decode token.",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Return public keys used to verify access/refresh tokens (RS256).",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Get public key",
+                "summary": "Get RSA public keys",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/presenter.PublicKey"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     }
                 }
@@ -2432,46 +3214,23 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get new access token from refresh token.",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Use HttpOnly refresh-token cookie to issue a new access token (rotation).",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Refresh token",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authentication header",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
+                "summary": "Refresh access token",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/presenter.Token"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -2481,7 +3240,6 @@ const docTemplate = `{
         },
         "/auth/resetpassword": {
             "patch": {
-                "description": "Reset Password, using code from email.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2491,19 +3249,18 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Reset Password",
+                "summary": "Reset password",
                 "parameters": [
                     {
                         "type": "string",
-                        "format": "code",
-                        "description": "code",
+                        "description": "Reset token",
                         "name": "code",
                         "in": "query",
                         "required": true
                     },
                     {
-                        "description": "Reset Password",
-                        "name": "resetPassword",
+                        "description": "New password",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2515,19 +3272,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     }
                 }
@@ -2537,7 +3282,8 @@ const docTemplate = `{
             "post": {
                 "description": "Authenticates a user using email and password. Returns access and refresh tokens.",
                 "consumes": [
-                    "application/json"
+                    "application/json",
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -2559,10 +3305,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Tokens returned successfully",
+                        "description": "Tokens returned",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.Token"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -2576,34 +3333,23 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
                     }
                 }
             }
         },
         "/auth/verifyemail": {
             "get": {
-                "description": "Verify user using code from email.",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Verify user",
+                "summary": "Verify email",
                 "parameters": [
                     {
                         "type": "string",
-                        "format": "code",
-                        "description": "offset",
+                        "description": "Verification code",
                         "name": "code",
                         "in": "query",
                         "required": true
@@ -2613,13 +3359,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     }
                 }
@@ -6171,15 +6911,10 @@ const docTemplate = `{
         },
         "/iot/alarmdevicestatus": {
             "get": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    },
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "Returns current alarm status for devices in a bucket, enriched with live MQTT data",
+                "produces": [
+                    "application/json"
                 ],
-                "description": "Returns current alarm status for devices",
                 "tags": [
                     "iot"
                 ],
@@ -6187,56 +6922,63 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "Filter by bucket",
                         "name": "bucket",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "temperature",
                         "description": "Filter by measurement",
                         "name": "measurement",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 42,
                         "description": "Filter by device ID",
                         "name": "device_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by device type ID",
                         "name": "type_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by hardware ID",
                         "name": "hardware_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Page number (default:1)",
+                        "example": 1,
+                        "description": "Page number (default 1)",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Items per page (default:1000)",
+                        "example": 1000,
+                        "description": "Items per page (default 1000)",
                         "name": "pageSize",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Alarm device status",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6246,15 +6988,10 @@ const docTemplate = `{
         },
         "/iot/alarmdevicestatuscontrol": {
             "get": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    },
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Returns alarm status and available control actions for each device",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -6262,24 +6999,28 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "Filter by bucket",
                         "name": "bucket",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 42,
                         "description": "Filter by device ID",
                         "name": "device_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by device type ID",
                         "name": "type_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by hardware ID",
                         "name": "hardware_id",
                         "in": "query"
@@ -6287,13 +7028,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Alarm device status with control info",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6321,7 +7062,7 @@ const docTemplate = `{
                 "tags": [
                     "iot"
                 ],
-                "summary": "Send control command to an MQTT device",
+                "summary": "Send control command to an MQTT device (POST)",
                 "parameters": [
                     {
                         "description": "Control request",
@@ -6335,19 +7076,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Command sent",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "MQTT publish failed",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6372,10 +7119,11 @@ const docTemplate = `{
                 "tags": [
                     "iot"
                 ],
-                "summary": "Send control command to an MQTT device via query parameters",
+                "summary": "Send control command to an MQTT device (GET)",
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "BAACTW05/CONTROL",
                         "description": "MQTT topic name (e.g. BAACTW05/CONTROL)",
                         "name": "topic",
                         "in": "query",
@@ -6383,6 +7131,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "ON",
                         "description": "Control message (e.g., ON, OFF, 1, 0)",
                         "name": "message",
                         "in": "query",
@@ -6391,19 +7140,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Command sent",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing topic or message",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "MQTT publish failed",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6413,15 +7168,10 @@ const docTemplate = `{
         },
         "/iot/device": {
             "get": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    },
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "Returns a paginated list of devices enriched with live MQTT data and alarm status",
+                "produces": [
+                    "application/json"
                 ],
-                "description": "Returns a paginated list of devices",
                 "tags": [
                     "iot"
                 ],
@@ -6429,42 +7179,53 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Page number (default:1)",
+                        "example": 1,
+                        "description": "Page number (default 1)",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Items per page (default:10)",
+                        "example": 10,
+                        "description": "Items per page (default 10)",
                         "name": "pageSize",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "Filter by bucket",
                         "name": "bucket",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by hardware ID",
                         "name": "hardware_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by device type ID",
                         "name": "type_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "sensor",
                         "description": "Search keyword",
                         "name": "keyword",
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "en",
+                            "th"
+                        ],
                         "type": "string",
+                        "example": "th",
                         "description": "Language (en/th)",
                         "name": "lang",
                         "in": "query"
@@ -6472,13 +7233,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Paginated device list",
                         "schema": {
-                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.DeviceListResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6488,15 +7261,10 @@ const docTemplate = `{
         },
         "/iot/devicebuckets": {
             "get": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    },
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "Returns all devices belonging to a specific bucket, enriched with live MQTT data",
+                "produces": [
+                    "application/json"
                 ],
-                "description": "Returns all devices belonging to a specific bucket",
                 "tags": [
                     "iot"
                 ],
@@ -6504,6 +7272,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "Bucket name",
                         "name": "bucket",
                         "in": "query",
@@ -6512,19 +7281,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Device bucket with devices",
                         "schema": {
-                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.DeviceBucketsResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing bucket",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6539,7 +7320,10 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns device configuration",
+                "description": "Returns device configuration (merged with defaults if not set)",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -6547,6 +7331,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "42",
                         "description": "Device ID",
                         "name": "deviceId",
                         "in": "query",
@@ -6555,20 +7340,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Device configuration",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing deviceId",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6583,14 +7373,18 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Deletes data older than specified days",
+                "description": "Deletes IoT data older than the specified number of days",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
-                "summary": "Delete old IoT data",
+                "summary": "Delete old IoT data (super user only)",
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 30,
                         "description": "Number of days (default 30)",
                         "name": "days",
                         "in": "query"
@@ -6598,13 +7392,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Deleted count",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Super user only",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6619,7 +7425,10 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Exports data in CSV or JSON format",
+                "description": "Exports data in CSV or JSON format for a device within a date range",
+                "produces": [
+                    "application/octet-stream"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -6627,6 +7436,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "42",
                         "description": "Device ID",
                         "name": "deviceId",
                         "in": "query",
@@ -6634,6 +7444,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "2026-10-01T00:00:00Z",
                         "description": "Start date (RFC3339)",
                         "name": "startDate",
                         "in": "query",
@@ -6641,13 +7452,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "2026-10-04T23:59:59Z",
                         "description": "End date (RFC3339)",
                         "name": "endDate",
                         "in": "query",
                         "required": true
                     },
                     {
+                        "enum": [
+                            "csv",
+                            "json"
+                        ],
                         "type": "string",
+                        "example": "csv",
                         "description": "Format: csv or json (default json)",
                         "name": "format",
                         "in": "query"
@@ -6655,19 +7472,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Exported file (CSV or JSON)",
                         "schema": {
                             "type": "file"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing or invalid parameters",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6677,7 +7500,15 @@ const docTemplate = `{
         },
         "/iot/deviceiotdata": {
             "get": {
-                "description": "Returns paginated IoT data for a device",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns paginated IoT data for a device, optionally filtered by date range",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -6685,6 +7516,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "42",
                         "description": "Device ID",
                         "name": "deviceId",
                         "in": "query",
@@ -6692,24 +7524,28 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Page number",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 50,
                         "description": "Items per page",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "2026-10-01T00:00:00Z",
                         "description": "Start date (RFC3339)",
                         "name": "startDate",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "2026-10-04T23:59:59Z",
                         "description": "End date (RFC3339)",
                         "name": "endDate",
                         "in": "query"
@@ -6717,7 +7553,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Paginated IoT data",
                         "schema": {
                             "allOf": [
                                 {
@@ -6735,13 +7571,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing deviceId",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6751,7 +7593,7 @@ const docTemplate = `{
         },
         "/iot/devicemqtt": {
             "get": {
-                "description": "Returns a paginated device list enriched with the latest MQTT\npayload, alarm status and control/influx chart URLs. The output\nstructure matches the NestJS mqtt2.controller.ts ` + "`" + `devicemqtt` + "`" + ` endpoint.",
+                "description": "Returns a paginated device list enriched with the latest MQTT payload,\nalarm status and control/influx chart URLs. Output structure matches\nthe NestJS mqtt2.controller.ts ` + "`" + `devicemqtt` + "`" + ` endpoint.",
                 "consumes": [
                     "application/json"
                 ],
@@ -6765,66 +7607,81 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "InfluxDB/MQTT bucket name",
                         "name": "bucket",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Page number (default:1)",
+                        "example": 1,
+                        "description": "Page number (default 1)",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Items per page (default:10000000)",
+                        "example": 100,
+                        "description": "Items per page (default 10000000)",
                         "name": "pageSize",
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "en",
+                            "th"
+                        ],
                         "type": "string",
+                        "example": "th",
                         "description": "Language (en/th)",
                         "name": "lang",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "42",
                         "description": "Filter by device ID",
                         "name": "device_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "1",
                         "description": "Filter by mqtt ID",
                         "name": "mqtt_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by type ID",
                         "name": "type_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by hardware ID",
                         "name": "hardware_id",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "sensor",
                         "description": "Search keyword",
                         "name": "keyword",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "temperature",
                         "description": "Filter by measurement",
                         "name": "measurement",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 0,
                         "description": "1 to force refresh from MQTT",
                         "name": "deletecache",
                         "in": "query"
@@ -6832,13 +7689,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Device list with live MQTT",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6848,7 +7705,7 @@ const docTemplate = `{
         },
         "/iot/devicesensercharts": {
             "get": {
-                "description": "Alias for GetSenserCharts – returns time‑series chart data from InfluxDB for a specific device/sensor.\nThis endpoint behaves identically to GET /iot/sensercharts.",
+                "description": "Alias for GetSenserCharts — behaves identically to GET /iot/sensercharts",
                 "consumes": [
                     "application/json"
                 ],
@@ -6901,7 +7758,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Chart data",
                         "schema": {
                             "allOf": [
                                 {
@@ -6919,13 +7776,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing bucket or measurement",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6935,7 +7792,15 @@ const docTemplate = `{
         },
         "/iot/devicestats": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Returns statistics for a device (count, first/last record, etc.)",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -6943,6 +7808,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "42",
                         "description": "Device ID",
                         "name": "deviceId",
                         "in": "query",
@@ -6951,7 +7817,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Device statistics",
                         "schema": {
                             "allOf": [
                                 {
@@ -6969,13 +7835,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing deviceId",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -6990,7 +7862,10 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns current status of a device",
+                "description": "Returns current status of a device (online/offline, battery, signal, firmware, last data)",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -6998,6 +7873,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "42",
                         "description": "Device ID",
                         "name": "deviceId",
                         "in": "query",
@@ -7006,7 +7882,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Device status",
                         "schema": {
                             "allOf": [
                                 {
@@ -7024,13 +7900,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing deviceId",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7043,7 +7925,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Updates device status fields",
+                "description": "Updates device status fields (battery, signal, firmware, location)",
                 "consumes": [
                     "application/json"
                 ],
@@ -7056,31 +7938,36 @@ const docTemplate = `{
                 "summary": "Update device status",
                 "parameters": [
                     {
-                        "description": "Device status data (must include deviceId)",
+                        "description": "Device status data (deviceId required)",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/presenter.UpdateDeviceStatusRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Status updated",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7090,15 +7977,10 @@ const docTemplate = `{
         },
         "/iot/locationdevice": {
             "get": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    },
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Returns all devices that belong to a specific location",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -7106,6 +7988,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Location ID",
                         "name": "location_id",
                         "in": "query",
@@ -7114,19 +7997,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Devices by location",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing location_id",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7136,7 +8019,10 @@ const docTemplate = `{
         },
         "/iot/monitordevicechart": {
             "get": {
-                "description": "Returns time‑series data for devices in a group",
+                "description": "Returns time-series data for devices in a group (from InfluxDB)",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -7144,6 +8030,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "Bucket name",
                         "name": "bucket",
                         "in": "query",
@@ -7151,6 +8038,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "temperature",
                         "description": "Measurement name",
                         "name": "measurement",
                         "in": "query",
@@ -7158,24 +8046,28 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "value",
                         "description": "Field name",
                         "name": "field",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "-10m",
                         "description": "Start time",
                         "name": "start",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "now(",
                         "description": "Stop time",
                         "name": "stop",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 100,
                         "description": "Limit",
                         "name": "limit",
                         "in": "query"
@@ -7183,13 +8075,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Chart data (data + date arrays)",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7199,7 +8091,10 @@ const docTemplate = `{
         },
         "/iot/monitordevicegroup": {
             "get": {
-                "description": "Returns devices grouped by type/location",
+                "description": "Returns devices grouped by type/location, enriched with live MQTT data",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "iot"
                 ],
@@ -7207,6 +8102,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "Bucket name",
                         "name": "bucket",
                         "in": "query",
@@ -7214,24 +8110,32 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by location ID",
                         "name": "location_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 1,
                         "description": "Filter by hardware ID",
                         "name": "hardware_id",
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "en",
+                            "th"
+                        ],
                         "type": "string",
+                        "example": "th",
                         "description": "Filter by lang",
                         "name": "lang",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 0,
                         "description": "Set delcache",
                         "name": "delcache",
                         "in": "query"
@@ -7239,13 +8143,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Grouped devices",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7255,15 +8159,10 @@ const docTemplate = `{
         },
         "/iot/sensercharts": {
             "get": {
-                "security": [
-                    {
-                        "OAuth2Password": []
-                    },
-                    {
-                        "BearerAuth": []
-                    }
+                "description": "Returns aggregated data points for a given measurement/field",
+                "produces": [
+                    "application/json"
                 ],
-                "description": "Returns aggregated data points",
                 "tags": [
                     "iot"
                 ],
@@ -7271,6 +8170,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "AIRCOM1",
                         "description": "InfluxDB bucket",
                         "name": "bucket",
                         "in": "query",
@@ -7278,6 +8178,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "temperature",
                         "description": "Measurement name",
                         "name": "measurement",
                         "in": "query",
@@ -7285,24 +8186,28 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Field name (default:value)",
+                        "example": "value",
+                        "description": "Field name (default: value)",
                         "name": "field",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "-10m",
                         "description": "Start time",
                         "name": "start",
                         "in": "query"
                     },
                     {
                         "type": "string",
+                        "example": "now(",
                         "description": "Stop time",
                         "name": "stop",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "example": 100,
                         "description": "Max points",
                         "name": "limit",
                         "in": "query"
@@ -7310,19 +8215,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Chart data",
                         "schema": {
-                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.SenserChartResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing bucket or measurement",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7332,7 +8249,7 @@ const docTemplate = `{
         },
         "/iot/topic": {
             "get": {
-                "description": "Subscribes to the given topic, waits for a single message, then unsubscribes. Caches the result for 60 seconds.\nUse \u0026delcache=1 to force deletion of the cached value and fetch a fresh payload.",
+                "description": "Subscribes to the given topic, waits for a single message, then unsubscribes.\nCaches the result for 60 seconds.\nUse ` + "`" + `\u0026delcache=1` + "`" + ` to force deletion of the cached value and fetch a fresh payload.",
                 "consumes": [
                     "application/json"
                 ],
@@ -7346,6 +8263,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "BAACTW05/DATA",
                         "description": "MQTT topic name (e.g. BAACTW05/DATA)",
                         "name": "topic",
                         "in": "query",
@@ -7363,19 +8281,31 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Live or cached data",
                         "schema": {
-                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.TopicDataResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing topic parameter",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7385,7 +8315,7 @@ const docTemplate = `{
         },
         "/iot/topicdevicechart": {
             "get": {
-                "description": "Returns time‑series data from InfluxDB for the given topic/bucket,\nplus the most recent MQTT message received on that topic.\nUses Redis cache for both parts (45s for chart, 10s for live payload).\nUse \u0026delcache=1 to force deletion of all caches and fetch fresh data.",
+                "description": "Returns time-series data from InfluxDB for the given topic/bucket,\nplus the most recent MQTT message received on that topic.\nUses Redis cache for both parts (45s for chart, 10s for live payload).\nUse ` + "`" + `\u0026delcache=1` + "`" + ` to force deletion of all caches and fetch fresh data.",
                 "consumes": [
                     "application/json"
                 ],
@@ -7400,7 +8330,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "default": "AIRCOM1",
-                        "description": "InfluxDB bucket name (e.g. AIRCOM1 default from topic)",
+                        "description": "InfluxDB bucket name (default: derived from topic)",
                         "name": "bucket",
                         "in": "query"
                     },
@@ -7429,7 +8359,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "default": "-10m",
-                        "description": "Start time (e.g. -10m, -1h, 2023-01-01T00:00:00Z)",
+                        "description": "Start time (e.g. -10m, -1h, RFC3339)",
                         "name": "start",
                         "in": "query"
                     },
@@ -7458,32 +8388,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Chart + latest MQTT payload",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "additionalProperties": true
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing topic parameter",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -7493,7 +8410,12 @@ const docTemplate = `{
         },
         "/iot/updatedeviceconfig": {
             "put": {
-                "description": "Updates device configuration (merges with existing)",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates device configuration (deep-merges with existing)",
                 "consumes": [
                     "application/json"
                 ],
@@ -7506,31 +8428,36 @@ const docTemplate = `{
                 "summary": "Update device configuration",
                 "parameters": [
                     {
-                        "description": "New config (must include deviceId)",
+                        "description": "New config (deviceId required)",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/presenter.UpdateDeviceConfigRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Configuration updated",
                         "schema": {
                             "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -8710,7 +9637,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Publishes a control message to a topic (usually ending with CONTROL), then listens on the corresponding DATA topic (CONTROL replaced by DATA) for a response.",
+                "description": "Publishes a control message to a topic (usually ending with CONTROL),\nthen listens on the corresponding DATA topic (CONTROL replaced by DATA) for a response.\nFalls back to a default payload if MQTT is unreachable (still returns 200).",
                 "consumes": [
                     "application/json"
                 ],
@@ -8724,6 +9651,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "BAACTW02/CONTROL",
                         "description": "MQTT topic to send control message (e.g., BAACTW02/CONTROL)",
                         "name": "topic",
                         "in": "query",
@@ -8731,6 +9659,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "ON",
                         "description": "Control message (e.g., ON, OFF, 1, 0)",
                         "name": "message",
                         "in": "query",
@@ -8739,21 +9668,15 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Control command executed (or fallback returned)",
                         "schema": {
                             "$ref": "#/definitions/presenter.DeviceControlResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing topic or message",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     }
                 }
@@ -8769,7 +9692,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Subscribes to the given topic, waits for a single message, then unsubscribes. Caches the result for 60 seconds.\nOn MQTT timeout the endpoint returns fallback data with HTTP 504 (see ` + "`" + `error_detail` + "`" + ` / ` + "`" + `from:fallback` + "`" + `).",
+                "description": "Subscribes to the given topic, waits for a single message, then unsubscribes.\nCaches the result for 60 seconds. On MQTT timeout the endpoint returns\nfallback data with HTTP 504 (see ` + "`" + `error_detail` + "`" + ` / ` + "`" + `from:fallback` + "`" + `).",
                 "consumes": [
                     "application/json"
                 ],
@@ -8779,10 +9702,11 @@ const docTemplate = `{
                 "tags": [
                     "mqtt"
                 ],
-                "summary": "Get live or cached MQTT topic data (request‑response)",
+                "summary": "Get live or cached MQTT topic data (request-response)",
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "BAACTW05/DATA",
                         "description": "MQTT topic name (e.g. BAACTW05/DATA)",
                         "name": "topic",
                         "in": "query",
@@ -8791,19 +9715,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Live or cached data returned",
                         "schema": {
                             "$ref": "#/definitions/icmongolang_internal_modules_mqtt_presenter.MQTTTopicDataResponse"
                         }
                     },
                     "400": {
-                        "description": "missing topic parameter",
+                        "description": "Missing topic parameter",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     },
                     "500": {
-                        "description": "internal error",
+                        "description": "Internal error (fetch failed)",
                         "schema": {
                             "$ref": "#/definitions/icmongolang_internal_modules_mqtt_presenter.MQTTTopicDataResponse"
                         }
@@ -8854,21 +9778,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Message published successfully",
                         "schema": {
                             "$ref": "#/definitions/icmongolang_internal_modules_mqtt_presenter.PublishResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid request body (missing topic/payload or bad QoS)",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error or MQTT publish failed",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     }
                 }
@@ -8881,7 +9805,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns the current connection state of the MQTT client to the broker, along with a timestamp (Asia/Bangkok).",
+                "description": "Returns the current connection state of the MQTT client to the broker,\nalong with a timestamp (Asia/Bangkok).",
                 "produces": [
                     "application/json"
                 ],
@@ -8891,16 +9815,9 @@ const docTemplate = `{
                 "summary": "Get MQTT connection status",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "MQTT connection state",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.StatusResponse"
                         }
                     }
                 }
@@ -8913,7 +9830,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Subscribes to a topic and starts receiving messages (persistent subscription). The connection will stay open and messages will be broadcast via WebSocket.",
+                "description": "Subscribes to a topic and starts receiving messages (persistent subscription).\nThe connection will stay open and messages will be broadcast via WebSocket.",
                 "consumes": [
                     "application/json"
                 ],
@@ -8937,21 +9854,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Subscribed successfully",
                         "schema": {
                             "$ref": "#/definitions/presenter.SubscribeResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing topic or invalid QoS",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     }
                 }
@@ -8974,15 +9891,9 @@ const docTemplate = `{
                 "summary": "List all subscribed topics",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Current persistent subscriptions",
                         "schema": {
                             "$ref": "#/definitions/presenter.SubscriptionsResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
                         }
                     }
                 }
@@ -9019,21 +9930,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Unsubscribed successfully",
                         "schema": {
                             "$ref": "#/definitions/presenter.UnsubscribeResponse"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing topic",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/icmongolang_internal_modules_mqtt_delivery_http.errResponse"
+                            "$ref": "#/definitions/presenter.ErrResponse"
                         }
                     }
                 }
@@ -9121,7 +10032,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Submit an order request. The order will be processed asynchronously by Kafka consumer.",
+                "description": "ยื่นคำสั่งซื้อ — ระบบจะ publish ไปยัง Kafka และประมวลผลแบบ async\nผลลัพธ์ทันทีคือ 202 Accepted พร้อม order_id สำหรับติดตามสถานะ\nClient สามารถ subscribe WebSocket (` + "`" + `/ws?room=\u003corder_id\u003e` + "`" + `) เพื่อรับ update",
                 "consumes": [
                     "application/json"
                 ],
@@ -9131,7 +10042,7 @@ const docTemplate = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Create a new order (async via Kafka)",
+                "summary": "สร้างคำสั่งซื้อใหม่ (async ผ่าน Kafka)",
                 "parameters": [
                     {
                         "description": "Order details",
@@ -9145,28 +10056,21 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "202": {
-                        "description": "Order accepted",
+                        "description": "Order accepted for processing",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/models.CreateOrderAcceptedResponse"
                         }
                     },
                     "400": {
-                        "description": "Invalid request",
+                        "description": "Invalid request body or missing required fields",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Internal server error",
+                        "description": "Internal server error (Kafka publish failed)",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -11239,7 +12143,6 @@ const docTemplate = `{
         },
         "/register": {
             "post": {
-                "description": "ลงทะเบียนผู้ใช้ทั่วไป (ไม่ต้องใช้ token)",
                 "consumes": [
                     "application/json"
                 ],
@@ -11249,10 +12152,10 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "สมัครสมาชิกผู้ใช้ใหม่",
+                "summary": "Register new user",
                 "parameters": [
                     {
-                        "description": "ข้อมูลสมัคร",
+                        "description": "Registration data",
                         "name": "user",
                         "in": "body",
                         "required": true,
@@ -11265,8 +12168,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21129,40 +22043,58 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "default": 20,
-                        "description": "Page size",
-                        "name": "limit",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "default": 0,
-                        "description": "Offset",
-                        "name": "offset",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "per_page",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Filter by email",
+                        "description": "Filter email",
                         "name": "email",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Filter by username",
+                        "description": "Filter username",
                         "name": "username",
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Filter fullname",
+                        "name": "fullname",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
-                        "description": "Filter by status",
+                        "description": "Filter status",
                         "name": "status",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Filter by role ID",
+                        "description": "Filter role",
                         "name": "role_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Filter verified",
+                        "name": "verified",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort field-ASC|DESC",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -21170,8 +22102,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserListResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21213,8 +22156,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21225,6 +22179,558 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/access-menus": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "access-menu"
+                ],
+                "summary": "List access menus",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter user_type_id",
+                        "name": "user_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter role_id",
+                        "name": "role_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter menu_id",
+                        "name": "menu_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter parent_id",
+                        "name": "parent_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.AccessMenuListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "access-menu"
+                ],
+                "summary": "Create access menu mapping",
+                "parameters": [
+                    {
+                        "description": "Access menu data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.AccessMenuCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserAccessMenu"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/access-menus/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "access-menu"
+                ],
+                "summary": "Get access menu by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Access menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserAccessMenu"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "access-menu"
+                ],
+                "summary": "Update access menu",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Access menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Fields to update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.AccessMenuUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserAccessMenu"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "access-menu"
+                ],
+                "summary": "Delete access menu",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Access menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/files": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-files"
+                ],
+                "summary": "List user files",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by uid",
+                        "name": "uid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by file_type_id",
+                        "name": "file_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status csv",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.FileListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-files"
+                ],
+                "summary": "Create user file",
+                "parameters": [
+                    {
+                        "description": "File data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.FileCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserFile"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/files/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-files"
+                ],
+                "summary": "Get file by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserFile"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-files"
+                ],
+                "summary": "Update file",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Fields to update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.FileUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserFile"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "user-files"
+                ],
+                "summary": "Delete file",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -21245,17 +22751,17 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "List users with keyword/status/sort/pagination (admin only)",
+                "summary": "List users with keyword/status/sort/pagination",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Keyword (username or email)",
+                        "description": "Keyword",
                         "name": "keyword",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Status csv (e.g. 0,1)",
+                        "description": "Status csv",
                         "name": "status",
                         "in": "query"
                     },
@@ -21266,23 +22772,23 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Sort field-ASC|DESC (e.g. username-ASC)",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
                         "default": 1,
-                        "description": "Page number",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "default": 20,
-                        "description": "Page size",
-                        "name": "page_size",
+                        "default": 10,
+                        "description": "Items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort field-ASC|DESC",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -21290,8 +22796,500 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/log-types": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "log-types"
+                ],
+                "summary": "List log types",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "log-types"
+                ],
+                "summary": "Create log type",
+                "parameters": [
+                    {
+                        "description": "Log type data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.LogTypeCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserLogType"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/log-types/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "log-types"
+                ],
+                "summary": "Get log type by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Log type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserLogType"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "log-types"
+                ],
+                "summary": "Update log type",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Log type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Fields to update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.LogTypeUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserLogType"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "log-types"
+                ],
+                "summary": "Delete log type",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Log type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/logs": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-logs"
+                ],
+                "summary": "List user logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by uid",
+                        "name": "uid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by log_type_id",
+                        "name": "log_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by IP",
+                        "name": "ipaddress",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "From (RFC3339)",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "To (RFC3339)",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.LogListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-logs"
+                ],
+                "summary": "Create user log (manual)",
+                "parameters": [
+                    {
+                        "description": "Log data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.LogCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserLog"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/logs/{log_type_id}/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-logs"
+                ],
+                "summary": "Get log by composite ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Log type ID",
+                        "name": "log_type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Log ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/icmongolang_internal_modules_users_models.SdUserLog"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "user-logs"
+                ],
+                "summary": "Delete log",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Log type ID",
+                        "name": "log_type_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Log ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
@@ -21316,13 +23314,24 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Get current user profile (with role title and permissions)",
+                "summary": "Get current user profile",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserProfileResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "401": {
@@ -21364,8 +23373,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21393,7 +23413,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Upload current user avatar (jpg/jpeg/png)",
+                "summary": "Upload avatar (jpg/jpeg/png)",
                 "parameters": [
                     {
                         "type": "file",
@@ -21407,8 +23427,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
@@ -21452,8 +23471,677 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/menus": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "List menus",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by modules_id",
+                        "name": "modules_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by menu_parent_id",
+                        "name": "menu_parent_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search keyword",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status csv",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "asc|desc",
+                        "name": "sort_order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.MenuListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Create menu",
+                "parameters": [
+                    {
+                        "description": "Menu data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.MenuCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SdMenu"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/menus/sort": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Bulk update menu sort (drag \u0026 drop)",
+                "parameters": [
+                    {
+                        "description": "Items to sort",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.SortUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/menus/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Get menu by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SdMenu"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Update menu",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Fields to update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.MenuUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SdMenu"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Delete menu",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/modules": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "List modules",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Items per page",
+                        "name": "per_page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Filter by module_parent_id",
+                        "name": "module_parent_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search keyword",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status csv",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "asc|desc",
+                        "name": "sort_order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.ModuleListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Create module",
+                "parameters": [
+                    {
+                        "description": "Module data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ModuleCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SdModules"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/modules/sort": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Bulk update module sort (drag \u0026 drop)",
+                "parameters": [
+                    {
+                        "description": "Items to sort",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.SortUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/modules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Get module by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Module ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SdModules"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Update module",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Module ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Fields to update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/presenter.ModuleUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SdModules"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "modules"
+                ],
+                "summary": "Delete module",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Module ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
@@ -21478,11 +24166,16 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "List active users by notification channel (admin only)",
+                "summary": "List active users by notification channel",
                 "parameters": [
                     {
+                        "enum": [
+                            "email",
+                            "sms",
+                            "line"
+                        ],
                         "type": "string",
-                        "description": "Notification channel (email|sms|line)",
+                        "description": "Channel",
                         "name": "channel",
                         "in": "path",
                         "required": true
@@ -21492,14 +24185,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     }
                 }
@@ -21518,7 +24204,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Get user profile with role title and permissions",
+                "summary": "Get user profile with role title \u0026 permissions",
                 "parameters": [
                     {
                         "type": "string",
@@ -21532,8 +24218,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserProfileResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21564,13 +24261,12 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "User statistics aggregated by status and role (admin only)",
+                "summary": "User statistics",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     }
                 }
@@ -21603,8 +24299,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21659,8 +24366,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21694,8 +24412,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
@@ -21729,7 +24446,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Toggle user active status (admin only)",
+                "summary": "Toggle user active status",
                 "parameters": [
                     {
                         "type": "string",
@@ -21752,18 +24469,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -21781,7 +24491,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Force logout all sessions of a user (admin only)",
+                "summary": "Force logout all sessions",
                 "parameters": [
                     {
                         "type": "string",
@@ -21795,8 +24505,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
@@ -21824,7 +24533,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Update user role (admin only)",
+                "summary": "Update user role (admin)",
                 "parameters": [
                     {
                         "type": "string",
@@ -21847,8 +24556,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/presenter.UserResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -21876,7 +24596,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Update user password (admin only)",
+                "summary": "Update user password (admin)",
                 "parameters": [
                     {
                         "type": "string",
@@ -21899,12 +24619,691 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/account/confirm-deletion": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ยืนยันว่าผู้ใช้ประสงค์จะลบข้อมูลส่วนบุคคลจริง — publish event data.deletion_requested",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-account"
+                ],
+                "summary": "ยืนยันการลบข้อมูลส่วนบุคคล (admin only)",
+                "parameters": [
+                    {
+                        "description": "Confirm payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ConfirmDeletionBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deletion confirmed",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/account/suspend": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ระงับบัญชี + เริ่มนับ retention period — publish event account.suspended",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-account"
+                ],
+                "summary": "ระงับบัญชีผู้ใช้ (admin only)",
+                "parameters": [
+                    {
+                        "description": "Suspend payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SuspendAccountBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account suspended",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/account/terminate": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ยุติบัญชี + เข้าสู่กระบวนการลบแบบรอเวลาตาม retention — publish event account.terminated",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-account"
+                ],
+                "summary": "ยุติบัญชีผู้ใช้ (admin only)",
+                "parameters": [
+                    {
+                        "description": "Terminate payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TerminateAccountBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account terminated",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid user_id",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/admin/reports": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "สรุปจำนวน audit trail ใน 1 เดือนล่าสุด จัดกลุ่มตาม action",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-admin"
+                ],
+                "summary": "รายงาน PDPA compliance (admin only)",
+                "responses": {
+                    "200": {
+                        "description": "Compliance report",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/consent": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "บันทึก consent ของผู้ใช้ตาม purpose ที่กำหนด พร้อม publish event consent.granted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-consent"
+                ],
+                "summary": "บันทึกความยินยอม (Consent)",
+                "parameters": [
+                    {
+                        "description": "Consent payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RecordConsentBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Consent created",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ถอน consent ของผู้ใช้ตาม purpose ที่กำหนด พร้อม publish event consent.revoked",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-consent"
+                ],
+                "summary": "ถอนความยินยอม (Revoke Consent)",
+                "parameters": [
+                    {
+                        "description": "Revoke payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RevokeConsentBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Revoked successfully",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Consent not found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/consent/history": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ดึงประวัติ consent ทั้งหมดของผู้ใช้ปัจจุบัน เรียงจากใหม่ไปเก่า",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-consent"
+                ],
+                "summary": "ประวัติความยินยอม",
+                "responses": {
+                    "200": {
+                        "description": "Consent history",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/dsar": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ดึงรายการ DSAR ทั้งหมดของผู้ใช้ปัจจุบัน เรียงจากใหม่ไปเก่า",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-dsar"
+                ],
+                "summary": "รายการ DSAR ของผู้ใช้",
+                "responses": {
+                    "200": {
+                        "description": "DSAR list",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ผู้ใช้ยื่นคำขอ Data Subject Access Request — จะสร้าง record พร้อม OTP 15 นาที",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-dsar"
+                ],
+                "summary": "ยื่นคำขอใช้สิทธิ (DSAR Submit)",
+                "parameters": [
+                    {
+                        "description": "DSAR payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SubmitDSARBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Request accepted",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/dsar/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "ดึงรายละเอียด DSAR 1 รายการ (เฉพาะของผู้ใช้ปัจจุบัน)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-dsar"
+                ],
+                "summary": "รายละเอียด DSAR ตาม ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "DSAR ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DSAR detail",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "DSAR not found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/dsar/{id}/process": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "เปลี่ยนสถานะ DSAR: 3=PROCESSING, 4=COMPLETED, 5=REJECTED — ต้องเป็น admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-dsar"
+                ],
+                "summary": "ประมวลผล DSAR (admin only)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "DSAR ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Process payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ProcessDSARBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated status",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "DSAR not found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/policy": {
+            "get": {
+                "description": "Public endpoint — คืน policy ที่มี status = active",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-policy"
+                ],
+                "summary": "ดึง Privacy Policy ที่มีผลอยู่",
+                "responses": {
+                    "200": {
+                        "description": "Active policy",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "สร้าง policy version ใหม่ + ตั้ง status = active — ต้องเป็น admin\nหมายเหตุ: ยังไม่ implement — คืน 501 จนกว่าจะ wire PublishPrivacyPolicyCommand",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-policy"
+                ],
+                "summary": "เผยแพร่ Policy ใหม่ (admin only)",
+                "parameters": [
+                    {
+                        "description": "Policy payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PublishPolicyBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Policy published",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Admin only",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "501": {
+                        "description": "Not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/pdpa/policy/versions": {
+            "get": {
+                "description": "Public endpoint — คืน policy ทุกเวอร์ชัน เรียงจากใหม่ไปเก่า",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pdpa-policy"
+                ],
+                "summary": "ดูประวัติเวอร์ชันของ Policy",
+                "responses": {
+                    "200": {
+                        "description": "Policy versions",
+                        "schema": {
+                            "$ref": "#/definitions/responses.SwaggerSuccessResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -22339,6 +25738,128 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.ConfirmDeletionBody": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                }
+            }
+        },
+        "dto.ProcessDSARBody": {
+            "type": "object",
+            "properties": {
+                "payload": {
+                    "type": "string"
+                },
+                "rejection_reason": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "valueobject.DSARStatus: 3=PROCESSING, 4=COMPLETED, 5=REJECTED",
+                    "type": "integer",
+                    "example": 3
+                }
+            }
+        },
+        "dto.PublishPolicyBody": {
+            "type": "object",
+            "required": [
+                "policy_key",
+                "title_en",
+                "title_th",
+                "version"
+            ],
+            "properties": {
+                "content_en": {
+                    "type": "string"
+                },
+                "content_th": {
+                    "type": "string"
+                },
+                "effective_at": {
+                    "type": "string",
+                    "example": "2026-01-01T00:00:00Z"
+                },
+                "policy_key": {
+                    "type": "string",
+                    "example": "privacy"
+                },
+                "title_en": {
+                    "type": "string",
+                    "example": "Privacy Policy"
+                },
+                "title_th": {
+                    "type": "string",
+                    "example": "นโยบายความเป็นส่วนตัว"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "1.0"
+                }
+            }
+        },
+        "dto.RecordConsentBody": {
+            "type": "object",
+            "properties": {
+                "purpose": {
+                    "description": "valueobject.ConsentPurpose: 1=NECESSARY, 5=MARKETING, 6=ANALYTICS",
+                    "type": "integer",
+                    "example": 1
+                },
+                "source": {
+                    "description": "web | mobile | api | offline",
+                    "type": "string",
+                    "example": "web"
+                }
+            }
+        },
+        "dto.RevokeConsentBody": {
+            "type": "object",
+            "properties": {
+                "purpose": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
+        "dto.SubmitDSARBody": {
+            "type": "object",
+            "properties": {
+                "request_type": {
+                    "description": "valueobject.DSARType: 1=ACCESS, 3=ERASURE, 7=WITHDRAW_CONSENT",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dto.SuspendAccountBody": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "example": "PDPA request"
+                },
+                "retention_years": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                }
+            }
+        },
+        "dto.TerminateAccountBody": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                }
+            }
+        },
         "helpers.AlarmDetailDto": {
             "type": "object",
             "properties": {
@@ -22531,6 +26052,29 @@ const docTemplate = `{
             "properties": {
                 "error": {
                     "type": "string"
+                }
+            }
+        },
+        "icmongolang_internal_modules_apimanager_presenter.APIKeyResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "hashed_key": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "key_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "revoked": {
+                    "type": "boolean"
                 }
             }
         },
@@ -22757,14 +26301,6 @@ const docTemplate = `{
                 }
             }
         },
-        "icmongolang_internal_modules_mqtt_delivery_http.errResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
         "icmongolang_internal_modules_mqtt_presenter.MQTTTopicDataResponse": {
             "type": "object",
             "properties": {
@@ -22794,6 +26330,12 @@ const docTemplate = `{
                 },
                 "from": {
                     "type": "string",
+                    "enum": [
+                        "mqtt",
+                        "cache",
+                        "fallback",
+                        "error"
+                    ],
                     "example": "mqtt"
                 },
                 "message": {
@@ -22805,7 +26347,8 @@ const docTemplate = `{
                     "example": true
                 },
                 "payload": {
-                    "description": "✅ remove example:\"25.5,60,1013\""
+                    "type": "string",
+                    "example": "25.5,60,1013"
                 },
                 "statuscode": {
                     "type": "integer",
@@ -22828,17 +26371,23 @@ const docTemplate = `{
                 "topic"
             ],
             "properties": {
-                "payload": {},
+                "payload": {
+                    "type": "string",
+                    "example": "ON"
+                },
                 "qos": {
                     "type": "integer",
                     "maximum": 2,
-                    "minimum": 0
+                    "minimum": 0,
+                    "example": 1
                 },
                 "retained": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "topic": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BAACTW05/CONTROL"
                 }
             }
         },
@@ -22846,10 +26395,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "published successfully"
                 },
                 "success": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -22950,6 +26501,131 @@ const docTemplate = `{
                 }
             }
         },
+        "icmongolang_internal_modules_users_models.SdUserAccessMenu": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "type": "integer"
+                },
+                "parent_id": {
+                    "type": "integer"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "user_access_id": {
+                    "type": "integer"
+                },
+                "user_type_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "icmongolang_internal_modules_users_models.SdUserFile": {
+            "type": "object",
+            "properties": {
+                "file_date": {
+                    "type": "string"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "file_type_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                }
+            }
+        },
+        "icmongolang_internal_modules_users_models.SdUserLog": {
+            "type": "object",
+            "properties": {
+                "browser_agent": {
+                    "type": "string"
+                },
+                "create": {
+                    "type": "string"
+                },
+                "delete_status": {
+                    "type": "integer"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "device_access": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "insert_status": {
+                    "type": "integer"
+                },
+                "ipaddress": {
+                    "type": "string"
+                },
+                "lang": {
+                    "type": "string"
+                },
+                "log_type_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "select_status": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                },
+                "update_status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "icmongolang_internal_modules_users_models.SdUserLogType": {
+            "type": "object",
+            "properties": {
+                "create": {
+                    "type": "string"
+                },
+                "log_type_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "type_detail": {
+                    "type": "string"
+                },
+                "type_name": {
+                    "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                }
+            }
+        },
         "icmongolang_internal_modules_vectordata_delivery_http.errResponse": {
             "type": "object",
             "properties": {
@@ -23046,6 +26722,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CreateOrderAcceptedResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Order accepted for processing"
+                },
+                "order_id": {
+                    "type": "string",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "PENDING"
+                }
+            }
+        },
         "models.CreateOrderRequest": {
             "type": "object",
             "required": [
@@ -23054,11 +26747,89 @@ const docTemplate = `{
             ],
             "properties": {
                 "product_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "PROD-001"
                 },
                 "quantity": {
                     "type": "integer",
-                    "minimum": 1
+                    "minimum": 1,
+                    "example": 3
+                }
+            }
+        },
+        "models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "product_id and quantity (\u003e=1) are required"
+                }
+            }
+        },
+        "models.SdMenu": {
+            "type": "object",
+            "properties": {
+                "create_date": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "menu_id": {
+                    "type": "integer"
+                },
+                "menu_parent_id": {
+                    "type": "integer"
+                },
+                "modules_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "update_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SdModules": {
+            "type": "object",
+            "properties": {
+                "create_date": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "module_id": {
+                    "type": "integer"
+                },
+                "module_parent_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "update_date": {
+                    "type": "string"
                 }
             }
         },
@@ -23076,26 +26847,85 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.APIKeyResponse": {
+        "presenter.AccessMenuCreate": {
+            "type": "object",
+            "required": [
+                "menu_id",
+                "role_id",
+                "user_type_id"
+            ],
+            "properties": {
+                "menu_id": {
+                    "type": "integer"
+                },
+                "parent_id": {
+                    "type": "integer"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "user_type_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.AccessMenuListResponse": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.AccessMenuResponse"
+                    }
                 },
-                "hashed_key": {
-                    "type": "string"
+                "page": {
+                    "type": "integer"
                 },
-                "key": {
-                    "type": "string"
+                "per_page": {
+                    "type": "integer"
                 },
-                "key_id": {
-                    "type": "string"
+                "total": {
+                    "type": "integer"
                 },
-                "name": {
-                    "type": "string"
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.AccessMenuResponse": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "type": "integer"
                 },
-                "revoked": {
-                    "type": "boolean"
+                "parent_id": {
+                    "type": "integer"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "user_access_id": {
+                    "type": "integer"
+                },
+                "user_type_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.AccessMenuUpdate": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "type": "integer"
+                },
+                "parent_id": {
+                    "type": "integer"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "user_type_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -23544,6 +27374,41 @@ const docTemplate = `{
                 }
             }
         },
+        "presenter.CleanupRequest": {
+            "type": "object",
+            "properties": {
+                "policy_id": {
+                    "description": "If empty, runs all active policies",
+                    "type": "string",
+                    "example": "pol-abc123"
+                }
+            }
+        },
+        "presenter.CleanupResponse": {
+            "type": "object",
+            "properties": {
+                "bytes_freed": {
+                    "type": "integer",
+                    "example": 104857600
+                },
+                "duration": {
+                    "type": "string",
+                    "example": "1.5s"
+                },
+                "messages_deleted": {
+                    "type": "integer",
+                    "example": 5000
+                },
+                "policies_run": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "status": {
+                    "type": "string",
+                    "example": "completed"
+                }
+            }
+        },
         "presenter.ControlRequest": {
             "type": "object",
             "properties": {
@@ -23817,50 +27682,185 @@ const docTemplate = `{
                 "value": {}
             }
         },
+        "presenter.DeviceBucketsResponse": {
+            "type": "object",
+            "properties": {
+                "bucket": {
+                    "type": "string",
+                    "example": "AIRCOM1"
+                },
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.DeviceDetailResponse"
+                    }
+                }
+            }
+        },
         "presenter.DeviceControlResponse": {
             "type": "object",
             "properties": {
                 "cachelift": {},
                 "code": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 200
                 },
-                "data": {},
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "25.5"
+                    ]
+                },
                 "error_detail": {
                     "type": "string"
                 },
                 "fetch_duration_ms": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 245
                 },
                 "from": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "mqtt",
+                        "cache",
+                        "fallback"
+                    ],
+                    "example": "mqtt"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Control sent, response received"
                 },
                 "message_sent": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ON"
                 },
                 "message_th": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ส่งคำสั่งและได้รับข้อมูลตอบกลับ"
                 },
-                "payload": {},
+                "payload": {
+                    "type": "string",
+                    "example": "25.5,60,1013"
+                },
                 "status": {
-                    "type": "integer"
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ],
+                    "example": 1
                 },
                 "status_msg": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "ON",
+                        "OFF"
+                    ],
+                    "example": "ON"
                 },
                 "statuscode": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 200
                 },
                 "timestamp": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-06-08T12:36:58+07:00"
                 },
                 "topic_control": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BAACTW02/CONTROL"
                 },
                 "topic_data": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BAACTW02/DATA"
+                }
+            }
+        },
+        "presenter.DeviceDetailResponse": {
+            "type": "object",
+            "properties": {
+                "alarm_title": {
+                    "type": "string",
+                    "example": "Normal"
+                },
+                "color_alert": {
+                    "type": "string",
+                    "example": "#EF4444"
+                },
+                "color_normal": {
+                    "type": "string",
+                    "example": "#22C55E"
+                },
+                "color_warning": {
+                    "type": "string",
+                    "example": "#F59E0B"
+                },
+                "device_id": {
+                    "type": "integer",
+                    "example": 42
+                },
+                "device_name": {
+                    "type": "string",
+                    "example": "Temperature Sensor 01"
+                },
+                "icon": {
+                    "type": "string",
+                    "example": "thermometer"
+                },
+                "recovery_alert": {
+                    "type": "string",
+                    "example": "38"
+                },
+                "recovery_warning": {
+                    "type": "string",
+                    "example": "28"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "status_alert": {
+                    "type": "string",
+                    "example": "40"
+                },
+                "status_warning": {
+                    "type": "string",
+                    "example": "30"
+                },
+                "type_name": {
+                    "type": "string",
+                    "example": "Temperature"
+                },
+                "unit": {
+                    "type": "string",
+                    "example": "°C"
+                },
+                "value_data": {
+                    "type": "string",
+                    "example": "25.50"
+                }
+            }
+        },
+        "presenter.DeviceListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.DeviceDetailResponse"
+                    }
+                },
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 128
                 }
             }
         },
@@ -23890,17 +27890,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "count": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1200
                 },
                 "dataPoints": {
                     "type": "object",
                     "additionalProperties": true
                 },
                 "firstRecord": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-01-01T00:00:00Z"
                 },
                 "lastRecord": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-10-04T12:00:00Z"
                 }
             }
         },
@@ -23908,36 +27911,44 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "batteryLevel": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 85
                 },
                 "deviceId": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "42"
                 },
                 "firmwareVersion": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1.2.3"
                 },
                 "isActive": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": true
                 },
                 "isOnline": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": true
                 },
                 "lastData": {
                     "type": "object",
                     "additionalProperties": true
                 },
                 "lastSeen": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-10-04T12:00:00Z"
                 },
                 "location": {
                     "type": "object",
                     "additionalProperties": true
                 },
                 "signalStrength": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": -70
                 },
                 "uptime": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "48h12m30s"
                 }
             }
         },
@@ -24138,6 +28149,15 @@ const docTemplate = `{
                 }
             }
         },
+        "presenter.ErrResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "topic is required"
+                }
+            }
+        },
         "presenter.ExecuteRequest": {
             "type": "object",
             "properties": {
@@ -24181,6 +28201,98 @@ const docTemplate = `{
                 },
                 "topic": {
                     "type": "string"
+                }
+            }
+        },
+        "presenter.FileCreate": {
+            "type": "object",
+            "required": [
+                "file_name"
+            ],
+            "properties": {
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "file_type_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.FileListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.FileResponse"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.FileResponse": {
+            "type": "object",
+            "properties": {
+                "file_date": {
+                    "type": "string"
+                },
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "file_type": {
+                    "type": "string"
+                },
+                "file_type_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.FileUpdate": {
+            "type": "object",
+            "properties": {
+                "file_name": {
+                    "type": "string"
+                },
+                "file_path": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -24250,8 +28362,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string",
-                    "example": "kongnakornna@gmail.com"
+                    "type": "string"
                 }
             }
         },
@@ -24433,17 +28544,26 @@ const docTemplate = `{
         "presenter.IotDataResponse": {
             "type": "object",
             "properties": {
-                "data": {},
+                "data": {
+                    "type": "object"
+                },
                 "device_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "42"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1001
                 },
-                "location": {},
-                "metadata": {},
+                "location": {
+                    "type": "object"
+                },
+                "metadata": {
+                    "type": "object"
+                },
                 "timestamp": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-10-04T12:00:00Z"
                 }
             }
         },
@@ -24794,11 +28914,379 @@ const docTemplate = `{
                 }
             }
         },
+        "presenter.LogCreate": {
+            "type": "object",
+            "required": [
+                "log_type_id",
+                "uid"
+            ],
+            "properties": {
+                "browser_agent": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "device_access": {
+                    "type": "string"
+                },
+                "ipaddress": {
+                    "type": "string"
+                },
+                "lang": {
+                    "type": "string"
+                },
+                "log_type_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.LogListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.LogResponse"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.LogResponse": {
+            "type": "object",
+            "properties": {
+                "browser_agent": {
+                    "type": "string"
+                },
+                "create": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "device_access": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ipaddress": {
+                    "type": "string"
+                },
+                "lang": {
+                    "type": "string"
+                },
+                "log_type_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.LogTypeCreate": {
+            "type": "object",
+            "required": [
+                "type_name"
+            ],
+            "properties": {
+                "status": {
+                    "type": "integer"
+                },
+                "type_detail": {
+                    "type": "string"
+                },
+                "type_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.LogTypeUpdate": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
+                },
+                "type_detail": {
+                    "type": "string"
+                },
+                "type_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.MenuCreate": {
+            "type": "object",
+            "required": [
+                "modules_id",
+                "name"
+            ],
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "menu_parent_id": {
+                    "type": "integer"
+                },
+                "modules_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.MenuListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.MenuResponse"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.MenuResponse": {
+            "type": "object",
+            "properties": {
+                "create_date": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "menu_id": {
+                    "type": "integer"
+                },
+                "menu_parent_id": {
+                    "type": "integer"
+                },
+                "modules_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "update_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.MenuUpdate": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "menu_parent_id": {
+                    "type": "integer"
+                },
+                "modules_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.MessagePageResponse": {
+            "type": "object",
+            "properties": {
+                "has_more": {
+                    "type": "boolean"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.WSMessageItem"
+                    }
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": "2024-01-15T10:29:00Z"
+                },
+                "prev_cursor": {
+                    "type": "string",
+                    "example": "2024-01-15T10:31:00Z"
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
         "presenter.MessageResponse": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "presenter.ModuleCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "module_parent_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.ModuleListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.ModuleResponse"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.ModuleResponse": {
+            "type": "object",
+            "properties": {
+                "create_date": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "module_id": {
+                    "type": "integer"
+                },
+                "module_parent_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "update_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.ModuleUpdate": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "module_parent_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -25131,16 +29619,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "limit": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 50
                 },
                 "page": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "pages": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 24
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1200
                 }
             }
         },
@@ -25347,14 +29839,89 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.PublicKey": {
+        "presenter.PermissionFlag": {
             "type": "object",
             "properties": {
-                "public_key_access_token": {
+                "config": {
+                    "type": "integer"
+                },
+                "delete": {
+                    "type": "integer"
+                },
+                "detail": {
                     "type": "string"
                 },
-                "public_key_refresh_token": {
+                "insert": {
+                    "type": "integer"
+                },
+                "log": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
+                },
+                "select": {
+                    "type": "integer"
+                },
+                "truncate": {
+                    "type": "integer"
+                },
+                "update": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.PresenceItem": {
+            "type": "object",
+            "properties": {
+                "instances": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"abc123\"",
+                        "\"def456\"]"
+                    ]
+                },
+                "last_seen": {
+                    "type": "string",
+                    "example": "2024-01-15T10:30:00Z"
+                },
+                "meta": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "online",
+                        "away",
+                        "busy",
+                        "offline"
+                    ],
+                    "example": "online"
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "user123"
+                }
+            }
+        },
+        "presenter.PresencePageResponse": {
+            "type": "object",
+            "properties": {
+                "has_more": {
+                    "type": "boolean"
+                },
+                "presences": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.PresenceItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -26137,14 +30704,125 @@ const docTemplate = `{
             ],
             "properties": {
                 "confirm_password": {
-                    "type": "string",
-                    "minLength": 8,
-                    "example": "password"
+                    "type": "string"
                 },
                 "new_password": {
                     "type": "string",
-                    "minLength": 8,
-                    "example": "password"
+                    "minLength": 8
+                }
+            }
+        },
+        "presenter.RetentionPolicyListResponse": {
+            "type": "object",
+            "properties": {
+                "policies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.RetentionPolicyResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.RetentionPolicyRequest": {
+            "type": "object",
+            "required": [
+                "max_age",
+                "topic"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "max_age": {
+                    "description": "Duration string (e.g., \"168h\", \"720h\")",
+                    "type": "string",
+                    "example": "168h"
+                },
+                "max_count": {
+                    "type": "integer",
+                    "example": 10000
+                },
+                "room": {
+                    "type": "string",
+                    "example": "BAACTW01"
+                },
+                "topic": {
+                    "type": "string",
+                    "example": "BAACTW01/*"
+                }
+            }
+        },
+        "presenter.RetentionPolicyResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-15T10:30:00Z"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "id": {
+                    "type": "string",
+                    "example": "pol-abc123"
+                },
+                "max_age": {
+                    "type": "string",
+                    "example": "168h"
+                },
+                "max_count": {
+                    "type": "integer",
+                    "example": 10000
+                },
+                "room": {
+                    "type": "string",
+                    "example": "BAACTW01"
+                },
+                "topic": {
+                    "type": "string",
+                    "example": "BAACTW01/*"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-15T10:30:00Z"
+                }
+            }
+        },
+        "presenter.RetentionStatsResponse": {
+            "type": "object",
+            "properties": {
+                "active_policies": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "bytes_freed": {
+                    "type": "integer",
+                    "example": 104857600
+                },
+                "last_cleanup_at": {
+                    "type": "string",
+                    "example": "2024-01-15T10:30:00Z"
+                },
+                "messages_deleted": {
+                    "type": "integer",
+                    "example": 5000
+                },
+                "next_cleanup_at": {
+                    "type": "string",
+                    "example": "2024-01-16T10:30:00Z"
+                },
+                "policies_count": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "total_messages": {
+                    "type": "integer",
+                    "example": 1000000
                 }
             }
         },
@@ -26631,6 +31309,51 @@ const docTemplate = `{
                 }
             }
         },
+        "presenter.SearchPageResponse": {
+            "type": "object",
+            "properties": {
+                "has_more": {
+                    "type": "boolean"
+                },
+                "next_cursor": {
+                    "type": "string",
+                    "example": "2024-01-15T10:29:00Z"
+                },
+                "prev_cursor": {
+                    "type": "string",
+                    "example": "2024-01-15T10:31:00Z"
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.SearchResultItem"
+                    }
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.SearchResultItem": {
+            "type": "object",
+            "properties": {
+                "highlights": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "message": {
+                    "$ref": "#/definitions/presenter.WSMessageItem"
+                },
+                "rank": {
+                    "type": "number"
+                }
+            }
+        },
         "presenter.SeedRequest": {
             "type": "object",
             "properties": {
@@ -26709,19 +31432,33 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "cache": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "no cache",
+                        "cache",
+                        "error"
+                    ],
+                    "example": "no cache"
                 },
                 "data": {
                     "type": "array",
                     "items": {
                         "type": "number"
-                    }
+                    },
+                    "example": [
+                        25.5,
+                        26.1,
+                        24.8
+                    ]
                 },
                 "date": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "2026-10-04T12:00:00+07:00"
+                    ]
                 }
             }
         },
@@ -26754,12 +31491,38 @@ const docTemplate = `{
             "properties": {
                 "password": {
                     "type": "string",
-                    "minLength": 8,
-                    "example": "password"
+                    "minLength": 8
                 },
                 "username": {
-                    "type": "string",
-                    "example": "kongnakornna"
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.SortItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "parent_id": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.SortUpdateRequest": {
+            "type": "object",
+            "required": [
+                "items"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.SortItem"
+                    }
                 }
             }
         },
@@ -26821,6 +31584,27 @@ const docTemplate = `{
                 "value": {}
             }
         },
+        "presenter.StatusResponse": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "connected",
+                        "disconnected"
+                    ],
+                    "example": "connected"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "example": "2026-10-04T12:00:00+07:00"
+                }
+            }
+        },
         "presenter.SubscribeRequest": {
             "type": "object",
             "required": [
@@ -26830,10 +31614,12 @@ const docTemplate = `{
                 "qos": {
                     "type": "integer",
                     "maximum": 2,
-                    "minimum": 0
+                    "minimum": 0,
+                    "example": 1
                 },
                 "topic": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BAACTW05/DATA"
                 }
             }
         },
@@ -26841,16 +31627,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "subscribed successfully"
                 },
                 "qos": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "subscribed_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2026-10-04T12:00:00Z"
                 },
                 "topic": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BAACTW05/DATA"
                 }
             }
         },
@@ -26858,13 +31648,18 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "count": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 2
                 },
                 "topics": {
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "BAACTW05/DATA",
+                        "BAACTW05/ALARM"
+                    ]
                 }
             }
         },
@@ -26890,6 +31685,49 @@ const docTemplate = `{
                 },
                 "partName": {
                     "type": "string"
+                }
+            }
+        },
+        "presenter.TopicDataResponse": {
+            "type": "object",
+            "properties": {
+                "cache": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "cache_enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "error_detail": {
+                    "type": "string",
+                    "example": "timeout waiting for message"
+                },
+                "from": {
+                    "type": "string",
+                    "enum": [
+                        "cache",
+                        "mqtt",
+                        "error",
+                        "fallback"
+                    ],
+                    "example": "mqtt"
+                },
+                "mqtt_connected": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "payload": {
+                    "type": "string",
+                    "example": "25.5,60,1013"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "example": "2026-10-04T12:00:00+07:00"
+                },
+                "topic": {
+                    "type": "string",
+                    "example": "AIRCOM1/DATA"
                 }
             }
         },
@@ -26958,7 +31796,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "topic": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "BAACTW05/DATA"
                 }
             }
         },
@@ -26966,13 +31805,57 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "unsubscribed successfully"
                 },
                 "success": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": true
                 },
                 "topic": {
+                    "type": "string",
+                    "example": "BAACTW05/DATA"
+                }
+            }
+        },
+        "presenter.UpdateDeviceConfigRequest": {
+            "type": "object",
+            "required": [
+                "deviceId"
+            ],
+            "properties": {
+                "config": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "deviceId": {
+                    "type": "string",
+                    "example": "42"
+                }
+            }
+        },
+        "presenter.UpdateDeviceStatusRequest": {
+            "type": "object",
+            "required": [
+                "deviceId"
+            ],
+            "properties": {
+                "battery": {
+                    "type": "number"
+                },
+                "deviceId": {
+                    "type": "string",
+                    "example": "42"
+                },
+                "firmware": {
                     "type": "string"
+                },
+                "location": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "signal": {
+                    "type": "number"
                 }
             }
         },
@@ -27024,60 +31907,221 @@ const docTemplate = `{
             "required": [
                 "confirm_password",
                 "email",
-                "password",
-                "role_id"
+                "password"
             ],
             "properties": {
                 "confirm_password": {
-                    "type": "string",
-                    "minLength": 8,
-                    "example": "password"
+                    "type": "string"
                 },
                 "email": {
-                    "type": "string",
-                    "example": "kongnakornna@gmail.com"
+                    "type": "string"
                 },
                 "firstname": {
-                    "type": "string",
-                    "example": "Kongnakorn"
+                    "type": "string"
                 },
                 "fullname": {
-                    "type": "string",
-                    "example": "Kongnakorn Jantakun"
+                    "type": "string"
                 },
                 "lastname": {
-                    "type": "string",
-                    "example": "Jantakun"
+                    "type": "string"
                 },
-                "line_id": {
-                    "type": "string",
-                    "example": "kongnakorn_line"
+                "lineid": {
+                    "type": "string"
                 },
                 "location_id": {
-                    "type": "string",
-                    "example": "loc_001"
+                    "type": "string"
                 },
                 "mobile_number": {
-                    "type": "string",
-                    "example": "0812345678"
+                    "type": "string"
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 8,
-                    "example": "password"
+                    "minLength": 8
                 },
                 "phone_number": {
-                    "type": "string",
-                    "example": "021234567"
+                    "type": "string"
                 },
                 "role_id": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "example": 2
+                    "type": "integer"
                 },
                 "username": {
-                    "type": "string",
-                    "example": "kongnakornna"
+                    "type": "string"
+                }
+            }
+        },
+        "presenter.UserListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.UserResponse"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "per_page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "type": "integer"
+                }
+            }
+        },
+        "presenter.UserProfileResponse": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "birthday": {},
+                "createddate": {
+                    "$ref": "#/definitions/helpers.LocalTime"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "id": {},
+                "is_superuser": {
+                    "type": "boolean"
+                },
+                "last_sign_in": {
+                    "description": "🆕 ใช้ *helpers.LocalTime (ไม่ใช่ *string)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/helpers.LocalTime"
+                        }
+                    ]
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "lineid": {
+                    "type": "string"
+                },
+                "location_id": {
+                    "type": "string"
+                },
+                "mobile_number": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/presenter.PermissionFlag"
+                    }
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "role_title": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updateddate": {
+                    "$ref": "#/definitions/helpers.LocalTime"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "verified": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "presenter.UserResponse": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "birthday": {},
+                "createddate": {
+                    "$ref": "#/definitions/helpers.LocalTime"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "fullname": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "id": {},
+                "is_superuser": {
+                    "type": "boolean"
+                },
+                "last_sign_in": {
+                    "description": "🆕 ใช้ *helpers.LocalTime (ไม่ใช่ *string)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/helpers.LocalTime"
+                        }
+                    ]
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "lineid": {
+                    "type": "string"
+                },
+                "location_id": {
+                    "type": "string"
+                },
+                "mobile_number": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updateddate": {
+                    "$ref": "#/definitions/helpers.LocalTime"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "verified": {
+                    "type": "boolean"
                 }
             }
         },
@@ -27089,13 +32133,11 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string",
-                    "example": "kongnakornna@gmail.com"
+                    "type": "string"
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 8,
-                    "example": "password"
+                    "minLength": 8
                 }
             }
         },
@@ -27111,7 +32153,7 @@ const docTemplate = `{
                 "lastname": {
                     "type": "string"
                 },
-                "line_id": {
+                "lineid": {
                     "type": "string"
                 },
                 "location_id": {
@@ -27149,16 +32191,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "confirm_password": {
-                    "type": "string",
-                    "minLength": 8
+                    "type": "string"
                 },
                 "new_password": {
                     "type": "string",
                     "minLength": 8
                 },
                 "old_password": {
-                    "type": "string",
-                    "minLength": 8
+                    "type": "string"
                 }
             }
         },
@@ -27205,7 +32245,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "payload": {},
+                "room": {
+                    "type": "string",
+                    "example": "BAACTW01"
+                },
                 "sender_id": {
+                    "type": "string"
+                },
+                "sender_role": {
                     "type": "string"
                 },
                 "sent_at": {
@@ -28277,7 +33324,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/api",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Go IoT API",
 	Description:      "API for ICMON project",

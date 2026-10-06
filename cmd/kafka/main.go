@@ -1,4 +1,14 @@
-package cmd
+// Package main — standalone Kafka service binary
+//
+// @title         Kafka Order Service
+// @version       1.0
+// @description   Asynchronous order processing with Kafka + WebSocket
+// @host          localhost:5051
+// @BasePath      /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+package main
 
 import (
 	"context"
@@ -23,50 +33,55 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-// @title         Kafka Order Service
-// @version       1.0
-// @description   Asynchronous order processing with Kafka + WebSocket
-// @host          localhost:5051
-// @BasePath      /
-// @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
-
 func main() {
 	cfg := config.GetCfg()
 	log := logger.NewLogger("kafka")
 	log.InitLogger()
 	log.Infof("🚀 Starting Kafka Service...")
 
+	// ---------- DB ----------
 	db, err := postgres.NewPsqlDB(cfg)
 	if err != nil {
 		log.Fatalf("❌ DB connection failed: %v", err)
 	}
 	log.Info("✅ PostgreSQL connected")
 
-	producer, err := kafka.NewProducer(cfg.Kafka.Brokers, cfg.Kafka.Topic, cfg.Kafka.Timeout)
+	// ---------- Kafka producer ----------
+	producer, err := kafka.NewProducer(cfg.Kafka.Brokers, cfg.Kafka.Topic)
 	if err != nil {
 		log.Fatalf("❌ Producer failed: %v", err)
 	}
-	defer producer.Close()
+	defer func() { _ = producer.Close() }()
 	log.Infof("✅ Kafka producer ready (brokers: %v)", cfg.Kafka.Brokers)
 
-	msgQueue := queue.NewQueue() // ใช้ฟังก์ชันที่เพิ่มแล้ว
-	hub := websocket.NewHub(msgQueue, log)
+	// ---------- WebSocket hub ----------
+	msgQueue := queue.NewQueue()
+	hub := websocket.NewHub(websocket.HubConfig{
+		Queue: msgQueue,
+		Log:   log,
+	})
 	go hub.Run()
 	log.Info("✅ WebSocket hub started")
 
+	// ---------- Usecase ----------
 	orderRepo := repository.NewOrderRepository(db)
 	orderUsecase := usecase.NewOrderUsecase(orderRepo, producer, cfg.Kafka.Topic, hub)
 
+	// ---------- Kafka consumer ----------
 	consumerHandler := func(msg *kafka.OrderMessage) error {
 		return orderUsecase.ProcessOrderMessage(msg)
 	}
-	consumer, err := kafka.NewConsumer(cfg.Kafka.Brokers, cfg.Kafka.GroupID, cfg.Kafka.Topic, consumerHandler, cfg.Kafka.Timeout)
+	consumer, err := kafka.NewConsumer(
+		cfg.Kafka.Brokers,
+		cfg.Kafka.GroupID,
+		cfg.Kafka.Topic,
+		consumerHandler,
+		cfg.Kafka.Timeout,
+	)
 	if err != nil {
 		log.Fatalf("❌ Consumer failed: %v", err)
 	}
-	defer consumer.Close()
+	defer func() { _ = consumer.Close() }()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	if err := consumer.Start(ctx); err != nil {
@@ -74,6 +89,7 @@ func main() {
 	}
 	log.Info("✅ Kafka consumer started")
 
+	// ---------- HTTP ----------
 	orderHandler := kafkaHttp.NewOrderHandler(orderUsecase)
 	wsHandler := ws.NewWsHandler(hub, orderUsecase, log)
 
@@ -82,7 +98,7 @@ func main() {
 	router.HandleFunc("/ws", wsHandler.ServeWS).Methods("GET")
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		_, _ = w.Write([]byte("OK"))
 	}).Methods("GET")
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),

@@ -8,7 +8,7 @@ import (
 )
 
 func MapCustomerRoute(router *chi.Mux, h customer.Handlers, mw *middleware.MiddlewareManager) {
-	router.Route("/customer", func(r chi.Router) {
+	router.Route("/api/customer", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mw.Verifier(true))
 			r.Use(mw.Authenticator())
@@ -24,7 +24,7 @@ func MapCustomerRoute(router *chi.Mux, h customer.Handlers, mw *middleware.Middl
 		})
 	})
 
-	router.Route("/car", func(r chi.Router) {
+	router.Route("/api/car", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mw.Verifier(true))
 			r.Use(mw.Authenticator())

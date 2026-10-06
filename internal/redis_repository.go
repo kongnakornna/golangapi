@@ -13,5 +13,8 @@ type RedisRepository[M any] interface {
 	Srem(ctx context.Context, key string, value string) error
 	SIsMember(ctx context.Context, key string, value string) (bool, error)
 	Expire(ctx context.Context, key string, seconds int) error
+	// Simple key-value operations for revocation checking
+	Set(ctx context.Context, key string, value string, seconds int) error
+	GetString(ctx context.Context, key string) (string, error)
 	// SMembers(ctx context.Context, key string) ([]string, error)
 }

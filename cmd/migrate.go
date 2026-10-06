@@ -45,13 +45,11 @@ var migrateCmd = &cobra.Command{
 			appLogger.Warnf("Failed to create extensions: %v", err)
 		}
 
-		// Run migration with skip list for problematic models
 		if err := Migrate(psqlDB, appLogger); err != nil {
 			appLogger.Fatal("Migrate ข้อมูลไม่สำเร็จ: ", err)
 		}
 		appLogger.Info("Migrate ข้อมูลสำเร็จ")
 
-		// Ensure vector index/table for the configured vector database
 		if cfg.VectorDB.Provider == "pgvector" {
 			vdb, err := vectordb.New(&cfg.VectorDB, nil, psqlDB, appLogger)
 			if err == nil {
@@ -76,7 +74,6 @@ func createExtensions(db *gorm.DB, cfg *config.Config) error {
 		"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"",
 		"CREATE EXTENSION IF NOT EXISTS \"pgcrypto\"",
 	}
-	// The pgvector extension is only needed when the vector DB provider is pgvector.
 	if strings.ToLower(cfg.VectorDB.Provider) == "pgvector" {
 		extensions = append(extensions, "CREATE EXTENSION IF NOT EXISTS \"vector\"")
 	}
@@ -89,177 +86,99 @@ func createExtensions(db *gorm.DB, cfg *config.Config) error {
 }
 
 // Migrate runs AutoMigrate with skip list for models that have known issues.
-// Add any model that fails to this list to skip it.
 func Migrate(db *gorm.DB, log logger.Logger) error {
-	// ⚠️  Add any model that fails to this map to skip it.
 	skipModels := map[string]bool{
-		// Skip models with Device relation (because Device has Mqtt/Location issues)
+		// ---- เดิมทั้งหมด คงไว้เหมือนเดิม ----
 		"icmongolang/internal/models.Device":                   true,
 		"icmongolang/internal/models.DeviceNotificationConfig": true,
 		"icmongolang/internal/models.DeviceSchedule":           true,
 		"icmongolang/internal/models.DeviceStatusHistory":      true,
-		"icmongolang/internal/models.SdActivityLog":            true, // has ActivityType relation
-		"icmongolang/internal/models.DeviceGroupMember":        true, // may also have Device relation
+		"icmongolang/internal/models.SdActivityLog":            true,
+		"icmongolang/internal/models.DeviceGroupMember":        true,
 		"icmongolang/internal/models.NotificationCondition":    true,
 		"icmongolang/internal/models.NotificationLog":          true,
 		"icmongolang/internal/models.ReportData":               true,
 		"icmongolang/internal/models.SensorData":               true,
-		"icmongolang/internal/models.DeviceGroup":              true, // might have nested issues
+		"icmongolang/internal/models.DeviceGroup":              true,
 		"icmongolang/internal/models.DeviceCategory":           true,
-		"icmongolang/internal/models.DeviceStatus":             true, // if it has Device relation
+		"icmongolang/internal/models.DeviceStatus":             true,
 		"icmongolang/internal/models.DeviceConfig":             true,
-		"icmongolang/internal/models.SdIotDevice":              true, // duplicate of iot.models.Device on same table -> would flip column types (text vs varchar) every run
+		"icmongolang/internal/models.SdIotDevice":              true,
 		"icmongolang/internal/models.CommandLog":               true,
 		"icmongolang/internal/models.DeviceAlert":              true,
 		"icmongolang/internal/models.IotData":                  true,
 		"icmongolang/internal/models.ActivityLog":              true,
-		// Add any other models that cause "invalid field" errors here
 	}
 
 	allModels := []interface{}{
-		&models.ActivityLog{},
-		&models.CommandLog{},
-		&models.DeviceAlert{},
-		&models.DeviceConfig{},
-		&models.DeviceStatus{},
-		&models.IotData{},
-		&models.NotiNotificationLog{},
-		&models.NotiNotificationRule{},
-		&models.NotiNotificationType{},
-		&models.NotiNotification{},
-		&models.NotificationDevice{},
-		&models.NotificationGroup{},
-		&models.NotificationGroupsDevicesNotificationDevice{},
-		&models.NotificationLog{},
-		&models.NotificationType{},
-		&models.SdActivityLog{},
-		&models.SdActivityTypeLog{},
-		&models.SdAdminAccessMenu{},
-		&models.SdAirControl{},
-		&models.SdAirControlDeviceMap{},
-		&models.SdAirControlLog{},
-		&models.SdAirMod{},
-		&models.SdAirModDeviceMap{},
-		&models.SdAirPeriod{},
-		&models.SdAirPeriodDeviceMap{},
-		&models.SdAirSettingWarning{},
-		&models.SdAirSettingWarningDeviceMap{},
-		&models.SdAirWarning{},
-		&models.SdAirWarningDeviceMap{},
-		&models.SdAlarmProcessLog{},
-		&models.SdAlarmProcessLogEmail{},
-		&models.SdAlarmProcessLogLine{},
-		&models.SdAlarmProcessLogMqtt{},
-		&models.SdAlarmProcessLogSms{},
-		&models.SdAlarmProcessLogTelegram{},
-		&models.SdAlarmProcessLogTemp{},
-		&models.SdApiKey{},
-		&models.SdAuditLog{},
-		&models.AuditLogEntry{},
-		&models.BlockchainAnchor{},
-		&models.FlowDefinition{},
-		&models.SdChannelTemplate{},
-		&models.SdDashboardConfig{},
-		&models.SdDeviceCategory{},
-		&models.SdDeviceGroup{},
-		&models.SdDeviceLog{},
-		&models.SdDeviceMember{},
-		&models.SdDeviceNotificationConfig{},
-		&models.SdDeviceSchedule{},
-		&models.SdDeviceStatusHistory{},
-		&models.SdGroupNotificationConfig{},
-		&models.SdIotAlarmDevice{},
-		&models.SdIotAlarmDeviceEvent{},
-		&models.SdIotApi{},
-		&models.SdIotDevice{},
-		&models.SdIotDeviceAction{},
-		&models.SdIotDeviceActionLog{},
-		&models.SdIotDeviceActionUser{},
-		&models.SdIotDeviceAlarmAction{},
-		&models.SdIotDeviceType{},
-		&models.SdIotEmail{},
-		&models.SdIotGroup{},
-		&models.SdIotHost{},
-		&models.SdIotInfluxdb{},
-		&models.SdIotLine{},
-		&models.SdIotLocation{},
-		&models.SdIotMqtt{},
-		&models.SdIotNodered{},
-		&models.SdIotSchedule{},
-		&models.SdIotScheduleDevice{},
-		&models.SdIotSensor{},
-		&models.SdIotSetting{},
-		&models.SdIotSms{},
-		&models.SdIotTelegram{},
-		&models.SdIotToken{},
-		&models.SdIotType{},
-		&models.SdModuleLog{},
-		&models.SdMqttHost{},
-		&models.SdMqttLog{},
-		&models.SdNotificationChannel{},
-		&models.SdNotificationCondition{},
-		&models.SdNotificationLog{},
-		&models.SdNotificationType{},
-		&models.SdReportData{},
-		&models.SdScheduleProcessLog{},
-		&models.SdSensorData{},
-		&models.SdSystemSetting{},
-		&models.SdUser{},
-		&models.SdUserAccessMenu{},
-		&models.SdUserFile{},
-		&models.SdUserLog{},
-		&models.SdUserLogType{},
-		&models.SdUserRole{},
-		&models.SdUserRolesAccess{},
-		&models.SdUserRolePermission{},
-		&models.SdUserRolesPermision{},
-		&models.Tnb{},
-		&models.Item{},
-		&models.WsMessage{},
-		&models.WsSession{},
-		&models.User{},
-		&models.PaymentMethod{},
-		&models.Payment{},
-		&models.Receipt{},
-		&models.PaymentHistory{},
+		// ---- เดิมทั้งหมด ----
+		&models.ActivityLog{}, &models.CommandLog{}, &models.DeviceAlert{}, &models.DeviceConfig{},
+		&models.DeviceStatus{}, &models.IotData{}, &models.NotiNotificationLog{},
+		&models.NotiNotificationRule{}, &models.NotiNotificationType{}, &models.NotiNotification{},
+		&models.NotificationDevice{}, &models.NotificationGroup{},
+		&models.NotificationGroupsDevicesNotificationDevice{}, &models.NotificationLog{},
+		&models.NotificationType{}, &models.SdActivityLog{}, &models.SdActivityTypeLog{},
+		&models.SdAdminAccessMenu{}, &models.SdAirControl{}, &models.SdAirControlDeviceMap{},
+		&models.SdAirControlLog{}, &models.SdAirMod{}, &models.SdAirModDeviceMap{},
+		&models.SdAirPeriod{}, &models.SdAirPeriodDeviceMap{}, &models.SdAirSettingWarning{},
+		&models.SdAirSettingWarningDeviceMap{}, &models.SdAirWarning{}, &models.SdAirWarningDeviceMap{},
+		&models.SdAlarmProcessLog{}, &models.SdAlarmProcessLogEmail{}, &models.SdAlarmProcessLogLine{},
+		&models.SdAlarmProcessLogMqtt{}, &models.SdAlarmProcessLogSms{},
+		&models.SdAlarmProcessLogTelegram{}, &models.SdAlarmProcessLogTemp{},
+		&models.SdApiKey{}, &models.SdAuditLog{}, &models.AuditLogEntry{}, &models.BlockchainAnchor{},
+		&models.FlowDefinition{}, &models.SdChannelTemplate{}, &models.SdDashboardConfig{},
+		&models.SdDeviceCategory{}, &models.SdDeviceGroup{}, &models.SdDeviceLog{},
+		&models.SdDeviceMember{}, &models.SdDeviceNotificationConfig{}, &models.SdDeviceSchedule{},
+		&models.SdDeviceStatusHistory{}, &models.SdGroupNotificationConfig{},
+		&models.SdIotAlarmDevice{}, &models.SdIotAlarmDeviceEvent{}, &models.SdIotApi{},
+		&models.SdIotDevice{}, &models.SdIotDeviceAction{}, &models.SdIotDeviceActionLog{},
+		&models.SdIotDeviceActionUser{}, &models.SdIotDeviceAlarmAction{},
+		&models.SdIotDeviceType{}, &models.SdIotEmail{}, &models.SdIotGroup{}, &models.SdIotHost{},
+		&models.SdIotInfluxdb{}, &models.SdIotLine{}, &models.SdIotLocation{}, &models.SdIotMqtt{},
+		&models.SdIotNodered{}, &models.SdIotSchedule{}, &models.SdIotScheduleDevice{},
+		&models.SdIotSensor{}, &models.SdIotSetting{}, &models.SdIotSms{}, &models.SdIotTelegram{},
+		&models.SdIotToken{}, &models.SdIotType{}, &models.SdModuleLog{}, &models.SdMqttHost{},
+		&models.SdMqttLog{}, &models.SdNotificationChannel{}, &models.SdNotificationCondition{},
+		&models.SdNotificationLog{}, &models.SdNotificationType{}, &models.SdReportData{},
+		&models.SdScheduleProcessLog{}, &models.SdSensorData{}, &models.SdSystemSetting{},
+		&models.SdUser{}, &models.SdUserAccessMenu{}, &models.SdUserFile{}, &models.SdUserLog{},
+		&models.SdUserLogType{}, &models.SdUserRole{}, &models.SdUserRolesAccess{},
+		&models.SdUserRolePermission{}, &models.SdUserRolesPermision{}, &models.Tnb{},
+		&models.Item{}, &models.WsMessage{}, &models.WsSession{}, &models.User{},
+		&models.PaymentMethod{}, &models.Payment{}, &models.Receipt{}, &models.PaymentHistory{},
 		&models.OutstandingBalance{},
 		&kafkamodels.Order{},
-		&pomodels.PurchaseOrderHeader{},
-		&pomodels.PurchaseOrderDetail{},
-		&pomodels.PurchaseOrderStatusHistory{},
-		&iotmodels.IotData{},
-		&iotmodels.ActivityLog{},
-		&iotmodels.AirControlDeviceMap{},
-		&iotmodels.AirControl{},
-		&iotmodels.AirControlLog{},
-		&iotmodels.AirMod{},
-		&iotmodels.AirModDeviceMap{},
-		&iotmodels.AirPeriod{},
-		&iotmodels.AirPeriodDeviceMap{},
-		&iotmodels.AirSettingWarning{},
-		&iotmodels.AirSettingWarningDeviceMap{},
-		&iotmodels.AirWarning{},
-		&iotmodels.AirWarningDeviceMap{},
-		&iotmodels.Device{},
-		&iotmodels.DeviceCategory{},
-		&iotmodels.DeviceGroup{},
-		&iotmodels.DeviceNotificationConfig{},
-		&iotmodels.DeviceSchedule{},
-		&iotmodels.DeviceStatusHistory{},
-		&iotmodels.GroupNotificationConfig{},
-		&iotmodels.DeviceStatus{},
-		&iotmodels.DeviceConfig{},
-		&iotmodels.CommandLog{},
+		&pomodels.PurchaseOrderHeader{}, &pomodels.PurchaseOrderDetail{}, &pomodels.PurchaseOrderStatusHistory{},
+		&iotmodels.IotData{}, &iotmodels.ActivityLog{}, &iotmodels.AirControlDeviceMap{},
+		&iotmodels.AirControl{}, &iotmodels.AirControlLog{}, &iotmodels.AirMod{},
+		&iotmodels.AirModDeviceMap{}, &iotmodels.AirPeriod{}, &iotmodels.AirPeriodDeviceMap{},
+		&iotmodels.AirSettingWarning{}, &iotmodels.AirSettingWarningDeviceMap{},
+		&iotmodels.AirWarning{}, &iotmodels.AirWarningDeviceMap{}, &iotmodels.Device{},
+		&iotmodels.DeviceCategory{}, &iotmodels.DeviceGroup{}, &iotmodels.DeviceNotificationConfig{},
+		&iotmodels.DeviceSchedule{}, &iotmodels.DeviceStatusHistory{}, &iotmodels.GroupNotificationConfig{},
+		&iotmodels.DeviceStatus{}, &iotmodels.DeviceConfig{}, &iotmodels.CommandLog{},
 		&iotmodels.DeviceAlert{},
-		// fullschedule module (fs_* tables)
-		&fullschedulemodel.Schedule{},
-		&fullschedulemodel.ScheduleDevice{},
-		&fullschedulemodel.ScheduleHistory{},
-		&fullschedulemodel.ScheduleSetting{},
-		&fullschedulemodel.Group{},
-		&fullschedulemodel.Zone{},
-		&fullschedulemodel.Area{},
+		&fullschedulemodel.Schedule{}, &fullschedulemodel.ScheduleDevice{},
+		&fullschedulemodel.ScheduleHistory{}, &fullschedulemodel.ScheduleSetting{},
+		&fullschedulemodel.Group{}, &fullschedulemodel.Zone{}, &fullschedulemodel.Area{},
 		&fullschedulemodel.AreaDevice{},
+
+		// ============================================================
+		// PDPA module — ต้องเรียงลำดับ FK:
+		//   1) Policy, Purpose        (ไม่มี FK ออก)
+		//   2) Consent                (FK → Policy, Purpose)
+		//   3) UserRequest            (ไม่มี FK ออก)
+		//   4) UserAccountStatus      (ไม่มี FK ออก)
+		//   5) AuditTrail             (ไม่มี FK ออก)
+		//   6) RequestResponse        (FK → UserRequest)
+		// ============================================================
+		&models.PdpaPolicy{},
+		&models.PdpaPurpose{},
+		&models.PdpaConsent{},
+		&models.PdpaUserRequest{},
+		&models.PdpaUserAccountStatus{},
+		&models.PdpaAuditTrail{},
+		&models.PdpaRequestResponse{},
 	}
 
 	// Filter out skipped models
@@ -279,10 +198,6 @@ func Migrate(db *gorm.DB, log logger.Logger) error {
 
 	log.Infof("Migrating %d models (skipped %d)", len(toMigrate), len(allModels)-len(toMigrate))
 
-	// Use a schema-migration logger: DDL like ALTER COLUMN TYPE on a large table
-	// routinely exceeds the 200 ms "slow query" threshold and would otherwise spam
-	// "SLOW SQL" warnings on every run. 5 s keeps genuinely stuck statements visible
-	// while silencing expected DDL. Errors are still returned by AutoMigrate below.
 	migrateDB := db.Session(&gorm.Session{
 		Logger: gormlogger.New(
 			stdlog.New(os.Stdout, "\r\n", stdlog.LstdFlags),
@@ -295,11 +210,6 @@ func Migrate(db *gorm.DB, log logger.Logger) error {
 		),
 	})
 
-	// Run AutoMigrate on the filtered list.
-	// Migrate each model individually so a non-fatal constraint/index error on one
-	// table (e.g. GORM trying to DROP CONSTRAINT "uni_..." / index that was already
-	// replaced under a different name by a conflicting/duplicate model, or an index
-	// created manually in migrations/*.sql) does not abort the whole migration.
 	var firstErr error
 	migratedCount := 0
 	for _, m := range toMigrate {
@@ -330,13 +240,6 @@ func Migrate(db *gorm.DB, log logger.Logger) error {
 	return nil
 }
 
-// isUndefinedObjectError reports whether the given error is a PostgreSQL
-// "undefined_object" error (SQLSTATE 42704). GORM/Postgres raise this when it tries
-// to drop a constraint or index whose name no longer exists — typically because a
-// duplicate model or a manually-created index in migrations/*.sql already replaced it
-// under a different name, or because the constraint was created by an earlier run.
-// These are non-fatal: the migration only aims to ensure the schema exists, and a
-// missing drop target already means the target does not exist.
 func isUndefinedObjectError(err error) bool {
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == "42704" {

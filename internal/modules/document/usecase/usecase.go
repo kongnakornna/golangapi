@@ -8,7 +8,6 @@ import (
 	"icmongolang/internal/modules/document"
 	"icmongolang/internal/usecase"
 	"icmongolang/pkg/logger"
-
 )
 
 type documentUseCase struct {

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	iotmodels "icmongolang/internal/modules/iot/models"
 	"icmongolang/internal/modules/control/presenter"
 	"icmongolang/internal/modules/control/repository"
+	iotmodels "icmongolang/internal/modules/iot/models"
 	"icmongolang/pkg/logger"
 )
 
@@ -34,10 +34,10 @@ type ControlUseCase interface {
 }
 
 type controlUseCase struct {
-	repo       repository.Repository
-	publisher  Publisher
-	logger     logger.Logger
-	enabled    bool
+	repo      repository.Repository
+	publisher Publisher
+	logger    logger.Logger
+	enabled   bool
 }
 
 // NewControlUseCase builds the control use case. repo/publisher may be nil

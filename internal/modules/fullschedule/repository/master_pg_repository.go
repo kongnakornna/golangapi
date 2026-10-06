@@ -391,5 +391,3 @@ func (r *MasterPgRepo) resolveSN(ctx context.Context, deviceID int) *string {
 
 // compile-time assertion
 var _ fullschedule.MasterPgRepository = (*MasterPgRepo)(nil)
-
-

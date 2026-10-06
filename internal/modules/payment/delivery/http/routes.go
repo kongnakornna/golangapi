@@ -33,7 +33,7 @@ func MapPaymentRoute(router *chi.Mux, h payment.Handlers, mw *middleware.Middlew
 }
 
 func MapReceiptRoute(router *chi.Mux, h payment.Handlers, mw *middleware.MiddlewareManager) {
-	router.Route("/receipts", func(r chi.Router) {
+	router.Route("/api/receipts", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mw.Verifier(true))
 			r.Use(mw.Authenticator())

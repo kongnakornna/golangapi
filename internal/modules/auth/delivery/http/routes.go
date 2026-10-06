@@ -1,35 +1,21 @@
 package http
 
 import (
-	"icmongolang/internal/modules/auth"
-	"icmongolang/internal/middleware"
 	"time"
+
+	"icmongolang/internal/middleware"
+	"icmongolang/internal/modules/auth"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func (h *authHandler) Routes(r chi.Router) {
-	// สร้าง rate limit middleware
-	rateLimitConfig := middleware.RateLimitConfig{
-		RequestsPerSecond: 50,               // 50 requests per second | 50 คำขอต่อวินาที
-		Burst:             100,              // Burst up to 100 | อนุญาตให้ส่งสูงสุด 100 คำขอในครั้งเดียว
-		CleanupInterval:   15 * time.Minute, // Clean up every 15 minutes | ทำความสะอาดทุก 15 นาที
-	}
-	rateLimiter := middleware.NewRateLimitMiddleware(rateLimitConfig)
-
-	// ใช้ rate limit เฉพาะ route login
-	r.Group(func(r chi.Router) {
-		r.Use(rateLimiter.Handler)  // ใช้ rate limit middleware
-		r.Post("/login", h.Login()) // route login
-		r.Post("/signin", h.SignIn())
-	})
-
-	// // routes อื่นๆ ไม่มี rate limit
-	// r.Post("/signup", h.SignUp())
-	// r.Post("/logout", h.Logout())
-	// r.Post("/refresh", h.Refresh())
-}
-
+// MapAuthRoute registers all /auth routes on the given router.
+//
+// Routes are grouped into three tiers:
+//
+//	Tier 1 — Public (rate limited, no auth)
+//	Tier 2 — Refresh-token only (uses refresh cookie, no access-token verify)
+//	Tier 3 — Protected (access token required)
 func MapAuthRoute(router *chi.Mux, h auth.Handlers, mw *middleware.MiddlewareManager) {
 	rateLimitConfig := middleware.RateLimitConfig{
 		RequestsPerSecond: 10,
@@ -38,11 +24,11 @@ func MapAuthRoute(router *chi.Mux, h auth.Handlers, mw *middleware.MiddlewareMan
 	}
 	rateLimiter := middleware.NewRateLimitMiddleware(rateLimitConfig)
 
-	// Auth routes
 	router.Route("/auth", func(r chi.Router) {
-		// Public routes
+		// Tier 1: Public
 		r.Group(func(r chi.Router) {
 			r.Use(rateLimiter.Handler)
+
 			r.Post("/login", h.Login())
 			r.Post("/signin", h.SignIn())
 			r.Get("/publickey", h.GetPublicKey())
@@ -50,13 +36,22 @@ func MapAuthRoute(router *chi.Mux, h auth.Handlers, mw *middleware.MiddlewareMan
 			r.Post("/forgotpassword", h.ForgotPassword())
 			r.Patch("/resetpassword", h.ResetPassword())
 		})
+
+		// Tier 2: Refresh-token routes — no Verifier / Authenticator
+		r.Group(func(r chi.Router) {
+			r.Use(rateLimiter.Handler)
+
+			r.Get("/refresh", h.RefreshToken())
+			r.Post("/logout", h.Logout())
+			r.Get("/logout", h.LogoutAllToken())
+			r.Post("/logoutall", h.LogoutAllToken())
+			r.Get("/logoutall", h.LogoutAllToken())
+		})
+
+		// Tier 3: Protected routes — add authenticated endpoints here
 		r.Group(func(r chi.Router) {
 			r.Use(mw.Verifier(false))
-			r.Use(mw.Authenticator())
-			r.Get("/refresh", h.RefreshToken())
-			r.Get("/logout", h.Logout())
-			r.Get("/logoutall", h.LogoutAllToken())
-			r.Post("/logoutall", h.LogoutAllToken())
+			r.Use(mw.Authenticator()) 
 		})
 	})
 }

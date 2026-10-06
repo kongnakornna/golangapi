@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 	"github.com/subosito/gotenv"
@@ -35,12 +36,15 @@ type Config struct {
 	LLM            LLMConfig           `mapstructure:"llm"`
 	VectorDB       VectorDBConfig      `mapstructure:"vectorDb"`
 	Upload         UploadConfig        `mapstructure:"upload"`
+	WS             WSConfig            `mapstructure:"ws"`
+	Retention      RetentionConfig     `mapstructure:"retention"`
 }
 
 type ServerConfig struct {
 	AppVersion     string
 	Port           string
-	Mode           string
+	Env            string `mapstructure:"env"`             // "development" | "staging" | "production"
+	Mode           string `mapstructure:"mode"`  
 	ProcessTimeout int
 	ReadTimeout    int
 	WriteTimeout   int
@@ -55,14 +59,14 @@ type Logger struct {
 }
 
 type PostgresConfig struct {
-	Host              string
-	Port              string
-	User              string
-	Password          string
-	Dbname            string
-	ConnectionTimeout int
-	MaxOpenConns      int
-	MaxIdleConns      int
+	Host               string
+	Port               string
+	User               string
+	Password           string
+	Dbname             string
+	ConnectionTimeout  int
+	MaxOpenConns       int
+	MaxIdleConns       int
 	ConnMaxLifetimeMin int
 }
 
@@ -91,6 +95,14 @@ type JwtConfig struct {
 	RefreshTokenExpireDuration int64
 	RefreshTokenPrivateKey     string
 	RefreshTokenPublicKey      string
+	// JWE (Ed25519 JWS + ECDH-ES/A256GCM JWE) for nested JWT in HTTP-only cookies
+	JweSigningPrivateKey string `mapstructure:"jwe_signing_private_key"` // base64 Ed25519 private key (64 bytes)
+	JweSigningPublicKey  string `mapstructure:"jwe_signing_public_key"`  // base64 Ed25519 public key (32 bytes)
+	JweKexPrivateKey     string `mapstructure:"jwe_kex_private_key"`     // base64 X25519 private key (32 bytes)
+	JweKexPublicKey      string `mapstructure:"jwe_kex_public_key"`      // base64 X25519 public key (32 bytes)
+	JweAccessTokenTTL    int64  `mapstructure:"jwe_access_token_ttl"`    // minutes
+	JweRefreshTokenTTL   int64  `mapstructure:"jwe_refresh_token_ttl"`   // minutes
+	ApiKeyPepper         string `mapstructure:"api_key_pepper"`          // HMAC pepper for API keys
 }
 
 type FirstSuperUserConfig struct {
@@ -187,6 +199,15 @@ type VectorDBConfig struct {
 type UploadConfig struct {
 	Dir            string `mapstructure:"dir"`              // root dir ของไฟล์อัปโหลด
 	MaxAvatarBytes int64  `mapstructure:"max_avatar_bytes"` // default 2MB
+}
+
+type WSConfig struct {
+	AllowedOrigins []string `mapstructure:"allowed_origins"` // allowed origins for WebSocket
+}
+
+type RetentionConfig struct {
+	Enabled         bool          `mapstructure:"enabled"`          // enable automatic cleanup
+	CleanupInterval time.Duration `mapstructure:"cleanup_interval"` // how often to run cleanup (e.g., "1h", "30m")
 }
 
 func ToSnakeCase(str string) string {

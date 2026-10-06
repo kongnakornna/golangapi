@@ -4,13 +4,13 @@ import "testing"
 
 func TestFluxEscape(t *testing.T) {
 	cases := map[string]string{
-		"value":                  "value",
-		`value"`:                 `value\"`,
-		`a"b\c`:                  `a\"b\\c`,
-		"line\nbreak":            `line\nbreak`,
-		"tab\there":              `tab\there`,
-		`payload" ; |> drop()`:   `payload\" ; |> drop()`,
-		`100% >= 90%`:            `100% >= 90%`,
+		"value":                "value",
+		`value"`:               `value\"`,
+		`a"b\c`:                `a\"b\\c`,
+		"line\nbreak":          `line\nbreak`,
+		"tab\there":            `tab\there`,
+		`payload" ; |> drop()`: `payload\" ; |> drop()`,
+		`100% >= 90%`:          `100% >= 90%`,
 	}
 	for in, want := range cases {
 		if got := fluxEscape(in); got != want {

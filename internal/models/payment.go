@@ -97,14 +97,14 @@ func (Receipt) TableName() string { return "t_receipt" }
 // PaymentHistory tracks payment status changes over time.
 // ประวัติการเปลี่ยนสถานะการชำระเงิน
 type PaymentHistory struct {
-	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primary_key"`
-	PaymentID    uuid.UUID  `gorm:"column:payment_id;type:uuid;not null"`
-	FromStatus   *string    `gorm:"column:from_status;type:varchar(20)"`
-	ToStatus     string     `gorm:"column:to_status;type:varchar(20);not null"`
-	ChangedBy    uuid.UUID  `gorm:"column:changed_by;type:uuid;not null"`
-	ChangedAt    time.Time  `gorm:"column:changed_at;not null;default:now()"`
-	Reason       *string    `gorm:"column:reason;type:text"`
-	WhitelabelID uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
+	ID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primary_key"`
+	PaymentID    uuid.UUID `gorm:"column:payment_id;type:uuid;not null"`
+	FromStatus   *string   `gorm:"column:from_status;type:varchar(20)"`
+	ToStatus     string    `gorm:"column:to_status;type:varchar(20);not null"`
+	ChangedBy    uuid.UUID `gorm:"column:changed_by;type:uuid;not null"`
+	ChangedAt    time.Time `gorm:"column:changed_at;not null;default:now()"`
+	Reason       *string   `gorm:"column:reason;type:text"`
+	WhitelabelID uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
 }
 
 func (PaymentHistory) TableName() string { return "t_payment_history" }

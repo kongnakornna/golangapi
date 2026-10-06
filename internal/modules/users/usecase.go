@@ -12,6 +12,7 @@ import (
 
 type UserUseCaseI interface {
 	internal.UseCaseI[models.SdUser]
+	GetByEmail(ctx context.Context, email string) (*models.SdUser, error) 
 	CreateUser(ctx context.Context, exp *models.SdUser, confirmPassword string) (*models.SdUser, error)
 	SignIn(ctx context.Context, email string, password string) (string, string, error)
 	SignInByUsername(ctx context.Context, username, password string) (string, string, error)

@@ -99,6 +99,23 @@ func (r *RedisRepo[M]) Expire(ctx context.Context, key string, seconds int) erro
 	return r.RedisClient.Expire(ctx, key, time.Second*time.Duration(seconds)).Err()
 }
 
+// Set stores a simple string value with TTL
+func (r *RedisRepo[M]) Set(ctx context.Context, key string, value string, seconds int) error {
+	return r.RedisClient.Set(ctx, key, value, time.Second*time.Duration(seconds)).Err()
+}
+
+// GetString retrieves a simple string value
+func (r *RedisRepo[M]) GetString(ctx context.Context, key string) (string, error) {
+	val, err := r.RedisClient.Get(ctx, key).Result()
+	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return "", nil
+		}
+		return "", err
+	}
+	return val, nil
+}
+
 // func (r *RedisRepo[M]) SMembers(ctx context.Context, key string) ([]string, error) {
 // 	result := r.RedisClient.SPop(ctx, key)
 // 	if result.Err() != nil {

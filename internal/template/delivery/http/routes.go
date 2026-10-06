@@ -8,7 +8,7 @@ import (
 )
 
 func MapTemplateRoutes(router chi.Router, h template.Handlers, mw *middleware.MiddlewareManager) {
-	router.Route("/templates", func(r chi.Router) {
+	router.Route("/api/templates", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mw.Verifier(true), mw.Authenticator(), mw.CurrentUser(), mw.ActiveUser())
 

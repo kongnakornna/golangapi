@@ -18,6 +18,15 @@ jwt:
   RefreshTokenExpireDuration: 1440
   RefreshTokenPrivateKey: ""
   RefreshTokenPublicKey: ""
+  # JWE (Ed25519 JWS + ECDH-ES/A256GCM JWE) for nested JWT in HTTP-only cookies
+  # Generate with: go run ./cmd/gen-jwe-keys
+  jwe_signing_private_key: ""  # base64 Ed25519 private key (64 bytes)
+  jwe_signing_public_key: ""   # base64 Ed25519 public key (32 bytes)
+  jwe_kex_private_key: ""      # base64 X25519 private key (32 bytes)
+  jwe_kex_public_key: ""       # base64 X25519 public key (32 bytes)
+  jwe_access_token_ttl: 15     # minutes
+  jwe_refresh_token_ttl: 1440  # minutes (24 hours)
+  api_key_pepper: ""           # HMAC pepper for API keys (min 32 bytes)
 
 firstSuperUser:
   Email: ""
@@ -126,3 +135,8 @@ vectorDb:
 upload:
   dir: "./uploads"
   max_avatar_bytes: 2097152
+
+ws:
+  # Allowed origins for WebSocket connections (CORS doesn't cover WS handshake)
+  # Example: ["https://app.example.com", "https://admin.example.com"]
+  allowed_origins: ["http://localhost:3000", "http://localhost:5173"]

@@ -19,11 +19,13 @@ import (
 	"icmongolang/internal/models"
 	"icmongolang/internal/modules/users"
 	usersUseCase "icmongolang/internal/modules/users/usecase"
+	"icmongolang/internal/repository"
 	"icmongolang/pkg/jwt"
 	"icmongolang/pkg/logger"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 )
 
 // ---- fakes ----
@@ -47,6 +49,7 @@ func (testLogger) Sync() error                        { return nil }
 
 var _ logger.Logger = testLogger{}
 
+// mockUseCase — ใช้เฉพาะ method ที่เทสต์ต้องใช้
 type mockUseCase struct {
 	users.UserUseCaseI // panic if an un-stubbed method is called
 
@@ -130,8 +133,27 @@ func newTestServer(t *testing.T, uc *mockUseCase) *testServer {
 		Upload: config.UploadConfig{Dir: t.TempDir(), MaxAvatarBytes: 8},
 	}
 
-	mw := middleware.CreateMiddlewareManager(cfg, testLogger{}, uc)
-	handler := CreateUserHandler(uc, cfg, testLogger{})
+	// Fake Redis client (won't actually connect in tests)
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+	redisRepo := repository.CreateRedisRepository[any](redisClient)
+
+	mw := middleware.CreateMiddlewareManager(cfg, testLogger{}, uc, redisRepo)
+
+	// 🆕 signature ใหม่ — ส่ง nil กับ UC ที่ test นี้ไม่ใช้
+	handler := CreateUserHandler(
+		uc,    // usersUC
+		nil,   // accessMenuUC
+		nil,   // fileUC
+		nil,   // logUC
+		nil,   // logTypeUC
+		nil,   // menuUC
+		nil,   // moduleUC
+		cfg,
+		testLogger{},
+	)
+
 	router := chi.NewRouter()
 	MapUserRoute(router, handler, mw)
 
@@ -237,7 +259,9 @@ type stubRedisRepo struct {
 func TestUploadAvatarTooLargeReturnsClientError(t *testing.T) {
 	cfg := &config.Config{Upload: config.UploadConfig{Dir: t.TempDir(), MaxAvatarBytes: 4}}
 	realUC := usersUseCase.CreateUserUseCaseI(&stubPgRepo{}, &stubRedisRepo{}, nil, cfg, testLogger{})
-	handler := CreateUserHandler(realUC, cfg, testLogger{}).(*userHandler)
+
+	// 🆕 signature ใหม่
+	handler := CreateUserHandler(realUC, nil, nil, nil, nil, nil, nil, cfg, testLogger{}).(*userHandler)
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)

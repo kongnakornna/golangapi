@@ -31,6 +31,62 @@ func (m *mockWSRepo) ValidateSession(ctx context.Context, token string) (*models
 	args := m.Called(ctx, token)
 	return args.Get(0).(*models.Session), args.Error(1)
 }
+func (m *mockWSRepo) GetMessages(ctx context.Context, params models.MessageQueryParams) (*models.MessagePage, error) {
+	args := m.Called(ctx, params)
+	return args.Get(0).(*models.MessagePage), args.Error(1)
+}
+func (m *mockWSRepo) GetMessagesByRoom(ctx context.Context, room string, params models.MessageQueryParams) (*models.MessagePage, error) {
+	args := m.Called(ctx, room, params)
+	return args.Get(0).(*models.MessagePage), args.Error(1)
+}
+func (m *mockWSRepo) GetMessagesBySender(ctx context.Context, senderID string, params models.MessageQueryParams) (*models.MessagePage, error) {
+	args := m.Called(ctx, senderID, params)
+	return args.Get(0).(*models.MessagePage), args.Error(1)
+}
+func (m *mockWSRepo) CountMessages(ctx context.Context, params models.MessageQueryParams) (int64, error) {
+	args := m.Called(ctx, params)
+	return args.Get(0).(int64), args.Error(1)
+}
+func (m *mockWSRepo) SearchMessages(ctx context.Context, params models.SearchQueryParams) (*models.SearchPage, error) {
+	args := m.Called(ctx, params)
+	return args.Get(0).(*models.SearchPage), args.Error(1)
+}
+func (m *mockWSRepo) CountSearchMessages(ctx context.Context, params models.SearchQueryParams) (int64, error) {
+	args := m.Called(ctx, params)
+	return args.Get(0).(int64), args.Error(1)
+}
+func (m *mockWSRepo) CreateRetentionPolicy(ctx context.Context, policy *models.RetentionPolicy) error {
+	args := m.Called(ctx, policy)
+	return args.Error(0)
+}
+func (m *mockWSRepo) GetRetentionPolicy(ctx context.Context, id string) (*models.RetentionPolicy, error) {
+	args := m.Called(ctx, id)
+	return args.Get(0).(*models.RetentionPolicy), args.Error(1)
+}
+func (m *mockWSRepo) ListRetentionPolicies(ctx context.Context, limit, offset int) ([]*models.RetentionPolicy, int64, error) {
+	args := m.Called(ctx, limit, offset)
+	return args.Get(0).([]*models.RetentionPolicy), args.Get(1).(int64), args.Error(2)
+}
+func (m *mockWSRepo) UpdateRetentionPolicy(ctx context.Context, policy *models.RetentionPolicy) error {
+	args := m.Called(ctx, policy)
+	return args.Error(0)
+}
+func (m *mockWSRepo) DeleteRetentionPolicy(ctx context.Context, id string) error {
+	args := m.Called(ctx, id)
+	return args.Error(0)
+}
+func (m *mockWSRepo) GetActiveRetentionPolicies(ctx context.Context) ([]*models.RetentionPolicy, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]*models.RetentionPolicy), args.Error(1)
+}
+func (m *mockWSRepo) GetRetentionStats(ctx context.Context) (*models.RetentionStats, error) {
+	args := m.Called(ctx)
+	return args.Get(0).(*models.RetentionStats), args.Error(1)
+}
+func (m *mockWSRepo) CleanupExpiredMessages(ctx context.Context, policy *models.RetentionPolicy) (int64, error) {
+	args := m.Called(ctx, policy)
+	return args.Get(0).(int64), args.Error(1)
+}
 
 // mock queue
 type mockQueue struct{ mock.Mock }

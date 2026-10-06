@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 
 	"icmongolang/internal/modules/pdpa/domain/entity"
-	"icmongolang/internal/modules/pdpa/domain/valueobject"
+	valueobject "icmongolang/internal/modules/pdpa/domain/valueobject"
 )
 
 type DeletionPolicyService struct{}

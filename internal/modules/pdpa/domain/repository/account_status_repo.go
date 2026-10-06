@@ -11,9 +11,9 @@ import (
 )
 
 type UserAccountStatusRepository interface {
-	Save(ctx context.Context, status *entity.UserAccountStatus) error
+	Save(ctx context.Context, s *entity.UserAccountStatus) error
 	FindByUserID(ctx context.Context, userID uuid.UUID) (*entity.UserAccountStatus, error)
-	FindSuspendedWithoutDeletion(ctx context.Context, cutoffDate time.Time) ([]entity.UserAccountStatus, error)
+	FindSuspendedWithoutDeletion(ctx context.Context, cutoff time.Time) ([]entity.UserAccountStatus, error)
 	UpdateStatus(ctx context.Context, userID uuid.UUID, status valueobject.AccountStatus) error
 	UpdateDeletionConfirmed(ctx context.Context, userID uuid.UUID, confirmedAt time.Time) error
 	UpdateAutoDeleted(ctx context.Context, userID uuid.UUID, deletedAt time.Time) error

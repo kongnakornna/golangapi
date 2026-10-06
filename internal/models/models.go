@@ -900,8 +900,6 @@ type FlowDefinition struct {
 
 func (FlowDefinition) TableName() string { return "flow_definitions" }
 
-
-
 // SdChannelTemplate defines message templates for notification channels.
 // เทมเพลตข้อความสำหรับช่องทางการแจ้งเตือน
 type SdChannelTemplate struct {
@@ -1908,14 +1906,14 @@ func (JobSymptom) TableName() string { return "t_job_service_car_symptom" }
 // JobDiagTroubleCode stores diagnostic trouble codes for a job.
 // รหัสข้อผิดพลาด DTC สำหรับงานซ่อม
 type JobDiagTroubleCode struct {
-	ID          uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	JobID       uuid.UUID `gorm:"column:job_id;type:uuid;not null"`
-	TroubleCode string    `gorm:"column:trouble_code;type:varchar(20);not null"`
-	Description *string   `gorm:"column:description;type:text"`
-	System      *string   `gorm:"column:system;type:varchar(50)"`
-	UserID      uuid.UUID `gorm:"column:user_id;type:uuid;not null"`
+	ID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	JobID        uuid.UUID `gorm:"column:job_id;type:uuid;not null"`
+	TroubleCode  string    `gorm:"column:trouble_code;type:varchar(20);not null"`
+	Description  *string   `gorm:"column:description;type:text"`
+	System       *string   `gorm:"column:system;type:varchar(50)"`
+	UserID       uuid.UUID `gorm:"column:user_id;type:uuid;not null"`
 	WhitelabelID uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
-	CreatedAt   time.Time `gorm:"column:created_at;not null;default:now()"`
+	CreatedAt    time.Time `gorm:"column:created_at;not null;default:now()"`
 }
 
 func (JobDiagTroubleCode) TableName() string { return "t_job_diag_trouble_code" }
@@ -1923,14 +1921,14 @@ func (JobDiagTroubleCode) TableName() string { return "t_job_diag_trouble_code" 
 // JobStatusHistory tracks job status changes.
 // ประวัติการเปลี่ยนสถานะของใบรับงานซ่อม
 type JobStatusHistory struct {
-	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	JobID        uuid.UUID  `gorm:"column:job_id;type:uuid;not null"`
-	FromStatus   *string    `gorm:"column:from_status;type:varchar(30)"`
-	ToStatus     string     `gorm:"column:to_status;type:varchar(30);not null"`
-	ChangedBy    uuid.UUID  `gorm:"column:changed_by;type:uuid;not null"`
-	ChangedAt    time.Time  `gorm:"column:changed_at;not null;default:now()"`
-	Reason       *string    `gorm:"column:reason;type:text"`
-	WhitelabelID uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
+	ID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	JobID        uuid.UUID `gorm:"column:job_id;type:uuid;not null"`
+	FromStatus   *string   `gorm:"column:from_status;type:varchar(30)"`
+	ToStatus     string    `gorm:"column:to_status;type:varchar(30);not null"`
+	ChangedBy    uuid.UUID `gorm:"column:changed_by;type:uuid;not null"`
+	ChangedAt    time.Time `gorm:"column:changed_at;not null;default:now()"`
+	Reason       *string   `gorm:"column:reason;type:text"`
+	WhitelabelID uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
 }
 
 func (JobStatusHistory) TableName() string { return "t_job_status_history" }
@@ -1979,16 +1977,16 @@ func (EmailLog) TableName() string { return "email_log" }
 // EmailConfig stores SMTP configuration.
 // การตั้งค่า SMTP
 type EmailConfig struct {
-	ID          int       `gorm:"column:id;primaryKey;autoIncrement"`
-	SmtpHost    string    `gorm:"column:smtp_host;type:varchar(255);not null"`
-	SmtpPort    int       `gorm:"column:smtp_port;not null"`
-	SmtpUser    string    `gorm:"column:smtp_user;type:varchar(255);not null"`
-	SmtpPass    string    `gorm:"column:smtp_pass;type:varchar(255);not null"`
-	FromEmail   string    `gorm:"column:from_email;type:varchar(255);not null"`
-	FromName    string    `gorm:"column:from_name;type:varchar(255);not null"`
-	IsActive    bool      `gorm:"column:is_active;not null;default:true"`
-	CreatedAt   time.Time `gorm:"column:created_at;not null;default:now()"`
-	UpdatedAt   time.Time `gorm:"column:updated_at;not null;default:now()"`
+	ID        int       `gorm:"column:id;primaryKey;autoIncrement"`
+	SmtpHost  string    `gorm:"column:smtp_host;type:varchar(255);not null"`
+	SmtpPort  int       `gorm:"column:smtp_port;not null"`
+	SmtpUser  string    `gorm:"column:smtp_user;type:varchar(255);not null"`
+	SmtpPass  string    `gorm:"column:smtp_pass;type:varchar(255);not null"`
+	FromEmail string    `gorm:"column:from_email;type:varchar(255);not null"`
+	FromName  string    `gorm:"column:from_name;type:varchar(255);not null"`
+	IsActive  bool      `gorm:"column:is_active;not null;default:true"`
+	CreatedAt time.Time `gorm:"column:created_at;not null;default:now()"`
+	UpdatedAt time.Time `gorm:"column:updated_at;not null;default:now()"`
 }
 
 func (EmailConfig) TableName() string { return "email_config" }
@@ -2108,49 +2106,49 @@ func (Customer) TableName() string { return "m_customer" }
 
 // Car represents a customer's vehicle.
 type Car struct {
-	ID                uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	CustomerID        uuid.UUID  `gorm:"column:customer_id;type:uuid;not null"`
-	LicensePlate      string     `gorm:"column:license_plate;type:varchar(20);unique;not null"`
-	Province          *string    `gorm:"column:province;type:varchar(50)"`
-	Brand             string     `gorm:"column:brand;type:varchar(50);not null"`
-	Model             string     `gorm:"column:model;type:varchar(100);not null"`
-	SubModel          *string    `gorm:"column:sub_model;type:varchar(100)"`
-	Year              *int       `gorm:"column:year"`
-	Color             *string    `gorm:"column:color;type:varchar(30)"`
-	EngineNumber      *string    `gorm:"column:engine_number;type:varchar(50)"`
-	ChassisNumber     *string    `gorm:"column:chassis_number;type:varchar(50)"`
-	FuelType          *string    `gorm:"column:fuel_type;type:varchar(20)"`
-	TransmissionType  *string    `gorm:"column:transmission_type;type:varchar(20)"`
-	EngineCC          *int       `gorm:"column:engine_cc"`
-	SeatingCapacity   *int       `gorm:"column:seating_capacity"`
-	Mileage           int        `gorm:"column:mileage;default:0"`
-	LastServiceDate   *time.Time `gorm:"column:last_service_date"`
-	NextServiceMileage *int      `gorm:"column:next_service_mileage"`
-	Notes             *string    `gorm:"column:notes;type:text"`
-	IsActive          bool       `gorm:"column:is_active;default:true"`
-	UserID            uuid.UUID  `gorm:"column:user_id;type:uuid;not null"`
-	WhitelabelID      uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
-	CreatedAt         time.Time  `gorm:"column:created_at;not null;default:now()"`
-	UpdatedAt         *time.Time `gorm:"column:updated_at"`
-	DeletedAt         *time.Time `gorm:"column:deleted_at"`
-	Deleted           bool       `gorm:"column:deleted;default:false"`
+	ID                 uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	CustomerID         uuid.UUID  `gorm:"column:customer_id;type:uuid;not null"`
+	LicensePlate       string     `gorm:"column:license_plate;type:varchar(20);unique;not null"`
+	Province           *string    `gorm:"column:province;type:varchar(50)"`
+	Brand              string     `gorm:"column:brand;type:varchar(50);not null"`
+	Model              string     `gorm:"column:model;type:varchar(100);not null"`
+	SubModel           *string    `gorm:"column:sub_model;type:varchar(100)"`
+	Year               *int       `gorm:"column:year"`
+	Color              *string    `gorm:"column:color;type:varchar(30)"`
+	EngineNumber       *string    `gorm:"column:engine_number;type:varchar(50)"`
+	ChassisNumber      *string    `gorm:"column:chassis_number;type:varchar(50)"`
+	FuelType           *string    `gorm:"column:fuel_type;type:varchar(20)"`
+	TransmissionType   *string    `gorm:"column:transmission_type;type:varchar(20)"`
+	EngineCC           *int       `gorm:"column:engine_cc"`
+	SeatingCapacity    *int       `gorm:"column:seating_capacity"`
+	Mileage            int        `gorm:"column:mileage;default:0"`
+	LastServiceDate    *time.Time `gorm:"column:last_service_date"`
+	NextServiceMileage *int       `gorm:"column:next_service_mileage"`
+	Notes              *string    `gorm:"column:notes;type:text"`
+	IsActive           bool       `gorm:"column:is_active;default:true"`
+	UserID             uuid.UUID  `gorm:"column:user_id;type:uuid;not null"`
+	WhitelabelID       uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
+	CreatedAt          time.Time  `gorm:"column:created_at;not null;default:now()"`
+	UpdatedAt          *time.Time `gorm:"column:updated_at"`
+	DeletedAt          *time.Time `gorm:"column:deleted_at"`
+	Deleted            bool       `gorm:"column:deleted;default:false"`
 }
 
 func (Car) TableName() string { return "m_car" }
 
 // CarServiceHistory records vehicle service history.
 type CarServiceHistory struct {
-	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	CarID           uuid.UUID `gorm:"column:car_id;type:uuid;not null"`
-	JobID           uuid.UUID `gorm:"column:job_id;type:uuid;not null"`
-	ServiceDate     time.Time `gorm:"column:service_date;not null"`
-	ServiceType     *string   `gorm:"column:service_type;type:varchar(50)"`
-	Description     *string   `gorm:"column:description;type:text"`
-	TotalCost       *float64  `gorm:"column:total_cost;type:decimal(15,2)"`
-	MileageAtService *int     `gorm:"column:mileage_at_service"`
-	MechanicName    *string   `gorm:"column:mechanic_name;type:varchar(100)"`
-	WhitelabelID    uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
-	CreatedAt       time.Time `gorm:"column:created_at;not null;default:now()"`
+	ID               uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	CarID            uuid.UUID `gorm:"column:car_id;type:uuid;not null"`
+	JobID            uuid.UUID `gorm:"column:job_id;type:uuid;not null"`
+	ServiceDate      time.Time `gorm:"column:service_date;not null"`
+	ServiceType      *string   `gorm:"column:service_type;type:varchar(50)"`
+	Description      *string   `gorm:"column:description;type:text"`
+	TotalCost        *float64  `gorm:"column:total_cost;type:decimal(15,2)"`
+	MileageAtService *int      `gorm:"column:mileage_at_service"`
+	MechanicName     *string   `gorm:"column:mechanic_name;type:varchar(100)"`
+	WhitelabelID     uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
+	CreatedAt        time.Time `gorm:"column:created_at;not null;default:now()"`
 }
 
 func (CarServiceHistory) TableName() string { return "m_car_service_history" }
@@ -2161,82 +2159,82 @@ func (CarServiceHistory) TableName() string { return "m_car_service_history" }
 
 // Quotation represents a quotation document.
 type Quotation struct {
-	ID               uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	QuotationNo      string     `gorm:"column:quotation_no;type:varchar(20);unique;not null"`
-	JobID            uuid.UUID  `gorm:"column:job_id;type:uuid;not null"`
-	CustomerID       uuid.UUID  `gorm:"column:customer_id;type:uuid;not null"`
-	QuotationDate    time.Time  `gorm:"column:quotation_date;not null;default:now()"`
-	ExpiryDate       time.Time  `gorm:"column:expiry_date;not null"`
-	Status           string     `gorm:"column:status;type:varchar(20);not null;default:DRAFT"`
-	Subtotal         float64    `gorm:"column:subtotal;type:decimal(15,2);not null;default:0"`
-	TaxRate          float64    `gorm:"column:tax_rate;type:decimal(5,2);default:7.00"`
-	TaxAmount        float64    `gorm:"column:tax_amount;type:decimal(15,2);default:0"`
-	DiscountType     *string    `gorm:"column:discount_type;type:varchar(20)"`
-	DiscountValue    float64    `gorm:"column:discount_value;type:decimal(15,2);default:0"`
-	Total            float64    `gorm:"column:total;type:decimal(15,2);not null;default:0"`
-	AmountInWordsTh  *string    `gorm:"column:amount_in_words_th;type:text"`
-	AmountInWordsEn  *string    `gorm:"column:amount_in_words_en;type:text"`
-	Currency         *string    `gorm:"column:currency;type:varchar(10);default:THB"`
-	ExchangeRate     float64    `gorm:"column:exchange_rate;type:decimal(10,4);default:1.0000"`
-	Notes            *string    `gorm:"column:notes;type:text"`
-	TermsAndConditions *string  `gorm:"column:terms_and_conditions;type:text"`
-	ApprovedBy       *uuid.UUID `gorm:"column:approved_by;type:uuid"`
-	ApprovedAt       *time.Time `gorm:"column:approved_at"`
-	RejectedReason   *string    `gorm:"column:rejected_reason;type:text"`
-	ConvertedToPo    bool       `gorm:"column:converted_to_po;default:false"`
-	UserID           uuid.UUID  `gorm:"column:user_id;type:uuid;not null"`
-	WhitelabelID     uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
-	CreatedAt        time.Time  `gorm:"column:created_at;not null;default:now()"`
-	UpdatedAt        *time.Time `gorm:"column:updated_at"`
-	DeletedAt        *time.Time `gorm:"column:deleted_at"`
-	Deleted          bool       `gorm:"column:deleted;default:false"`
+	ID                 uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	QuotationNo        string     `gorm:"column:quotation_no;type:varchar(20);unique;not null"`
+	JobID              uuid.UUID  `gorm:"column:job_id;type:uuid;not null"`
+	CustomerID         uuid.UUID  `gorm:"column:customer_id;type:uuid;not null"`
+	QuotationDate      time.Time  `gorm:"column:quotation_date;not null;default:now()"`
+	ExpiryDate         time.Time  `gorm:"column:expiry_date;not null"`
+	Status             string     `gorm:"column:status;type:varchar(20);not null;default:DRAFT"`
+	Subtotal           float64    `gorm:"column:subtotal;type:decimal(15,2);not null;default:0"`
+	TaxRate            float64    `gorm:"column:tax_rate;type:decimal(5,2);default:7.00"`
+	TaxAmount          float64    `gorm:"column:tax_amount;type:decimal(15,2);default:0"`
+	DiscountType       *string    `gorm:"column:discount_type;type:varchar(20)"`
+	DiscountValue      float64    `gorm:"column:discount_value;type:decimal(15,2);default:0"`
+	Total              float64    `gorm:"column:total;type:decimal(15,2);not null;default:0"`
+	AmountInWordsTh    *string    `gorm:"column:amount_in_words_th;type:text"`
+	AmountInWordsEn    *string    `gorm:"column:amount_in_words_en;type:text"`
+	Currency           *string    `gorm:"column:currency;type:varchar(10);default:THB"`
+	ExchangeRate       float64    `gorm:"column:exchange_rate;type:decimal(10,4);default:1.0000"`
+	Notes              *string    `gorm:"column:notes;type:text"`
+	TermsAndConditions *string    `gorm:"column:terms_and_conditions;type:text"`
+	ApprovedBy         *uuid.UUID `gorm:"column:approved_by;type:uuid"`
+	ApprovedAt         *time.Time `gorm:"column:approved_at"`
+	RejectedReason     *string    `gorm:"column:rejected_reason;type:text"`
+	ConvertedToPo      bool       `gorm:"column:converted_to_po;default:false"`
+	UserID             uuid.UUID  `gorm:"column:user_id;type:uuid;not null"`
+	WhitelabelID       uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
+	CreatedAt          time.Time  `gorm:"column:created_at;not null;default:now()"`
+	UpdatedAt          *time.Time `gorm:"column:updated_at"`
+	DeletedAt          *time.Time `gorm:"column:deleted_at"`
+	Deleted            bool       `gorm:"column:deleted;default:false"`
 }
 
 func (Quotation) TableName() string { return "t_quotation" }
 
 // QuotationPart represents a part item in a quotation.
 type QuotationPart struct {
-	ID          uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	QuotationID uuid.UUID `gorm:"column:quotation_id;type:uuid;not null"`
-	PartID      uuid.UUID `gorm:"column:part_id;type:uuid;not null"`
-	Quantity    int       `gorm:"column:quantity;not null;default:1"`
-	UnitPrice   float64   `gorm:"column:unit_price;type:decimal(15,2);not null"`
-	Discount    float64   `gorm:"column:discount;type:decimal(15,2);default:0"`
-	Note        *string   `gorm:"column:note;type:text"`
-	UserID      uuid.UUID `gorm:"column:user_id;type:uuid;not null"`
-	WhitelabelID uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
-	CreatedAt   time.Time `gorm:"column:created_at;not null;default:now()"`
-	UpdatedAt   *time.Time `gorm:"column:updated_at"`
+	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	QuotationID  uuid.UUID  `gorm:"column:quotation_id;type:uuid;not null"`
+	PartID       uuid.UUID  `gorm:"column:part_id;type:uuid;not null"`
+	Quantity     int        `gorm:"column:quantity;not null;default:1"`
+	UnitPrice    float64    `gorm:"column:unit_price;type:decimal(15,2);not null"`
+	Discount     float64    `gorm:"column:discount;type:decimal(15,2);default:0"`
+	Note         *string    `gorm:"column:note;type:text"`
+	UserID       uuid.UUID  `gorm:"column:user_id;type:uuid;not null"`
+	WhitelabelID uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
+	CreatedAt    time.Time  `gorm:"column:created_at;not null;default:now()"`
+	UpdatedAt    *time.Time `gorm:"column:updated_at"`
 }
 
 func (QuotationPart) TableName() string { return "t_quotation_part" }
 
 // QuotationService represents a service item in a quotation.
 type QuotationService struct {
-	ID          uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	QuotationID uuid.UUID `gorm:"column:quotation_id;type:uuid;not null"`
-	ServiceID   uuid.UUID `gorm:"column:service_id;type:uuid;not null"`
-	Quantity    int       `gorm:"column:quantity;not null;default:1"`
-	UnitPrice   float64   `gorm:"column:unit_price;type:decimal(15,2);not null"`
-	Discount    float64   `gorm:"column:discount;type:decimal(15,2);default:0"`
-	Note        *string   `gorm:"column:note;type:text"`
-	UserID      uuid.UUID `gorm:"column:user_id;type:uuid;not null"`
-	WhitelabelID uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
-	CreatedAt   time.Time `gorm:"column:created_at;not null;default:now()"`
-	UpdatedAt   *time.Time `gorm:"column:updated_at"`
+	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	QuotationID  uuid.UUID  `gorm:"column:quotation_id;type:uuid;not null"`
+	ServiceID    uuid.UUID  `gorm:"column:service_id;type:uuid;not null"`
+	Quantity     int        `gorm:"column:quantity;not null;default:1"`
+	UnitPrice    float64    `gorm:"column:unit_price;type:decimal(15,2);not null"`
+	Discount     float64    `gorm:"column:discount;type:decimal(15,2);default:0"`
+	Note         *string    `gorm:"column:note;type:text"`
+	UserID       uuid.UUID  `gorm:"column:user_id;type:uuid;not null"`
+	WhitelabelID uuid.UUID  `gorm:"column:whitelabel_id;type:uuid;not null"`
+	CreatedAt    time.Time  `gorm:"column:created_at;not null;default:now()"`
+	UpdatedAt    *time.Time `gorm:"column:updated_at"`
 }
 
 func (QuotationService) TableName() string { return "t_quotation_service" }
 
 // QuotationStatusHistory tracks quotation status changes.
 type QuotationStatusHistory struct {
-	ID           uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	QuotationID  uuid.UUID  `gorm:"column:quotation_id;type:uuid;not null"`
-	FromStatus   *string    `gorm:"column:from_status;type:varchar(20)"`
-	ToStatus     string     `gorm:"column:to_status;type:varchar(20);not null"`
-	ChangedBy    uuid.UUID  `gorm:"column:changed_by;type:uuid;not null"`
-	ChangedAt    time.Time  `gorm:"column:changed_at;not null;default:now()"`
-	Reason       *string    `gorm:"column:reason;type:text"`
+	ID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	QuotationID  uuid.UUID `gorm:"column:quotation_id;type:uuid;not null"`
+	FromStatus   *string   `gorm:"column:from_status;type:varchar(20)"`
+	ToStatus     string    `gorm:"column:to_status;type:varchar(20);not null"`
+	ChangedBy    uuid.UUID `gorm:"column:changed_by;type:uuid;not null"`
+	ChangedAt    time.Time `gorm:"column:changed_at;not null;default:now()"`
+	Reason       *string   `gorm:"column:reason;type:text"`
 	WhitelabelID uuid.UUID `gorm:"column:whitelabel_id;type:uuid;not null"`
 }
 

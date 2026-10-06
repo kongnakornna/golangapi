@@ -8,7 +8,7 @@ import (
 
 // MapControlRoutes registers control routes under /api/control.
 func MapControlRoutes(router chi.Router, h *ControlHandler, mw *middleware.MiddlewareManager) {
-	router.Route("/control", func(r chi.Router) {
+	router.Route("/api/control", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(mw.Verifier(true))
 			r.Use(mw.Authenticator())

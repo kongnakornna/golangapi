@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"icmongolang/internal/modules/alarm/models"
 	"gorm.io/gorm"
+	"icmongolang/internal/modules/alarm/models"
 )
 
 var alarmLogAllowedFilters = map[string]bool{

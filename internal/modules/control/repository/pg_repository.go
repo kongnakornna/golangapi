@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	iotmodels "icmongolang/internal/modules/iot/models"
 	"gorm.io/gorm"
+	iotmodels "icmongolang/internal/modules/iot/models"
 )
 
 // ScheduledDevice joins a schedule with the devices it controls.

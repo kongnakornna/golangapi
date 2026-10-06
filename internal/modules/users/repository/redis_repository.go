@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"icmongolang/internal/models"
-	"icmongolang/internal/repository"
 	"icmongolang/internal/modules/users"
+	"icmongolang/internal/repository"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -17,6 +17,13 @@ type UserRedisRepo struct {
 	repository.RedisRepo[models.SdUser]
 }
 
+type CacheRepository interface {
+	GetJSON(ctx context.Context, key string, dst interface{}) (bool, error)
+	SetJSON(ctx context.Context, key string, value interface{}, ttl time.Duration) error
+	Delete(ctx context.Context, keys ...string) error
+	DeleteByPattern(ctx context.Context, pattern string) error
+	ScanAndDelete(ctx context.Context, pattern string, batchSize int) (int, error)
+}
 func CreateUserRedisRepository(redisClient *redis.Client) users.UserRedisRepository {
 	return &UserRedisRepo{
 		RedisRepo: repository.CreateRedisRepo[models.SdUser](redisClient),
